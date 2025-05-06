@@ -24,7 +24,7 @@
     <div class="form-field"><label for="name">Author Name</label><input type="text" id="name" placeholder="Clay Risen"></div>
     <div class="form-field"><label for="location">Location</label><input type="text" id="location" placeholder="Reporting from Berlin"></div>
     <div class="form-field"><label for="content">Content</label><textarea id="content" rows="5" placeholder="Today’s unexpected drama..."></textarea></div>
-    <button type="button" id="generate">Embed</button>
+    <button type="button" id="embed-btn">Embed</button>
     <h2>Embed Code</h2>
     <textarea id="embed-code" rows="4" readonly></textarea>
     <h2>Preview</h2>
@@ -34,12 +34,25 @@
   <div id="embed-view" class="embed-view-container" style="display:none;"></div>
 
   <script>
+    // Build the embed card
+    function createEmbed({ image, name, location, content }) {
+      const container = document.createElement('div');
+      container.className = 'embed-container';
+      if (image) { const img = document.createElement('img'); img.src = image; img.className = 'embed-img'; container.appendChild(img); }
+      if (name) { const author = document.createElement('div'); author.className = 'embed-author'; author.textContent = name; container.appendChild(author); }
+      if (location) { const loc = document.createElement('div'); loc.className = 'embed-location'; loc.textContent = location; container.appendChild(loc); }
+      if (content) { const p = document.createElement('p'); p.textContent = content; container.appendChild(p); }
+      return container;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const isEmbed = urlParams.get('embed') === 'true';
       const formContainer = document.getElementById('form-container');
       const embedView = document.getElementById('embed-view');
+
       if (isEmbed) {
+        // Display as embeddable card
         formContainer.style.display = 'none';
         embedView.style.display = 'block';
         const params = {
@@ -50,9 +63,14 @@
         };
         embedView.appendChild(createEmbed(params));
       } else {
+        // Builder UI
         embedView.style.display = 'none';
-        const btn = document.getElementById('generate');
-        console.log('Init embed builder, button:', btn);
+        const btn = document.getElementById('embed-btn');
+        if (!btn) {
+          console.error('Embed button (#embed-btn) not found');
+          return;
+        }
+        console.log('Embed builder initialized', btn);
         btn.addEventListener('click', () => {
           const image = document.getElementById('image').value;
           const name = document.getElementById('name').value;
@@ -61,33 +79,14 @@
           const baseUrl = window.location.origin + window.location.pathname;
           const params = new URLSearchParams({ embed: 'true', image, name, location, content }).toString();
           const src = `${baseUrl}?${params}`;
-          const iframeCode = `<iframe src="${src}" width="600" style="border:none;width:100%;" frameborder="0"></iframe>`;
-          document.getElementById('embed-code').value = iframeCode;
+          const code = `<iframe src="${src}" width="600" style="border:none;width:100%;" frameborder="0"></iframe>`;
+          document.getElementById('embed-code').value = code;
           const preview = document.getElementById('preview');
           preview.innerHTML = '';
           preview.appendChild(createEmbed({ image, name, location, content }));
         });
       }
     });
-
-    function createEmbed({ image, name, location, content }) {
-      const container = document.createElement('div');
-      container.className = 'embed-container';
-      if (image) {
-        const img = document.createElement('img'); img.src = image; img.className = 'embed-img'; container.appendChild(img);
-      }
-      if (name) {
-        const author = document.createElement('div'); author.className = 'embed-author'; author.textContent = name; container.appendChild(author);
-      }
-      if (location) {
-        const loc = document.createElement('div'); loc.className = 'embed-location'; loc.textContent = location; container.appendChild(loc);
-      }
-      if (content) {
-        const p = document.createElement('p'); p.textContent = content; container.appendChild(p);
-      }
-      return container;
-    }
   </script>
 </body>
 </html>
-
