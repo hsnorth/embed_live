@@ -4,26 +4,105 @@
   <meta charset="UTF-8">
   <title>Embed Generator</title>
   <style>
-    body { font-family: 'Noto Serif', Georgia, serif; background: #f5f5f5; color: #000; margin:0; padding:0; }
-    .form-container, .embed-view-container { max-width:600px; margin:2em auto; background:#fff; padding:1em; border:1px solid #ddd; }
-    .form-field { margin-bottom:1em; }
-    label { display:block; margin-bottom:0.5em; font-weight:bold; }
-    input, textarea, button { font-family: 'Noto Serif', Georgia, serif; font-size:1em; }
-    input, textarea { width:100%; padding:0.5em; border:1px solid #ccc; }
-    button { padding:0.75em 1.5em; cursor:pointer; }
-    .embed-container { background:#fff; color:#000; padding:1em; border:1px solid #ccc; }
-    .embed-img { max-width:100%; height:auto; margin-bottom:1em; }
-    .embed-author { font-weight:bold; margin-bottom:0.25em; }
-    .embed-location { font-style:italic; margin-bottom:1em; }
+    /* Ensure no default margins, padding, or scrollbars in embed */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Noto Serif', Georgia, serif;
+      background: #fff;
+      color: #000;
+    }
+    /* Hide scrollbars in WebKit */
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Builder and embed view containers */
+    .form-container {
+      max-width: 600px;
+      margin: 2em auto;
+      background: #f5f5f5;
+      padding: 1em;
+      border: 1px solid #ddd;
+    }
+    .embed-view-container {
+      max-width: 600px;
+      margin: 0;
+      padding: 1em;
+      border: none;
+    }
+
+    .form-field {
+      margin-bottom: 1em;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5em;
+      font-weight: bold;
+    }
+    input, textarea, button {
+      font-family: inherit;
+      font-size: 1em;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.5em;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.75em 1.5em;
+      cursor: pointer;
+    }
+
+    /* Embed card styling */
+    .embed-container {
+      padding: 0;
+      border: none;
+    }
+    .embed-img {
+      width: 100%;
+      height: auto;
+      margin: 0;
+    }
+    .embed-author,
+    .embed-location,
+    .embed-content {
+      margin: 0;
+      padding: 0;
+    }
+    .embed-author {
+      font-weight: bold;
+      margin-top: 0.5em;
+    }
+    .embed-location {
+      font-style: italic;
+      margin-top: 0.25em;
+    }
+    .embed-content {
+      margin-top: 0.5em;
+    }
   </style>
 </head>
 <body>
   <div id="form-container" class="form-container">
     <h1>Embed Builder</h1>
-    <div class="form-field"><label for="image">Image URL</label><input type="text" id="image" placeholder="https://..."></div>
-    <div class="form-field"><label for="name">Author Name</label><input type="text" id="name" placeholder="Clay Risen"></div>
-    <div class="form-field"><label for="location">Location</label><input type="text" id="location" placeholder="Reporting from Berlin"></div>
-    <div class="form-field"><label for="content">Content</label><textarea id="content" rows="5" placeholder="Today’s unexpected drama..."></textarea></div>
+    <div class="form-field">
+      <label for="image">Image URL</label>
+      <input type="text" id="image" placeholder="https://...">
+    </div>
+    <div class="form-field">
+      <label for="name">Author Name</label>
+      <input type="text" id="name" placeholder="Clay Risen">
+    </div>
+    <div class="form-field">
+      <label for="location">Location</label>
+      <input type="text" id="location" placeholder="Reporting from Berlin">
+    </div>
+    <div class="form-field">
+      <label for="content">Content</label>
+      <textarea id="content" rows="5" placeholder="Today’s unexpected drama..."></textarea>
+    </div>
     <button type="button" id="embed-btn">Embed</button>
     <h2>Embed Code</h2>
     <textarea id="embed-code" rows="4" readonly></textarea>
@@ -33,15 +112,34 @@
 
   <div id="embed-view" class="embed-view-container" style="display:none;"></div>
 
-  <script>
-    // Build the embed card
+  <script defer>
     function createEmbed({ image, name, location, content }) {
       const container = document.createElement('div');
       container.className = 'embed-container';
-      if (image) { const img = document.createElement('img'); img.src = image; img.className = 'embed-img'; container.appendChild(img); }
-      if (name) { const author = document.createElement('div'); author.className = 'embed-author'; author.textContent = name; container.appendChild(author); }
-      if (location) { const loc = document.createElement('div'); loc.className = 'embed-location'; loc.textContent = location; container.appendChild(loc); }
-      if (content) { const p = document.createElement('p'); p.textContent = content; container.appendChild(p); }
+      if (image) {
+        const img = document.createElement('img');
+        img.src = image;
+        img.className = 'embed-img';
+        container.appendChild(img);
+      }
+      if (name) {
+        const author = document.createElement('div');
+        author.className = 'embed-author';
+        author.textContent = name;
+        container.appendChild(author);
+      }
+      if (location) {
+        const loc = document.createElement('div');
+        loc.className = 'embed-location';
+        loc.textContent = location;
+        container.appendChild(loc);
+      }
+      if (content) {
+        const p = document.createElement('div');
+        p.className = 'embed-content';
+        p.textContent = content;
+        container.appendChild(p);
+      }
       return container;
     }
 
@@ -52,7 +150,6 @@
       const embedView = document.getElementById('embed-view');
 
       if (isEmbed) {
-        // Display as embeddable card
         formContainer.style.display = 'none';
         embedView.style.display = 'block';
         const params = {
@@ -63,23 +160,17 @@
         };
         embedView.appendChild(createEmbed(params));
       } else {
-        // Builder UI
         embedView.style.display = 'none';
         const btn = document.getElementById('embed-btn');
-        if (!btn) {
-          console.error('Embed button (#embed-btn) not found');
-          return;
-        }
-        console.log('Embed builder initialized', btn);
         btn.addEventListener('click', () => {
           const image = document.getElementById('image').value;
           const name = document.getElementById('name').value;
           const location = document.getElementById('location').value;
           const content = document.getElementById('content').value;
           const baseUrl = window.location.origin + window.location.pathname;
-          const params = new URLSearchParams({ embed: 'true', image, name, location, content }).toString();
-          const src = `${baseUrl}?${params}`;
-          const code = `<iframe src="${src}" width="600" style="border:none;width:100%;" frameborder="0"></iframe>`;
+          const query = new URLSearchParams({ embed: 'true', image, name, location, content }).toString();
+          const src = `${baseUrl}?${query}`;
+          const code = `<iframe src="${src}" style="border:0;margin:0;padding:0;width:100%;overflow:hidden;" scrolling="no" frameborder="0"></iframe>`;
           document.getElementById('embed-code').value = code;
           const preview = document.getElementById('preview');
           preview.innerHTML = '';
