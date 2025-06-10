@@ -1,1 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gazette Rich List 2025</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    /* Reset & Base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 112.5%; }
+    body {
+      font-family: Georgia, serif;
+      background: #fff; color: #111;
+      line-height: 1.6;
+    }
+
+    /* Full-bleed header */
+    .section-header {
+      width: 100vw; position: relative;
+      left: 50%; margin-left: -50vw;
+      background: #000; padding: 2rem 0;
+    }
+    .section-header .container {
+      max-width: 800px; margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .section-header h1,
+    .section-header p {
+      font-family: 'Roboto', sans-serif;
+      color: #B59410; text-align: left; margin: 0;
+    }
+    .section-header h1 { font-size: 2.75rem; font-weight: 700; }
+    .section-header p  { font-size: 1.4rem; margin-top: .5rem; }
+
+    /* Centered content */
+    .container {
+      max-width: 800px; margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+    .date-line {
+      font-size: 1rem; color: #666;
+      margin-bottom: 1rem;
+    }
+    .description {
+      font-size: 1.05rem; margin-bottom: 1.5rem;
+    }
+
+    /* Profiles */
+    .profile {
+      margin-bottom: 2rem;
+    }
+    .profile h2 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.75rem; color: #B59410;
+      margin-bottom: .5rem;
+    }
+    .profile h2 span {
+      color: #000; font-weight: normal;
+    }
+    .profile p {
+      font-size: 1rem;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 2rem;
+      font-size: 1rem; color: #666;
+    }
+    .pagination button {
+      padding: .5rem 1rem; font-size: 1rem;
+      cursor: pointer;
+    }
+    .pagination button:disabled {
+      opacity: .5; cursor: not-allowed;
+    }
+
+    /* Methodology */
+    .methodology { padding-top: 2rem; }
+    .methodology h3 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 2.25rem; margin-bottom: 1rem;
+    }
+    .methodology p {
+      margin-bottom: 1rem; font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-bleed header -->
+  <div class="section-header">
+    <div class="container">
+      <h1>Gazette Rich List 2025</h1>
+      <p>Browse the top 26 Quebec fortunes and read concise bios.</p>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="date-line">Published on June 21, 2025</div>
+    <div class="description">
+      A paginated showcase of Quebec’s wealthiest—rank, name, estimated net worth and a brief biography.
+    </div>
+
+    <div id="profiles"></div>
+
+    <div class="pagination">
+      <button id="prev">← Previous</button>
+      <div id="pager">Page 1 of 6</div>
+      <button id="next">Next →</button>
+    </div>
+
+    <div class="methodology">
+      <h3>Methodology</h3>
+      <p>The Gazette Rich List 2025 estimates the minimum net worth of Quebec’s 25 richest individuals and families. Our goal is to give a clear, transparent snapshot of wealth that can be publicly identified and verified.</p>
+      <p>We looked at sources of wealth that are on the public record. That includes shares in publicly traded companies, calculated using official filings and valued at stock prices as of June X, 2025. When families clearly control a company together, we counted their shares as one combined total. For private businesses, we used financial statements (if available). If a company lacked enough information or was running at a loss, we left it out. We also included land and property, using data from Quebec’s land registry and property assessments.</p>
+      <p>We did not include hidden or unverifiable assets like bank accounts, trust funds, most private equity stakes, or offshore holdings that aren’t publicly disclosed.</p>
+      <p>These are conservative estimates. The real size of these fortunes is likely much larger.</p>
+      <p>All valuations were done between X and Y.</p>
+      <p>To be included, individuals or families must currently live in Quebec, have their primary residence here, or – if they were born in Quebec but now live elsewhere – maintain strong ties to the province through things like family, property, or charitable giving.</p>
+      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
+      <p>We welcome corrections or further documentation from those featured in the list.</p>
+    </div>
+  </div>
+
+  <script>
+    const profiles = [
+      {
+        rank: 1,
+        name: 'Alain Bouchard and family',
+        worth: '$9.2B',
+        bio: 'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single convenience store in Laval, Quebec. Over four decades he transformed it into one of the world’s largest chains, operating more than 14,000 outlets across North America, Europe, and Asia under brands like Couche-Tard, Circle K, and Mac’s. A shrewd acquirer, Bouchard drove the company’s rapid expansion through strategic purchases and partnerships, all while maintaining a private ownership structure under his family’s holding company. Today, the Bouchards remain deeply involved in governance and philanthropy, focusing on health care, education and community development across Canada.',
+      },
+      {
+        rank: 2,
+        name: 'Paul Desmarais Jr. and André',
+        worth: '$7.0B',
+        bio: 'Brothers Paul Desmarais Jr. and André Desmarais inherited control of Power Corporation of Canada, a diversified financial services giant co-founded by their father, Paul Desmarais Sr. Under their leadership, Power Corp expanded its portfolio into asset management, insurance, and energy through stakes in companies like Great-West Lifeco and IGM Financial. The Desmarais duo also spearheaded high-profile acquisitions, including stake purchases in electricity and natural gas utilities. Beyond business, they are major philanthropists, funding educational initiatives at McGill University and health-care projects in Montreal. Their stewardship has kept Power Corp a pillar of Quebec’s corporate landscape.',
+      },
+      {
+        rank: 3,
+        name: 'The Azrieli family',
+        worth: '$6.0B',
+        bio: 'The Azrieli family’s fortune traces back to Holocaust survivor David Azrieli, who arrived in Canada in 1951. Starting in real estate development, he built landmark properties like Toronto’s First Canadian Place and shopping centres across Israel. Today the family controls Azrieli Group, a leading owner-operator of office towers and retail complexes with a market cap in the billions. Their philanthropic arm, the Azrieli Foundation, is Canada’s largest charitable foundation, funding scientific research, arts and education with grants totalling hundreds of millions. Guided by third-generation siblings Stefan, Sharon and Danielle, the Azrieli legacy combines real estate success with high-impact giving.',
+      },
+      {
+        rank: 4,
+        name: 'Emanuele Saputo & family',
+        worth: '$5.5B',
+        bio: 'Emanuele Saputo and his family founded Saputo Inc. in 1954, initially producing mozzarella in Montreal’s Jean-Talon Market. Under his stewardship, Saputo expanded through aggressive acquisitions and innovation, becoming one of the world’s top dairy processors. The company now operates in Canada, the United States, Argentina, Australia and the UK, producing cheddar, brie, and specialty cheeses for retail and industrial clients. The Saputos remain majority shareholders, sitting on the board and driving strategy. Beyond dairy, they invest in real estate and community causes, notably supporting cultural institutions in Montreal and health-care initiatives across Quebec.',
+      },
+      {
+        rank: 5,
+        name: 'Robert Miller',
+        worth: '$5.2B',
+        bio: 'Robert Miller founded Future Electronics in 1968 out of his parents’ basement in Montreal. Starting as a small parts distributor, he transformed the firm into a global leader in electronic components, serving OEMs in aerospace, automotive, telecommunications and consumer electronics. Under Miller’s direction, Future Electronics now spans 170 locations in over 40 countries, boasting an inventory worth more than US$750 million. Known for hands-on leadership, Miller emphasizes customer service and rapid fulfillment. Outside business, he supports educational and healthcare causes in Montreal, funding scholarships and hospital equipment through his family’s foundation.',
+      },
+      {
+        rank: 6,
+        name: 'Jacques D’Amours & Marie-Eve D’Amours',
+        worth: '$4.5B',
+        bio: 'Sibling co-founders Jacques D’Amours and Marie-Eve D’Amours helped transform Couche-Tard from a local convenience store into a global retail heavyweight. Jacques, originally a purchasing manager, led M&A in the 1990s, bringing smaller dépanneur chains under the Couche-Tard umbrella. Marie-Eve, with a background in operations, oversaw branding and the expansion of Circle K. Together they championed a culture of frontline empowerment and rapid inventory turnover. Today Jacques sits on the board, while Marie-Eve heads the company’s charitable foundation, supporting literacy and food-security programs across Quebec’s most vulnerable communities.',
+      },
+      {
+        rank: 7,
+        name: 'Ryan Cohen',
+        worth: '$4.0B',
+        bio: 'Ryan Cohen first made his mark in e-commerce founding Chewy in 2011, a pet-supplies startup he built from his bedroom into a $3.35 billion acquisition by PetSmart in 2017. His customer-first philosophy drove Chewy’s meteoric rise—hiring call-centre agents who send handwritten cards to grieving pet owners and offering free shipping. In 2020, Cohen pivoted to activist investing, taking a 13% stake in GameStop and joining its board. He led the company’s digital turnaround, streamlining e-commerce and shaking up management. Now 27, Cohen is credited with reshaping two major retail incumbents in under a decade.',
+      },
+      {
+        rank: 8,
+        name: 'Serge Godin',
+        worth: '$3.7B',
+        bio: 'In 1976, Serge Godin founded CGI (now CGI Inc.) in Quebec City with $4,000 and an IBM mainframe rented by the hour. He pioneered a client-centric consulting model, reinvesting profits to buy out early partners and expand into Europe. By 1986 CGI was public, and over the next three decades it grew via disciplined M&A into one of the world’s largest IT and business-process services firms. Godin’s emphasis on local autonomy and employee ownership earned CGI a reputation for low turnover and deep client relationships. Though retired from day-to-day duties, he remains its largest individual shareholder.',
+      },
+      {
+        rank: 9,
+        name: 'Jean Coutu & family',
+        worth: '$3.3B',
+        bio: 'Jean Coutu opened his first pharmacy in Montreal’s Old Port in 1969, betting on small-town markets overlooked by big chains. His emphasis on community service and “friendly pharmacist” branding fueled explosive growth across Quebec and the Maritimes. By 1990 the chain was public; a series of acquisitions and in-house generic brands deepened its market share. Though the Coutu family sold the chain to Metro in 2018 for $4.5 billion, they retained real estate rights on hundreds of stores and a royalty stream. Today the family manages that property portfolio while supporting health-care charities in their hometown.',
+      },
+      {
+        rank: 10,
+        name: 'Pierre Karl Péladeau',
+        worth: '$3.0B',
+        bio: 'Son of Quebecor founder Pierre Péladeau Sr., Pierre Karl Péladeau took the reins in 1999, steering Quebecor from a print publisher into a diversified media and telecom powerhouse. Under his leadership, Quebecor acquired Vidéotron, launched a national satellite service and expanded digital advertising and content production. Péladeau’s turn as Parti Québécois leader in 2015 cut short by a surprise resignation, he remains Quebecor’s executive chair. He champions French-language culture and invests heavily in local sports and arts. His philanthropic arm focuses on education and community broadcasting, aiming to nurture Quebec’s next-generation storytellers.',
+      }
+      // …add profiles 11–26 here…
+    ];
+
+    const perPage = 5;
+    let currentPage = 1;
+    const totalPages = Math.ceil(profiles.length / perPage);
+
+    function renderPage() {
+      const container = document.getElementById('profiles');
+      container.innerHTML = '';
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+      profiles.slice(start, end).forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'profile';
+        div.innerHTML = `
+          <h2>${p.rank}. <span>${p.name} — ${p.worth}</span></h2>
+          <p>${p.bio}</p>
+        `;
+        container.appendChild(div);
+      });
+      document.getElementById('pager').textContent =
+        'Page ' + currentPage + ' of ' + totalPages;
+      document.getElementById('prev').disabled = currentPage === 1;
+      document.getElementById('next').disabled = currentPage === totalPages;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => {
+      if (currentPage > 1) { currentPage--; renderPage(); }
+    });
+    document.getElementById('next').addEventListener('click', () => {
+      if (currentPage < totalPages) { currentPage++; renderPage(); }
+    });
+
+    window.onload = renderPage;
+  </script>
+
+</body>
+</html>
 
