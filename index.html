@@ -5,33 +5,38 @@
 <title>Gazette Rich List 2025</title>
 <style>
 :root {
-  --bg-light: #ffffff;
-  --bg-alt: #f9f9f9;
-  --text: #333333;
-  --accent: #005bbb;
-  --border: #e0e0e0;
+  --bg: #fafafa;
+  --text: #222;
+  --accent1: #3a6ea5;
+  --accent2: #5391c6;
+  --row-alt: #fff;
+  --row-hover: #e3f7ff;
+  --border: #ddd;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-  font-family: Georgia, serif; 
-  background: var(--bg-light); 
-  color: var(--text); 
-  padding: 1rem; 
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); font-family: Georgia, serif; color: var(--text); padding: 1rem; }
+.container { max-width: 1000px; margin: auto; }
+h2 { text-align:center; font-size:2rem; margin-bottom:1rem;
+     background: linear-gradient(90deg,var(--accent1),var(--accent2));
+     -webkit-background-clip: text; color: transparent; }
+.table-wrapper { overflow-x:auto; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); 
+                 animation: fadeIn 0.6s ease backwards; }
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
 }
-.container { max-width: 1000px; margin: 0 auto; }
-h2 { margin-bottom: 1rem; font-size: 1.75rem; text-align: center; }
-.table-wrapper { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-thead { background: var(--accent); color: #fff; }
-th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
-th { position: sticky; top: 0; z-index: 2; }
-tbody tr:nth-child(odd) { background: var(--bg-alt); }
-tbody tr:hover { background: #e6f4ff; }
-.center { text-align: center; }
-.bold { font-weight: bold; }
+table { width:100%; border-collapse: collapse; min-width: 600px; }
+thead th { position: sticky; top:0; padding:0.75rem; text-align:left; 
+           color:#fff; background: linear-gradient(90deg,var(--accent1),var(--accent2)); 
+           font-size:1.1rem; }
+th, td { border-bottom:1px solid var(--border); padding:0.75rem 1rem; }
+tbody tr:nth-child(even) { background: var(--row-alt); }
+tbody tr:hover { background: var(--row-hover); transform: translateX(4px); transition: background 0.3s, transform 0.2s; }
+.center { text-align:center; }
+.bold { font-weight:bold; }
 .industry-col { }
 @media (max-width: 600px) {
-  .industry-col { display: none; }
+  .industry-col { display:none; }
 }
 </style>
 </head>
