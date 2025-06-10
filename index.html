@@ -7,8 +7,9 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    /* Reset & Body */
+    /* Reset & Base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 112.5%; } /* bump all text by 12.5% */
     body {
       font-family: Georgia, serif;
       background: #fff;
@@ -38,11 +39,11 @@
       margin: 0;
     }
     .section-header h1 {
-      font-size: 2.5rem;
+      font-size: 2.75rem;
       font-weight: 700;
     }
     .section-header p {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 400;
       margin-top: 0.5rem;
     }
@@ -51,22 +52,22 @@
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 1rem;
+      padding: 1.5rem 1rem;
     }
     .date-line {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #666;
       margin-bottom: 1rem;
     }
     .description {
-      font-size: 1rem;
+      font-size: 1.05rem;
       margin-bottom: 1.5rem;
     }
 
     /* Responsive table wrapper */
     .table-wrapper {
       overflow-x: auto;
-      margin-bottom: 2rem;
+      margin-bottom: 0.5rem;
     }
     table {
       width: 100%;
@@ -74,27 +75,28 @@
       table-layout: auto;
     }
     th, td {
-      padding: 0.75rem 0.5rem;
+      padding: 0.85rem 0.5rem;
+      font-size: 1rem;
+      color: #000; /* black text */
     }
     th {
       font-family: 'Roboto', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 700;
       text-transform: uppercase;
-      color: #333;
+      font-weight: 700;
       text-align: left;
     }
-    td.center {
-      text-align: center;
-    }
-    td.name {
-      text-align: left;
-    }
-    td.bold {
-      font-weight: bold;
+    td.center { text-align: center; }
+    td.name   { text-align: left; }
+    td.bold   { font-weight: bold; }
+
+    /* tighten Worth column spacing */
+    th:nth-child(3),
+    td:nth-child(3) {
+      padding-left: 0.25rem;
+      padding-right: 0.5rem;
     }
 
-    /* Zebra stripes by row */
+    /* Zebra stripe rows */
     tbody tr:nth-child(even) {
       background: #f9f9f9;
     }
@@ -104,10 +106,18 @@
 
     /* Hide industry on small screens */
     @media (max-width: 600px) {
-      th.industry,
-      td.industry {
+      th.industry, td.industry {
         display: none;
       }
+    }
+
+    /* Table footer */
+    .table-footer {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: right;
+      margin-top: 0.5rem;
+      font-style: italic;
     }
 
     /* Methodology */
@@ -116,21 +126,22 @@
     }
     .methodology h3 {
       font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
+      font-size: 2.25rem;
       margin-bottom: 1rem;
     }
     .methodology p {
       margin-bottom: 1rem;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Full-width header -->
+  <!-- Full-bleed header -->
   <div class="section-header">
     <div class="container">
       <h1>Gazette Rich List 2025</h1>
-      <p>Compare estimated fortunes of Quebec’s wealthiest and learn our methodology.</p>
+      <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
     </div>
   </div>
 
@@ -139,7 +150,7 @@
 
     <div class="date-line">Published on June 21, 2025</div>
     <div class="description">
-      The definitive yearly Rich List of the richest people in Quebec. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
+      The definitive Rich List of the richest people in Quebec, yearly. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
     </div>
 
     <div class="table-wrapper">
@@ -183,6 +194,8 @@
       </table>
     </div>
 
+    <div class="table-footer">Table: Montreal Gazette</div>
+
     <div class="methodology">
       <h3>Methodology</h3>
       <p>The Gazette Rich List 2025 estimates the minimum net worth of Quebec’s 25 richest individuals and families. Our goal is to give a clear, transparent snapshot of wealth that can be publicly identified and verified.</p>
@@ -194,7 +207,6 @@
       <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
       <p>We welcome corrections or further documentation from those featured in the list.</p>
     </div>
-
   </div>
 
 </body>
