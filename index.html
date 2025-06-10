@@ -1,7 +1,3 @@
-from IPython.display import IFrame, display
-
-# Updated HTML with dynamic styling and responsive design
-html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,33 +12,26 @@ html_content = """
   --border: #e0e0e0;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-light); color: var(--text); padding: 1rem; }
+body { 
+  font-family: Georgia, serif; 
+  background: var(--bg-light); 
+  color: var(--text); 
+  padding: 1rem; 
+}
 .container { max-width: 1000px; margin: 0 auto; }
 h2 { margin-bottom: 1rem; font-size: 1.75rem; text-align: center; }
 .table-wrapper { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
 table { width: 100%; border-collapse: collapse; min-width: 600px; }
 thead { background: var(--accent); color: #fff; }
-th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); text-align: left; }
+th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
 th { position: sticky; top: 0; z-index: 2; }
-tbody tr { background: var(--bg-light); transition: background 0.3s; }
 tbody tr:nth-child(odd) { background: var(--bg-alt); }
 tbody tr:hover { background: #e6f4ff; }
-.numeric { text-align: right; }
+.center { text-align: center; }
+.bold { font-weight: bold; }
+.industry-col { }
 @media (max-width: 600px) {
-  table, thead, tbody, th, td, tr { display: block; }
-  thead tr { position: absolute; top: -9999px; left: -9999px; }
-  tr { margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem; }
-  td { border: none; border-bottom: 1px solid var(--border); position: relative; padding-left: 50%; }
-  td:last-child { border-bottom: none; }
-  td:before {
-    position: absolute; top: 0.75rem; left: 1rem; width: 45%; white-space: nowrap; font-weight: bold;
-  }
-  td:nth-of-type(1):before { content: "R"; }
-  td:nth-of-type(2):before { content: "Name"; }
-  td:nth-of-type(3):before { content: "Net worth ($B)"; }
-  td:nth-of-type(4):before { content: "Industry"; }
-  td { padding: 0.75rem 1rem; }
-  .numeric { text-align: left; }
+  .industry-col { display: none; }
 }
 </style>
 </head>
@@ -53,49 +42,42 @@ tbody tr:hover { background: #e6f4ff; }
     <table>
       <thead>
         <tr>
-          <th style="width:10%">Rank</th>
+          <th class="center" style="width:10%">Rank</th>
           <th style="width:45%">Name</th>
-          <th style="width:25%" class="numeric">Net worth ($B)</th>
-          <th style="width:20%">Industry</th>
+          <th class="center" style="width:25%">Net worth ($B)</th>
+          <th class="center industry-col" style="width:20%">Industry</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>1</td><td>Alain Bouchard and family</td><td class="numeric">$ 9.2</td><td>Couche-Tard founder</td></tr>
-        <tr><td>2</td><td>Paul Desmarais Jr. and André</td><td class="numeric">$ 7.0</td><td>Power Corp heirs</td></tr>
-        <tr><td>3</td><td>The Azrieli family</td><td class="numeric">$ 6.0</td><td>Real estate & philanthropy</td></tr>
-        <tr><td>4</td><td>Emanuele Saputo & family</td><td class="numeric">$ 5.5</td><td>Saputo dairy empire</td></tr>
-        <tr><td>5</td><td>Robert Miller</td><td class="numeric">$ 5.2</td><td>Future Electronics founder</td></tr>
-        <tr><td>6</td><td>Jacques D’Amours & Marie-Eve D’Amours</td><td class="numeric">$ 4.5</td><td>Couche-Tard co-founder</td></tr>
-        <tr><td>7</td><td>Ryan Cohen</td><td class="numeric">$ 4.0</td><td>GameStop investor, Chewy founder</td></tr>
-        <tr><td>8</td><td>Serge Godin</td><td class="numeric">$ 3.7</td><td>CGI founder</td></tr>
-        <tr><td>9</td><td>Jean Coutu & family</td><td class="numeric">$ 3.3</td><td>Pharmacy chain</td></tr>
-        <tr><td>10</td><td>Pierre Karl Péladeau</td><td class="numeric">$ 3.0</td><td>Québecor media empire</td></tr>
-        <tr><td>11</td><td>Bombardier & Beaudoin family</td><td class="numeric">$ 2.5</td><td>Bombardier aerospace</td></tr>
-        <tr><td>12</td><td>Richard Fortin</td><td class="numeric">$ 2.5</td><td>Couche-Tard co-founder</td></tr>
-        <tr><td>13</td><td>Philip Fayer</td><td class="numeric">$ 2.1</td><td>Paysafe founder</td></tr>
-        <tr><td>14</td><td>Molson family</td><td class="numeric">$ 2.0</td><td>Beer empire</td></tr>
-        <tr><td>15</td><td>Kruger family</td><td class="numeric">$ 1.9</td><td>Tissue & paper products</td></tr>
-        <tr><td>16</td><td>Réal Plourde</td><td class="numeric">$ 1.6</td><td>Couche-Tard co-founder</td></tr>
-        <tr><td>17</td><td>Andrew Lutfy</td><td class="numeric">$ 1.5</td><td>Retail & real estate</td></tr>
-        <tr><td>18</td><td>Goodman family</td><td class="numeric">$ 1.5</td><td>Investment & real estate</td></tr>
-        <tr><td>19</td><td>Guy Laliberté</td><td class="numeric">$ 1.3</td><td>Cirque du Soleil founder</td></tr>
-        <tr><td>20</td><td>Pierre Lassonde</td><td class="numeric">$ 1.3</td><td>Mining & gold royalty</td></tr>
-        <tr><td>21</td><td>John MacBain</td><td class="numeric">$ 1.1</td><td>Auto trader & philanthropy</td></tr>
-        <tr><td>22</td><td>Larry Rossy</td><td class="numeric">$ 1.0</td><td>Dollarama founder</td></tr>
-        <tr><td>23</td><td>Hewitt family</td><td class="numeric">$ 1.0</td><td>Heavy equipment distribution</td></tr>
-        <tr><td>24</td><td>Charles Bronfman</td><td class="numeric">—</td><td>Seagram heir?</td></tr>
-        <tr><td>25</td><td>Stephan Jarislowsky</td><td class="numeric">—</td><td>Investment management?</td></tr>
-        <tr><td>26</td><td>Lawrence Stroll</td><td class="numeric">—</td><td>Fashion & Formula 1?</td></tr>
+        <tr><td class="center">1</td><td>Alain Bouchard and family</td><td class="center bold">$ 9.2</td><td class="center industry-col">Couche-Tard founder</td></tr>
+        <tr><td class="center">2</td><td>Paul Desmarais Jr. and André</td><td class="center bold">$ 7.0</td><td class="center industry-col">Power Corp heirs</td></tr>
+        <tr><td class="center">3</td><td>The Azrieli family</td><td class="center bold">$ 6.0</td><td class="center industry-col">Real estate & philanthropy</td></tr>
+        <tr><td class="center">4</td><td>Emanuele Saputo & family</td><td class="center bold">$ 5.5</td><td class="center industry-col">Saputo dairy empire</td></tr>
+        <tr><td class="center">5</td><td>Robert Miller</td><td class="center bold">$ 5.2</td><td class="center industry-col">Future Electronics founder</td></tr>
+        <tr><td class="center">6</td><td>Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$ 4.5</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">7</td><td>Ryan Cohen</td><td class="center bold">$ 4.0</td><td class="center industry-col">GameStop investor, Chewy founder</td></tr>
+        <tr><td class="center">8</td><td>Serge Godin</td><td class="center bold">$ 3.7</td><td class="center industry-col">CGI founder</td></tr>
+        <tr><td class="center">9</td><td>Jean Coutu & family</td><td class="center bold">$ 3.3</td><td class="center industry-col">Pharmacy chain</td></tr>
+        <tr><td class="center">10</td><td>Pierre Karl Péladeau</td><td class="center bold">$ 3.0</td><td class="center industry-col">Québecor media empire</td></tr>
+        <tr><td class="center">11</td><td>Bombardier & Beaudoin family</td><td class="center bold">$ 2.5</td><td class="center industry-col">Bombardier aerospace</td></tr>
+        <tr><td class="center">12</td><td>Richard Fortin</td><td class="center bold">$ 2.5</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">13</td><td>Philip Fayer</td><td class="center bold">$ 2.1</td><td class="center industry-col">Paysafe founder</td></tr>
+        <tr><td class="center">14</td><td>Molson family</td><td class="center bold">$ 2.0</td><td class="center industry-col">Beer empire</td></tr>
+        <tr><td class="center">15</td><td>Kruger family</td><td class="center bold">$ 1.9</td><td class="center industry-col">Tissue & paper products</td></tr>
+        <tr><td class="center">16</td><td>Réal Plourde</td><td class="center bold">$ 1.6</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">17</td><td>Andrew Lutfy</td><td class="center bold">$ 1.5</td><td class="center industry-col">Retail & real estate</td></tr>
+        <tr><td class="center">18</td><td>Goodman family</td><td class="center bold">$ 1.5</td><td class="center industry-col">Investment & real estate</td></tr>
+        <tr><td class="center">19</td><td>Guy Laliberté</td><td class="center bold">$ 1.3</td><td class="center industry-col">Cirque du Soleil founder</td></tr>
+        <tr><td class="center">20</td><td>Pierre Lassonde</td><td class="center bold">$ 1.3</td><td class="center industry-col">Mining & gold royalty</td></tr>
+        <tr><td class="center">21</td><td>John MacBain</td><td class="center bold">$ 1.1</td><td class="center industry-col">Auto trader & philanthropy</td></tr>
+        <tr><td class="center">22</td><td>Larry Rossy</td><td class="center bold">$ 1.0</td><td class="center industry-col">Dollarama founder</td></tr>
+        <tr><td class="center">23</td><td>Hewitt family</td><td class="center bold">$ 1.0</td><td class="center industry-col">Heavy equipment distribution</td></tr>
+        <tr><td class="center">24</td><td>Charles Bronfman</td><td class="center bold">—</td><td class="center industry-col">Seagram heir?</td></tr>
+        <tr><td class="center">25</td><td>Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry-col">Investment management?</td></tr>
+        <tr><td class="center">26</td><td>Lawrence Stroll</td><td class="center bold">—</td><td class="center industry-col">Fashion & Formula 1?</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 </body>
 </html>
-"""
-
-# Save and preview the HTML
-with open('/mnt/data/richlist.html', 'w') as f:
-    f.write(html_content)
-
-display(IFrame('/mnt/data/richlist.html', width='100%', height='600'))
