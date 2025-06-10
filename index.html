@@ -7,125 +7,94 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+    /* Reset & Body */
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      margin: 0;
-      padding: 0;
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      line-height: 1.6;
+      line-height:1.6;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-    /* Intro Header */
+
+    /* Full-bleed header */
     .section-header {
-      background-color: #000;
-      color: #B59410;
-      padding: 2rem 1rem;
-      text-align: left;
+      position: relative;
+      left: 50%; width:100vw; margin-left:-50vw;
+      background:#000; color:#B59410;
+      padding:2rem 1rem;
+      text-align:left;
     }
     .section-header h1,
     .section-header p {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
+      font-family:'Roboto', sans-serif;
+      margin:0;
     }
-    .section-header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-    }
-    .section-header p {
-      font-size: 1.3rem;
-      font-weight: 400;
-      margin-top: 0.5rem;
-    }
-    .section-content {
-      padding: 1.5rem;
-      background: #fff;
-      color: #000;
+    .section-header h1 { font-size:2.5rem; font-weight:700; }
+    .section-header p  { font-size:1.3rem; font-weight:400; margin-top:0.5rem; }
+
+    /* Centered content */
+    .container {
+      max-width:800px; margin:0 auto; padding:1rem;
     }
     .date-line {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 1rem;
+      font-size:0.9rem; color:#666; margin-bottom:1rem;
     }
     .description {
-      font-size: 1rem;
+      font-size:1rem; margin-bottom:1rem;
     }
+
     /* Responsive table wrapper */
-    .table-wrapper {
-      overflow-x: auto;
-      margin-bottom: 1rem;
-    }
+    .table-wrapper { overflow-x:auto; margin-bottom:2rem; }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: auto;
+      width:100%; border-collapse:collapse; table-layout:auto;
     }
     th, td {
-      padding: 0.75rem 0.5rem;
+      padding:0.75rem 0.5rem;
     }
     th {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      color: #333;
-      font-family: 'Roboto', sans-serif;
+      font-family:'Roboto', sans-serif;
+      font-size:0.9rem; font-weight:700;
+      text-transform:uppercase; color:#333;
+      text-align:left;
     }
-    /* Alternate column shading */
-    td:nth-child(2n),
-    th:nth-child(2n) {
-      background-color: #f9f9f9;
+    td.center { text-align:center; }
+    td.name   { text-align:left; }
+    td.bold   { font-weight:bold; }
+
+    /* Zebra stripes on full rows */
+    tbody tr:nth-child(even) { background:#f9f9f9; }
+    tr:hover td { background:#eaeaea; }
+
+    /* Hide industry on mobile */
+    @media (max-width:600px) {
+      th.industry, td.industry { display:none; }
     }
-    td.center {
-      text-align: center;
-    }
-    td.name {
-      text-align: left;
-    }
-    td.bold {
-      font-weight: bold;
-    }
-    tr:hover td {
-      background: #eaeaea;
-    }
-    /* Hide industry on small screens */
-    @media (max-width: 600px) {
-      td.industry, th.industry {
-        display: none;
-      }
-    }
+
     /* Methodology */
-    .methodology {
-      padding: 1.5rem;
+    .methodology { padding-top:2rem; }
+    .methodology h3 {
+      font-family:'Roboto', sans-serif;
+      font-size:2rem; margin-bottom:1rem;
     }
-    h3 {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.75rem;
-      margin-bottom: 0.75rem;
-    }
-    .methodology p {
-      margin-bottom: 1rem;
-    }
+    .methodology p { margin-bottom:1rem; }
   </style>
 </head>
 <body>
+
+  <!-- Full-bleed header -->
+  <div class="section-header">
+    <h1>Gazette Rich List 2025</h1>
+    <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
+  </div>
+
+  <!-- Centered content -->
   <div class="container">
-    <!-- Styled Intro -->
-    <div class="section-header">
-      <h1>Gazette Rich List 2025</h1>
-      <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
-    </div>
-    <div class="section-content">
-      <div class="date-line">Published on June 21, 2025</div>
-      <div class="description">
-        The definitive Rich List of the richest people in Quebec, yearly. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
-      </div>
+    <div class="date-line">Published on June 21, 2025</div>
+    <div class="description">
+      The definitive Rich List of the richest people in Quebec, yearly. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
     </div>
 
-    <!-- Responsive Table Wrapper -->
+    <!-- Table -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -137,9 +106,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td class="center">1</td><td class="name">Alain Bouchard and family</td><td class="center bold">$9.2B</td><td class="center industry">Couche-Tard founder</td></tr>
-          <tr><td class="center">2</td><td class="name">Paul Desmarais Jr. and André</td><td class="center bold">$7.0B</td><td class="center industry">Power Corp heirs</td></tr>
-          <tr><td class="center">3</td><td class="name">The Azrieli family</td><td class="center bold">$6.0B</td><td class="center industry">Real estate & philanthropy</td></tr>
+          <tr><td class="center">1</td><td class="name">Alain Bouchard and family</td><td class="center bold">$9.2B</td><td class="industry">Couche-Tard founder</td></tr>
+          <tr><td class="center">2</td><td class="name">Paul Desmarais Jr. and André</td><td class="center bold">$7.0B</td><td class="industry">Power Corp heirs</td></tr>
+          <tr><td class="center">3</td><td class="name">The Azrieli family</td><td class="center bold">$6.0B</td><td class="industry">Real estate & philanthropy</td></tr>
           <tr><td class="center">4</td><td class="name">Emanuele Saputo & family</td><td class="center bold">$5.5B</td><td class="center industry">Saputo dairy empire</td></tr>
           <tr><td class="center">5</td><td class="name">Robert Miller</td><td class="center bold">$5.2B</td><td class="center industry">Future Electronics founder</td></tr>
           <tr><td class="center">6</td><td class="name">Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$4.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
