@@ -19,9 +19,9 @@
     /* Intro Header */
     .section-header {
       background-color: #000;
-      color: #66cdaa;
+      color: #B59410;
       padding: 2rem 1rem;
-      text-align: center;
+      text-align: left;
     }
     .section-header h1 {
       margin: 0;
@@ -29,7 +29,7 @@
       font-weight: bold;
     }
     .section-header p {
-      margin: 1rem 0 0;
+      margin: 0.5rem 0 0;
       font-size: 1.3rem;
       line-height: 1.4;
     }
@@ -63,11 +63,15 @@
       font-size: 0.9rem;
       color: #333;
     }
-    td.center, th.center {
+    td.center {
       text-align: center;
     }
     td.bold {
       font-weight: bold;
+    }
+    /* Ensure name column left-aligned */
+    td.name, th.name {
+      text-align: left;
     }
     tr:hover td {
       background: #f5f5f5;
@@ -80,9 +84,12 @@
     /* Methodology */
     h3 {
       margin-top: 1.5rem;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       border-bottom: 1px solid #ddd;
-      padding-bottom: 0.25rem;
+      padding-bottom: 0.5rem;
+    }
+    .methodology {
+      padding: 1.5rem;
     }
     .methodology p {
       margin-bottom: 1rem;
@@ -92,13 +99,13 @@
 <body>
   <div class="container">
 
-    <!-- Bloomberg-style Intro -->
+    <!-- Styled Intro -->
     <div class="section-header">
       <h1>Gazette Rich List 2025</h1>
-      <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
+      <p>View profiles of Quebec’s wealthiest, compare fortunes, and learn about how we calculated it.</p>
     </div>
     <div class="section-content">
-      <div class="date-line">As of June X, 2025</div>
+      <div class="date-line">Published on June 21, 2025</div>
       <div class="description">
         The Rich List is a yearly ranking of the richest people in Quebec. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
       </div>
@@ -107,40 +114,38 @@
     <!-- Rich List Table -->
     <table>
       <thead>
-        <tr>
           <th class="center">Rank</th>
-          <th>Name</th>
+          <th class="name">Name</th>
           <th class="center">Worth</th>
           <th class="center industry">Industry</th>
-        </tr>
       </thead>
       <tbody>
-        <tr><td class="center">1</td><td>Alain Bouchard and family</td><td class="center bold">$9.2B</td><td class="center industry">Couche-Tard founder</td></tr>
-        <tr><td class="center">2</td><td>Paul Desmarais Jr. and André</td><td class="center bold">$7.0B</td><td class="center industry">Power Corp heirs</td></tr>
-        <tr><td class="center">3</td><td>The Azrieli family</td><td class="center bold">$6.0B</td><td class="center industry">Real estate & philanthropy</td></tr>
-        <tr><td class="center">4</td><td>Emanuele Saputo & family</td><td class="center bold">$5.5B</td><td class="center industry">Saputo dairy empire</td></tr>
-        <tr><td class="center">5</td><td>Robert Miller</td><td class="center bold">$5.2B</td><td class="center industry">Future Electronics founder</td></tr>
-        <tr><td class="center">6</td><td>Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$4.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">7</td><td>Ryan Cohen</td><td class="center bold">$4.0B</td><td class="center industry">GameStop investor, Chewy founder</td></tr>
-        <tr><td class="center">8</td><td>Serge Godin</td><td class="center bold">$3.7B</td><td class="center industry">CGI founder</td></tr>
-        <tr><td class="center">9</td><td>Jean Coutu & family</td><td class="center bold">$3.3B</td><td class="center industry">Pharmacy chain</td></tr>
-        <tr><td class="center">10</td><td>Pierre Karl Péladeau</td><td class="center bold">$3.0B</td><td class="center industry">Québecor media empire</td></tr>
-        <tr><td class="center">11</td><td>Bombardier & Beaudoin family</td><td class="center bold">$2.5B</td><td class="center industry">Bombardier aerospace</td></tr>
-        <tr><td class="center">12</td><td>Richard Fortin</td><td class="center bold">$2.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">13</td><td>Philip Fayer</td><td class="center bold">$2.1B</td><td class="center industry">Paysafe founder</td></tr>
-        <tr><td class="center">14</td><td>Molson family</td><td class="center bold">$2.0B</td><td class="center industry">Beer empire</td></tr>
-        <tr><td class="center">15</td><td>Kruger family</td><td class="center bold">$1.9B</td><td class="center industry">Tissue & paper products</td></tr>
-        <tr><td class="center">16</td><td>Réal Plourde</td><td class="center bold">$1.6B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">17</td><td>Andrew Lutfy</td><td class="center bold">$1.5B</td><td class="center industry">Retail & real estate</td></tr>
-        <tr><td class="center">18</td><td>Goodman family</td><td class="center bold">$1.5B</td><td class="center industry">Investment & real estate</td></tr>
-        <tr><td class="center">19</td><td>Guy Lalibert&eacute;</td><td class="center bold">$1.3B</td><td class="center industry">Cirque du Soleil founder</td></tr>
-        <tr><td class="center">20</td><td>Pierre Lassonde</td><td class="center bold">$1.3B</td><td class="center industry">Mining & gold royalty</td></tr>
-        <tr><td class="center">21</td><td>John MacBain</td><td class="center bold">$1.1B</td><td class="center industry">Auto trader & philanthropy</td></tr>
-        <tr><td class="center">22</td><td>Larry Rossy</td><td class="center bold">$1.0B</td><td class="center industry">Dollarama founder</td></tr>
-        <tr><td class="center">23</td><td>Hewitt family</td><td class="center bold">$1.0B</td><td class="center industry">Heavy equipment distribution</td></tr>
-        <tr><td class="center">24</td><td>Charles Bronfman</td><td class="center bold">—</td><td class="center industry">Seagram heir?</td></tr>
-        <tr><td class="center">25</td><td>Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry">Investment management?</td></tr>
-        <tr><td class="center">26</td><td>Lawrence Stroll</td><td class="center bold">—</td><td class="center industry">Fashion & Formula 1?</td></tr>
+        <tr><td class="center">1</td><td class="name">Alain Bouchard and family</td><td class="center bold">$9.2B</td><td class="center industry">Couche-Tard founder</td></tr>
+        <tr><td class="center">2</td><td class="name">Paul Desmarais Jr. and André</td><td class="center bold">$7.0B</td><td class="center industry">Power Corp heirs</td></tr>
+        <tr><td class="center">3</td><td class="name">The Azrieli family</td><td class="center bold">$6.0B</td><td class="center industry">Real estate & philanthropy</td></tr>
+        <tr><td class="center">4</td><td class="name">Emanuele Saputo & family</td><td class="center bold">$5.5B</td><td class="center industry">Saputo dairy empire</td></tr>
+        <tr><td class="center">5</td><td class="name">Robert Miller</td><td class="center bold">$5.2B</td><td class="center industry">Future Electronics founder</td></tr>
+        <tr><td class="center">6</td><td class="name">Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$4.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">7</td><td class="name">Ryan Cohen</td><td class="center bold">$4.0B</td><td class="center industry">GameStop investor, Chewy founder</td></tr>
+        <tr><td class="center">8</td><td class="name">Serge Godin</td><td class="center bold">$3.7B</td><td class="center industry">CGI founder</td></tr>
+        <tr><td class="center">9</td><td class="name">Jean Coutu & family</td><td class="center bold">$3.3B</td><td class="center industry">Pharmacy chain</td></tr>
+        <tr><td class="center">10</td><td class="name">Pierre Karl Péladeau</td><td class="center bold">$3.0B</td><td class="center industry">Québecor media empire</td></tr>
+        <tr><td class="center">11</td><td class="name">Bombardier & Beaudoin family</td><td class="center bold">$2.5B</td><td class="center industry">Bombardier aerospace</td></tr>
+        <tr><td class="center">12</td><td class="name">Richard Fortin</td><td class="center bold">$2.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">13</td><td class="name">Philip Fayer</td><td class="center bold">$2.1B</td><td class="center industry">Paysafe founder</td></tr>
+        <tr><td class="center">14</td><td class="name">Molson family</td><td class="center bold">$2.0B</td><td class="center industry">Beer empire</td></tr>
+        <tr><td class="center">15</td><td class="name">Kruger family</td><td class="center bold">$1.9B</td><td class="center industry">Tissue & paper products</td></tr>
+        <tr><td class="center">16</td><td class="name">Réal Plourde</td><td class="center bold">$1.6B</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">17</td><td class="name">Andrew Lutfy</td><td class="center bold">$1.5B</td><td class="center industry">Retail & real estate</td></tr>
+        <tr><td class="center">18</td><td class="name">Goodman family</td><td class="center bold">$1.5B</td><td class="center industry">Investment & real estate</td></tr>
+        <tr><td class="center">19</td><td class="name">Guy Lalibert&eacute;</td><td class="center bold">$1.3B</td><td class="center industry">Cirque du Soleil founder</td></tr>
+        <tr><td class="center">20</td><td class="name">Pierre Lassonde</td><td class="center bold">$1.3B</td><td class="center industry">Mining & gold royalty</td></tr>
+        <tr><td class="center">21</td><td class="name">John MacBain</td><td class="center bold">$1.1B</td><td class="center industry">Auto trader & philanthropy</td></tr>
+        <tr><td class="center">22</td><td class="name">Larry Rossy</td><td class="center bold">$1.0B</td><td class="center industry">Dollarama founder</td></tr>
+        <tr><td class="center">23</td><td class="name">Hewitt family</td><td class="center bold">$1.0B</td><td class="center industry">Heavy equipment distribution</td></tr>
+        <tr><td class="center">24</td><td class="name">Charles Bronfman</td><td class="center bold">—</td><td class="center industry">Seagram heir?</td></tr>
+        <tr><td class="center">25</td><td class="name">Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry">Investment management?</td></tr>
+        <tr><td class="center">26</td><td class="name">Lawrence Stroll</td><td class="center bold">—</td><td class="center industry">Fashion & Formula 1?</td></tr>
       </tbody>
     </table>
 
@@ -151,9 +156,9 @@
       <p>We looked at sources of wealth that are on the public record. That includes shares in publicly traded companies, calculated using official filings and valued at stock prices as of June X, 2025. When families clearly control a company together, we counted their shares as one combined total. For private businesses, we used financial statements (if available). If a company lacked enough information or was running at a loss, we left it out. We also included land and property, using data from Quebec’s land registry and property assessments.</p>
       <p>We did not include hidden or unverifiable assets like bank accounts, trust funds, most private equity stakes, or offshore holdings that aren’t publicly disclosed.</p>
       <p>These are conservative estimates. The real size of these fortunes is likely much larger.</p>
-      <p>All valuations were done between x and y.</p>
-      <p>To be included, individuals or families must currently live in Quebec, have their primary residence here, or – if they were born in Quebec but now live elsewhere – maintain strong ties to the province through things like family, property, or charitable giving.</p>
-      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
+      <p>All valuations were done between X and Y.</p>
+      <p>To be included, individuals or families must currently live in Quebec, have their primary residence here, or – if they were born in Quebec but now live elsewhere – maintain strong ties to the province through things like family, property, or charitable giving.</p>
+      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
       <p>We welcome corrections or further documentation from those featured in the list.</p>
     </div>
 
