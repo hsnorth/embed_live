@@ -2,182 +2,211 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Embed Generator</title>
+  <title>Gazette Rich List 2025</title>
   <style>
-    /* Ensure no default margins, padding, or scrollbars in embed */
-    html, body {
+    body {
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin-bottom: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    thead {
+      background-color: #f4f4f4;
+    }
+    th, td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
       overflow: hidden;
-      font-family: 'Noto Serif', Georgia, serif;
-      background: #fff;
-      color: #000;
+      text-overflow: ellipsis;
     }
-    /* Hide scrollbars in WebKit */
-    body::-webkit-scrollbar {
-      display: none;
+    tbody tr:nth-child(odd) {
+      background-color: #fafafa;
     }
-
-    /* Builder and embed view containers */
-    .form-container {
-      max-width: 600px;
-      margin: 2em auto;
-      background: #f5f5f5;
-      padding: 1em;
-      border: 1px solid #ddd;
-    }
-    .embed-view-container {
-      max-width: 600px;
-      margin: 0;
-      padding: 1em;
-      border: none;
-    }
-
-    .form-field {
-      margin-bottom: 1em;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5em;
-      font-weight: bold;
-    }
-    input, textarea, button {
-      font-family: inherit;
-      font-size: 1em;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 0.5em;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 0.75em 1.5em;
-      cursor: pointer;
-    }
-
-    /* Embed card styling */
-    .embed-container {
-      padding: 0;
-      border: none;
-    }
-    .embed-img {
-      width: 100%;
-      height: auto;
-      margin: 0;
-    }
-    .embed-author,
-    .embed-location,
-    .embed-content {
-      margin: 0;
-      padding: 0;
-    }
-    .embed-author {
-      font-weight: bold;
-      margin-top: 0.5em;
-    }
-    .embed-location {
-      font-style: italic;
-      margin-top: 0.25em;
-    }
-    .embed-content {
-      margin-top: 0.5em;
+    .numeric {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
   </style>
 </head>
 <body>
-  <div id="form-container" class="form-container">
-    <h1>Embed Builder</h1>
-    <div class="form-field">
-      <label for="image">Image URL</label>
-      <input type="text" id="image" placeholder="https://...">
-    </div>
-    <div class="form-field">
-      <label for="name">Author Name</label>
-      <input type="text" id="name" placeholder="Clay Risen">
-    </div>
-    <div class="form-field">
-      <label for="location">Location</label>
-      <input type="text" id="location" placeholder="Reporting from Berlin">
-    </div>
-    <div class="form-field">
-      <label for="content">Content</label>
-      <textarea id="content" rows="5" placeholder="Today’s unexpected drama..."></textarea>
-    </div>
-    <button type="button" id="embed-btn">Embed</button>
-    <h2>Embed Code</h2>
-    <textarea id="embed-code" rows="4" readonly></textarea>
-    <h2>Preview</h2>
-    <div id="preview"></div>
-  </div>
-
-  <div id="embed-view" class="embed-view-container" style="display:none;"></div>
-
-  <script defer>
-    function createEmbed({ image, name, location, content }) {
-      const container = document.createElement('div');
-      container.className = 'embed-container';
-      if (image) {
-        const img = document.createElement('img');
-        img.src = image;
-        img.className = 'embed-img';
-        container.appendChild(img);
-      }
-      if (name) {
-        const author = document.createElement('div');
-        author.className = 'embed-author';
-        author.textContent = name;
-        container.appendChild(author);
-      }
-      if (location) {
-        const loc = document.createElement('div');
-        loc.className = 'embed-location';
-        loc.textContent = location;
-        container.appendChild(loc);
-      }
-      if (content) {
-        const p = document.createElement('div');
-        p.className = 'embed-content';
-        p.textContent = content;
-        container.appendChild(p);
-      }
-      return container;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isEmbed = urlParams.get('embed') === 'true';
-      const formContainer = document.getElementById('form-container');
-      const embedView = document.getElementById('embed-view');
-
-      if (isEmbed) {
-        formContainer.style.display = 'none';
-        embedView.style.display = 'block';
-        const params = {
-          image: urlParams.get('image'),
-          name: urlParams.get('name'),
-          location: urlParams.get('location'),
-          content: urlParams.get('content')
-        };
-        embedView.appendChild(createEmbed(params));
-      } else {
-        embedView.style.display = 'none';
-        const btn = document.getElementById('embed-btn');
-        btn.addEventListener('click', () => {
-          const image = document.getElementById('image').value;
-          const name = document.getElementById('name').value;
-          const location = document.getElementById('location').value;
-          const content = document.getElementById('content').value;
-          const baseUrl = window.location.origin + window.location.pathname;
-          const query = new URLSearchParams({ embed: 'true', image, name, location, content }).toString();
-          const src = `${baseUrl}?${query}`;
-          const code = `<iframe src="${src}" style="border:0;margin:0;padding:0;width:100%;overflow:hidden;" scrolling="no" frameborder="0"></iframe>`;
-          document.getElementById('embed-code').value = code;
-          const preview = document.getElementById('preview');
-          preview.innerHTML = '';
-          preview.appendChild(createEmbed({ image, name, location, content }));
-        });
-      }
-    });
-  </script>
+  <h2>Gazette Rich List 2025</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:5%">Rank</th>
+        <th style="width:45%">Name</th>
+        <th style="width:20%" class="numeric">Net worth ($ B)</th>
+        <th style="width:30%">Industry</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Alain Bouchard and family</td>
+        <td class="numeric">$ 9.2</td>
+        <td>Couche-Tard founder</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Paul Desmarais Jr. and André</td>
+        <td class="numeric">$ 7.0</td>
+        <td>Power Corp heirs</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>The Azrieli family</td>
+        <td class="numeric">$ 6.0</td>
+        <td>Real estate and philanthropy</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Emanuele Saputo & family</td>
+        <td class="numeric">$ 5.5</td>
+        <td>Saputo dairy empire</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Robert Miller</td>
+        <td class="numeric">$ 5.2</td>
+        <td>Future Electronics founder</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Jacques D’Amours & Marie-Eve D’Amours</td>
+        <td class="numeric">$ 4.5</td>
+        <td>Couche-Tard co-founder</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Ryan Cohen</td>
+        <td class="numeric">$ 4.0</td>
+        <td>GameStop investor, Chewy founder</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Serge Godin</td>
+        <td class="numeric">$ 3.7</td>
+        <td>CGI founder</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Jean Coutu & family</td>
+        <td class="numeric">$ 3.3</td>
+        <td>Pharmacy chain</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Pierre Karl Péladeau</td>
+        <td class="numeric">$ 3.0</td>
+        <td>Québecor media empire</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Bombardier & Beaudoin family</td>
+        <td class="numeric">$ 2.5</td>
+        <td>Bombardier aerospace</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Richard Fortin</td>
+        <td class="numeric">$ 2.5</td>
+        <td>Couche-Tard co-founder</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Philip Fayer</td>
+        <td class="numeric">$ 2.1</td>
+        <td>Paysafe founder</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Molson family</td>
+        <td class="numeric">$ 2.0</td>
+        <td>Beer empire</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Kruger family</td>
+        <td class="numeric">$ 1.9</td>
+        <td>Tissue & paper products</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>Réal Plourde</td>
+        <td class="numeric">$ 1.6</td>
+        <td>Couche-Tard co-founder</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td>Andrew Lutfy</td>
+        <td class="numeric">$ 1.5</td>
+        <td>Retail and real estate</td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td>Goodman family</td>
+        <td class="numeric">$ 1.5</td>
+        <td>Investment and real estate</td>
+      </tr>
+      <tr>
+        <td>19</td>
+        <td>Guy Laliberté</td>
+        <td class="numeric">$ 1.3</td>
+        <td>Cirque du Soleil founder</td>
+      </tr>
+      <tr>
+        <td>20</td>
+        <td>Pierre Lassonde</td>
+        <td class="numeric">$ 1.3</td>
+        <td>Mining and gold royalty</td>
+      </tr>
+      <tr>
+        <td>21</td>
+        <td>John MacBain</td>
+        <td class="numeric">$ 1.1</td>
+        <td>Auto trader & philanthropy</td>
+      </tr>
+      <tr>
+        <td>22</td>
+        <td>Larry Rossy</td>
+        <td class="numeric">$ 1.0</td>
+        <td>Dollarama founder</td>
+      </tr>
+      <tr>
+        <td>23</td>
+        <td>Hewitt family</td>
+        <td class="numeric">$ 1.0</td>
+        <td>Heavy equipment distribution</td>
+      </tr>
+      <tr>
+        <td>24</td>
+        <td>Charles Bronfman</td>
+        <td class="numeric">—</td>
+        <td>Seagram heir?</td>
+      </tr>
+      <tr>
+        <td>25</td>
+        <td>Stephan Jarislowsky</td>
+        <td class="numeric">—</td>
+        <td>Investment management?</td>
+      </tr>
+      <tr>
+        <td>26</td>
+        <td>Lawrence Stroll</td>
+        <td class="numeric">—</td>
+        <td>Fashion & Formula 1?</td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>
