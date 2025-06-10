@@ -70,14 +70,14 @@
       margin-bottom: 0.5rem;
     }
     table {
-      width: 100%;
-      border-collapse: collapse;
+      width: 100%; 
+      border-collapse: collapse; 
       table-layout: auto;
     }
     th, td {
       padding: 0.85rem 0.5rem;
       font-size: 1rem;
-      color: #000; /* black text */
+      color: #000;
     }
     th {
       font-family: 'Roboto', sans-serif;
@@ -87,16 +87,18 @@
     }
     td.center { text-align: center; }
     td.name   { text-align: left; }
-    td.bold   { font-weight: bold; }
 
-    /* tighten Worth column spacing */
-    th:nth-child(3),
-    td:nth-child(3) {
-      padding-left: 0.25rem;
-      padding-right: 0.5rem;
+    /* Slightly increase space between columns */
+    th.name, td.name {
+      padding-left: 1rem;
+    }
+    th.industry, td.industry {
+      padding-left: 1rem;
     }
 
-    /* Zebra stripe rows */
+    td.bold { font-weight: bold; }
+
+    /* Zebra striping by row */
     tbody tr:nth-child(even) {
       background: #f9f9f9;
     }
@@ -106,7 +108,8 @@
 
     /* Hide industry on small screens */
     @media (max-width: 600px) {
-      th.industry, td.industry {
+      th.industry,
+      td.industry {
         display: none;
       }
     }
@@ -207,7 +210,20 @@
       <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
       <p>We welcome corrections or further documentation from those featured in the list.</p>
     </div>
+
   </div>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+Tools
+
+
