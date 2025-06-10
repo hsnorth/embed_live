@@ -6,7 +6,7 @@
   <style>
     body {
       margin: 0;
-      padding: 1rem;
+      padding: 0;
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
@@ -16,27 +16,42 @@
       max-width: 800px;
       margin: auto;
     }
-    h2 {
-      background: #000;
-      color: gold;
+    /* Intro Header */
+    .section-header {
+      background-color: #000;
+      color: #66cdaa;
+      padding: 2rem 1rem;
       text-align: center;
-      font-size: 1.75rem;
-      margin: 0 0 1rem;
-      padding: 0.75rem;
-      border-radius: 4px;
     }
-    .intro {
+    .section-header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    .section-header p {
+      margin: 1rem 0 0;
+      font-size: 1.3rem;
+      line-height: 1.4;
+    }
+    .section-content {
+      padding: 1.5rem;
       background: #fff;
       color: #000;
-      padding: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border-bottom: 1px solid #ddd;
+    }
+    .section-content .date-line {
+      font-size: 0.9rem;
+      color: #666;
       margin-bottom: 1rem;
     }
+    .section-content .description {
+      font-size: 1rem;
+    }
+    /* Table Styles */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1rem;
+      margin: 0;
     }
     th, td {
       padding: 0.5rem 0.75rem;
@@ -62,6 +77,7 @@
         display: none;
       }
     }
+    /* Methodology */
     h3 {
       margin-top: 1.5rem;
       font-size: 1.25rem;
@@ -75,12 +91,20 @@
 </head>
 <body>
   <div class="container">
-    <h2>The Gazette Rich List 2025</h2>
-    <div class="intro">
-      The Rich List is a yearly ranking of the richest people in Quebec. The numbers are careful estimates 
-      based on public and private information. For anyone with shares in public companies, we used stock 
-      prices from June X, 2025. You can read more about how we made the list below.
+
+    <!-- Bloomberg-style Intro -->
+    <div class="section-header">
+      <h1>Gazette Rich List 2025</h1>
+      <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
     </div>
+    <div class="section-content">
+      <div class="date-line">As of June X, 2025</div>
+      <div class="description">
+        The Rich List is a yearly ranking of the richest people in Quebec. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
+      </div>
+    </div>
+
+    <!-- Rich List Table -->
     <table>
       <thead>
         <tr>
@@ -119,17 +143,20 @@
         <tr><td class="center">26</td><td>Lawrence Stroll</td><td class="center bold">—</td><td class="center industry">Fashion & Formula 1?</td></tr>
       </tbody>
     </table>
+
+    <!-- Full Methodology -->
     <div class="methodology">
       <h3>Methodology</h3>
       <p>The Gazette Rich List 2025 estimates the minimum net worth of Quebec’s 25 richest individuals and families. Our goal is to give a clear, transparent snapshot of wealth that can be publicly identified and verified.</p>
-      <p>We looked at sources of wealth that are on the public record. That includes shares in publicly traded companies, calculated using official filings and valued at stock prices as of June X, 2025. When families clearly control a company together, we counted their shares as one combined total. For private businesses, we used financial statements (if available). If a company lacked enough information or was running at a loss, we left it out. We also included land and property, using data from Quebec’s land registry and property assessments.</p>
+      <p>We looked at sources of wealth that are on the public record. That includes shares in publicly traded companies, calculated using official filings and valued at stock prices as of June X, 2025. When families clearly control a company together, we counted their shares as one combined total. For private businesses, we used financial statements (if available). If a company lacked enough information or was running at a loss, we left it out. We also included land and property, using data from Quebec’s land registry and property assessments.</p>
       <p>We did not include hidden or unverifiable assets like bank accounts, trust funds, most private equity stakes, or offshore holdings that aren’t publicly disclosed.</p>
       <p>These are conservative estimates. The real size of these fortunes is likely much larger.</p>
       <p>All valuations were done between x and y.</p>
       <p>To be included, individuals or families must currently live in Quebec, have their primary residence here, or – if they were born in Quebec but now live elsewhere – maintain strong ties to the province through things like family, property, or charitable giving.</p>
-      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
+      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
       <p>We welcome corrections or further documentation from those featured in the list.</p>
     </div>
+
   </div>
 </body>
 </html>
