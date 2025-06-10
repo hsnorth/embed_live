@@ -8,93 +8,140 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     /* Reset & Body */
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      line-height:1.6;
+      line-height: 1.6;
     }
 
     /* Full-bleed header */
     .section-header {
+      width: 100vw;
       position: relative;
-      left: 50%; width:100vw; margin-left:-50vw;
-      background:#000; color:#B59410;
-      padding:2rem 1rem;
-      text-align:left;
+      left: 50%;
+      margin-left: -50vw;
+      background: #000;
+      padding: 2rem 0;
+    }
+    .section-header .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
     }
     .section-header h1,
     .section-header p {
-      font-family:'Roboto', sans-serif;
-      margin:0;
+      font-family: 'Roboto', sans-serif;
+      color: #B59410;
+      text-align: left;
+      margin: 0;
     }
-    .section-header h1 { font-size:2.5rem; font-weight:700; }
-    .section-header p  { font-size:1.3rem; font-weight:400; margin-top:0.5rem; }
+    .section-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .section-header p {
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+    }
 
     /* Centered content */
     .container {
-      max-width:800px; margin:0 auto; padding:1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
     }
     .date-line {
-      font-size:0.9rem; color:#666; margin-bottom:1rem;
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1rem;
     }
     .description {
-      font-size:1rem; margin-bottom:1rem;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     /* Responsive table wrapper */
-    .table-wrapper { overflow-x:auto; margin-bottom:2rem; }
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
     table {
-      width:100%; border-collapse:collapse; table-layout:auto;
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
     }
     th, td {
-      padding:0.75rem 0.5rem;
+      padding: 0.75rem 0.5rem;
     }
     th {
-      font-family:'Roboto', sans-serif;
-      font-size:0.9rem; font-weight:700;
-      text-transform:uppercase; color:#333;
-      text-align:left;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #333;
+      text-align: left;
     }
-    td.center { text-align:center; }
-    td.name   { text-align:left; }
-    td.bold   { font-weight:bold; }
+    td.center {
+      text-align: center;
+    }
+    td.name {
+      text-align: left;
+    }
+    td.bold {
+      font-weight: bold;
+    }
 
-    /* Zebra stripes on full rows */
-    tbody tr:nth-child(even) { background:#f9f9f9; }
-    tr:hover td { background:#eaeaea; }
+    /* Zebra stripes by row */
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover td {
+      background: #eaeaea;
+    }
 
-    /* Hide industry on mobile */
-    @media (max-width:600px) {
-      th.industry, td.industry { display:none; }
+    /* Hide industry on small screens */
+    @media (max-width: 600px) {
+      th.industry,
+      td.industry {
+        display: none;
+      }
     }
 
     /* Methodology */
-    .methodology { padding-top:2rem; }
-    .methodology h3 {
-      font-family:'Roboto', sans-serif;
-      font-size:2rem; margin-bottom:1rem;
+    .methodology {
+      padding-top: 2rem;
     }
-    .methodology p { margin-bottom:1rem; }
+    .methodology h3 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .methodology p {
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Full-bleed header -->
+  <!-- Full-width header -->
   <div class="section-header">
-    <h1>Gazette Rich List 2025</h1>
-    <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
+    <div class="container">
+      <h1>Gazette Rich List 2025</h1>
+      <p>View profiles of Quebec’s wealthiest, see estimated fortunes, and learn our methodology.</p>
+    </div>
   </div>
 
-  <!-- Centered content -->
+  <!-- Main content -->
   <div class="container">
+
     <div class="date-line">Published on June 21, 2025</div>
     <div class="description">
       The definitive Rich List of the richest people in Quebec, yearly. The numbers are careful estimates based on public and private information. For anyone with shares in public companies, we used stock prices from June X, 2025. You can read more about how we made the list below.
     </div>
 
-    <!-- Table -->
     <div class="table-wrapper">
       <table>
         <thead>
@@ -109,34 +156,33 @@
           <tr><td class="center">1</td><td class="name">Alain Bouchard and family</td><td class="center bold">$9.2B</td><td class="industry">Couche-Tard founder</td></tr>
           <tr><td class="center">2</td><td class="name">Paul Desmarais Jr. and André</td><td class="center bold">$7.0B</td><td class="industry">Power Corp heirs</td></tr>
           <tr><td class="center">3</td><td class="name">The Azrieli family</td><td class="center bold">$6.0B</td><td class="industry">Real estate & philanthropy</td></tr>
-          <tr><td class="center">4</td><td class="name">Emanuele Saputo & family</td><td class="center bold">$5.5B</td><td class="center industry">Saputo dairy empire</td></tr>
-          <tr><td class="center">5</td><td class="name">Robert Miller</td><td class="center bold">$5.2B</td><td class="center industry">Future Electronics founder</td></tr>
-          <tr><td class="center">6</td><td class="name">Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$4.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-          <tr><td class="center">7</td><td class="name">Ryan Cohen</td><td class="center bold">$4.0B</td><td class="center industry">GameStop investor, Chewy founder</td></tr>
-          <tr><td class="center">8</td><td class="name">Serge Godin</td><td class="center bold">$3.7B</td><td class="center industry">CGI founder</td></tr>
-          <tr><td class="center">9</td><td class="name">Jean Coutu & family</td><td class="center bold">$3.3B</td><td class="center industry">Pharmacy chain</td></tr>
-          <tr><td class="center">10</td><td class="name">Pierre Karl Péladeau</td><td class="center bold">$3.0B</td><td class="center industry">Québecor media empire</td></tr>
-          <tr><td class="center">11</td><td class="name">Bombardier & Beaudoin family</td><td class="center bold">$2.5B</td><td class="center industry">Bombardier aerospace</td></tr>
-          <tr><td class="center">12</td><td class="name">Richard Fortin</td><td class="center bold">$2.5B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-          <tr><td class="center">13</td><td class="name">Philip Fayer</td><td class="center bold">$2.1B</td><td class="center industry">Paysafe founder</td></tr>
-          <tr><td class="center">14</td><td class="name">Molson family</td><td class="center bold">$2.0B</td><td class="center industry">Beer empire</td></tr>
-          <tr><td class="center">15</td><td class="name">Kruger family</td><td class="center bold">$1.9B</td><td class="center industry">Tissue & paper products</td></tr>
-          <tr><td class="center">16</td><td class="name">Réal Plourde</td><td class="center bold">$1.6B</td><td class="center industry">Couche-Tard co-founder</td></tr>
-          <tr><td class="center">17</td><td class="name">Andrew Lutfy</td><td class="center bold">$1.5B</td><td class="center industry">Retail & real estate</td></tr>
-          <tr><td class="center">18</td><td class="name">Goodman family</td><td class="center bold">$1.5B</td><td class="center industry">Investment & real estate</td></tr>
-          <tr><td class="center">19</td><td class="name">Guy Lalibert&eacute;</td><td class="center bold">$1.3B</td><td class="center industry">Cirque du Soleil founder</td></tr>
-          <tr><td class="center">20</td><td class="name">Pierre Lassonde</td><td class="center bold">$1.3B</td><td class="center industry">Mining & gold royalty</td></tr>
-          <tr><td class="center">21</td><td class="name">John MacBain</td><td class="center bold">$1.1B</td><td class="center industry">Auto trader & philanthropy</td></tr>
-          <tr><td class="center">22</td><td class="name">Larry Rossy</td><td class="center bold">$1.0B</td><td class="center industry">Dollarama founder</td></tr>
-          <tr><td class="center">23</td><td class="name">Hewitt family</td><td class="center bold">$1.0B</td><td class="center industry">Heavy equipment distribution</td></tr>
-          <tr><td class="center">24</td><td class="name">Charles Bronfman</td><td class="center bold">—</td><td class="center industry">Seagram heir?</td></tr>
-          <tr><td class="center">25</td><td class="name">Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry">Investment management?</td></tr>
-          <tr><td class="center">26</td><td class="name">Lawrence Stroll</td><td class="center bold">—</td><td class="center industry">Fashion & Formula 1?</td></tr>
+          <tr><td class="center">4</td><td class="name">Emanuele Saputo & family</td><td class="center bold">$5.5B</td><td class="industry">Saputo dairy empire</td></tr>
+          <tr><td class="center">5</td><td class="name">Robert Miller</td><td class="center bold">$5.2B</td><td class="industry">Future Electronics founder</td></tr>
+          <tr><td class="center">6</td><td class="name">Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$4.5B</td><td class="industry">Couche-Tard co-founder</td></tr>
+          <tr><td class="center">7</td><td class="name">Ryan Cohen</td><td class="center bold">$4.0B</td><td class="industry">GameStop investor, Chewy founder</td></tr>
+          <tr><td class="center">8</td><td class="name">Serge Godin</td><td class="center bold">$3.7B</td><td class="industry">CGI founder</td></tr>
+          <tr><td class="center">9</td><td class="name">Jean Coutu & family</td><td class="center bold">$3.3B</td><td class="industry">Pharmacy chain</td></tr>
+          <tr><td class="center">10</td><td class="name">Pierre Karl Péladeau</td><td class="center bold">$3.0B</td><td class="industry">Québecor media empire</td></tr>
+          <tr><td class="center">11</td><td class="name">Bombardier & Beaudoin family</td><td class="center bold">$2.5B</td><td class="industry">Bombardier aerospace</td></tr>
+          <tr><td class="center">12</td><td class="name">Richard Fortin</td><td class="center bold">$2.5B</td><td class="industry">Couche-Tard co-founder</td></tr>
+          <tr><td class="center">13</td><td class="name">Philip Fayer</td><td class="center bold">$2.1B</td><td class="industry">Paysafe founder</td></tr>
+          <tr><td class="center">14</td><td class="name">Molson family</td><td class="center bold">$2.0B</td><td class="industry">Beer empire</td></tr>
+          <tr><td class="center">15</td><td class="name">Kruger family</td><td class="center bold">$1.9B</td><td class="industry">Tissue & paper products</td></tr>
+          <tr><td class="center">16</td><td class="name">Réal Plourde</td><td class="center bold">$1.6B</td><td class="industry">Couche-Tard co-founder</td></tr>
+          <tr><td class="center">17</td><td class="name">Andrew Lutfy</td><td class="center bold">$1.5B</td><td class="industry">Retail & real estate</td></tr>
+          <tr><td class="center">18</td><td class="name">Goodman family</td><td class="center bold">$1.5B</td><td class="industry">Investment & real estate</td></tr>
+          <tr><td class="center">19</td><td class="name">Guy Laliberté</td><td class="center bold">$1.3B</td><td class="industry">Cirque du Soleil founder</td></tr>
+          <tr><td class="center">20</td><td class="name">Pierre Lassonde</td><td class="center bold">$1.3B</td><td class="industry">Mining & gold royalty</td></tr>
+          <tr><td class="center">21</td><td class="name">John MacBain</td><td class="center bold">$1.1B</td><td class="industry">Auto trader & philanthropy</td></tr>
+          <tr><td class="center">22</td><td class="name">Larry Rossy</td><td class="center bold">$1.0B</td><td class="industry">Dollarama founder</td></tr>
+          <tr><td class="center">23</td><td class="name">Hewitt family</td><td class="center bold">$1.0B</td><td class="industry">Heavy equipment distribution</td></tr>
+          <tr><td class="center">24</td><td class="name">Charles Bronfman</td><td class="center bold">—</td><td class="industry">Seagram heir?</td></tr>
+          <tr><td class="center">25</td><td class="name">Stephan Jarislowsky</td><td class="center bold">—</td><td class="industry">Investment management?</td></tr>
+          <tr><td class="center">26</td><td class="name">Lawrence Stroll</td><td class="center bold">—</td><td class="industry">Fashion & Formula 1?</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Full Methodology -->
     <div class="methodology">
       <h3>Methodology</h3>
       <p>The Gazette Rich List 2025 estimates the minimum net worth of Quebec’s 25 richest individuals and families. Our goal is to give a clear, transparent snapshot of wealth that can be publicly identified and verified.</p>
@@ -148,6 +194,8 @@
       <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
       <p>We welcome corrections or further documentation from those featured in the list.</p>
     </div>
+
   </div>
+
 </body>
 </html>
