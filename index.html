@@ -4,82 +4,91 @@
 <meta charset="UTF-8">
 <title>Gazette Rich List 2025</title>
 <style>
-:root {
-  --bg: #fafafa;
-  --text: #222;
-  --accent1: #3a6ea5;
-  --accent2: #5391c6;
-  --row-alt: #fff;
-  --row-hover: #e3f7ff;
-  --border: #ddd;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background: var(--bg); font-family: Georgia, serif; color: var(--text); padding: 1rem; }
-.container { max-width: 1000px; margin: auto; }
-h2 { text-align:center; font-size:2rem; margin-bottom:1rem;
-     background: linear-gradient(90deg,var(--accent1),var(--accent2));
-     -webkit-background-clip: text; color: transparent; }
-.table-wrapper { overflow-x:auto; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); 
-                 animation: fadeIn 0.6s ease backwards; }
-@keyframes fadeIn {
-  from { opacity:0; transform: translateY(20px); }
-  to   { opacity:1; transform: translateY(0); }
-}
-table { width:100%; border-collapse: collapse; min-width: 600px; }
-thead th { position: sticky; top:0; padding:0.75rem; text-align:left; 
-           color:#fff; background: linear-gradient(90deg,var(--accent1),var(--accent2)); 
-           font-size:1.1rem; }
-th, td { border-bottom:1px solid var(--border); padding:0.75rem 1rem; }
-tbody tr:nth-child(even) { background: var(--row-alt); }
-tbody tr:hover { background: var(--row-hover); transform: translateX(4px); transition: background 0.3s, transform 0.2s; }
-.center { text-align:center; }
-.bold { font-weight:bold; }
-.industry-col { }
-@media (max-width: 600px) {
-  .industry-col { display:none; }
-}
+  body {
+    margin: 0;
+    padding: 1rem;
+    font-family: Georgia, serif;
+    background: #fff;
+    color: #111;
+  }
+  .container {
+    max-width: 800px;
+    margin: auto;
+  }
+  h2 {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  td.center, th.center {
+    text-align: center;
+  }
+  td.bold {
+    font-weight: bold;
+  }
+  tr:hover td {
+    background: #f5f5f5;
+  }
+  @media (max-width: 600px) {
+    td.industry, th.industry {
+      display: none;
+    }
+  }
 </style>
 </head>
 <body>
-<div class="container">
-  <h2>Gazette Rich List 2025</h2>
-  <div class="table-wrapper">
+  <div class="container">
+    <h2>Gazette Rich List 2025</h2>
     <table>
       <thead>
         <tr>
-          <th class="center" style="width:10%">Rank</th>
-          <th style="width:45%">Name</th>
-          <th class="center" style="width:25%">Net worth ($B)</th>
-          <th class="center industry-col" style="width:20%">Industry</th>
+          <th class="center">Rank</th>
+          <th>Name</th>
+          <th class="center">Net worth ($B)</th>
+          <th class="center industry">Industry</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td class="center">1</td><td>Alain Bouchard and family</td><td class="center bold">$ 9.2</td><td class="center industry-col">Couche-Tard founder</td></tr>
-        <tr><td class="center">2</td><td>Paul Desmarais Jr. and André</td><td class="center bold">$ 7.0</td><td class="center industry-col">Power Corp heirs</td></tr>
-        <tr><td class="center">3</td><td>The Azrieli family</td><td class="center bold">$ 6.0</td><td class="center industry-col">Real estate & philanthropy</td></tr>
-        <tr><td class="center">4</td><td>Emanuele Saputo & family</td><td class="center bold">$ 5.5</td><td class="center industry-col">Saputo dairy empire</td></tr>
-        <tr><td class="center">5</td><td>Robert Miller</td><td class="center bold">$ 5.2</td><td class="center industry-col">Future Electronics founder</td></tr>
-        <tr><td class="center">6</td><td>Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$ 4.5</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">7</td><td>Ryan Cohen</td><td class="center bold">$ 4.0</td><td class="center industry-col">GameStop investor, Chewy founder</td></tr>
-        <tr><td class="center">8</td><td>Serge Godin</td><td class="center bold">$ 3.7</td><td class="center industry-col">CGI founder</td></tr>
-        <tr><td class="center">9</td><td>Jean Coutu & family</td><td class="center bold">$ 3.3</td><td class="center industry-col">Pharmacy chain</td></tr>
-        <tr><td class="center">10</td><td>Pierre Karl Péladeau</td><td class="center bold">$ 3.0</td><td class="center industry-col">Québecor media empire</td></tr>
-        <tr><td class="center">11</td><td>Bombardier & Beaudoin family</td><td class="center bold">$ 2.5</td><td class="center industry-col">Bombardier aerospace</td></tr>
-        <tr><td class="center">12</td><td>Richard Fortin</td><td class="center bold">$ 2.5</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">13</td><td>Philip Fayer</td><td class="center bold">$ 2.1</td><td class="center industry-col">Paysafe founder</td></tr>
-        <tr><td class="center">14</td><td>Molson family</td><td class="center bold">$ 2.0</td><td class="center industry-col">Beer empire</td></tr>
-        <tr><td class="center">15</td><td>Kruger family</td><td class="center bold">$ 1.9</td><td class="center industry-col">Tissue & paper products</td></tr>
-        <tr><td class="center">16</td><td>Réal Plourde</td><td class="center bold">$ 1.6</td><td class="center industry-col">Couche-Tard co-founder</td></tr>
-        <tr><td class="center">17</td><td>Andrew Lutfy</td><td class="center bold">$ 1.5</td><td class="center industry-col">Retail & real estate</td></tr>
-        <tr><td class="center">18</td><td>Goodman family</td><td class="center bold">$ 1.5</td><td class="center industry-col">Investment & real estate</td></tr>
-        <tr><td class="center">19</td><td>Guy Laliberté</td><td class="center bold">$ 1.3</td><td class="center industry-col">Cirque du Soleil founder</td></tr>
-        <tr><td class="center">20</td><td>Pierre Lassonde</td><td class="center bold">$ 1.3</td><td class="center industry-col">Mining & gold royalty</td></tr>
-        <tr><td class="center">21</td><td>John MacBain</td><td class="center bold">$ 1.1</td><td class="center industry-col">Auto trader & philanthropy</td></tr>
-        <tr><td class="center">22</td><td>Larry Rossy</td><td class="center bold">$ 1.0</td><td class="center industry-col">Dollarama founder</td></tr>
-        <tr><td class="center">23</td><td>Hewitt family</td><td class="center bold">$ 1.0</td><td class="center industry-col">Heavy equipment distribution</td></tr>
-        <tr><td class="center">24</td><td>Charles Bronfman</td><td class="center bold">—</td><td class="center industry-col">Seagram heir?</td></tr>
-        <tr><td class="center">25</td><td>Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry-col">Investment management?</td></tr>
-        <tr><td class="center">26</td><td>Lawrence Stroll</td><td class="center bold">—</td><td class="center industry-col">Fashion & Formula 1?</td></tr>
+        <tr><td class="center">1</td><td>Alain Bouchard and family</td><td class="center bold">$ 9.2</td><td class="center industry">Couche-Tard founder</td></tr>
+        <tr><td class="center">2</td><td>Paul Desmarais Jr. and André</td><td class="center bold">$ 7.0</td><td class="center industry">Power Corp heirs</td></tr>
+        <tr><td class="center">3</td><td>The Azrieli family</td><td class="center bold">$ 6.0</td><td class="center industry">Real estate & philanthropy</td></tr>
+        <tr><td class="center">4</td><td>Emanuele Saputo & family</td><td class="center bold">$ 5.5</td><td class="center industry">Saputo dairy empire</td></tr>
+        <tr><td class="center">5</td><td>Robert Miller</td><td class="center bold">$ 5.2</td><td class="center industry">Future Electronics founder</td></tr>
+        <tr><td class="center">6</td><td>Jacques D’Amours & Marie-Eve D’Amours</td><td class="center bold">$ 4.5</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">7</td><td>Ryan Cohen</td><td class="center bold">$ 4.0</td><td class="center industry">GameStop investor, Chewy founder</td></tr>
+        <tr><td class="center">8</td><td>Serge Godin</td><td class="center bold">$ 3.7</td><td class="center industry">CGI founder</td></tr>
+        <tr><td class="center">9</td><td>Jean Coutu & family</td><td class="center bold">$ 3.3</td><td class="center industry">Pharmacy chain</td></tr>
+        <tr><td class="center">10</td><td>Pierre Karl Péladeau</td><td class="center bold">$ 3.0</td><td class="center industry">Québecor media empire</td></tr>
+        <tr><td class="center">11</td><td>Bombardier & Beaudoin family</td><td class="center bold">$ 2.5</td><td class="center industry">Bombardier aerospace</td></tr>
+        <tr><td class="center">12</td><td>Richard Fortin</td><td class="center bold">$ 2.5</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">13</td><td>Philip Fayer</td><td class="center bold">$ 2.1</td><td class="center industry">Paysafe founder</td></tr>
+        <tr><td class="center">14</td><td>Molson family</td><td class="center bold">$ 2.0</td><td class="center industry">Beer empire</td></tr>
+        <tr><td class="center">15</td><td>Kruger family</td><td class="center bold">$ 1.9</td><td class="center industry">Tissue & paper products</td></tr>
+        <tr><td class="center">16</td><td>Réal Plourde</td><td class="center bold">$ 1.6</td><td class="center industry">Couche-Tard co-founder</td></tr>
+        <tr><td class="center">17</td><td>Andrew Lutfy</td><td class="center bold">$ 1.5</td><td class="center industry">Retail & real estate</td></tr>
+        <tr><td class="center">18</td><td>Goodman family</td><td class="center bold">$ 1.5</td><td class="center industry">Investment & real estate</td></tr>
+        <tr><td class="center">19</td><td>Guy Laliberté</td><td class="center bold">$ 1.3</td><td class="center industry">Cirque du Soleil founder</td></tr>
+        <tr><td class="center">20</td><td>Pierre Lassonde</td><td class="center bold">$ 1.3</td><td class="center industry">Mining & gold royalty</td></tr>
+        <tr><td class="center">21</td><td>John MacBain</td><td class="center bold">$ 1.1</td><td class="center industry">Auto trader & philanthropy</td></tr>
+        <tr><td class="center">22</td><td>Larry Rossy</td><td class="center bold">$ 1.0</td><td class="center industry">Dollarama founder</td></tr>
+        <tr><td class="center">23</td><td>Hewitt family</td><td class="center bold">$ 1.0</td><td class="center industry">Heavy equipment distribution</td></tr>
+        <tr><td class="center">24</td><td>Charles Bronfman</td><td class="center bold">—</td><td class="center industry">Seagram heir?</td></tr>
+        <tr><td class="center">25</td><td>Stephan Jarislowsky</td><td class="center bold">—</td><td class="center industry">Investment management?</td></tr>
+        <tr><td class="center">26</td><td>Lawrence Stroll</td><td class="center bold">—</td><td class="center industry">Fashion & Formula 1?</td></tr>
       </tbody>
     </table>
   </div>
