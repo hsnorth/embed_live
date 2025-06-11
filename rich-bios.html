@@ -78,10 +78,10 @@
       gap: 1rem;
       padding: 0.5rem 0;
       scrollbar-width: auto;
-    }
-    .pagination.centered {
+
+      /* ← cap and centre under content */
       max-width: 600px;
-      margin: 0 auto;       /* horizontally centered under content */
+      margin: 0 auto;
     }
     .pagination::-webkit-scrollbar {
       height: 8px;
@@ -120,14 +120,16 @@
         font-size: 1.5rem;
         margin: 1rem 0;
       }
+
+      /* stack text above image */
       .profile {
-        flex-direction: column;
+        flex-direction: column-reverse;
         gap: 1rem;
         margin-bottom: 1.5rem;
       }
       .avatar-wrap {
         width: 100%;
-        max-width: 250px;
+        max-width: 200px;   /* slightly smaller */
         margin: 0 auto;
       }
       .text-col {
@@ -142,8 +144,10 @@
         font-size: 1rem;
         line-height: 1.5;
       }
+
       .pagination {
         gap: 0.5rem;
+        padding: 0.5rem 0;
       }
       .pagination button {
         font-size: 1rem;
