@@ -7,7 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    html, body { margin:0; padding:0; }
+    html, body { margin: 0; padding: 0; }
     body {
       font-family: Georgia, serif;
       background: #fff;
@@ -21,14 +21,14 @@
     }
 
     .main-header {
-      font-family: 'Roboto',sans-serif;
+      font-family: 'Roboto', sans-serif;
       font-size: 2rem;
       font-weight: 700;
       margin: 1.5rem 0;
     }
     .main-header .gold { color: #B59410; }
 
-    /* — flex profile — */
+    /* —— desktop: 2-column grid —— */
     .profile {
       display: grid;
       grid-template-columns: 1fr 300px;
@@ -41,18 +41,9 @@
       margin-bottom: 2rem;
       align-items: start;
     }
-    .avatar-wrap {
-      grid-area: avatar;
-    }
-    .profile-header {
-      grid-area: header;
-    }
-    .bio-text {
-      grid-area: bio;
-    }
 
     .avatar-wrap {
-      flex: 0 0 300px;
+      grid-area: avatar;
       width: 300px;
       aspect-ratio: 1;
       overflow: hidden;
@@ -64,7 +55,25 @@
       display: block;
     }
 
-    /* — pagination — */
+    .profile-header {
+      grid-area: header;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #002147;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .bio-text {
+      grid-area: bio;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin: 0;
+      align-self: start;    /* bio at top of its cell */
+    }
+
+    /* —— pagination —— */
     .pagination {
       display: flex;
       overflow-x: auto;
@@ -84,7 +93,7 @@
     .pagination button {
       background: none;
       border: none;
-      font-family: 'Roboto',sans-serif;
+      font-family: 'Roboto', sans-serif;
       font-weight: 700;
       font-size: 1.125rem;
       padding: 0.75rem 1rem;
@@ -101,14 +110,19 @@
       cursor: default;
     }
 
-    /* — mobile — */
-    @media (max-width:600px) {
+    /* —— mobile: 1-column grid —— */
+    @media (max-width: 600px) {
       .main-header {
         font-size: 1.5rem;
-        margin:1rem 0;
+        margin: 1rem 0;
       }
       .profile {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+          "avatar"
+          "header"
+          "bio";
         gap: 1rem;
       }
       .avatar-wrap {
@@ -121,9 +135,9 @@
         text-align: center;
       }
       .bio-text {
-        text-align: center;
         font-size: 1rem;
         line-height: 1.5;
+        text-align: center;
       }
       .pagination {
         gap: 0.5rem;
@@ -137,10 +151,12 @@
   </style>
 </head>
 <body>
+
   <div class="content">
     <header class="main-header">
       Browse The Gazette <span class="gold">Rich List</span> 2025
     </header>
+
     <div id="profile-container"></div>
     <div id="pagination" class="pagination"></div>
   </div>
@@ -180,10 +196,10 @@
     let currentPage = 0;
 
     const container = document.getElementById('profile-container');
-    const pager     = document.getElementById('pagination');
+    const pager = document.getElementById('pagination');
 
     function render() {
-      // show 3 profiles
+      // render profiles for the page
       const start = currentPage * perPage;
       const slice = profiles.slice(start, start + perPage);
       container.innerHTML = slice.map(p => `
@@ -192,7 +208,7 @@
             <img src="${p.avatar}" alt="${p.name}">
           </div>
           <h2 class="profile-header">
-            ${p.rank}. ${p.name} ${p.worth}
+            ${p.rank}. ${p.name.toUpperCase()} — ${p.worth}
           </h2>
           <p class="bio-text">${p.bio}</p>
         </div>
@@ -201,20 +217,19 @@
       // pagination
       pager.innerHTML = '';
       for (let i = 0; i < totalPages; i++) {
-        const s = i*perPage + 1;
-        const e = Math.min((i+1)*perPage, profiles.length);
+        const s = i * perPage + 1;
+        const e = Math.min((i + 1) * perPage, profiles.length);
         const label = s === e ? `${s}` : `${s} – ${e}`;
         const btn = document.createElement('button');
         btn.textContent = label;
         btn.className = i === currentPage ? 'active' : '';
-        btn.disabled  = i === currentPage;
-        btn.onclick   = () => { currentPage = i; render(); window.scrollTo(0,0); };
+        btn.disabled = i === currentPage;
+        btn.onclick = () => { currentPage = i; render(); window.scrollTo(0, 0); };
         pager.appendChild(btn);
       }
     }
 
     window.onload = render;
   </script>
-
 </body>
 </html>
