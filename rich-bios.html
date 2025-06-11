@@ -181,19 +181,24 @@
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
     function renderPage() {
       const container = document.getElementById('profiles');
       container.innerHTML = '';
       profiles
         .slice((currentPage - 1) * perPage, currentPage * perPage)
         .forEach(p => {
+          const color = badgeColor(p.rank);
           const div = document.createElement('div');
           div.className = 'profile';
           div.innerHTML = `
             <div class="avatar-wrap">
-              <img src="${p.avatar}" alt="${p.name}" class="avatar"/>
-              <div class="rank-badge" style="background:${badgeColor(p.rank)}">
+              <img
+                src="${p.avatar}"
+                alt="${p.name}"
+                class="avatar"
+                style="border:2px solid ${color};"
+              />
+              <div class="rank-badge" style="background:${color}">
                 ${p.rank}
               </div>
             </div>
