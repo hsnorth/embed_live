@@ -7,22 +7,19 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    /* reset so it hugs any embed container */
-    html, body {
-      margin: 0;
-      padding: 0;
-    }
+    /* —— reset & base —— */
+    html, body { margin: 0; padding: 0; }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
+      padding: 1rem; /* gentle outer gutter */
     }
 
+    /* —— center the widget —— */
     .content {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      max-width: none;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .main-header {
@@ -31,19 +28,22 @@
       font-weight: 700;
       margin: 1.5rem 0;
     }
-    .main-header .gold {
-      color: #B59410;
-    }
+    .main-header .gold { color: #B59410; }
 
+    /* —— grid profile layout —— */
     .profile {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "avatar header"
+        "avatar bio";
+      gap: 1rem 2rem;
       margin-bottom: 2rem;
+      align-items: start;
     }
     .avatar-wrap {
-      flex: 0 0 300px;
+      grid-area: avatar;
       width: 300px;
       aspect-ratio: 1;
       overflow: hidden;
@@ -54,34 +54,32 @@
       object-fit: cover;
       display: block;
     }
-    .text-col {
-      flex: 1;
-      min-width: 300px;
-      max-width: 400px;
-    }
+
     .profile-header {
+      grid-area: header;
       font-family: 'Roboto', sans-serif;
       font-size: 1.75rem;
       font-weight: 400;
       text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-    .bio-text {
-      font-size: 1.125rem;
-      line-height: 1.6;
+      margin: 0; /* no extra bottom margin, grid gap handles it */
     }
 
-    /* pagination */
+    .bio-text {
+      grid-area: bio;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* —— pagination —— */
     .pagination {
       display: flex;
       overflow-x: auto;
       gap: 1rem;
       padding: 0.5rem 0;
-      scrollbar-width: auto;
-
-      /* ← cap and centre under content */
       max-width: 600px;
       margin: 0 auto;
+      scrollbar-width: auto;
     }
     .pagination::-webkit-scrollbar {
       height: 8px;
@@ -111,40 +109,36 @@
       cursor: default;
     }
 
-    /* responsive for small screens */
+    /* —— mobile adjustments —— */
     @media (max-width: 600px) {
-      body {
-        padding: 0.5rem;
-      }
       .main-header {
         font-size: 1.5rem;
         margin: 1rem 0;
       }
-
-      /* stack text above image */
       .profile {
-        flex-direction: column-reverse;
+        /* stack header → avatar → bio */
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+          "header"
+          "avatar"
+          "bio";
         gap: 1rem;
-        margin-bottom: 1.5rem;
       }
       .avatar-wrap {
         width: 100%;
-        max-width: 200px;   /* slightly smaller */
+        max-width: 200px;
         margin: 0 auto;
-      }
-      .text-col {
-        max-width: 100%;
-        text-align: center;
       }
       .profile-header {
         font-size: 1.25rem;
-        line-height: 1.2;
+        text-align: center;
       }
       .bio-text {
         font-size: 1rem;
         line-height: 1.5;
+        text-align: center;
       }
-
       .pagination {
         gap: 0.5rem;
         padding: 0.5rem 0;
@@ -154,6 +148,7 @@
         padding: 0.5rem 0.75rem;
       }
     }
+
   </style>
 </head>
 <body>
@@ -166,7 +161,6 @@
     <div id="profile-container"></div>
     <div id="pagination" class="pagination"></div>
   </div>
-
   <script>
     const profiles = [
       { rank: 1,  name: 'Alain Bouchard and family',            worth: '$9.2B', avatar: 'images/bouchard.png',  bio: 'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single Laval store and grew it into a 17,000-outlet global chain.' },
@@ -207,12 +201,10 @@
           <div class="avatar-wrap">
             <img src="${p.avatar}" alt="${p.name}">
           </div>
-          <div class="text-col">
-            <div class="profile-header">
-              ${p.rank}. ${p.name.toUpperCase()} — ${p.worth}
-            </div>
-            <div class="bio-text">${p.bio}</div>
-          </div>
+          <h2 class="profile-header">
+            ${p.rank}. ${p.name.toUpperCase()} — ${p.worth}
+          </h2>
+          <p class="bio-text">${p.bio}</p>
         </div>
       `;
       pager.innerHTML = '';
