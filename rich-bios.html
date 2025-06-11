@@ -6,30 +6,35 @@
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    *, *::before, *::after {
+
+    /* reset so it hugs any embed container */
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      padding: 2rem;
     }
+
+    .content {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      max-width: none;
+    }
+
     .main-header {
       font-family: 'Roboto', sans-serif;
       font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 2rem;
+      margin: 1.5rem 0;
     }
     .main-header .gold {
       color: #B59410;
     }
-    .content {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
+
     .profile {
       display: flex;
       flex-wrap: wrap;
@@ -47,6 +52,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
     .text-col {
       flex: 1;
@@ -65,20 +71,14 @@
       line-height: 1.6;
     }
 
-    /* —————————————————————————————————————————————————————————————
-       pagination tweaks
-    ————————————————————————————————————————————————————————————— */
+    /* pagination */
     .pagination {
-      position: relative;               /* for the fade cue */
       display: flex;
       overflow-x: auto;
       gap: 1rem;
-      padding-bottom: 0.5rem;
-      margin-top: 2rem;
-      max-width: 700px;
-      scrollbar-width: auto;           /* Gecko */
+      padding: 0.5rem 0;
+      scrollbar-width: auto;
     }
-    /* WebKit scrollbar visible */
     .pagination::-webkit-scrollbar {
       height: 8px;
     }
@@ -86,29 +86,16 @@
       background: #B59410;
       border-radius: 4px;
     }
-    /* right-edge fade */
-    .pagination::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0; right: 0;
-      width: 2rem;
-      pointer-events: none;
-      background: linear-gradient(to left, #fff, rgba(255,255,255,0));
-    }
-
     .pagination button {
       flex: 0 0 auto;
       background: none;
       border: none;
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-
-      /* ↑ bump these so they’re more tappable/readable ↓ */
       font-size: 1.125rem;
       padding: 0.75rem 1rem;
-
+      white-space: nowrap;
+      cursor: pointer;
       text-decoration: underline transparent;
       color: #111;
     }
@@ -119,15 +106,44 @@
       opacity: 0.5;
       cursor: default;
     }
-    @media(max-width:400px) {
+
+    /* responsive for small screens */
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+      .main-header {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
       .profile {
-        flex-direction: column-reverse;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
       }
       .avatar-wrap {
+        width: 100%;
+        max-width: 250px;
         margin: 0 auto;
       }
       .text-col {
         max-width: 100%;
+        text-align: center;
+      }
+      .profile-header {
+        font-size: 1.25rem;
+        line-height: 1.2;
+      }
+      .bio-text {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      .pagination {
+        gap: 0.5rem;
+      }
+      .pagination button {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
       }
     }
   </style>
@@ -145,9 +161,9 @@
 
   <script>
     const profiles = [
-      { rank: 1,  name: 'Alain Bouchard and family',           worth: '$9.2B', avatar: 'images/bouchard.png',  bio: 'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single Laval store and grew it into a 17,000-outlet global chain.' },
-      { rank: 2,  name: 'Paul Desmarais Jr. and André',        worth: '$7.0B', avatar: 'images/desmarais.png', bio: 'Brothers Paul Jr. and André Desmarais expanded Power Corp into a diversified financial-services empire.' },
-      { rank: 3,  name: 'Naomi, Sharon & Danna Azrieli',        worth: '$6.0B', avatar: 'images/azrieli.png',    bio: 'The Azrieli sisters manage a $6B real-estate legacy and the $2.4B Azrieli Foundation.' },
+      { rank: 1,  name: 'Alain Bouchard and family',            worth: '$9.2B', avatar: 'images/bouchard.png',  bio: 'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single Laval store and grew it into a 17,000-outlet global chain.' },
+      { rank: 2,  name: 'Paul Desmarais Jr. and André',         worth: '$7.0B', avatar: 'images/desmarais.png', bio: 'Brothers Paul Jr. and André Desmarais expanded Power Corp into a diversified financial-services empire.' },
+      { rank: 3,  name: 'Naomi, Sharon & Danna Azrieli',         worth: '$6.0B', avatar: 'images/azrieli.png',    bio: 'The Azrieli sisters manage a $6B real-estate legacy and the $2.4B Azrieli Foundation.' },
       { rank: 4,  name: 'Emanuele Saputo & family',            worth: '$5.5B', avatar: 'images/saputo.png',    bio: 'Emanuele Saputo grew his cheese business into a leading global dairy processor.' },
       { rank: 5,  name: 'Robert Miller',                       worth: '$5.2B', avatar: 'images/miller.png',    bio: 'Robert Miller founded Future Electronics in 1968, now a global distributor of electronic components.' },
       { rank: 6,  name: 'Jacques D’Amours & Marie-Eve D’Amours', worth: '$4.5B', avatar: 'images/amour.png',     bio: 'Jacques and Marie-Eve D’Amours co-grew Couche-Tard into a worldwide retail network.' },
@@ -172,7 +188,7 @@
       { rank: 25, name: 'Stephan Jarislowsky',                worth: '—',     avatar: 'images/stroll.png',    bio: 'Stephan Jarislowsky founded Jarislowsky Fraser, championed governance and funds arts research.' }
     ];
 
-    let current = 0, total = profiles.length;
+    let current = 0;
     const container = document.getElementById('profile-container');
     const pager     = document.getElementById('pagination');
 
