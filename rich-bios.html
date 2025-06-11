@@ -1,103 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    /* Reset & Base */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 112.5%; }
+    * {margin:0;padding:0;box-sizing:border-box}
     body {
       font-family: Georgia, serif;
       background: #fff; color: #111;
       line-height: 1.6;
     }
-
-    /* Full-bleed header */
-    .section-header {
-      width: 100vw; position: relative;
-      left: 50%; margin-left: -50vw;
-      background: #000; padding: 2rem 0;
+    /* full-bleed banner */
+    .banner {
+      width:100vw; position:relative; left:50%; margin-left:-50vw;
+      background:#000; padding:1.5rem 0;
     }
-    .section-header .container {
-      max-width: 800px; margin: 0 auto; padding: 0 1rem;
+    .banner .container {
+      max-width:800px; margin:0 auto; padding:0 1rem;
     }
-    .section-header h1,
-    .section-header p {
-      font-family: 'Roboto', sans-serif;
-      color: #B59410; text-align: left; margin: 0;
+    .banner p {
+      font-family:'Roboto',sans-serif;
+      color:#B59410; font-size:1.5rem;
     }
-    .section-header h1 { font-size: 2.75rem; font-weight: 700; }
-    .section-header p  { font-size: 1.4rem; margin-top: .5rem; }
-
-    /* Centered content */
+    /* centered wrapper */
     .container {
-      max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem;
+      max-width:800px; margin:0 auto; padding:1.5rem 1rem;
     }
-    .date-line {
-      font-size: 1rem; color: #666; margin-bottom: 1rem;
-    }
-    .description {
-      font-size: 1.05rem; margin-bottom: 1.5rem;
-    }
-
-    /* Profiles */
-    .profile { margin-bottom: 2rem; }
+    /* profile blocks */
+    .profile + .profile { margin-top:2rem; }
     .profile h2 {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.75rem; color: #B59410;
-      margin-bottom: .5rem;
+      font-family:'Roboto',sans-serif;
+      font-size:1.75rem; margin-bottom:.5rem;
     }
-    .profile h2 span { color: #000; font-weight: normal; }
-    .profile p { font-size: 1rem; }
-
-    /* Pagination */
+    .profile h2 .rank {
+      color:#B59410; font-weight:700; margin-right:.5rem;
+    }
+    .profile h2 .name-worth {
+      color:#000; font-weight:400;
+    }
+    .profile p { font-size:1rem; }
+    /* pagination */
     .pagination {
-      display: flex; justify-content: space-between;
-      align-items: center; margin-top: 2rem;
-      font-size: 1rem; color: #666;
+      display:flex; justify-content:space-between;
+      align-items:center; margin-top:2rem;
+      font-size:1rem; color:#666;
     }
-    .pagination .pages { display: flex; gap: .5rem; }
+    .pagination .pages { display:flex; gap:.5rem; }
     .pagination button,
     .pagination .page-number {
-      padding: .5rem 1rem; font-size: 1rem;
-      cursor: pointer; background: none; border: 1px solid #ccc;
+      padding:.5rem 1rem; font-size:1rem;
+      cursor:pointer; background:none; border:1px solid #ccc;
     }
     .pagination button:disabled {
-      opacity: .5; cursor: not-allowed;
+      opacity:.5; cursor:not-allowed;
     }
     .pagination .page-number.active {
-      background: #B59410; color: #fff; border-color: #B59410;
+      background:#B59410; color:#fff; border-color:#B59410;
     }
-
-    /* Methodology */
-    .methodology { padding-top: 2rem; }
-    .methodology h3 {
-      font-family: 'Roboto', sans-serif;
-      font-size: 2.25rem; margin-bottom: 1rem;
-    }
-    .methodology p { margin-bottom: 1rem; font-size: 1rem; }
   </style>
 </head>
 <body>
 
-  <!-- Full-bleed header -->
-  <div class="section-header">
+  <!-- banner -->
+  <div class="banner">
     <div class="container">
-      <h1>Gazette Rich List 2025</h1>
-      <p>Browse the top 26 Quebec fortunes and read concise bios.</p>
+      <p>Browse the profiles of the top 25 fortunes in Quebec</p>
     </div>
   </div>
 
   <div class="container">
-    <div class="date-line">Published on June 21, 2025</div>
-    <div class="description">
-      A paginated showcase of Quebec’s wealthiest—rank, name, estimated net worth and a brief biography.
-    </div>
-
     <div id="profiles"></div>
 
     <div class="pagination">
@@ -105,19 +78,8 @@
       <div class="pages" id="page-numbers"></div>
       <button id="next">Next →</button>
     </div>
-
-    <div class="methodology">
-      <h3>Methodology</h3>
-      <p>The Gazette Rich List 2025 estimates the minimum net worth of Quebec’s 25 richest individuals and families. Our goal is to give a clear, transparent snapshot of wealth that can be publicly identified and verified.</p>
-      <p>We looked at sources of wealth that are on the public record. That includes shares in publicly traded companies, calculated using official filings and valued at stock prices as of June X, 2025. When families clearly control a company together, we counted their shares as one combined total. For private businesses, we used financial statements (if available). If a company lacked enough information or was running at a loss, we left it out. We also included land and property, using data from Quebec’s land registry and property assessments.</p>
-      <p>We did not include hidden or unverifiable assets like bank accounts, trust funds, most private equity stakes, or offshore holdings that aren’t publicly disclosed.</p>
-      <p>These are conservative estimates. The real size of these fortunes is likely much larger.</p>
-      <p>All valuations were done between X and Y.</p>
-      <p>To be included, individuals or families must currently live in Quebec, have their primary residence here, or – if they were born in Quebec but now live elsewhere – maintain strong ties to the province through things like family, property, or charitable giving.</p>
-      <p>Sources to compile this list include: Canadian and international corporate filings, insider ownership reports, annual circulars, land and company registries, U.S. SEC filings, U.K. Companies House records, and reporting from Bloomberg, Forbes, La Presse, Le Journal de Montréal, The New York Times, The Globe and Mail, and our own Montreal Gazette archives.</p>
-      <p>We welcome corrections or further documentation from those featured in the list.</p>
-    </div>
   </div>
+
 
   <script>
     const profiles = [
