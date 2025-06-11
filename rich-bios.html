@@ -332,29 +332,33 @@
       }
     ];
 
+
     const perPage = 3;
     const totalPages = Math.ceil(profiles.length / perPage);
     let currentPage = 0;
 
     const container = document.getElementById('profile-container');
-    const pager = document.getElementById('pagination');
+    const pager     = document.getElementById('pagination');
 
-    function adjustIframeHeight() {
+    function setIframeHeight() {
       if (window.frameElement) {
-        // set iframe height to fit content
-        window.frameElement.style.height = document.documentElement.scrollHeight + 'px';
+        const height = window.innerWidth > 600 ? 1400 : 2100;
+        window.frameElement.style.height = height + 'px';
       }
     }
 
     function render() {
       const start = currentPage * perPage;
       const slice = profiles.slice(start, start + perPage);
+
       container.innerHTML = slice.map(p => `
         <div class="profile">
           <div class="avatar-wrap">
             <img src="${p.avatar}" alt="${p.name}">
           </div>
-          <h2 class="profile-header">${p.rank}. ${p.name} — ${p.worth}</h2>
+          <h2 class="profile-header">
+            ${p.rank}. ${p.name} — ${p.worth}
+          </h2>
           <p class="bio-text">${p.bio}</p>
         </div>
       `).join('');
@@ -367,21 +371,18 @@
         const btn = document.createElement('button');
         btn.textContent = label;
         btn.className = i === currentPage ? 'active' : '';
-        btn.disabled = i === currentPage;
-        btn.onclick = () => {
-          currentPage = i;
-          render();
-          adjustIframeHeight();
-          window.scrollTo(0, 0);
-        };
+        btn.disabled  = i === currentPage;
+        btn.onclick   = () => { currentPage = i; render(); setIframeHeight(); window.scrollTo(0,0); };
         pager.appendChild(btn);
       }
 
-      adjustIframeHeight();
+      setIframeHeight();
     }
 
-    window.onload = render;
-    window.addEventListener('resize', adjustIframeHeight);
+    window.onload = () => {
+      render();
+      window.addEventListener('resize', setIframeHeight);
+    };
   </script>
 </body>
 </html>
