@@ -1,52 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    * { margin:0; padding:0; box-sizing:border-box }
     body {
-      display: flex;
-      min-height: 100vh;
       font-family: Georgia, serif;
-      color: #111;
-      background: #fff;
+      background:#fff; color:#111;
+      display:flex; min-height:100vh;
     }
-    /* Sidebar */
-    .sidebar {
-      flex: 0 0 250px;
-      background: #f9f9f9;
-      padding: 2rem 1rem;
-      border-right: 1px solid #ddd;
-      position: sticky;
-      top: 0;
-      align-self: flex-start;
-    }
-    .sidebar h1 {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    /* Main */
+    /* Sidebar removed; header moves into main */
     .main {
-      flex: 1;
-      padding: 2rem;
+      flex:1; padding:2rem; max-width:900px; margin:0 auto;
     }
+    .header {
+      font-family:'Roboto',sans-serif;
+      font-size:2rem; font-weight:700;
+      margin-bottom:1.5rem;
+    }
+    .header .gold { color:#B59410 }
+
+    /* Profile container */
     .profile {
-      display: flex;
-      align-items: flex-start;
-      gap: 2rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
+      display:flex; gap:2rem; align-items:flex-start;
+      margin-bottom:2rem; flex-wrap:wrap;
     }
     .avatar-wrap {
-      flex: 0 0 300px;
-      width: 300px; aspect-ratio:1;
-      border: 6px dotted #000;
-      overflow: hidden;
+      flex:0 0 300px; width:300px; aspect-ratio:1;
+      border:6px dotted #000; overflow:hidden;
     }
     .avatar-wrap img {
       width:100%; height:100%; object-fit:cover;
@@ -55,57 +40,56 @@
       flex:1; min-width:300px;
     }
     .profile-header {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
+      font-family:'Roboto',sans-serif;
+      font-size:1.75rem; font-weight:700;
+      text-transform:uppercase;
+      margin-bottom:1rem;
     }
     .bio-text {
-      font-size: 1.125rem;
-      line-height: 1.6;
+      font-size:1.125rem; line-height:1.6;
     }
-    .pagination {
-      text-align: center;
-      margin-top: 2rem;
-      font-family: 'Roboto', sans-serif;
+
+    /* Paging dots + underlined name links */
+    .pager {
+      display:flex; align-items:center; gap:1rem; font-family:'Roboto',sans-serif;
     }
-    .pagination button {
-      background: none;
-      border: 1px solid #ccc;
-      padding: 0.5rem 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-block;
-      margin: 0 0.25rem;
+    .pager .dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#ccc; cursor:pointer;
     }
-    .pagination button.active {
-      background: #B59410;
-      color: #fff;
-      border-color: #B59410;
+    .pager .dot.active { background:#B59410 }
+    .pager .names {
+      display:flex; gap:1rem;
     }
-    .pagination button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .pager .names a {
+      text-decoration:none; color:#111; font-weight:700;
+      border-bottom:2px solid transparent;
+      padding-bottom:2px;
     }
-    @media (max-width:700px) {
-      body { flex-direction: column; }
-      .sidebar { width:100%; border-right:none; border-bottom:1px solid #ddd; }
+    .pager .names a.active {
+      border-color:#B59410;
+    }
+
+    @media(max-width:700px) {
       .profile { flex-direction:column; }
-      .avatar-wrap { margin:0 auto; }
+      .avatar-wrap, .text-col { width:100%; max-width:none; }
     }
   </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <h1>Browse Gazette Rich List 2025</h1>
-  </aside>
+  <main class="main">
+    <div class="header">
+      Browse Gazette <span class="gold">Rich List 2025</span>
+    </div>
 
-  <section class="main">
-    <div id="profile-container"></div>
-    <div id="pagination" class="pagination"></div>
-  </section>
+    <div id="profile" class="profile"></div>
+
+    <div class="pager">
+      <div id="dots"></div>
+      <div class="names" id="names"></div>
+    </div>
+  </main>
 
   <script>
     const profiles = [
@@ -136,36 +120,46 @@
       {rank:25,name:'Stephan Jarislowsky',worth:'—',avatar:'https://via.placeholder.com/64',bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed corporate governance and funds arts research.'}
     ];
 
-    let current = 0, total = profiles.length;
-    const container = document.getElementById('profile-container');
-    const pagination = document.getElementById('pagination');
+    let page = 0, total = profiles.length;
+
+    const profileEl = document.getElementById('profile');
+    const dotsEl = document.getElementById('dots');
+    const namesEl = document.getElementById('names');
 
     function render() {
-      const p = profiles[current];
-      container.innerHTML = `
-        <div class="profile">
-          <div class="avatar-wrap">
-            <img src="${p.avatar}" alt="${p.name}">
-          </div>
-          <div class="text-col">
-            <div class="profile-header">${p.rank}. ${p.name} — ${p.worth}</div>
-            <div class="bio-text">${p.bio}</div>
-          </div>
+      const p = profiles[page];
+      profileEl.innerHTML = `
+        <div class="avatar-wrap">
+          <img src="${p.avatar}" alt="${p.name}">
+        </div>
+        <div class="text-col">
+          <div class="profile-header">${p.rank}. ${p.name.toUpperCase()} — ${p.worth}</div>
+          <div class="bio-text">${p.bio}</div>
         </div>
       `;
-      pagination.innerHTML = '';
-      const start = Math.max(0, current-2), end = Math.min(total, start+5);
-      for (let i=start; i<end; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = `${i+1}. ${profiles[i].name}`;
-        btn.className = i===current?'active':'';
-        btn.disabled = i===current;
-        btn.onclick = ()=>{ current=i; render(); window.scrollTo(0,0); };
-        pagination.appendChild(btn);
+      // dots for sets of three
+      dotsEl.innerHTML = '';
+      const sets = Math.ceil(total/3);
+      for (let i=0;i<sets;i++){
+        const dot = document.createElement('div');
+        dot.className='dot'+(i===Math.floor(page/3)?' active':'');
+        dot.onclick=()=>{ page=i*3; render(); };
+        dotsEl.appendChild(dot);
+      }
+      // names for current set
+      namesEl.innerHTML = '';
+      const start = Math.floor(page/3)*3;
+      const end = Math.min(total, start+3);
+      for (let i=start;i<end;i++){
+        const a = document.createElement('a');
+        a.textContent = `${profiles[i].rank}. ${profiles[i].name}`;
+        a.className = i===page?'active':'';
+        a.onclick=()=>{ page=i; render(); window.scrollTo(0,0); };
+        namesEl.appendChild(a);
       }
     }
 
-    window.onload = render;
+    render();
   </script>
 
 </body>
