@@ -14,12 +14,10 @@
       color: #111;
       padding: 1rem;
     }
-
     .content {
       max-width: 800px;
       margin: 0 auto;
     }
-
     .main-header {
       font-family: 'Roboto', sans-serif;
       font-size: 2rem;
@@ -28,7 +26,6 @@
     }
     .main-header .gold { color: #B59410; }
 
-    /* desktop: 2-column grid */
     .profile {
       display: grid;
       grid-template-columns: 1fr 300px;
@@ -41,7 +38,6 @@
       margin-bottom: 2rem;
       align-items: start;
     }
-
     .avatar-wrap {
       grid-area: avatar;
       width: 300px;
@@ -54,17 +50,15 @@
       object-fit: cover;
       display: block;
     }
-
     .profile-header {
       grid-area: header;
       font-family: 'Roboto', sans-serif;
       font-size: 1.75rem;
       font-weight: 600;
-      color: #111;             /* black */
-      text-transform: none;    /* normal case */
+      color: #111;
+      text-transform: none;
       margin: 0;
     }
-
     .bio-text {
       grid-area: bio;
       font-size: 1.125rem;
@@ -73,7 +67,6 @@
       align-self: start;
     }
 
-    /* pagination */
     .pagination {
       display: flex;
       overflow-x: auto;
@@ -110,7 +103,6 @@
       cursor: default;
     }
 
-    /* mobile */
     @media (max-width: 600px) {
       .main-header {
         font-size: 1.5rem;
@@ -347,8 +339,14 @@
     const container = document.getElementById('profile-container');
     const pager = document.getElementById('pagination');
 
+    function adjustIframeHeight() {
+      if (window.frameElement) {
+        // set iframe height to fit content
+        window.frameElement.style.height = document.documentElement.scrollHeight + 'px';
+      }
+    }
+
     function render() {
-      // render profiles for the page
       const start = currentPage * perPage;
       const slice = profiles.slice(start, start + perPage);
       container.innerHTML = slice.map(p => `
@@ -356,14 +354,11 @@
           <div class="avatar-wrap">
             <img src="${p.avatar}" alt="${p.name}">
           </div>
-          <h2 class="profile-header">
-            ${p.rank}. ${p.name} — ${p.worth}
-          </h2>
+          <h2 class="profile-header">${p.rank}. ${p.name} — ${p.worth}</h2>
           <p class="bio-text">${p.bio}</p>
         </div>
       `).join('');
 
-      // pagination
       pager.innerHTML = '';
       for (let i = 0; i < totalPages; i++) {
         const s = i * perPage + 1;
@@ -373,12 +368,20 @@
         btn.textContent = label;
         btn.className = i === currentPage ? 'active' : '';
         btn.disabled = i === currentPage;
-        btn.onclick = () => { currentPage = i; render(); window.scrollTo(0, 0); };
+        btn.onclick = () => {
+          currentPage = i;
+          render();
+          adjustIframeHeight();
+          window.scrollTo(0, 0);
+        };
         pager.appendChild(btn);
       }
+
+      adjustIframeHeight();
     }
 
     window.onload = render;
+    window.addEventListener('resize', adjustIframeHeight);
   </script>
 </body>
 </html>
