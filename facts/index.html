@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Scorecard: Gazette Rich List 2025</title>
+  <title>Rich List Stats</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -26,7 +26,7 @@
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);  /* always two columns */
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
     }
     .stat-card {
@@ -53,6 +53,7 @@
       font-family: 'Roboto', sans-serif;
       font-size: 2.2rem;
       font-weight: 700;
+      color: #B59410;
       margin: 0 0 0.5rem 0;
     }
     .stat-card p {
@@ -61,10 +62,25 @@
       line-height: 1.4;
       margin: 0;
     }
+
     @media (max-width: 600px) {
-      h1 { font-size: 2rem; }
-      .stat-card h2 { font-size: 2rem; }
-      .stat-card p { font-size: 0.85rem; }
+      h1 {
+        font-size: 2rem;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;       /* single column */
+        justify-items: center;           /* center the cards */
+      }
+      .stat-card {
+        max-width: 400px;                /* narrower card width */
+        width: 100%;
+      }
+      .stat-card h2 {
+        font-size: 2rem;
+      }
+      .stat-card p {
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -74,19 +90,19 @@
     <h1>Rich List Stats</h1>
     <div class="stats-grid">
       <div class="stat-card">
-        <h2>$80 B+</h2>
+        <h2>$80 B+</h2>
         <p>Combined net worth of all 25 members on the Gazette Rich List.</p>
       </div>
       <div class="stat-card">
-        <h2>$9.2 B</h2>
+        <h2>$9.2 B</h2>
         <p>Alain Bouchard sits at the top spot, co-founder of Couche-Tard.</p>
       </div>
       <div class="stat-card">
-        <h2>26,000</h2>
-        <p>Is the number of years to earn the $1.3 B entry point at a $50 000/year salary.</p>
+        <h2>26 000 yrs</h2>
+        <p>Time to earn the $1.3 B entry point at a $50 000/year salary.</p>
       </div>
       <div class="stat-card">
-        <h2>$2.4 B</h2>
+        <h2>$2.4 B</h2>
         <p>Size of the Azrieli Foundation—the largest philanthropic endowment.</p>
       </div>
     </div>
