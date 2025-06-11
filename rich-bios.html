@@ -7,7 +7,6 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    /* —— reset & base —— */
     html, body { margin:0; padding:0; }
     body {
       font-family: Georgia, serif;
@@ -16,7 +15,6 @@
       padding: 1rem;
     }
 
-    /* —— center the widget —— */
     .content {
       max-width: 800px;
       margin: 0 auto;
@@ -30,22 +28,19 @@
     }
     .main-header .gold { color: #B59410; }
 
-    /* —— profile grid —— */
+    /* profile grid */
     .profile {
       display: grid;
       grid-template-columns: 1fr 300px;
       grid-template-rows: auto auto;
       grid-template-areas:
         "header avatar"
-        "bio    avatar";    /* avatar now lives in both rows */
-    
-      /* now you can restore a little vertical breathing room if you like */
+        "bio    avatar";
       row-gap: 1rem;
       column-gap: 2rem;
       margin-bottom: 2rem;
       align-items: start;
     }
-    
     .avatar-wrap {
       grid-area: avatar;
       width: 300px;
@@ -58,6 +53,7 @@
       object-fit: cover;
       display: block;
     }
+
     .profile-header {
       grid-area: header;
       font-family: 'Roboto', sans-serif;
@@ -72,9 +68,10 @@
       font-size: 1.125rem;
       line-height: 1.6;
       margin: 0;
+      align-self: start;  /* force top alignment */
     }
 
-    /* —— pagination —— */
+    /* pagination */
     .pagination {
       display: flex;
       overflow-x: auto;
@@ -112,7 +109,7 @@
       cursor: default;
     }
 
-    /* —— mobile adjustments —— */
+    /* mobile */
     @media (max-width: 600px) {
       .main-header {
         font-size: 1.5rem;
@@ -137,9 +134,9 @@
         text-align: center;
       }
       .bio-text {
+        text-align: center;
         font-size: 1rem;
         line-height: 1.5;
-        text-align: center;
       }
       .pagination {
         gap: 0.5rem;
@@ -192,6 +189,7 @@
       { rank: 25, name: 'Stephan Jarislowsky',                worth: '—',     avatar: 'images/stroll.png',    bio: 'Stephan Jarislowsky founded Jarislowsky Fraser, championed governance and funds arts research.' }
     ];
 
+
     const perPage = 3;
     const totalPages = Math.ceil(profiles.length / perPage);
     let currentPage = 0;
@@ -200,12 +198,10 @@
     const pager     = document.getElementById('pagination');
 
     function render() {
-      // slice out the profiles for this page
+      // show 3 profiles
       const start = currentPage * perPage;
-      const pageItems = profiles.slice(start, start + perPage);
-
-      // render each
-      container.innerHTML = pageItems.map(p => `
+      const slice = profiles.slice(start, start + perPage);
+      container.innerHTML = slice.map(p => `
         <div class="profile">
           <div class="avatar-wrap">
             <img src="${p.avatar}" alt="${p.name}">
@@ -217,13 +213,14 @@
         </div>
       `).join('');
 
-      // pagination buttons
+      // pagination
       pager.innerHTML = '';
       for (let i = 0; i < totalPages; i++) {
-        const startNum = i * perPage + 1;
-        const endNum = Math.min((i + 1) * perPage, profiles.length);
+        const s = i*perPage + 1;
+        const e = Math.min((i+1)*perPage, profiles.length);
+        const label = s === e ? `${s}` : `${s} – ${e}`;
         const btn = document.createElement('button');
-        btn.textContent = `${startNum} – ${endNum}`;
+        btn.textContent = label;
         btn.className = i === currentPage ? 'active' : '';
         btn.disabled  = i === currentPage;
         btn.onclick   = () => { currentPage = i; render(); window.scrollTo(0,0); };
