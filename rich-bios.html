@@ -64,25 +64,52 @@
       font-size: 1.125rem;
       line-height: 1.6;
     }
+
+    /* —————————————————————————————————————————————————————————————
+       pagination tweaks
+    ————————————————————————————————————————————————————————————— */
     .pagination {
+      position: relative;               /* for the fade cue */
       display: flex;
       overflow-x: auto;
       gap: 1rem;
       padding-bottom: 0.5rem;
       margin-top: 2rem;
-      scrollbar-width: thin;
+      scrollbar-width: auto;           /* Gecko */
     }
+    /* WebKit scrollbar visible */
+    .pagination::-webkit-scrollbar {
+      height: 8px;
+    }
+    .pagination::-webkit-scrollbar-thumb {
+      background: #B59410;
+      border-radius: 4px;
+    }
+    /* right-edge fade */
+    .pagination::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 2rem;
+      pointer-events: none;
+      background: linear-gradient(to left, #fff, rgba(255,255,255,0));
+    }
+
     .pagination button {
       flex: 0 0 auto;
       background: none;
       border: none;
-      padding: 0.5rem 0.75rem;
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
+
+      /* ↑ bump these so they’re more tappable/readable ↓ */
+      font-size: 1.125rem;
+      padding: 0.75rem 1rem;
+
       text-decoration: underline transparent;
-      color: #111; /* black page numbers */
+      color: #111;
     }
     .pagination button.active {
       text-decoration-color: #B59410;
