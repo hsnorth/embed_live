@@ -6,93 +6,93 @@
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    * { margin:0; padding:0; box-sizing:border-box; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     body {
-      display:flex; min-height:100vh;
-      font-family:Georgia, serif;
-      background:#fff; color:#111;
+      display: flex;
+      min-height: 100vh;
+      font-family: Georgia, serif;
+      color: #111;
+      background: #fff;
     }
     /* Sidebar */
     .sidebar {
-      flex:0 0 250px;
-      background:#f9f9f9;
-      padding:2rem 1rem;
-      border-right:1px solid #ddd;
-      position:sticky; top:0;
+      flex: 0 0 250px;
+      background: #f9f9f9;
+      padding: 2rem 1rem;
+      border-right: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
     }
     .sidebar h1 {
-      font-family:'Roboto',sans-serif;
-      font-size:1.25rem; font-weight:700;
-      text-transform:uppercase;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
     }
     /* Main */
     .main {
-      flex:1; padding:2rem;
+      flex: 1;
+      padding: 2rem;
     }
-    .banner {
-      margin-bottom:1rem;
-    }
-    .banner p {
-      font-family:'Roboto',sans-serif;
-      font-size:2rem; font-weight:700;
-    }
-    .banner .gold { color:#B59410; }
-
-    /* Profile flex container */
     .profile {
-      display:flex;
-      align-items:flex-start;
-      gap:2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 2rem;
       flex-wrap: wrap;
-      margin-bottom:2rem;
-      max-width:1000px;
     }
-    /* Image column */
     .avatar-wrap {
-      flex:0 0 300px;
-      width:300px; aspect-ratio:1;
-      border:6px dotted #000;
-      overflow:hidden;
+      flex: 0 0 300px;
+      width: 300px; aspect-ratio:1;
+      border: 6px dotted #000;
+      overflow: hidden;
     }
     .avatar-wrap img {
       width:100%; height:100%; object-fit:cover;
     }
-    /* Text column */
     .text-col {
-      flex:1;
-      min-width:300px;
+      flex:1; min-width:300px;
     }
     .profile-header {
-      font-family:'Roboto',sans-serif;
-      font-size:1.75rem; font-weight:700;
-      text-transform:uppercase;
-      margin-bottom:0.5rem;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
     }
     .bio-text {
-      font-size:1.125rem; line-height:1.6;
+      font-size: 1.125rem;
+      line-height: 1.6;
     }
-
-    /* Pagination nearest 5 */
     .pagination {
-      display:flex; justify-content:center; gap:0.5rem;
-      font-family:'Roboto',sans-serif; margin-top:2rem;
+      text-align: center;
+      margin-top: 2rem;
+      font-family: 'Roboto', sans-serif;
     }
     .pagination button {
-      padding:0.5rem 0.75rem;
-      background:none; border:1px solid #ccc;
-      font-weight:700; cursor:pointer;
+      background: none;
+      border: 1px solid #ccc;
+      padding: 0.5rem 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 0.25rem;
     }
     .pagination button.active {
-      background:#B59410; color:#fff; border-color:#B59410;
+      background: #B59410;
+      color: #fff;
+      border-color: #B59410;
     }
     .pagination button:disabled {
-      opacity:0.5; cursor:not-allowed;
+      opacity: 0.5;
+      cursor: not-allowed;
     }
-
-    @media(max-width:700px) {
-      body { flex-direction:column; }
+    @media (max-width:700px) {
+      body { flex-direction: column; }
       .sidebar { width:100%; border-right:none; border-bottom:1px solid #ddd; }
-      .avatar-wrap, .text-col { flex:1 1 100%; min-width:0; }
+      .profile { flex-direction:column; }
+      .avatar-wrap { margin:0 auto; }
     }
   </style>
 </head>
@@ -103,11 +103,10 @@
   </aside>
 
   <section class="main">
-
     <div id="profile-container"></div>
-
-    <div class="pagination" id="pagination"></div>
+    <div id="pagination" class="pagination"></div>
   </section>
+
   <script>
     const profiles = [
       {rank:1,name:'Alain Bouchard and family',worth:'$9.2B',avatar:'https://corporate.couche-tard.com/image/2-alain-bouchard-2748.png',bio:'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single convenience store in Laval, Quebec. Over four decades he transformed it into one of the world’s largest chains, operating more than 14,000 outlets across North America, Europe and Asia.'},
@@ -137,10 +136,9 @@
       {rank:25,name:'Stephan Jarislowsky',worth:'—',avatar:'https://via.placeholder.com/64',bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed corporate governance and funds arts research.'}
     ];
 
-
     let current = 0, total = profiles.length;
     const container = document.getElementById('profile-container');
-    const pager = document.getElementById('pagination');
+    const pagination = document.getElementById('pagination');
 
     function render() {
       const p = profiles[current];
@@ -150,21 +148,20 @@
             <img src="${p.avatar}" alt="${p.name}">
           </div>
           <div class="text-col">
-            <div class="profile-header">${p.rank}. ${p.name.toUpperCase()} — ${p.worth}</div>
+            <div class="profile-header">${p.rank}. ${p.name} — ${p.worth}</div>
             <div class="bio-text">${p.bio}</div>
           </div>
         </div>
       `;
-      // nearest 5 page buttons
-      pager.innerHTML = '';
-      let start = Math.max(0, current - 2), end = Math.min(total, start + 5);
-      for (let i = start; i < end; i++) {
+      pagination.innerHTML = '';
+      const start = Math.max(0, current-2), end = Math.min(total, start+5);
+      for (let i=start; i<end; i++) {
         const btn = document.createElement('button');
-        btn.textContent = (i+1);
+        btn.textContent = `${i+1}. ${profiles[i].name}`;
         btn.className = i===current?'active':'';
         btn.disabled = i===current;
         btn.onclick = ()=>{ current=i; render(); window.scrollTo(0,0); };
-        pager.appendChild(btn);
+        pagination.appendChild(btn);
       }
     }
 
