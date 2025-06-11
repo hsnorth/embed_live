@@ -64,17 +64,28 @@
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 2rem; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
       .stat-card {
+        display: flex;
+        align-items: center;     /* vertical center */
         padding: 1rem;
       }
       .number {
         font-size: 2rem;
-        margin-bottom: 0.25rem;
+        margin: 0;
+        flex-shrink: 0;
+        /* push it in from the left edge a bit */
+        margin-left: 1.5rem;
+        margin-right: 1rem;
       }
       .label {
         font-size: 0.95rem;
+        margin: 0;
+        /* ensure all labels start at the same x-position */
+        flex: 1;
       }
     }
   </style>
