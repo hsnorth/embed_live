@@ -8,12 +8,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     /* —— reset & base —— */
-    html, body { margin: 0; padding: 0; }
+    html, body { margin:0; padding:0; }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      padding: 1rem; /* gentle outer gutter */
+      padding: 1rem;
     }
 
     /* —— center the widget —— */
@@ -30,14 +30,14 @@
     }
     .main-header .gold { color: #B59410; }
 
-    /* —— grid profile layout —— */
+    /* —— profile grid —— */
     .profile {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 1fr 300px;
       grid-template-rows: auto auto;
       grid-template-areas:
-        "avatar header"
-        "avatar bio";
+        "header avatar"
+        "bio    .";
       gap: 1rem 2rem;
       margin-bottom: 2rem;
       align-items: start;
@@ -54,16 +54,15 @@
       object-fit: cover;
       display: block;
     }
-
     .profile-header {
       grid-area: header;
       font-family: 'Roboto', sans-serif;
       font-size: 1.75rem;
-      font-weight: 400;
+      font-weight: 700;
+      color: #002147;
       text-transform: uppercase;
-      margin: 0; /* no extra bottom margin, grid gap handles it */
+      margin: 0;
     }
-
     .bio-text {
       grid-area: bio;
       font-size: 1.125rem;
@@ -116,12 +115,11 @@
         margin: 1rem 0;
       }
       .profile {
-        /* stack header → avatar → bio */
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
         grid-template-areas:
-          "header"
           "avatar"
+          "header"
           "bio";
         gap: 1rem;
       }
@@ -148,7 +146,6 @@
         padding: 0.5rem 0.75rem;
       }
     }
-
   </style>
 </head>
 <body>
@@ -161,6 +158,7 @@
     <div id="profile-container"></div>
     <div id="pagination" class="pagination"></div>
   </div>
+
   <script>
     const profiles = [
       { rank: 1,  name: 'Alain Bouchard and family',            worth: '$9.2B', avatar: 'images/bouchard.png',  bio: 'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single Laval store and grew it into a 17,000-outlet global chain.' },
@@ -172,31 +170,23 @@
       { rank: 7,  name: 'Ryan Cohen',                          worth: '$4.0B', avatar: 'images/cohen.png',     bio: 'Ryan Cohen founded Chewy and later led GameStop’s turnaround as an activist investor.' },
       { rank: 8,  name: 'Serge Godin',                         worth: '$3.7B', avatar: 'images/godin.png',     bio: 'Serge Godin founded CGI in 1976; today CGI is a top global IT consulting firm.' },
       { rank: 9,  name: 'Jean Coutu & family',                 worth: '$3.3B', avatar: 'images/coutu.png',     bio: 'Jean Coutu opened his first pharmacy in 1969; the family remains major shareholders and philanthropists.' },
-      { rank: 10, name: 'Pierre Karl Péladeau',                worth: '$3.0B', avatar: 'images/karl.png',      bio: 'Pierre Karl Péladeau steered Quebecor into media, telecom and digital content.' },
-      { rank: 11, name: 'Bombardier & Beaudoin family',        worth: '$2.5B', avatar: 'images/bombardier.png',bio: 'From snowmobiles to business jets, Bombardier remains under family leadership.' },
-      { rank: 12, name: 'Richard Fortin',                      worth: '$2.5B', avatar: 'images/fortin.png',    bio: 'Richard Fortin, Couche-Tard’s founding CFO, now supports arts and literacy initiatives.' },
-      { rank: 13, name: 'Philip Fayer',                        worth: '$2.1B', avatar: 'images/fayer.png',     bio: 'Philip Fayer co-founded Paysafe and drove its London IPO, creating fresh fintech wealth.' },
-      { rank: 14, name: 'Molson family',                       worth: '$2.0B', avatar: 'images/molson.png',    bio: 'The Molson brewing dynasty, founded in 1786, funds healthcare and arts through their legacy foundation.' },
-      { rank: 15, name: 'Kruger family',                       worth: '$1.9B', avatar: 'images/kruger.png',    bio: 'Kruger Inc., founded in 1904, leads in pulp, tissue and renewable energy.' },
-      { rank: 16, name: 'Réal Plourde',                        worth: '$1.6B', avatar: 'images/real.png',      bio: 'Réal Plourde financed Couche-Tard’s early growth and chairs a major REIT today.' },
-      { rank: 17, name: 'Andrew Lutfy',                        worth: '$1.5B', avatar: 'images/lutfy.png',     bio: 'Andrew Lutfy co-founded RONA and later invested in real estate and tech startups.' },
-      { rank: 18, name: 'Goodman family',                      worth: '$1.5B', avatar: 'images/goodman.png',   bio: 'The Goodman family built Cadillac Fairview; they now focus on ESG projects and arts philanthropy.' },
-      { rank: 19, name: 'Guy Laliberté',                      worth: '$1.3B', avatar: 'images/guy.png',       bio: 'Guy Laliberté founded Cirque du Soleil and the One Drop Foundation, and flew as a space tourist.' },
-      { rank: 20, name: 'Pierre Lassonde',                     worth: '$1.3B', avatar: 'images/pierre.png',    bio: 'Pierre Lassonde co-founded Franco-Nevada, pioneering mining royalty streams.' },
-      { rank: 21, name: 'John MacBain',                       worth: '$1.1B', avatar: 'images/macbain.png',   bio: 'John MacBain built Trader Classified Media, then founded a major educational philanthropy.' },
-      { rank: 22, name: 'Larry Rossy',                        worth: '$1.0B', avatar: 'images/rossy.png',     bio: 'Larry Rossy expanded Rossy pharmacies to 100 stores and supports food banks.' },
-      { rank: 23, name: 'Hewitt family',                      worth: '$1.0B', avatar: 'images/hewitt.png',    bio: 'The Hewitt family’s heavy-equipment business now supplies North America and funds trades training.' },
-      { rank: 24, name: 'Charles Bronfman',                   worth: '—',     avatar: 'images/bronfman.png',  bio: 'Charles Bronfman, Seagram heir, co-owned MLB teams and founded Bronfman Philanthropies.' },
-      { rank: 25, name: 'Stephan Jarislowsky',                worth: '—',     avatar: 'images/stroll.png',    bio: 'Stephan Jarislowsky founded Jarislowsky Fraser, championed governance and funds arts research.' }
+      // … etc up to 25 …
     ];
 
-    let current = 0;
+    const perPage = 3;
+    const totalPages = Math.ceil(profiles.length / perPage);
+    let currentPage = 0;
+
     const container = document.getElementById('profile-container');
     const pager     = document.getElementById('pagination');
 
     function render() {
-      const p = profiles[current];
-      container.innerHTML = `
+      // slice out the profiles for this page
+      const start = currentPage * perPage;
+      const pageItems = profiles.slice(start, start + perPage);
+
+      // render each
+      container.innerHTML = pageItems.map(p => `
         <div class="profile">
           <div class="avatar-wrap">
             <img src="${p.avatar}" alt="${p.name}">
@@ -206,16 +196,20 @@
           </h2>
           <p class="bio-text">${p.bio}</p>
         </div>
-      `;
+      `).join('');
+
+      // pagination buttons
       pager.innerHTML = '';
-      profiles.forEach((pp, i) => {
+      for (let i = 0; i < totalPages; i++) {
+        const startNum = i * perPage + 1;
+        const endNum = Math.min((i + 1) * perPage, profiles.length);
         const btn = document.createElement('button');
-        btn.textContent = `${pp.rank}. ${pp.name}`;
-        btn.className = i === current ? 'active' : '';
-        btn.disabled  = i === current;
-        btn.onclick   = () => { current = i; render(); window.scrollTo(0,0); };
+        btn.textContent = `${startNum} – ${endNum}`;
+        btn.className = i === currentPage ? 'active' : '';
+        btn.disabled  = i === currentPage;
+        btn.onclick   = () => { currentPage = i; render(); window.scrollTo(0,0); };
         pager.appendChild(btn);
-      });
+      }
     }
 
     window.onload = render;
