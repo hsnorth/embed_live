@@ -62,28 +62,21 @@
     }
     .pagination {
       display: flex;
+      flex-wrap: nowrap;      /* prevent wrapping onto new lines */
+      overflow-x: auto;       /* allow horizontal scroll */
       gap: 1rem;
-      overflow-x: auto;
       padding-bottom: 0.5rem;
       margin-top: 2rem;
       scrollbar-width: thin;
-      justify-content: center;
-    }
-    .pagination::-webkit-scrollbar {
-      height: 6px;
-    }
-    .pagination::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 3px;
     }
     .pagination button {
-      flex: 0 0 auto;
+      flex: 0 0 auto;         /* each button keeps its width */
       background: none;
       border: none;
       padding: 0.5rem 0.75rem;
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      white-space: nowrap;
+      white-space: nowrap;    /* no internal wrapping */
       cursor: pointer;
       text-decoration: underline transparent;
     }
