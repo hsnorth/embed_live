@@ -37,12 +37,15 @@
       grid-template-rows: auto auto;
       grid-template-areas:
         "header avatar"
-        "bio    .";
-      row-gap: 0;       /* no vertical gap between header and bio */
-      column-gap: 2rem; /* keep your 2rem horizontal space */
+        "bio    avatar";    /* avatar now lives in both rows */
+    
+      /* now you can restore a little vertical breathing room if you like */
+      row-gap: 1rem;
+      column-gap: 2rem;
       margin-bottom: 2rem;
       align-items: start;
     }
+    
     .avatar-wrap {
       grid-area: avatar;
       width: 300px;
