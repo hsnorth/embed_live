@@ -30,28 +30,25 @@
 
     /* — flex profile — */
     .profile {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "header avatar"
+        "bio    avatar";
+      row-gap: 1rem;
+      column-gap: 2rem;
       margin-bottom: 2rem;
+      align-items: start;
     }
-    .text-col {
-      flex: 1;
-      min-width: 300px;
-      max-width: 400px;
+    .avatar-wrap {
+      grid-area: avatar;
     }
     .profile-header {
-      font-family: 'Roboto',sans-serif;
-      font-size: 1.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin: 0 0 0.5rem;    /* small gap before bio */
+      grid-area: header;
     }
     .bio-text {
-      margin: 0;             /* sits directly under header */
-      font-size: 1.125rem;
-      line-height: 1.6;
+      grid-area: bio;
     }
 
     .avatar-wrap {
