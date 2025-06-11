@@ -20,7 +20,7 @@
     }
     h1 {
       font-family: 'Roboto', sans-serif;
-      font-size: 2.4rem;
+      font-size: 2.2rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
     }
@@ -30,58 +30,51 @@
       gap: 1.5rem;
     }
     .stat-card {
-      background:#fff;
-      border-radius:4px;
-      padding:1.5rem 1.5rem 1.5rem 2rem;
-      position: relative;
-      overflow:hidden;
-    }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
-    }
-    .stat-card::before {
-      content:'';
-      position:absolute;
-      top:1.5rem;
-      left:1.5rem;
-      width:50px; height:4px;
-      background:linear-gradient(90deg,#B59410,#D4AF37);
+      background: #fff;
+      border-radius: 6px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      text-align: center;
     }
     .number {
-      font-family:'Roboto',sans-serif;
-      font-size:2.4rem;
-      font-weight:700;
-      color:#111;           /* now black */
-      margin:0;
-      margin-left:1rem;     /* align under gradient */
+      position: relative;
+      display: inline-block;
+      font-family: 'Roboto', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #111;
+      margin: 0 0 0.5rem 0;
+    }
+    .number::before {
+      content: '';
+      position: absolute;
+      top: -0.6rem;   /* lifts bar just above number */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, #B59410, #D4AF37);
+      border-radius: 2px;
     }
     .label {
-      font-size:1.125rem;   /* slightly bigger */
-      color:#333;
-      line-height:1.4;
-      margin:0;
-      margin-left: (1rem + 50px); /* indent to match numbers */
-      /* fallback for browsers without calc support: */
-      margin-left: calc(1rem + 50px);
+      font-size: 1.05rem;
+      line-height: 1.4;
+      color: #333;
+      margin: 0;
     }
 
-    @media(max-width:600px){
-      h1 { font-size:2rem; }
-      .stats-grid { grid-template-columns:1fr; gap:1rem; }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .stats-grid { grid-template-columns: 1fr; }
       .stat-card {
-        padding:1rem 1rem 1rem 1rem;
-      }
-      .stat-card::before {
-        top:1rem; left:1rem;
+        padding: 1rem;
       }
       .number {
-        font-size:2rem;
-        margin-left:1rem;
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
       }
       .label {
-        font-size:1rem;
-        margin-left:1rem;
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -91,19 +84,19 @@
     <h1>Rich List Stats</h1>
     <div class="stats-grid">
       <div class="stat-card">
-        <h2 class="number">$80 B+</h2>
+        <div class="number">$80 B+</div>
         <p class="label">Total wealth of the 25 members</p>
       </div>
       <div class="stat-card">
-        <h2 class="number">$9.2 B</h2>
+        <div class="number">$9.2 B</div>
         <p class="label">Alain Bouchard’s net worth</p>
       </div>
       <div class="stat-card">
-        <h2 class="number">26 000</h2>
+        <div class="number">26 000</div>
         <p class="label">Years to earn $1.3 B at $50 000/yr</p>
       </div>
       <div class="stat-card">
-        <h2 class="number">$2.4 B</h2>
+        <div class="number">$2.4 B</div>
         <p class="label">Azrieli Foundation endowment</p>
       </div>
     </div>
