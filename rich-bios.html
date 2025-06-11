@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Gazette Rich List 2025 Bios</title>
+  <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
+      display: flex;
+      min-height: 100vh;
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      display: flex;
-      min-height: 100vh;
     }
+    /* Sidebar */
     .sidebar {
       flex: 0 0 250px;
       background: #f9f9f9;
@@ -21,7 +22,7 @@
       border-right: 1px solid #ddd;
       position: sticky;
       top: 0;
-      align-self: start;
+      align-self: flex-start;
     }
     .sidebar h1 {
       font-family: 'Roboto', sans-serif;
@@ -29,36 +30,28 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-    .container {
+    /* Main */
+    .main {
       flex: 1;
       padding: 2rem;
     }
-    .banner {
-      margin-bottom: 1.5rem;
-    }
-    .banner p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-    .banner .gold {
-      color: #B59410;
-    }
+    /* Profile header (replaces 'context') */
     .profile-header {
       font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: 700;
       text-transform: uppercase;
       margin-bottom: 1rem;
     }
+    /* Two-column layout */
     .profile-body {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
-      align-items: start;
+      margin-bottom: 2rem;
     }
+    /* Image box */
     .avatar-wrap {
-      position: relative;
       width: 100%;
       max-width: 300px;
       aspect-ratio: 1;
@@ -70,31 +63,40 @@
       height: 100%;
       object-fit: cover;
     }
+    /* Bio paragraph */
     .bio-text {
       font-size: 1rem;
+      line-height: 1.6;
     }
-    .pager {
-      margin-top: 2rem;
+    /* Pagination: nearest 5 pages */
+    .pagination {
       display: flex;
-      justify-content: space-between;
-    }
-    .pager button {
-      padding: 0.5rem 1rem;
+      justify-content: center;
+      gap: 0.5rem;
       font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
+      margin-top: 2rem;
+    }
+    .pagination button {
       background: none;
       border: 1px solid #ccc;
+      padding: 0.5rem 0.75rem;
+      font-weight: 700;
       cursor: pointer;
     }
-    .pager button:disabled {
+    .pagination button.active {
+      background: #B59410;
+      color: #fff;
+      border-color: #B59410;
+    }
+    .pagination button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    @media (max-width: 700px) {
+    @media(max-width:700px) {
       body { flex-direction: column; }
       .sidebar { position: relative; width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
-      .profile-body { display: flex; flex-direction: column; }
+      .profile-body { grid-template-columns: 1fr; }
+      .avatar-wrap { margin: 0 auto; }
     }
   </style>
 </head>
@@ -104,20 +106,12 @@
     <h1>Browse Gazette Rich List 2025</h1>
   </aside>
 
-  <main class="container">
-    <div class="banner">
-      <p>Discover Quebec’s <span class="gold">top 25 fortunes</span> now</p>
-    </div>
-
-    <!-- these must match the JS getElementById calls -->
+  <section class="main">
     <div id="profile-header" class="profile-header"></div>
     <div id="profile-body" class="profile-body"></div>
+    <div id="pagination" class="pagination"></div>
+  </section>
 
-    <div class="pager">
-      <button id="prev">← Previous</button>
-      <button id="next">Next →</button>
-    </div>
-  </main>
 
   <script>
     const profiles = [
@@ -148,15 +142,15 @@
       {rank:25,name:'Stephan Jarislowsky',worth:'—',avatar:'https://via.placeholder.com/64',bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed corporate governance and funds arts research.'}
     ];
 
-    let currentPage = 0;
+
+    let current = 0;
     const total = profiles.length;
     const headerEl = document.getElementById('profile-header');
     const bodyEl = document.getElementById('profile-body');
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
+    const paginationEl = document.getElementById('pagination');
 
     function render() {
-      const p = profiles[currentPage];
+      const p = profiles[current];
       headerEl.textContent = `${p.rank}. ${p.name.toUpperCase()} — ${p.worth}`;
       bodyEl.innerHTML = `
         <div class="avatar-wrap">
@@ -164,12 +158,18 @@
         </div>
         <div class="bio-text">${p.bio}</div>
       `;
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage === total - 1;
+      paginationEl.innerHTML = '';
+      const start = Math.max(0, current - 2);
+      const end = Math.min(total, start + 5);
+      for (let i = start; i < end; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${profiles[i].rank}`;
+        btn.className = (i === current ? 'active' : '');
+        btn.disabled = (i === current);
+        btn.onclick = () => { current = i; render(); window.scrollTo(0,0); };
+        paginationEl.appendChild(btn);
+      }
     }
-
-    prevBtn.onclick = () => { if (currentPage>0) { currentPage--; render(); window.scrollTo(0,0);} };
-    nextBtn.onclick = () => { if (currentPage<total-1){ currentPage++; render(); window.scrollTo(0,0);} };
 
     window.onload = render;
   </script>
