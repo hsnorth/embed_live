@@ -50,24 +50,21 @@
     }
 
     /* Paging dots + underlined name links */
-    .pager {
-      display:flex; align-items:center; gap:1rem; font-family:'Roboto',sans-serif;
+    /* Continuous name pagination */
+    .pagination {
+      display:flex; flex-wrap:wrap; gap:0.5rem;
+      font-family:'Roboto',sans-serif; margin-top:2rem;
     }
-    .pager .dot {
-      width:8px; height:8px; border-radius:50%;
-      background:#ccc; cursor:pointer;
+    .pagination button {
+      background:none; border:none; padding:0.25rem;
+      font-weight:700; cursor:pointer;
+      text-decoration:underline transparent;
     }
-    .pager .dot.active { background:#B59410 }
-    .pager .names {
-      display:flex; gap:1rem;
+    .pagination button.active {
+      text-decoration-color:#B59410;
     }
-    .pager .names a {
-      text-decoration:none; color:#111; font-weight:700;
-      border-bottom:2px solid transparent;
-      padding-bottom:2px;
-    }
-    .pager .names a.active {
-      border-color:#B59410;
+    .pagination button:disabled {
+      opacity:0.5; cursor:default;
     }
 
     @media(max-width:700px) {
@@ -83,11 +80,8 @@
       Browse Gazette <span class="gold">Rich List 2025</span>
     </div>
 
-    <div id="profile" class="profile"></div>
-
-    <div class="pager">
-      <div id="dots"></div>
-      <div class="names" id="names"></div>
+    <div id="profile-body"></div>
+    <div id="pagination" class="pagination"></div>
     </div>
   </main>
 
@@ -120,15 +114,13 @@
       {rank:25,name:'Stephan Jarislowsky',worth:'—',avatar:'https://via.placeholder.com/64',bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed corporate governance and funds arts research.'}
     ];
 
-    let page = 0, total = profiles.length;
-
-    const profileEl = document.getElementById('profile');
-    const dotsEl = document.getElementById('dots');
-    const namesEl = document.getElementById('names');
+    let current = 0, total = profiles.length;
+    const bodyEl = document.getElementById('profile-body');
+    const pageEl = document.getElementById('pagination');
 
     function render() {
-      const p = profiles[page];
-      profileEl.innerHTML = `
+      const p = profiles[current];
+      bodyEl.innerHTML = `
         <div class="avatar-wrap">
           <img src="${p.avatar}" alt="${p.name}">
         </div>
@@ -137,29 +129,18 @@
           <div class="bio-text">${p.bio}</div>
         </div>
       `;
-      // dots for sets of three
-      dotsEl.innerHTML = '';
-      const sets = Math.ceil(total/3);
-      for (let i=0;i<sets;i++){
-        const dot = document.createElement('div');
-        dot.className='dot'+(i===Math.floor(page/3)?' active':'');
-        dot.onclick=()=>{ page=i*3; render(); };
-        dotsEl.appendChild(dot);
-      }
-      // names for current set
-      namesEl.innerHTML = '';
-      const start = Math.floor(page/3)*3;
-      const end = Math.min(total, start+3);
-      for (let i=start;i<end;i++){
-        const a = document.createElement('a');
-        a.textContent = `${profiles[i].rank}. ${profiles[i].name}`;
-        a.className = i===page?'active':'';
-        a.onclick=()=>{ page=i; render(); window.scrollTo(0,0); };
-        namesEl.appendChild(a);
-      }
+      pageEl.innerHTML = '';
+      profiles.forEach((pp,i) => {
+        const btn = document.createElement('button');
+        btn.textContent = `${pp.rank}. ${pp.name}`;
+        btn.className = i===current?'active':'';
+        btn.disabled = i===current;
+        btn.onclick = ()=>{ current=i; render(); window.scrollTo(0,0); };
+        pageEl.appendChild(btn);
+      });
     }
 
-    render();
+    window.onload = render;
   </script>
 
 </body>
