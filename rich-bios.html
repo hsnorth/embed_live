@@ -6,8 +6,7 @@
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       display: flex;
       min-height: 100vh;
@@ -15,14 +14,13 @@
       background: #fff;
       color: #111;
     }
-
-    /* Sidebar */
     .sidebar {
       flex: 0 0 250px;
       background: #f9f9f9;
       padding: 2rem 1rem;
       border-right: 1px solid #ddd;
-      position: sticky; top: 0;
+      position: sticky;
+      top: 0;
       align-self: flex-start;
     }
     .sidebar h1 {
@@ -31,15 +29,11 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-
-    /* Main content */
     .main {
       flex: 1;
       padding: 2rem;
     }
     .banner {
-      background: #fff;
-      padding: 1rem 0;
       margin-bottom: 1.5rem;
     }
     .banner p {
@@ -50,25 +44,16 @@
     .banner .gold {
       color: #B59410;
     }
-
-    /* Profile section */
-    .profile-header {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
     .profile-body {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
       align-items: start;
+      margin-bottom: 2rem;
     }
-
     .avatar-wrap {
       width: 100%;
-      max-width: 400px;
+      max-width: 300px;
       aspect-ratio: 1;
       border: 6px dotted #000;
       overflow: hidden;
@@ -78,12 +63,21 @@
       height: 100%;
       object-fit: cover;
     }
-
+    .text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-header {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
     .bio-text {
-      font-size: 1.125rem; /* larger text */
+      font-size: 1.125rem;
       line-height: 1.6;
     }
-
     .pagination {
       display: flex;
       justify-content: center;
@@ -92,9 +86,9 @@
       font-family: 'Roboto', sans-serif;
     }
     .pagination button {
+      padding: 0.5rem 0.75rem;
       background: none;
       border: 1px solid #ccc;
-      padding: 0.5rem 0.75rem;
       font-weight: 700;
       cursor: pointer;
     }
@@ -107,28 +101,29 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
-
     @media (max-width: 700px) {
       body { flex-direction: column; }
       .sidebar { position: relative; width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
       .profile-body { grid-template-columns: 1fr; }
-      .avatar-wrap { margin: 0 auto; max-width: 100%; }
+      .avatar-wrap { margin: 0 auto; }
     }
   </style>
 </head>
 <body>
 
-  <section class="main">
+  <aside class="sidebar">
+    <h1>Browse Gazette Rich List 2025</h1>
+  </aside>
+
+  <main class="main">
     <div class="banner">
-      <p>Browse Gazette Rich List 2025</p>
+      <p>Discover Quebec’s <span class="gold">top 25 fortunes</span></p>
     </div>
 
-    <div id="profile-header" class="profile-header"></div>
     <div id="profile-body" class="profile-body"></div>
 
     <div class="pagination" id="pagination"></div>
-  </section>
-  <script>
+  </main>
     const profiles = [
       {rank:1,name:'Alain Bouchard and family',worth:'$9.2B',avatar:'https://corporate.couche-tard.com/image/2-alain-bouchard-2748.png',bio:'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single convenience store in Laval, Quebec. Over four decades he transformed it into one of the world’s largest chains, operating more than 14,000 outlets across North America, Europe and Asia.'},
       {rank:2,name:'Paul Desmarais Jr. and André',worth:'$7.0B',avatar:'https://acadienouvelle-6143.kxcdn.com/wp-content/uploads/2019/12/Capture-5.png',bio:'Brothers Paul Jr. and André Desmarais inherited Power Corporation of Canada, expanding its asset management, insurance and energy businesses while funding major philanthropic initiatives.'},
@@ -159,20 +154,22 @@
 
 
 
+
     let currentPage = 0;
     const total = profiles.length;
-    const headerEl = document.getElementById('profile-header');
     const bodyEl = document.getElementById('profile-body');
     const paginationEl = document.getElementById('pagination');
 
     function render() {
       const p = profiles[currentPage];
-      headerEl.textContent = `${p.rank}. ${p.name.toUpperCase()} — ${p.worth}`;
       bodyEl.innerHTML = `
         <div class="avatar-wrap">
           <img src="${p.avatar}" alt="${p.name}">
         </div>
-        <div class="bio-text">${p.bio}</div>
+        <div class="text-wrap">
+          <div class="profile-header">${p.rank}. ${p.name.toUpperCase()} — ${p.worth}</div>
+          <div class="bio-text">${p.bio}</div>
+        </div>
       `;
       paginationEl.innerHTML = '';
       const start = Math.max(0, currentPage - 2);
