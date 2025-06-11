@@ -184,20 +184,6 @@
       document.getElementById('next').disabled = currentPage === totalPages;
     }
 
-    document.getElementById('prev').addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderPage();
-        scrollToTop();
-      }
-    });
-    document.getElementById('next').addEventListener('click', () => {
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderPage();
-        scrollToTop();
-      }
-    });
 
     window.onload = renderPage;
   </script>
