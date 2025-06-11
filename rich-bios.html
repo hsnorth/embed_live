@@ -13,69 +13,79 @@
       color: #111;
       line-height: 1.6;
     }
-    /* banner */
+    /* banner with left-aligned snappy label */
     .banner {
-      background:#fff;
-      padding:1rem 1rem;    
+      background: #fff;
+      padding: 1rem 1rem;
     }
     .banner .container {
-      max-width:800px; margin:0 auto;
+      max-width: 800px;
+      margin: 0 auto;
     }
     .banner p {
-      font-family:'Roboto',sans-serif;
-      font-size:2rem; font-weight:bold;
-      color:#000;
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #000;
+      text-align: left;
     }
     .banner p .gold {
-      color:#B59410;
+      color: #B59410;
     }
-    /* centered wrapper */
+    /* centered wrapper with reduced padding */
     .container {
-      max-width:800px; margin:0 auto; padding:0.5rem 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0.5rem 1rem;
     }
     /* profile blocks */
-    .profile + .profile { margin-top:1.5rem; }
+    .profile + .profile { margin-top: 1.5rem; }
     .profile h2 {
-      font-family:'Roboto',sans-serif;
-      font-size:2rem;       /* increased size */
-      margin-bottom:0.5rem;
-      font-weight:bold;
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
     }
     .profile h2 .rank {
-      color:#B59410; margin-right:0.5rem;
+      color: #B59410;
+      margin-right: 0.5rem;
     }
     .profile h2 .name-worth {
-      color:#000;
+      color: #000;
     }
     .profile p {
-      font-size:1.2rem;
+      font-size: 1rem;
     }
     /* pagination */
     .pagination {
-      display:flex; justify-content:center;
-      margin-top:2rem; font-size:1rem; color:#666;
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #666;
     }
-    .pagination .pages { display:flex; gap:0.5rem; }
+    .pagination .pages { display: flex; gap: 0.5rem; }
     .pagination .page-number {
-      padding:0.5rem 0.75rem; font-size:1rem;
-      cursor:pointer; background:none; border:1px solid #ccc;
-      font-weight:bold;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background: none;
+      border: 1px solid #ccc;
+      font-weight: bold;
     }
     .pagination .page-number.active {
-      background:#B59410; color:#fff; border-color:#B59410;
+      background: #B59410;
+      color: #fff;
+      border-color: #B59410;
     }
   </style>
 </head>
 <body>
 
-
-  <!-- banner with white background -->
+  <!-- snappier, left-aligned banner -->
   <div class="banner">
     <div class="container">
-      <p>
-        Browse profiles of Quebec's 
-        <span class="gold">top 25 fortunes</span>
-      </p>
+      <p>Discover Quebec’s <span class="gold">top 25 fortunes</span> now</p>
     </div>
   </div>
 
