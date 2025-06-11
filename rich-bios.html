@@ -8,95 +8,69 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     body {
-      display:flex; min-height:100vh;
-      font-family: Georgia, serif; background:#fff; color:#111;
+      font-family: Georgia, serif;
+      background: #fff; color: #111;
+      padding: 2rem;
     }
-    /* Sidebar */
-    .sidebar {
-      flex:0 0 250px; background:#f9f9f9;
-      padding:2rem 1rem; border-right:1px solid #ddd;
-      position:sticky; top:0;
+    .main-header {
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      margin-bottom: 1.5rem;
     }
-    .sidebar h1 {
-      font-family:'Roboto',sans-serif; font-size:1.25rem;
-      font-weight:700; text-transform:uppercase;
-    }
-    /* Main */
-    .main {
-      flex:1; padding:2rem;
-    }
-    .banner {
-      margin-bottom:1.5rem;
-    }
-    .banner p {
-      font-family:'Roboto',sans-serif; font-size:2rem;
-      font-weight:700;
-    }
-    .banner .gold { color:#B59410; }
-
-    /* Profile */
-    #profile-body {
-      display:flex; gap:2rem; align-items:flex-start;
-      flex-wrap:wrap; margin-bottom:2rem;
+    .main-header .gold { color: #B59410; }
+    .profile {
+      display: flex; gap: 2rem; align-items: flex-start;
+      flex-wrap: wrap; margin-bottom: 2rem; max-width: 1000px;
     }
     .avatar-wrap {
-      flex:0 0 300px; width:300px; aspect-ratio:1;
-      border:6px dotted #000; overflow:hidden;
+      flex: 0 0 300px; width: 300px; aspect-ratio: 1;
+      border: 6px dotted #000; overflow: hidden;
     }
     .avatar-wrap img {
-      width:100%; height:100%; object-fit:cover;
+      width: 100%; height: 100%; object-fit: cover;
     }
     .text-col {
-      flex:1; min-width:300px;
+      flex: 1; min-width: 300px;
     }
     .profile-header {
-      font-family:'Roboto',sans-serif; font-size:1.75rem;
-      font-weight:700; text-transform:uppercase;
-      margin-bottom:1rem;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.75rem; font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
     }
     .bio-text {
-      font-size:1.125rem; line-height:1.6;
+      font-size: 1.125rem; line-height: 1.6;
     }
-
-    /* Continuous name pagination */
     .pagination {
-      display:flex; flex-wrap:wrap; gap:0.5rem;
-      font-family:'Roboto',sans-serif; margin-top:2rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      font-family: 'Roboto', sans-serif;
+      margin-top: 2rem;
     }
     .pagination button {
-      background:none; border:none; padding:0.25rem;
-      font-weight:700; cursor:pointer;
-      text-decoration:underline transparent;
+      background: none; border: none;
+      padding: 0.5rem 0.75rem; font-weight: 700;
+      cursor: pointer; text-decoration: underline transparent;
     }
     .pagination button.active {
-      text-decoration-color:#B59410;
+      text-decoration-color: #B59410;
     }
     .pagination button:disabled {
-      opacity:0.5; cursor:default;
+      opacity: 0.5; cursor: default;
     }
-
-    @media(max-width:700px) {
-      body { flex-direction:column; }
-      .sidebar { width:100%; border-right:none; border-bottom:1px solid #ddd; }
-      #profile-body { flex-direction:column; }
-      .avatar-wrap { margin:0 auto; }
+    @media (max-width:700px) {
+      .profile { flex-direction: column; }
+      .avatar-wrap { margin: 0 auto; }
     }
   </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <h1>Browse Gazette Rich List 2025</h1>
-  </aside>
+  <header class="main-header">
+    Browse Gazette <span class="gold">Rich List 2025</span>
+  </header>
 
-  <section class="main">
-    <div class="banner">
-      <p>Discover Quebec’s <span class="gold">top 25 fortunes</span></p>
-    </div>
-
-    <div id="profile-body"></div>
-    <div id="pagination" class="pagination"></div>
-  </section>
+  <div id="profile-container"></div>
+  <div id="pagination" class="pagination"></div>
 
   <script>
     const profiles = [
@@ -128,28 +102,30 @@
     ];
 
     let current = 0, total = profiles.length;
-    const bodyEl = document.getElementById('profile-body');
-    const pageEl = document.getElementById('pagination');
+    const container = document.getElementById('profile-container');
+    const pager = document.getElementById('pagination');
 
     function render() {
       const p = profiles[current];
-      bodyEl.innerHTML = `
-        <div class="avatar-wrap">
-          <img src="${p.avatar}" alt="${p.name}">
-        </div>
-        <div class="text-col">
-          <div class="profile-header">${p.rank}. ${p.name.toUpperCase()} — ${p.worth}</div>
-          <div class="bio-text">${p.bio}</div>
+      container.innerHTML = `
+        <div class="profile">
+          <div class="avatar-wrap">
+            <img src="${p.avatar}" alt="${p.name}">
+          </div>
+          <div class="text-col">
+            <div class="profile-header">${p.rank}. ${p.name.toUpperCase()} — ${p.worth}</div>
+            <div class="bio-text">${p.bio}</div>
+          </div>
         </div>
       `;
-      pageEl.innerHTML = '';
+      pager.innerHTML = '';
       profiles.forEach((pp,i) => {
         const btn = document.createElement('button');
         btn.textContent = `${pp.rank}. ${pp.name}`;
-        btn.className = i===current?'active':'';
-        btn.disabled = i===current;
-        btn.onclick = ()=>{ current=i; render(); window.scrollTo(0,0); };
-        pageEl.appendChild(btn);
+        btn.className = i === current ? 'active' : '';
+        btn.disabled = i === current;
+        btn.onclick = () => { current = i; render(); window.scrollTo(0,0); };
+        pager.appendChild(btn);
       });
     }
 
@@ -157,4 +133,3 @@
   </script>
 
 </body>
-</html>
