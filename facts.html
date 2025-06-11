@@ -3,23 +3,32 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Key Stats: Rich List 2025</title>
+  <title>Key Stats: Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       font-family: Georgia, serif;
       background: #f9f9f9;
       color: #111;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h1 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.5rem;
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
     }
     .stat-card {
       background: #fff;
@@ -40,39 +49,42 @@
       margin: 0;
       line-height: 1.4;
     }
-
     @media (max-width: 600px) {
-      .stat-card h2 {
-        font-size: 1.1rem;
-      }
-      .stat-card p {
-        font-size: 1rem;
-      }
+      h1 { font-size: 1.5rem; }
+      .stat-card h2 { font-size: 1.1rem; }
+      .stat-card p { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <h2>Minimum Fortune</h2>
-      <p>$1.3 billion</p>
-    </div>
-    <div class="stat-card">
-      <h2>Combined Wealth</h2>
-      <p>Over $80 billion</p>
-    </div>
-    <div class="stat-card">
-      <h2>Top Spot</h2>
-      <p>Alain Bouchard, Couche-Tard co-founder, at $9.2 billion</p>
-    </div>
-    <div class="stat-card">
-      <h2>Top Sector</h2>
-      <p>Convenience stores — 4 founders hold $17.5 billion</p>
-    </div>
-    <div class="stat-card">
-      <h2>Largest Endowment</h2>
-      <p>Azrieli Foundation, at $2.4 billion</p>
+  <div class="container">
+    <h1>Key Stats</h1>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h2>Combined Wealth</h2>
+        <p>Over \$80 billion</p>
+      </div>
+      <div class="stat-card">
+        <h2>Top Spot</h2>
+        <p>Alain Bouchard, Couche-Tard co-founder, at \$9.2 billion</p>
+      </div>
+      <div class="stat-card">
+        <h2>Top Sector</h2>
+        <p>Convenience stores — four Couche-Tard founders hold \$17.5 billion</p>
+      </div>
+      <div class="stat-card">
+        <h2>Largest Foundation</h2>
+        <p>The Azrieli Foundation, at \$2.4 billion</p>
+      </div>
+      <div class="stat-card">
+        <h2>Years to Join</h2>
+        <p>At \$50,000/year salary, ~26,000 years to earn the \$1.3 billion threshold</p>
+      </div>
+      <div class="stat-card">
+        <h2>Female Billionaires</h2>
+        <p>Only three on the list — the Azrieli sisters</p>
+      </div>
     </div>
   </div>
 
