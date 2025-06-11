@@ -9,81 +9,55 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: Georgia, serif;
-      background: #fff;
-      color: #111;
+      background: #fff; color: #111;
       line-height: 1.6;
     }
-    /* Full-bleed banner */
+    /* full-bleed banner */
     .banner {
-      width:100vw;
-      position:relative;
-      left:50%;
-      margin-left:-50vw;
-      background:#000;
-      padding:1.5rem 0;
+      width:100vw; position:relative; left:50%; margin-left:-50vw;
+      background:#000; padding:1.5rem 0;
     }
     .banner .container {
-      max-width:800px;
-      margin:0 auto;
-      padding:0 1rem;
+      max-width:800px; margin:0 auto; padding:0 1rem;
     }
     .banner p {
       font-family:'Roboto',sans-serif;
-      color:#B59410;
-      font-size:1.5rem;
-      font-weight: bold;
+      color:#B59410; font-size:1.5rem;
     }
-    /* Centered wrapper */
+    /* centered wrapper */
     .container {
-      max-width:800px;
-      margin:0 auto;
-      padding:1.5rem 1rem;
+      max-width:800px; margin:0 auto; padding:1.5rem 1rem;
     }
-    /* Profile blocks */
+    /* profile blocks */
     .profile + .profile {
       margin-top:2rem;
     }
     .profile h2 {
       font-family:'Roboto',sans-serif;
-      font-size:1.75rem;
-      margin-bottom:.5rem;
+      font-size:1.75rem; margin-bottom:.5rem;
     }
     .profile h2 .rank {
-      color:#B59410;
-      font-weight:700;
-      margin-right:.5rem;
+      color:#B59410; font-weight:700; margin-right:.5rem;
     }
     .profile h2 .name-worth {
-      color:#000;
-      font-weight:400;
+      color:#000; font-weight:400;
     }
     .profile p {
       font-size:1rem;
     }
-    /* Pagination */
+    /* pagination (page numbers only) */
     .pagination {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
       margin-top:2rem;
-      font-size:1rem;
-      color:#666;
+      text-align:center;
     }
-    .pagination .pages {
-      display:flex;
-      gap:.5rem;
-    }
-    .pagination button,
     .pagination .page-number {
-      padding:.5rem 1rem;
+      display:inline-block;
+      margin:0 .25rem;
+      padding:.5rem .75rem;
       font-size:1rem;
       cursor:pointer;
       background:none;
       border:1px solid #ccc;
-    }
-    .pagination button:disabled {
-      opacity:.5;
-      cursor:not-allowed;
     }
     .pagination .page-number.active {
       background:#B59410;
@@ -97,16 +71,14 @@
   <!-- Banner -->
   <div class="banner">
     <div class="container">
-      <p>Browse profiles of Quebec's top 25 fortunes </p>
+      <p>Browse the profiles of the top 25 fortunes in Quebec</p>
     </div>
   </div>
 
   <div class="container">
     <div id="profiles"></div>
 
-    <div class="pagination">
-      <div class="pages" id="page-numbers"></div>
-    </div>
+    <div class="pagination" id="page-numbers"></div>
   </div>
 
   <script>
@@ -119,23 +91,23 @@
       { rank:6,  name:'Jacques D’Amours & Marie-Eve D’Amours', worth:'$4.5B', bio:'Sibling co-founders Jacques D’Amours and Marie-Eve D’Amours helped transform Couche-Tard from a local convenience store into a global retail heavyweight. Jacques spearheaded acquisitions, while Marie-Eve led branding and operations, building the Circle K network.'},
       { rank:7,  name:'Ryan Cohen',                     worth:'$4.0B', bio:'Ryan Cohen founded Chewy in 2011, building it into a US$3.35 billion pet‐supplies e-tailer and later led GameStop’s digital turnaround as an activist investor.'},
       { rank:8,  name:'Serge Godin',                    worth:'$3.7B', bio:'Serge Godin founded CGI in 1976, pioneering the IT-services model. Today CGI Inc. employs tens of thousands globally, known for low staff turnover and deep client relationships.'},
-      { rank:9,  name:'Jean Coutu & family',            worth:'$3.3B', bio:'Jean Coutu opened his first pharmacy in 1969. His family sold the chain to Metro in 2018 but retained real-estate royalties on many stores and funds healthcare charities.'},
-      { rank:10, name:'Pierre Karl Péladeau',           worth:'$3.0B', bio:'Pierre Karl Péladeau diversified Quebecor into media, telecom and digital content. After a brief political stint, he returned as executive chair and champions francophone culture.'},
-      { rank:11, name:'Bombardier & Beaudoin family',   worth:'$2.5B', bio:'From snowmobiles to jets, the Bombardier empire—founded in 1942—remains under the Beaudoin family, now focused on business aviation and rail, plus STEM philanthropy.'},
+      { rank:9,  name:'Jean Coutu & family',            worth:'$3.3B', bio:'Jean Coutu opened his first pharmacy in 1969. His family sold the chain to Metro in 2018 but retained real-estate royalties on many stores and supports healthcare charities.'},
+      { rank:10, name:'Pierre Karl Péladeau',           worth:'$3.0B', bio:'Pierre Karl Péladeau diversified Quebecor into media, telecom and digital content. After a brief political stint, he returned as executive chair, championing francophone culture and community broadcasting.'},
+      { rank:11, name:'Bombardier & Beaudoin family',   worth:'$2.5B', bio:'From snowmobiles to jets, the Bombardier empire—founded in 1942—remains under the Beaudoin family, now focused on business aviation, rail and STEM philanthropy.'},
       { rank:12, name:'Richard Fortin',                 worth:'$2.5B', bio:'Couche-Tard co-founder Richard Fortin managed M&A and finance, powering rapid growth. Today he funds literacy and arts programs across Quebec.'},
-      { rank:13, name:'Philip Fayer',                   worth:'$2.1B', bio:'Philip Fayer co-founded Paysafe in 1996, merging with Neteller and Skrill to become a top digital-payments firm listed in London.'},
-      { rank:14, name:'Molson family',                  worth:'$2.0B', bio:'The Molson brewing saga began in 1786. Today Molson Coors is a global beer powerhouse and the family’s foundation backs healthcare, education and the arts.'},
-      { rank:15, name:'Kruger family',                  worth:'$1.9B', bio:'Since 1904 Kruger Inc. has diversified from pulp to tissue and renewable-energy projects, investing heavily in sustainability and community scholarships.'},
-      { rank:16, name:'Réal Plourde',                   worth:'$1.6B', bio:'Early Couche-Tard investor Réal Plourde now chairs a commercial REIT and funds healthcare innovation and francophone scholarships.'},
-      { rank:17, name:'Andrew Lutfy',                   worth:'$1.5B', bio:'Andrew Lutfy co-founded RONA in 1992 and later invested in real estate and tech, while supporting entrepreneurship programs at HEC Montréal.'},
-      { rank:18, name:'Goodman family',                 worth:'$1.5B', bio:'The Goodman family built Cadillac Fairview into a real-estate titan and now focuses on ESG developments and arts philanthropy.'},
+      { rank:13, name:'Philip Fayer',                   worth:'$2.1B', bio:'Philip Fayer co-founded Paysafe in 1996, merging with Neteller and Skrill to become a leading digital-payments firm listed in London.'},
+      { rank:14, name:'Molson family',                  worth:'$2.0B', bio:'The Molson brewing saga began in 1786. Today Molson Coors is a global beer powerhouse, and the family’s foundation backs healthcare, education and the arts.'},
+      { rank:15, name:'Kruger family',                  worth:'$1.9B', bio:'Since 1904 Kruger Inc. has diversified from pulp and paper to tissue and renewable energy, investing heavily in sustainability and community scholarships.'},
+      { rank:16, name:'Réal Plourde',                   worth:'$1.6B', bio:'Réal Plourde financed Couche-Tard’s first stores, then built a REIT and now mentors retail start-ups while funding healthcare research.'},
+      { rank:17, name:'Andrew Lutfy',                   worth:'$1.5B', bio:'Andrew Lutfy co-founded RONA in 1992 and sold to Lowe’s in 2016; he now invests in real estate and supports entrepreneurship programs.'},
+      { rank:18, name:'Goodman family',                 worth:'$1.5B', bio:'The Goodmans built Cadillac Fairview into a real-estate titan and now focus on ESG developments and art philanthropy.'},
       { rank:19, name:'Guy Laliberté',                  worth:'$1.3B', bio:'Guy Laliberté founded Cirque du Soleil in 1984, then launched the One Drop Foundation and became Canada’s first civilian space tourist.'},
-      { rank:20, name:'Pierre Lassonde',                worth:'$1.3B', bio:'Pierre Lassonde co-founded Franco-Nevada in 1983, creating the royalty streaming model in mining finance and funding arts and engineering.'},
-      { rank:21, name:'John MacBain',                   worth:'$1.1B', bio:'John MacBain founded Trader Classified Media, sold it for $3.4 billion, then launched a foundation for education and land-mine removal.'},
-      { rank:22, name:'Larry Rossy',                    worth:'$1.0B', bio:'Larry Rossy grew Rossy pharmacies to 100 stores. The family supports food banks and co-founded community health clinics.'},
-      { rank:23, name:'Hewitt family',                  worth:'$1.0B', bio:'The Hewitt family’s equipment distributor grew from 1962 roots to a North American leader and funds technical trades training.'},
-      { rank:24, name:'Charles Bronfman',               worth:'—',    bio:'Charles Bronfman, Seagram heir, co-owned MLB teams, launched Bronfman Philanthropies and backs Jewish education and women’s health.'},
-      { rank:25, name:'Stephan Jarislowsky',            worth:'—',    bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed shareholder rights via annual letters, and funds arts and social-science research.'}
+      { rank:20, name:'Pierre Lassonde',                worth:'$1.3B', bio:'Pierre Lassonde co-founded Franco-Nevada in 1983, creating the royalty-streaming model in mining finance and funding arts and engineering.'},
+      { rank:21, name:'John MacBain',                   worth:'$1.1B', bio:'John MacBain founded Trader Classified Media, sold it for US$3.4 billion, then launched a foundation for education and land-mine removal.'},
+      { rank:22, name:'Larry Rossy',                    worth:'$1.0B', bio:'Larry Rossy grew his family’s Rossy pharmacies to 100 stores and now supports food banks and community clinics.'},
+      { rank:23, name:'Hewitt family',                  worth:'$1.0B', bio:'The Hewitt family’s equipment distributor grew from 1962 roots to a North American leader and funds skilled-trades training.'},
+      { rank:24, name:'Charles Bronfman',               worth:'—',    bio:'Charles Bronfman, Seagram heir, co-owned MLB teams, launched Bronfman Philanthropies and backs education and women’s health.'},
+      { rank:25, name:'Stephan Jarislowsky',            worth:'—',    bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed shareholder rights through annual letters, and funds arts and social-science research.'}
     ];
 
     const perPage = 5;
@@ -164,7 +136,6 @@
           container.appendChild(div);
         });
 
-      // pagination numbers
       const pagesDiv = document.getElementById('page-numbers');
       pagesDiv.innerHTML = '';
       for (let i = 1; i <= totalPages; i++) {
@@ -178,10 +149,13 @@
         });
         pagesDiv.appendChild(btn);
       }
-      document.getElementById('prev').disabled = currentPage === 1;
-      document.getElementById('next').disabled = currentPage === totalPages;
     }
 
+    document.getElementById('page-numbers').addEventListener('click', e => {
+      if (e.target.classList.contains('page-number')) {
+        // handled above
+      }
+    });
 
     window.onload = renderPage;
   </script>
