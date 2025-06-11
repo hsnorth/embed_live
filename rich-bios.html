@@ -146,15 +146,14 @@
       { rank:23, name:'Hewitt family',                     worth:'$1.0B', bio:`The Hewitt family built Hewitt Equipment, a distributor of heavy machinery for construction and forestry, in 1962. Headquartered in Laval, the company grew through exclusive OEM partnerships and exceptional after-sales service. Today Hewitt operates in Canada and the U.S., supplying at least five major brands and maintaining one of North America’s largest parts inventories. As the third generation takes over, the family has diversified into equipment rental and renewable-energy infrastructure. They support technical training programs at CEGEPs and sponsor an annual engineers’ symposium in Montreal, bolstering the skilled-trades pipeline for their industry’s future.`},
       { rank:24, name:'Charles Bronfman',                  worth:'—',    bio:`Charles Bronfman, heir to the Seagram distillery fortune, transformed the family’s assets into a global entertainment and music empire. From the 1960s to the 1990s, he co-owned MLB franchises, invested in publishing and launched cutting-edge philanthropic ventures. Bronfman co-founded The Andrea & Charles Bronfman Philanthropies, supporting Jewish education, women’s health and environmental sustainability. A major gift to McGill University created the Bronfman Professorship in Asian Studies. Though his net worth fluctuates with private holdings, his impact on culture and generosity—particularly in arts and interfaith dialogue—remains a defining legacy of Montreal’s most storied family.`},
       { rank:25, name:'Stephan Jarislowsky',               worth:'—',    bio:`Stephan Jarislowsky founded Jarislowsky Fraser in 1955, building one of Canada’s premier investment management firms. Known for his contrarian value approach, he guided the firm through bear and bull markets, earning trust among pension funds and endowments. Jarislowsky is famed for candid annual investor letters that critique corporate governance and public policy. A lifelong advocate for shareholder rights, he helped improve board accountability across Canadian blue-chips. Beyond finance, Jarislowsky funds arts and social-science research through the Jarislowsky Foundation, and is a strong voice for intergenerational fairness in pensions and retirement security.`},
-      { rank:26, name:'Lawrence Stroll',                   worth:'—',    bio:`Lawrence Stroll built his fortune as a fashion mogul, co-founding Tommy Hilfiger Europe and later acquiring luxury brands. A prominent investor in Formula 1, he led a consortium to save and rebrand Racing Point as Aston Martin. Under his stewardship, the team returned to competitive form, securing podium finishes and renewed brand partnerships. Stroll’s investments span real estate, retail and automotive design, reflecting his passion for high performance and luxury. A dual citizen of Canada and Switzerland, he supports motorsport development programs, funding karting and engineering scholarships to nurture young talent in Canada and beyond.`}
     ];
 
     const perPage = 5;
     let currentPage = 1;
     const totalPages = Math.ceil(profiles.length / perPage);
 
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function scrollToProfiles() {
+      document.getElementById('profiles').scrollIntoView({ behavior: 'smooth' });
     }
 
     function renderPage() {
@@ -165,10 +164,10 @@
       profiles.slice(start, end).forEach(p => {
         const div = document.createElement('div');
         div.className = 'profile';
-        div.innerHTML = \`
-          <h2>\${p.rank}. <span>\${p.name} — \${p.worth}</span></h2>
-          <p>\${p.bio}</p>
-        \`;
+        div.innerHTML = `
+          <h2>${p.rank}. <span>${p.name} — ${p.worth}</span></h2>
+          <p>${p.bio}</p>
+        `;
         container.appendChild(div);
       });
 
@@ -181,10 +180,11 @@
         btn.addEventListener('click', () => {
           currentPage = i;
           renderPage();
-          scrollToTop();
+          scrollToProfiles();
         });
         pagesDiv.appendChild(btn);
       }
+
       document.getElementById('prev').disabled = currentPage === 1;
       document.getElementById('next').disabled = currentPage === totalPages;
     }
@@ -193,14 +193,15 @@
       if (currentPage > 1) {
         currentPage--;
         renderPage();
-        scrollToTop();
+        scrollToProfiles();
       }
     });
+
     document.getElementById('next').addEventListener('click', () => {
       if (currentPage < totalPages) {
         currentPage++;
         renderPage();
-        scrollToTop();
+        scrollToProfiles();
       }
     });
 
