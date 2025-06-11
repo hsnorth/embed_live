@@ -3,17 +3,16 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Gazette Rich List 2025</title>
+  <title>Gazette Rich List 2025 Bios</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * { margin:0; padding:0; box-sizing:border-box }
     body {
       font-family: Georgia, serif;
-      background: #fff; 
+      background: #fff;
       color: #111;
       line-height: 1.6;
     }
-    /* banner with left-aligned snappy label */
     .banner {
       background: #fff;
       padding: 1rem 1rem;
@@ -25,38 +24,65 @@
     .banner p {
       font-family: 'Roboto', sans-serif;
       font-size: 2rem;
-      font-weight: bold;
+      font-weight: 700;
       color: #000;
       text-align: left;
     }
-    .banner p .gold {
+    .banner .gold {
       color: #B59410;
     }
-    /* centered wrapper with reduced padding */
     .container {
       max-width: 800px;
       margin: 0 auto;
       padding: 0.5rem 1rem;
     }
-    /* profile blocks */
-    .profile + .profile { margin-top: 1.5rem; }
-    .profile h2 {
+    .profiles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .profile {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .avatar-wrap {
+      position: relative;
+      width: 64px;
+      height: 64px;
+    }
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #B59410;
+    }
+    .rank-badge {
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-family: 'Roboto', sans-serif;
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 0.9rem;
     }
-    .profile h2 .rank {
-      color: #B59410;
-      margin-right: 0.5rem;
+    .profile-body h2 {
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      margin: 0 0 0.5rem;
+      font-weight: 700;
     }
-    .profile h2 .name-worth {
-      color: #000;
+    .profile-body p {
+      margin: 0;
+      font-size: 1rem;
     }
-    .profile p {
-      font-size: 1.2rem;
-    }
-    /* pagination */
     .pagination {
       display: flex;
       justify-content: center;
@@ -64,16 +90,19 @@
       font-size: 1rem;
       color: #666;
     }
-    .pagination .pages { display: flex; gap: 0.5rem; }
-    .pagination .page-number {
+    .pagination .pages {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .page-number {
       padding: 0.5rem 0.75rem;
       font-size: 1rem;
       cursor: pointer;
       background: none;
       border: 1px solid #ccc;
-      font-weight: bold;
+      font-weight: 700;
     }
-    .pagination .page-number.active {
+    .page-number.active {
       background: #B59410;
       color: #fff;
       border-color: #B59410;
@@ -82,51 +111,56 @@
 </head>
 <body>
 
-  <!-- snappier, left-aligned banner -->
   <div class="banner">
     <div class="container">
-      <p>Explore Quebec’s <span class="gold">top 25 fortunes</span></p>
+      <p>Discover Quebec’s <span class="gold">top 25 fortunes</span> now</p>
     </div>
   </div>
 
   <div class="container">
-    <div id="profiles"></div>
-
+    <div id="profiles" class="profiles-list"></div>
     <div class="pagination" id="page-numbers"></div>
   </div>
 
   <script>
     const profiles = [
-      { rank:1,  name:'Alain Bouchard and family',       worth:'$9.2B', bio:'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single convenience store in Laval, Quebec. Over four decades he transformed it into one of the world’s largest chains, operating more than 14,000 outlets across North America, Europe and Asia under brands like Couche-Tard, Circle K and Mac’s. A shrewd acquirer, Bouchard drove the company’s rapid expansion through strategic purchases and partnerships, all while maintaining a private ownership structure under his family’s holding company. Today, the Bouchards remain deeply involved in governance and philanthropy, focusing on health care, education and community development across Canada.'},
-      { rank:2,  name:'Paul Desmarais Jr. and André',   worth:'$7.0B', bio:'Brothers Paul Desmarais Jr. and André Desmarais inherited control of Power Corporation of Canada from their father. They expanded into asset management, insurance and utilities while funding major philanthropic initiatives in Quebec.'},
-      { rank:3,  name:'The Azrieli family',             worth:'$6.0B', bio:'The Azrieli family’s fortune traces back to Holocaust survivor David Azrieli. He built landmark real estate from Toronto to Israel and founded Canada’s largest private philanthropic foundation, granting hundreds of millions to science and the arts.'},
-      { rank:4,  name:'Emanuele Saputo & family',       worth:'$5.5B', bio:'Emanuele Saputo grew his family’s cheese business from a Montreal market stall into Saputo Inc., one of the world’s largest dairy processors, operating in five countries and producing a wide range of cheeses and dairy products.'},
-      { rank:5,  name:'Robert Miller',                  worth:'$5.2B', bio:'Robert Miller founded Future Electronics in 1968 in his parents’ basement. Today the company is a global electronic components distributor with over 170 locations worldwide, known for rapid fulfillment and customer service.'},
-      { rank:6,  name:'Jacques D’Amours & Marie-Eve D’Amours', worth:'$4.5B', bio:'Sibling co-founders Jacques D’Amours and Marie-Eve D’Amours helped transform Couche-Tard from a local convenience store into a global retail heavyweight. Jacques spearheaded acquisitions, while Marie-Eve led branding and operations, building the Circle K network.'},
-      { rank:7,  name:'Ryan Cohen',                     worth:'$4.0B', bio:'Ryan Cohen founded Chewy in 2011, building it into a US$3.35 billion pet‐supplies e-tailer and later led GameStop’s digital turnaround as an activist investor.'},
-      { rank:8,  name:'Serge Godin',                    worth:'$3.7B', bio:'Serge Godin founded CGI in 1976, pioneering the IT-services model. Today CGI Inc. employs tens of thousands globally, known for low staff turnover and deep client relationships.'},
-      { rank:9,  name:'Jean Coutu & family',            worth:'$3.3B', bio:'Jean Coutu opened his first pharmacy in 1969. His family sold the chain to Metro in 2018 but retained real-estate royalties on many stores and supports healthcare charities.'},
-      { rank:10, name:'Pierre Karl Péladeau',           worth:'$3.0B', bio:'Pierre Karl Péladeau diversified Quebecor into media, telecom and digital content. After a brief political stint, he returned as executive chair, championing francophone culture and community broadcasting.'},
-      { rank:11, name:'Bombardier & Beaudoin family',   worth:'$2.5B', bio:'From snowmobiles to jets, the Bombardier empire—founded in 1942—remains under the Beaudoin family, now focused on business aviation, rail and STEM philanthropy.'},
-      { rank:12, name:'Richard Fortin',                 worth:'$2.5B', bio:'Couche-Tard co-founder Richard Fortin managed M&A and finance, powering rapid growth. Today he funds literacy and arts programs across Quebec.'},
-      { rank:13, name:'Philip Fayer',                   worth:'$2.1B', bio:'Philip Fayer co-founded Paysafe in 1996, merging with Neteller and Skrill to become a leading digital-payments firm listed in London.'},
-      { rank:14, name:'Molson family',                  worth:'$2.0B', bio:'The Molson brewing saga began in 1786. Today Molson Coors is a global beer powerhouse, and the family’s foundation backs healthcare, education and the arts.'},
-      { rank:15, name:'Kruger family',                  worth:'$1.9B', bio:'Since 1904 Kruger Inc. has diversified from pulp and paper to tissue and renewable energy, investing heavily in sustainability and community scholarships.'},
-      { rank:16, name:'Réal Plourde',                   worth:'$1.6B', bio:'Réal Plourde financed Couche-Tard’s first stores, then built a REIT and now mentors retail start-ups while funding healthcare research.'},
-      { rank:17, name:'Andrew Lutfy',                   worth:'$1.5B', bio:'Andrew Lutfy co-founded RONA in 1992 and sold to Lowe’s in 2016; he now invests in real estate and supports entrepreneurship programs.'},
-      { rank:18, name:'Goodman family',                 worth:'$1.5B', bio:'The Goodmans built Cadillac Fairview into a real-estate titan and now focus on ESG developments and art philanthropy.'},
-      { rank:19, name:'Guy Laliberté',                  worth:'$1.3B', bio:'Guy Laliberté founded Cirque du Soleil in 1984, then launched the One Drop Foundation and became Canada’s first civilian space tourist.'},
-      { rank:20, name:'Pierre Lassonde',                worth:'$1.3B', bio:'Pierre Lassonde co-founded Franco-Nevada in 1983, creating the royalty-streaming model in mining finance and funding arts and engineering.'},
-      { rank:21, name:'John MacBain',                   worth:'$1.1B', bio:'John MacBain founded Trader Classified Media, sold it for US$3.4 billion, then launched a foundation for education and land-mine removal.'},
-      { rank:22, name:'Larry Rossy',                    worth:'$1.0B', bio:'Larry Rossy grew his family’s Rossy pharmacies to 100 stores and now supports food banks and community clinics.'},
-      { rank:23, name:'Hewitt family',                  worth:'$1.0B', bio:'The Hewitt family’s equipment distributor grew from 1962 roots to a North American leader and funds skilled-trades training.'},
-      { rank:24, name:'Charles Bronfman',               worth:'—',    bio:'Charles Bronfman, Seagram heir, co-owned MLB teams, launched Bronfman Philanthropies and backs education and women’s health.'},
-      { rank:25, name:'Stephan Jarislowsky',            worth:'—',    bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed shareholder rights through annual letters, and funds arts and social-science research.'}
+      {rank:1,name:'Alain Bouchard and family',worth:'$9.2B',avatar:'https://yourcdn.com/avatars/alain_bouchard.jpg',bio:'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single convenience store in Laval, Quebec. Over four decades he transformed it into one of the world’s largest chains, operating more than 14,000 outlets across North America, Europe and Asia under brands like Couche-Tard, Circle K and Mac’s.'},
+      {rank:2,name:'Paul Desmarais Jr. and André',worth:'$7.0B',avatar:'https://yourcdn.com/avatars/paul_desmarais.jpg',bio:'Brothers Paul Desmarais Jr. and André inherited control of Power Corporation of Canada from their father. They expanded into asset management, insurance and energy through stakes in Great-West Lifeco and IGM Financial, and fund major philanthropic initiatives across Quebec.'},
+      {rank:3,name:'The Azrieli family',worth:'$6.0B',avatar:'https://yourcdn.com/avatars/azrieli_family.jpg',bio:'Naomi, Sharon and Danna Azrieli inherited their real-estate empire from Holocaust survivor David Azrieli. They oversee Azrieli Group’s billions-worth portfolio and the Azrieli Foundation, Canada’s largest private charitable endowment with over $2.4 billion in assets.'},
+      {rank:4,name:'Emanuele Saputo & family',worth:'$5.5B',avatar:'https://yourcdn.com/avatars/emanuele_saputo.jpg',bio:'Emanuele Saputo and family founded Saputo Inc. in 1954, growing from a Montreal market stall to a global dairy processor operating in Canada, the U.S., Argentina, Australia and the UK.'},
+      {rank:5,name:'Robert Miller',worth:'$5.2B',avatar:'https://yourcdn.com/avatars/robert_miller.jpg',bio:'Robert Miller founded Future Electronics in 1968 from his parents’ basement in Montreal. Today it’s a global distributor of electronic components with over 170 locations in 40+ countries.'},
+      {rank:6,name:'Jacques D’Amours & Marie-Eve D’Amours',worth:'$4.5B',avatar:'https://yourcdn.com/avatars/jacques_damours.jpg',bio:'Sibling co-founders Jacques D’Amours and Marie-Eve D’Amours helped expand Couche-Tard through aggressive M&A and operations leadership, building Circle K into a global convenience-store network.'},
+      {rank:7,name:'Ryan Cohen',worth:'$4.0B',avatar:'https://yourcdn.com/avatars/ryan_cohen.jpg',bio:'Ryan Cohen founded Chewy in 2011, scaling it to a $3.35 billion sale and later led an activist turnaround of GameStop as a board member, reshaping retail strategy.'},
+      {rank:8,name:'Serge Godin',worth:'$3.7B',avatar:'https://yourcdn.com/avatars/serge_godin.jpg',bio:'Serge Godin founded CGI in 1976, pioneering a client-centric IT services model. Today CGI Inc. ranks among the world’s largest technology and consulting firms.'},
+      {rank:9,name:'Jean Coutu & family',worth:'$3.3B',avatar:'https://yourcdn.com/avatars/jean_coutu.jpg',bio:'Jean Coutu opened his first pharmacy in 1969. He built a regional chain that, after selling to Metro, still generates royalties and funds healthcare charities.'},
+      {rank:10,name:'Pierre Karl Péladeau',worth:'$3.0B',avatar:'https://yourcdn.com/avatars/pierre_peladeau.jpg',bio:'Pierre Karl Péladeau diversified Quebecor from print publishing into telecom and digital media, later serving briefly as Parti Québécois leader before returning as executive chair.'},
+      {rank:11,name:'Bombardier & Beaudoin family',worth:'$2.5B',avatar:'https://yourcdn.com/avatars/bombardier_beaudoin.jpg',bio:'The Bombardier dynasty—from snowmobiles to regional jets—remains under Beaudoin family control, now refocused on business aviation, rail and STEM philanthropy.'},
+      {rank:12,name:'Richard Fortin',worth:'$2.5B',avatar:'https://yourcdn.com/avatars/richard_fortin.jpg',bio:'Richard Fortin, one of Couche-Tard’s founding CFOs, orchestrated financing for rapid expansion and now funds literacy and arts through his foundation.'},
+      {rank:13,name:'Philip Fayer',worth:'$2.1B',avatar:'https://yourcdn.com/avatars/philip_fayer.jpg',bio:'Philip Fayer co-founded Paysafe in 1996, merging major digital-payments brands like Neteller and Skrill; today he drives its fintech innovation as executive chair.'},
+      {rank:14,name:'Molson family',worth:'$2.0B',avatar:'https://yourcdn.com/avatars/molson_family.jpg',bio:'The Molson brewing saga began in 1786; today the family’s legacy spans global beer brands and a foundation supporting healthcare, education and the arts.'},
+      {rank:15,name:'Kruger family',worth:'$1.9B',avatar:'https://yourcdn.com/avatars/kruger_family.jpg',bio:'Since 1904 Kruger Inc. has grown from pulp mills to tissue and packaging, pioneering sustainable forestry and funding community scholarships.'},
+      {rank:16,name:'Réal Plourde',worth:'$1.6B',avatar:'https://yourcdn.com/avatars/real_plourde.jpg',bio:'Réal Plourde financed Couche-Tard’s first stores and now chairs a commercial-property REIT while funding healthcare innovation in Quebec.'},
+      {rank:17,name:'Andrew Lutfy',worth:'$1.5B',avatar:'https://yourcdn.com/avatars/andrew_lutfy.jpg',bio:'Andrew Lutfy co-founded RONA in 1992 and sold it to Lowe’s in 2016; he now invests in real estate and supports entrepreneurship programs.'},
+      {rank:18,name:'Goodman family',worth:'$1.5B',avatar:'https://yourcdn.com/avatars/goodman_family.jpg',bio:'The Goodman family built Cadillac Fairview into a commercial-real-estate leader; they now focus on ESG projects and arts philanthropy.'},
+      {rank:19,name:'Guy Laliberté',worth:'$1.3B',avatar:'https://yourcdn.com/avatars/guy_laliberte.jpg',bio:'Guy Laliberté founded Cirque du Soleil in 1984, redefining circus; he later launched the One Drop Foundation and became Canada’s first civilian space tourist.'},
+      {rank:20,name:'Pierre Lassonde',worth:'$1.3B',avatar:'https://yourcdn.com/avatars/pierre_lassonde.jpg',bio:'Pierre Lassonde co-founded Franco-Nevada in 1983, pioneering streaming royalties in mining; he donates generously to arts and engineering education.'},
+      {rank:21,name:'John MacBain',worth:'$1.1B',avatar:'https://yourcdn.com/avatars/john_macbain.jpg',bio:'John MacBain founded Trader Classified Media, sold it for $3.4 billion in 2006, then established a major foundation for education and land-mine removal.'},
+      {rank:22,name:'Larry Rossy',worth:'$1.0B',avatar:'https://yourcdn.com/avatars/larry_rossy.jpg',bio:'Larry Rossy grew Rossy pharmacies from one Montreal store to 100 locations; his family supports food banks and local healthcare clinics.'},
+      {rank:23,name:'Hewitt family',worth:'$1.0B',avatar:'https://yourcdn.com/avatars/hewitt_family.jpg',bio:'The Hewitt family founded Hewitt Equipment in 1962, distributing heavy machinery and now funding trades training and renewable-energy infrastructure.'},
+      {rank:24,name:'Charles Bronfman',worth:'—',avatar:'https://yourcdn.com/avatars/charles_bronfman.jpg',bio:'Charles Bronfman, Seagram heir, co-owned MLB teams, launched Bronfman Philanthropies, and funds Jewish education, women’s health and environmental causes.'},
+      {rank:25,name:'Stephan Jarislowsky',worth:'—',avatar:'https://yourcdn.com/avatars/stephan_jarislowsky.jpg',bio:'Stephan Jarislowsky founded Jarislowsky Fraser in 1955, championed corporate governance through annual investor letters, and funds arts and social-science research.'},
     ];
 
     const perPage = 5;
     let currentPage = 1;
     const totalPages = Math.ceil(profiles.length / perPage);
+
+    function badgeColor(rank) {
+      if (rank === 1) return '#B59410';    // gold
+      if (rank === 2) return '#C0C0C0';    // silver
+      if (rank === 3) return '#CD7F32';    // bronze
+      return '#39FF14';                    // neon green
+    }
 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -141,11 +175,16 @@
           const div = document.createElement('div');
           div.className = 'profile';
           div.innerHTML = `
-            <h2>
-              <span class="rank">${p.rank}.</span>
-              <span class="name-worth">${p.name} — ${p.worth}</span>
-            </h2>
-            <p>${p.bio}</p>
+            <div class="avatar-wrap">
+              <img src="${p.avatar}" alt="${p.name}" class="avatar"/>
+              <div class="rank-badge" style="background:${badgeColor(p.rank)}">
+                ${p.rank}
+              </div>
+            </div>
+            <div class="profile-body">
+              <h2><span class="name-worth">${p.name} — ${p.worth}</span></h2>
+              <p>${p.bio}</p>
+            </div>
           `;
           container.appendChild(div);
         });
@@ -156,20 +195,14 @@
         const btn = document.createElement('button');
         btn.textContent = i;
         btn.className = 'page-number' + (i === currentPage ? ' active' : '');
-        btn.addEventListener('click', () => {
+        btn.onclick = () => {
           currentPage = i;
           renderPage();
           scrollToTop();
-        });
+        };
         pagesDiv.appendChild(btn);
       }
     }
-
-    document.getElementById('page-numbers').addEventListener('click', e => {
-      if (e.target.classList.contains('page-number')) {
-        // handled above
-      }
-    });
 
     window.onload = renderPage;
   </script>
