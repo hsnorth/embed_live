@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Rich List Stats</title>
+  <title>Four key stats</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     html, body {
       margin: 0; padding: 0;
       font-family: Georgia, serif;
-      background: #f9f9f9;
+      background: #fff;            /* white page background */
       color: #111;
     }
     .container {
@@ -20,9 +20,10 @@
     }
     h1 {
       font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
+      text-align: left;
     }
     .stats-grid {
       display: grid;
@@ -32,15 +33,19 @@
     .stat-card {
       background: #fff;
       border-radius: 6px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      text-align: left;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* subtle shadow */
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
     }
     .number {
       position: relative;
-      display: inline-block;
       font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
+      font-size: 2.4rem;
       font-weight: 700;
       color: #111;
       margin: 0 0 0.5rem 0;
@@ -48,9 +53,8 @@
     .number::before {
       content: '';
       position: absolute;
-      top: -0.6rem;   /* lifts bar just above number */
-      left: 25%;
-      transform: translateX(-50%);
+      top: -0.6rem;
+      left: 0;
       width: 60px;
       height: 4px;
       background: linear-gradient(90deg, #B59410, #D4AF37);
@@ -58,59 +62,58 @@
     }
     .label {
       font-size: 1.05rem;
-      line-height: 1.4;
       color: #333;
+      line-height: 1.4;
       margin: 0;
+    }
+    .caption {
+      font-family: Georgia, serif;
+      font-size: 0.875rem;
+      color: #666;
+      margin-top: 2rem;
+      text-align: right;
     }
 
     @media (max-width: 600px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
+      h1 { font-size: 2rem; }
+      .stats-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .stat-card {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
         gap: 1rem;
       }
-      .stat-card {
-        display: flex;
-        align-items: center;     /* vertical center */
-        padding: 1rem;
-      }
       .number {
-        font-size: 1.8rem;
-        margin: 0;
+        font-size: 2rem;
+        margin-bottom: 0;
         flex-shrink: 0;
-        /* push it in from the left edge a bit */
-        margin-left: 1.5rem;
-        margin-right: 1rem;
       }
-      .label {
-        font-size: 0.95rem;
-        margin: 0;
-        /* ensure all labels start at the same x-position */
-        flex: 1;
-      }
+      .label { font-size: 0.95rem; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Rich List Number Crunching</h1>
+    <h1>Four key stats</h1>
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="number">$80 Bn</div>
+        <div class="number">$80&nbsp;Bn</div>
         <p class="label">Total wealth of the 25 members</p>
       </div>
       <div class="stat-card">
-        <div class="number">$9.2 Bn</div>
+        <div class="number">$9.2&nbsp;Bn</div>
         <p class="label">Net worth of richest person</p>
       </div>
       <div class="stat-card">
         <div class="number">26,000</div>
-        <p class="label">Years to make list at $50 k per yr</p>
+        <p class="label">Years to make list at $50 k/yr</p>
       </div>
       <div class="stat-card">
-        <div class="number">$2.4 Bn</div>
+        <div class="number">$2.4&nbsp;Bn</div>
         <p class="label">Size of largest foundation</p>
       </div>
     </div>
+    <p class="caption">Graphic: The Gazette Rich List 2025</p>
   </div>
 </body>
 </html>
