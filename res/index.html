@@ -5,14 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Rich List Facts</title>
   <style>
-    /* By default show the large-screen GIF, hide the small one */
+    /* GIF swap */
     .smallfacts { display: none; }
     .largefacts { display: block; width: 100%; height: auto; }
 
-    /* On narrow viewports (600px and below), show small GIF instead */
     @media (max-width: 600px) {
       .smallfacts { display: block; width: 100%; height: auto; }
       .largefacts { display: none; }
+    }
+
+    /* Caption styling */
+    .caption {
+      font-size: 1em;
+      color: #555;
+      text-align: center;
+      margin-top: 0.5em;
     }
   </style>
 </head>
@@ -30,5 +37,11 @@
     alt="Rich List key stats (large screen)"
     class="largefacts" />
 
+  <!-- Page‐level caption -->
+  <p class="caption">
+    Graphic: The Gazette Rich List 2025
+  </p>
+
 </body>
 </html>
+
