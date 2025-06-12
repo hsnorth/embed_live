@@ -230,6 +230,59 @@
   { rank:25, name:'Stephan Jarislowsky', worth:'—', avatar:'images/stroll.png',
     bio:'Stephan Jarislowsky founded the investment firm Jarislowsky Fraser in 1955, managing billions in pension and endowment funds. A staunch advocate for ethical corporate governance, he authored influential books on investing and economics. Jarislowsky supports arts and education across Canada, endowing university chairs and research centres in Montreal and beyond.' }
 ];
-  </script>
+  function getPerPage() {
+    return window.innerWidth > 600 ? 3 : 2;
+  }
+
+  let currentPage = 0;
+  const container = document.getElementById('profile-container');
+  const pager     = document.getElementById('pagination');
+
+  function render() {
+    const perPage    = getPerPage();
+    const totalPages = Math.ceil(profiles.length / perPage);
+    const start      = currentPage * perPage;
+    const slice      = profiles.slice(start, start + perPage);
+
+    container.innerHTML = slice.map(p => `
+      <div class="profile">
+        <div class="avatar-wrap">
+          <img src="${p.avatar}" alt="Portrait of ${p.name}">
+        </div>
+        <h2 class="profile-header">
+          ${p.rank}. ${p.name} — ${p.worth}
+        </h2>
+        <p class="bio-text">${p.bio}</p>
+      </div>
+    `).join('');
+
+    pager.innerHTML = '';
+    for (let i = 0; i < totalPages; i++) {
+      const s     = i * perPage + 1;
+      const e     = Math.min((i + 1) * perPage, profiles.length);
+      const label = s === e ? `${s}` : `${s} – ${e}`;
+      const btn   = document.createElement('button');
+      btn.textContent = label;
+      btn.className  = i === currentPage ? 'active' : '';
+      btn.disabled   = i === currentPage;
+      btn.onclick    = () => {
+        currentPage = i;
+        render();
+        window.scrollTo(0,0);
+      };
+      btn.setAttribute('aria-label', `Profiles ${label}`);
+      pager.appendChild(btn);
+    }
+  }
+
+  window.onload = () => {
+    render();
+    window.addEventListener('resize', () => {
+      const maxPage = Math.ceil(profiles.length / getPerPage()) - 1;
+      if (currentPage > maxPage) currentPage = maxPage;
+      render();
+    });
+  };
+</script>
 </body>
 </html>
