@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive Canva Embed</title>
+  <style>
+    /* Hide small-screen embed by default */
+    .embed-small { display: none; }
+    /* Show large-screen embed by default */
+    .embed-large { display: block; }
+
+    /* On narrow viewports (600px and below), switch */
+    @media (max-width: 600px) {
+      .embed-small { display: block; }
+      .embed-large { display: none; }
+    }
+
+    /* Common iframe container style */
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16);
+      margin: 1.6em 0 0.9em;
+      overflow: hidden;
+      border-radius: 8px;
+      will-change: transform;
+    }
+    .iframe-container.small  { padding-top: 125%; }
+    .iframe-container.large  { padding-top: 56.25%; }
+
+    .iframe-container iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      border: none;
+      margin: 0; padding: 0;
+    }
+
+    .caption {
+      font-size: 0.9em;
+      margin-top: -0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Small‐screen version -->
+  <div class="embed-small">
+    <div class="iframe-container small">
+      <iframe loading="lazy"
+        src="https://www.canva.com/design/DAGqJRsWmCI/9IgqboIf-AvvygtovABjjg/watch?embed"
+        allowfullscreen allow="fullscreen">
+      </iframe>
+    </div>
+    <p class="caption">
+      <a href="https://www.canva.com/design/DAGqJRsWmCI/9IgqboIf-AvvygtovABjjg/watch?utm_content=DAGqJRsWmCI&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
+         target="_blank" rel="noopener">$9.2 B</a> by Harry North
+    </p>
+  </div>
+
+  <!-- Large‐screen version -->
+  <div class="embed-large">
+    <div class="iframe-container large">
+      <iframe loading="lazy"
+        src="https://www.canva.com/design/DAGqJn1_Drk/6Ld02z7PzqZ-vuO9KMci_Q/watch?embed"
+        allowfullscreen allow="fullscreen">
+      </iframe>
+    </div>
+    <p class="caption">
+      <a href="https://www.canva.com/design/DAGqJn1_Drk/6Ld02z7PzqZ-vuO9KMci_Q/watch?utm_content=DAGqJn1_Drk&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
+         target="_blank" rel="noopener">$9.2 B (1920 × 1080 px)</a> by Harry North
+    </p>
+  </div>
+
+</body>
+</html>
