@@ -3,138 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rich List Breakdown</title>
+  <title>Rich List Facts</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 1em;
-      background: #f9f9f9;
-    }
-    h1 {
-      font-style: italic;
-      margin-bottom: 1em;
-      text-align: center;
-    }
+    /* By default show the large-screen GIF, hide the small one */
+    .smallfacts { display: none; }
+    .largefacts { display: block; width: 100%; height: auto; }
 
-    /* Grid for the 4 stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5em;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .stat {
-      background: #fff;
-      border-radius: 8px;
-      padding: 1em;
-      box-shadow: 0 2px 8px rgba(63,69,81,0.16);
-      opacity: 0;
-      transform: translateX(-30px);
-      animation: slideInStat 0.8s forwards;
-    }
-    .stats-grid .stat:nth-of-type(1) { animation-delay: 0s; }
-    .stats-grid .stat:nth-of-type(2) { animation-delay: 0.2s; }
-    .stats-grid .stat:nth-of-type(3) { animation-delay: 0.4s; }
-    .stats-grid .stat:nth-of-type(4) { animation-delay: 0.6s; }
-
-    .stat img {
-      display: block;
-      max-width: 100%;
-      margin-bottom: 0.5em;
-    }
-    .stat h2 {
-      margin: 0.2em 0;
-      font-size: 1.5em;
-    }
-    .stat p {
-      margin: 0;
-      color: #555;
-    }
-
-    @keyframes slideInStat {
-      from { opacity: 0; transform: translateX(-30px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Portrait + crown */
-    .portrait-container {
-      position: relative;
-      width: 60%;
-      max-width: 400px;
-      margin: -80px auto 0; /* pull up over the stats */
-      z-index: 2;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: slideUpPortrait 0.8s forwards;
-      animation-delay: 1s;
-    }
-    .portrait-container img.portrait {
-      display: block;
-      width: 100%;
-      border-radius: 8px;
-    }
-    .portrait-container img.crown {
-      position: absolute;
-      top: -15%;
-      left: 50%;
-      transform: translateX(-50%) scale(0);
-      width: 50%;
-      animation: popInCrown 0.5s forwards;
-      animation-delay: 1.8s;
-    }
-
-    @keyframes slideUpPortrait {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes popInCrown {
-      from { opacity: 0; transform: translateX(-50%) scale(0); }
-      to   { opacity: 1; transform: translateX(-50%) scale(1); }
+    /* On narrow viewports (600px and below), show small GIF instead */
+    @media (max-width: 600px) {
+      .smallfacts { display: block; width: 100%; height: auto; }
+      .largefacts { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <h1>Rich List breakdown</h1>
+  <!-- smallfacts.gif for phones / narrow screens -->
+  <img
+    src="smallfacts.gif"
+    alt="Rich List key stats (small screen)"
+    class="smallfacts" />
 
-  <!-- Four stats in a 2x2 grid -->
-  <div class="stats-grid">
-    <!-- 1. Timer -->
-    <div class="stat">
-      <img src="timer.png" alt="Hourglass & cash">
-      <h2>26,000 yrs</h2>
-      <p>Time to make the list earning an average salary.</p>
-    </div>
-
-    <!-- 2. Gold stacks -->
-    <div class="stat">
-      <img src="gold%20stacks.png" alt="Gold bullion">
-      <h2>$80 Bn</h2>
-      <p>Total wealth of the 25 wealthiest people in Quebec.</p>
-    </div>
-
-    <!-- 3. Bouchard (text only) -->
-    <div class="stat">
-      <h2>$9.2 Bn</h2>
-      <p>Alain Bouchard is Quebec’s richest person.</p>
-    </div>
-
-    <!-- 4. Charity -->
-    <div class="stat">
-      <img src="charity.png" alt="Hands & heart">
-      <h2>$2.4 Bn</h2>
-      <p>Size of the largest foundation.</p>
-    </div>
-  </div>
-
-  <!-- Portrait + crown, overlapping -->
-  <div class="portrait-container">
-    <img class="portrait" src="../images/bouchard.png" alt="Alain Bouchard">
-    <img class="crown" src="crown.png" alt="Crown">
-  </div>
+  <!-- largefacts.gif for desktop / wide screens -->
+  <img
+    src="largefacts.gif"
+    alt="Rich List key stats (large screen)"
+    class="largefacts" />
 
 </body>
 </html>
