@@ -154,7 +154,82 @@
   </div>
 
   <script>
-    // profiles array and script remains unchanged
+    const profiles = [
+  { rank:1, name:'Alain Bouchard and family', worth:'$9.2B', avatar:'images/bouchard.png',
+    bio:'Alain Bouchard launched Alimentation Couche-Tard in 1980 from a single Laval store. He expanded the brand into a global network of 17,000 outlets across multiple continents. Known for pioneering 24-hour retail and digital fuel-payments, Bouchard transformed Quebec’s convenience store model and remains one of Canada’s most respected entrepreneurs and philanthropists. He also funds youth education and cancer research.' },
+
+  { rank:2, name:'Paul Desmarais Jr. and André', worth:'$7.0B', avatar:'images/desmarais.png',
+    bio:'Paul Jr. and André Desmarais expanded Power Corporation from pulp and paper to a global investment firm. They oversaw deals in Asia, launched major financial holdings, and helped manage assets topping $2 trillion. Their leadership cemented the Desmarais legacy as one of the most influential in Canada’s corporate and political spheres. They continue to support major philanthropic initiatives.' },
+
+  { rank:3, name:'Naomi, Sharon & Danna Azrieli', worth:'$6.0B', avatar:'images/azrieli.png',
+    bio:'Naomi, Sharon and Danna Azrieli oversee a vast empire of real estate spanning shopping malls, towers and luxury condos. Through the Azrieli Foundation, they’ve contributed over $700 million to education, medical research and architecture. They are also advocates for accessibility in design, and support Holocaust remembrance initiatives in both Canada and Israel through public memorials and grants.' },
+
+  { rank:4, name:'Emanuele Saputo & family', worth:'$5.5B', avatar:'images/saputo.png',
+    bio:'Emanuele Saputo took a local family cheesemaking business and built a dairy empire that now spans North America, Australia, and the UK. He led strategic acquisitions, championed eco-packaging, and poured hundreds of millions into animal welfare and food safety. Saputo Inc. is now a top-10 global dairy producer and a pillar of Quebec’s agri-food industry.' },
+
+  { rank:5, name:'Robert Miller', worth:'$5.2B', avatar:'images/miller.png',
+    bio:'Robert Miller founded Future Electronics in 1968, growing it into one of the world’s largest suppliers of electronic components. Serving clients from aerospace to automotive sectors, the firm operates in 170 cities. Miller also supports educational causes and high-tech innovation through private grants and university partnerships. He is known for maintaining tight control of the privately-held firm.' },
+
+  { rank:6, name:'Jacques D’Amours & Marie-Eve D’Amours', worth:'$4.5B', avatar:'images/amour.png',
+    bio:'Jacques and Marie-Eve D’Amours helped grow Couche-Tard into a 17,000-store powerhouse. The couple led expansion into Europe and the U.S., while pushing digital loyalty strategies and customer rewards. They’ve also donated millions to public health and education projects in Quebec, supporting hospitals, research initiatives and local schools. They remain major investors in local entrepreneurship.' },
+
+  { rank:7, name:'Ryan Cohen', worth:'$4.0B', avatar:'images/cohen.png',
+    bio:'Ryan Cohen co-founded Chewy.com in 2011, turning it into the top online pet supplies retailer in the U.S. He sold it to PetSmart for $3.35B in 2017. Now a high-profile activist investor, he’s taken leadership roles at GameStop and advocates for blockchain innovations in e-commerce and retail. Cohen is a vocal critic of corporate inefficiency.' },
+
+  { rank:8, name:'Serge Godin', worth:'$3.7B', avatar:'images/godin.png',
+    bio:'Serge Godin founded CGI in 1976 and built it into a global IT consulting giant. CGI now ranks among the top 50 tech services firms, with clients in defence, banking, and government. Godin also chairs philanthropic boards supporting arts, education, and health across Canada and abroad. He has pledged over $200 million to social causes.' },
+
+  { rank:9, name:'Jean Coutu & family', worth:'$3.3B', avatar:'images/coutu.png',
+    bio:'Jean Coutu revolutionized Quebec pharmacy retail with franchised drugstores starting in 1969. The family remains involved in healthcare, owning shares in drugstores, clinics, and wellness ventures. Their charitable foundation focuses on medical research, housing and nutrition initiatives for underprivileged families and vulnerable seniors in Quebec. Coutu is widely seen as a pioneer in accessible pharmacy services.' },
+
+  { rank:10, name:'Pierre Karl Péladeau', worth:'$3.0B', avatar:'images/karl.png',
+    bio:'Pierre Karl Péladeau turned Quebecor into a telecom and media force with Videotron and TVA. Known for nationalist views and cultural activism, he briefly led the Parti Québécois. He renamed himself after Karl Marx, advocating worker equity, but his fortune grew through private broadcasting and infrastructure holdings. He remains influential in Quebec’s political and cultural arenas.' },
+
+  { rank:11, name:'Bombardier & Beaudoin family', worth:'$2.5B', avatar:'images/bombardier.png',
+    bio:'The Beaudoin family transformed Bombardier from a snowmobile maker into an aerospace powerhouse known for business jets and mass-transit trains. Although Bombardier faced financial turbulence in recent years, the family retains strategic influence. They also invest in aerospace R&D and support STEM education programs in Quebec. Their legacy remains central to Canadian transportation innovation.' },
+
+  { rank:12, name:'Richard Fortin', worth:'$2.5B', avatar:'images/fortin.png',
+    bio:'Richard Fortin served as Couche-Tard’s CFO during its global rise and helped engineer many of its major acquisitions. He now chairs several non-profits, supporting youth literacy, health research, and financial education. Fortin has invested in fintech and cleantech startups, particularly those founded in Quebec. He is recognized for championing long-term business planning.' },
+
+  { rank:13, name:'Philip Fayer', worth:'$2.1B', avatar:'images/fayer.png',
+    bio:'Philip Fayer founded Paysafe in 1996 and grew it into a major global fintech firm specializing in digital wallets and online payments. He took the company public in London and has since advised blockchain payment startups. A McGill graduate, Fayer is also a venture backer of emerging AI and e-commerce technologies based in Canada.' },
+
+  { rank:14, name:'Molson family', worth:'$2.0B', avatar:'images/molson.png',
+    bio:'The Molson family has been brewing beer in Montreal since 1786. Their company, Molson Coors, distributes iconic beer brands globally and remains one of North America’s largest brewers. The family also operates a powerful philanthropic foundation that supports hospitals, the arts, education and youth sports. They remain active in civic life and public affairs.' },
+
+  { rank:15, name:'Kruger family', worth:'$1.9B', avatar:'images/kruger.png',
+    bio:'Kruger Inc., founded in 1904, leads in tissue paper, packaging, and renewable energy. The family has invested in sustainable forestry and green chemistry. Their operations span North America and include hydroelectric projects. They support environmental education and trades training in Quebec. Kruger remains one of the province’s most quietly influential business empires.' },
+
+  { rank:16, name:'Réal Plourde', worth:'$1.6B', avatar:'images/real.png',
+    bio:'Réal Plourde co-founded Couche-Tard and was instrumental in early financing and growth strategy. He later chaired a major Canadian REIT focused on retail real estate. Plourde supports community sports and youth programs in Quebec and continues to serve on several corporate boards. He is a major donor to cancer research and local universities.' },
+
+  { rank:17, name:'Andrew Lutfy', worth:'$1.5B', avatar:'images/lufty.png',
+    bio:'Andrew Lutfy is CEO of Groupe Dynamite and co-founded RONA, helping it become a Canadian hardware giant. He now focuses on retail real estate and startup investments. Lutfy champions Montreal’s retail landscape and supports fashion entrepreneurship. He has funded creative arts and design initiatives aimed at youth empowerment in urban communities.' },
+
+  { rank:18, name:'Goodman family', worth:'$1.5B', avatar:'images/goodman.png',
+    bio:'The Goodman family founded real estate developer Cadillac Fairview, known for landmark malls across North America. Today, they focus on ESG-driven urban redevelopment and commercial real estate ventures. Their philanthropic work includes support for the arts, Jewish heritage institutions, and children’s hospitals in Toronto and Montreal. They also fund environmental design projects.' },
+
+  { rank:19, name:'Guy Laliberté', worth:'$1.3B', avatar:'images/guy.png',
+    bio:'Guy Laliberté founded Cirque du Soleil in 1984 and redefined live entertainment worldwide. A street performer turned billionaire, he launched the One Drop Foundation for global water access and became Canada’s first space tourist. He invests in immersive art, music, and crypto projects and continues to advocate for planetary sustainability.' },
+
+  { rank:20, name:'Pierre Lassonde', worth:'$1.3B', avatar:'images/pierre.png',
+    bio:'Pierre Lassonde co-founded Franco-Nevada and pioneered the royalty model in mining. He is a leading figure in global gold and critical minerals investment. Lassonde has endowed university programs in geology and art history, served on corporate and museum boards, and helped fund the Canadian Museum of Contemporary Photography in Ottawa.' },
+
+  { rank:21, name:'John MacBain', worth:'$1.1B', avatar:'images/macbain.png',
+    bio:'John MacBain built Trader Classified Media into a global classifieds empire before selling it and focusing on philanthropy. His foundation funds scholarships for disadvantaged students at Oxford, McGill, and Sciences Po. He has supported climate change policy, health innovation, and refugee resettlement. MacBain is also a signatory of the Giving Pledge.' },
+
+  { rank:22, name:'Larry Rossy', worth:'$1.0B', avatar:'images/rossy.png',
+    bio:'Larry Rossy expanded Dollarama from a modest general store into a retail chain with over 1,400 locations across Canada. He stepped down as CEO in 2016 but remains active in retail investment. Through the Rossy Foundation, he supports mental health care, university research, and food insecurity programs in Quebec.' },
+
+  { rank:23, name:'Hewitt family', worth:'$1.0B', avatar:'images/hewitt.png',
+    bio:'The Hewitt family runs Hewitt Equipment, a machinery distributor serving construction, mining, and energy sectors. They have expanded into real estate and renewables, and support trades training and STEM education in Quebec. Their philanthropic efforts also include infrastructure partnerships and sponsoring engineering faculties across several Canadian universities.' },
+
+  { rank:24, name:'Charles Bronfman', worth:'—', avatar:'images/bronfman.png',
+    bio:'Charles Bronfman inherited part of the Seagram liquor fortune and co-owned the Montreal Expos. A major donor to Jewish and Canadian cultural causes, he co-founded Birthright Israel and the McGill Institute for the Study of Canada. His philanthropy spans human rights, historical preservation, and reconciliation initiatives.' },
+
+  { rank:25, name:'Stephan Jarislowsky', worth:'—', avatar:'images/stroll.png',
+    bio:'Stephan Jarislowsky founded the investment firm Jarislowsky Fraser in 1955, managing billions in pension and endowment funds. A staunch advocate for ethical corporate governance, he authored influential books on investing and economics. Jarislowsky supports arts and education across Canada, endowing university chairs and research centres in Montreal and beyond.' }
+];
   </script>
 </body>
 </html>
