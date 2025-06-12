@@ -1,107 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Rich List Key Stats</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rich List Breakdown</title>
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 1em; background: #f9f9f9; }
-    h1 { text-align: center; margin-bottom: 1em; }
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1em;
+      background: #f9f9f9;
+    }
+    h1 {
+      font-style: italic;
+      margin-bottom: 1em;
+      text-align: center;
+    }
 
-    .grid {
+    /* Grid for the 4 stats */
+    .stats-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 1.5em;
-    }
-    @media(min-width:700px){
-      .grid { grid-template-columns: repeat(2,1fr); }
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .card {
+    .stat {
       background: #fff;
       border-radius: 8px;
       padding: 1em;
       box-shadow: 0 2px 8px rgba(63,69,81,0.16);
-      overflow: hidden;
-      position: relative;
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: slideInStat 0.8s forwards;
     }
-    .card img {
+    .stats-grid .stat:nth-of-type(1) { animation-delay: 0s; }
+    .stats-grid .stat:nth-of-type(2) { animation-delay: 0.2s; }
+    .stats-grid .stat:nth-of-type(3) { animation-delay: 0.4s; }
+    .stats-grid .stat:nth-of-type(4) { animation-delay: 0.6s; }
+
+    .stat img {
       display: block;
       max-width: 100%;
       margin-bottom: 0.5em;
+    }
+    .stat h2 {
+      margin: 0.2em 0;
+      font-size: 1.5em;
+    }
+    .stat p {
+      margin: 0;
+      color: #555;
+    }
+
+    @keyframes slideInStat {
+      from { opacity: 0; transform: translateX(-30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Portrait + crown */
+    .portrait-container {
+      position: relative;
+      width: 60%;
+      max-width: 400px;
+      margin: -80px auto 0; /* pull up over the stats */
+      z-index: 2;
       opacity: 0;
-      animation: slideIn 0.8s forwards;
-    }
-    .card:nth-child(1) img { animation-delay: 0s; }
-    .card:nth-child(2) img { animation-delay: 0.2s; }
-    .card:nth-child(3) img { animation-delay: 0.4s; }
-    .card:nth-child(4) img { animation-delay: 0.6s; }
-
-    .card h2 { margin: 0.2em 0; font-size: 1.5em; }
-    .card p  { margin: 0; color: #555; }
-
-    .bouchard-wrapper img.bouchard {
-      animation: slideUp 0.8s forwards;
-      animation-delay: 0s;
-    }
-    .bouchard-wrapper img.crown {
-      position: absolute;
-      top: -10%;
-      left: 50%;
-      transform: translateX(-50%) scale(0);
-      width: 40%;
-      animation: popIn 0.5s forwards;
+      transform: translateY(30px);
+      animation: slideUpPortrait 0.8s forwards;
       animation-delay: 1s;
     }
+    .portrait-container img.portrait {
+      display: block;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .portrait-container img.crown {
+      position: absolute;
+      top: -15%;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      width: 50%;
+      animation: popInCrown 0.5s forwards;
+      animation-delay: 1.8s;
+    }
 
-    @keyframes slideIn {
-      from { transform: translateX(-30px); opacity: 0; }
-      to   { transform: translateX(0);     opacity: 1; }
+    @keyframes slideUpPortrait {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    @keyframes slideUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
-    @keyframes popIn {
-      from { transform: translateX(-50%) scale(0); opacity: 0; }
-      to   { transform: translateX(-50%) scale(1); opacity: 1; }
+    @keyframes popInCrown {
+      from { opacity: 0; transform: translateX(-50%) scale(0); }
+      to   { opacity: 1; transform: translateX(-50%) scale(1); }
     }
   </style>
 </head>
 <body>
 
-  <h1>Rich List Breakdown</h1>
-  <div class="grid">
+  <h1>Rich List breakdown</h1>
 
+  <!-- Four stats in a 2x2 grid -->
+  <div class="stats-grid">
     <!-- 1. Timer -->
-    <div class="card">
-      <img src="timer.png" alt="Timer icon">
+    <div class="stat">
+      <img src="timer.png" alt="Hourglass & cash">
       <h2>26,000 yrs</h2>
       <p>Time to make the list earning an average salary.</p>
     </div>
 
-    <!-- 2. Bouchard + Crown -->
-    <div class="card bouchard-wrapper">
-      <img class="bouchard" src="../images/bouchard.png" alt="Alain Bouchard">
-      <img class="crown"   src="crown.png"         alt="Crown">
-      <h2>$9.2 Bn</h2>
-      <p>Net worth of Alain Bouchard, Quebec’s richest person.</p>
-    </div>
-
-    <!-- 3. Gold Stacks -->
-    <div class="card">
-      <img src="gold%20stacks.png" alt="Gold stacks">
+    <!-- 2. Gold stacks -->
+    <div class="stat">
+      <img src="gold%20stacks.png" alt="Gold bullion">
       <h2>$80 Bn</h2>
       <p>Total wealth of the 25 wealthiest people in Quebec.</p>
     </div>
 
-    <!-- 4. Charity -->
-    <div class="card">
-      <img src="charity.png" alt="Charity hands">
-      <h2>$2.4 Bn</h2>
-      <p>Size of largest foundation.</p>
+    <!-- 3. Bouchard (text only) -->
+    <div class="stat">
+      <h2>$9.2 Bn</h2>
+      <p>Alain Bouchard is Quebec’s richest person.</p>
     </div>
 
+    <!-- 4. Charity -->
+    <div class="stat">
+      <img src="charity.png" alt="Hands & heart">
+      <h2>$2.4 Bn</h2>
+      <p>Size of the largest foundation.</p>
+    </div>
   </div>
+
+  <!-- Portrait + crown, overlapping -->
+  <div class="portrait-container">
+    <img class="portrait" src="../images/bouchard.png" alt="Alain Bouchard">
+    <img class="crown" src="crown.png" alt="Crown">
+  </div>
+
 </body>
 </html>
