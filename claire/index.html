@@ -1,1 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timeline: The Search for Claire Bell</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fafafa;
+    }
+
+    .timeline-wrapper {
+      max-width: 100%;
+      padding: 1rem;
+    }
+
+    .timeline-title {
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+
+    .timeline-sub {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .timeline {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 1rem;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      flex: 0 0 300px;
+      margin-right: 1rem;
+      scroll-snap-align: start;
+      padding: 1rem;
+      position: relative;
+    }
+
+    .event-date {
+      font-weight: bold;
+      color: darkred;
+    }
+
+    .event-text {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .event-text b {
+      font-weight: bold;
+    }
+
+    .event-img {
+      margin-top: 0.75rem;
+      max-width: 100%;
+      border-radius: 5px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      height: 5px;
+      background: red;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .timeline-marker {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: red;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    .scroll-instruction {
+      text-align: right;
+      font-size: 0.85rem;
+      color: grey;
+    }
+  </style>
+</head>
+<body>
+  <div class="timeline-wrapper">
+    <div class="timeline-title">Timeline:</div>
+    <div class="timeline-sub">The search for Claire Bell<br>2025</div>
+    <div class="scroll-instruction">Scroll right →</div>
+
+    <div class="timeline">
+      <!-- CARD 1 -->
+      <div class="event-card">
+        <div class="event-date">15 June 2025</div>
+        <div class="event-text">
+          Claire Bell, 3, is last seen near <b>Newman Blvd.</b> in Montreal’s LaSalle borough. Her mother later reports her missing at a souvenir shop 60km away.
+        </div>
+        <img class="event-img" src="https://via.placeholder.com/280x160" alt="Location photo" />
+        <div class="timeline-line">
+          <div class="timeline-marker"></div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="event-card">
+        <div class="event-date">16 June 2025</div>
+        <div class="event-text">
+          Police discover a dead Chihuahua, believed to be with Claire, near <b>Highway 30</b>. The Sûreté du Québec launches a search in the Montérégie region.
+        </div>
+        <img class="event-img" src="https://via.placeholder.com/280x160" alt="Search site" />
+        <div class="timeline-line">
+          <div class="timeline-marker"></div>
+        </div>
+      </div>
+
+      <!-- Add more cards here... -->
+
+    </div>
+  </div>
+</body>
+</html>
 
