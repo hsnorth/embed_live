@@ -4,12 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Claire Bell Timeline</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
       background: #fafafa;
+    }
+
+    .scroll-instruction {
+      text-align: right;
+      font-size: 0.85rem;
+      color: grey;
+      padding: 0 1rem;
     }
 
     .timeline {
@@ -24,7 +31,7 @@
       background: white;
       border-radius: 10px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      flex: 0 0 280px;
+      flex: 0 0 300px;
       margin-right: 1rem;
       scroll-snap-align: start;
       padding: 1rem;
@@ -39,6 +46,14 @@
     .event-text {
       margin-top: 0.5rem;
       font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .event-img {
+      width: 100%;
+      height: auto;
+      margin-top: 1rem;
+      border-radius: 4px;
     }
 
     .timeline-line {
@@ -74,13 +89,6 @@
       transform: translateX(-50%);
       z-index: 2;
     }
-
-    .scroll-instruction {
-      text-align: right;
-      font-size: 0.85rem;
-      color: grey;
-      margin-right: 1rem;
-    }
   </style>
 </head>
 <body>
@@ -90,34 +98,61 @@
   <div class="timeline">
     <div class="timeline-line"></div>
 
-    <!-- CARD 1: Title card inside timeline -->
-    <div class="event-card">
-      <div class="event-date">Timeline: The Search for Claire Bell<br>2025</div>
-      <div class="event-text">
-        A young girl disappears. A city joins the search. This timeline shows the key moments in the first days of the Claire Bell case.
+    <!-- CARD 1: Title card with image -->
+    <div class="event-card" style="position: relative;">
+      <!-- Optional logo top-right -->
+      <!-- <img src="https://your-logo-url.com/logo.png" alt="Logo" style="position: absolute; top: 10px; right: 10px; width: 40px; height: auto;" /> -->
+
+      <div style="color: #b30000; font-weight: bold; font-size: 1.1rem; margin-bottom: 0.3rem;">
+        Timeline:
       </div>
+      <div style="font-weight: bold; font-size: 1.1rem; line-height: 1.4;">
+        The search for Claire Bell
+      </div>
+      <div style="font-size: 1rem; margin-bottom: 1rem;">
+        Sunday – Wednesday
+      </div>
+
+      <img class="event-img" src="https://via.placeholder.com/280x280?text=Claire+Bell" alt="Claire Bell photo" />
       <div class="timeline-marker"></div>
     </div>
 
-    <!-- CARD 2 -->
+    <!-- CARD 2: Missing -->
     <div class="event-card">
       <div class="event-date">Sunday, June 15</div>
       <div class="event-text">
-        Claire Bell, 3, is last seen near <b>Newman Blvd.</b> in Montreal’s LaSalle borough. Her mother reports her missing at a souvenir shop 60 km away later that day.
+        Claire Bell, 3, is last seen near <b>Newman Blvd.</b> in Montreal’s LaSalle borough. Her mother later reports her missing at a souvenir shop 60 km away.
       </div>
       <div class="timeline-marker"></div>
     </div>
 
-    <!-- CARD 3 -->
+    <!-- CARD 3: Dog found -->
     <div class="event-card">
       <div class="event-date">Monday, June 16</div>
       <div class="event-text">
-        Police discover a dead Chihuahua near <b>Highway 30</b>, believed to have been with Claire. Search efforts intensify in the Montérégie region.
+        Police discover a dead Chihuahua, believed to have been with Claire, near <b>Highway 30</b>. The Sûreté du Québec begins searching the Montérégie region.
+      </div>
+      <div class="timeline-marker"></div>
+    </div>
+
+    <!-- CARD 4: Charges -->
+    <div class="event-card">
+      <div class="event-date">Tuesday, June 17</div>
+      <div class="event-text">
+        Claire’s mother, <b>Rachel Todd</b>, is charged with child abandonment. She appears in court wearing a red shirt and grey blanket. A bail hearing is scheduled.
+      </div>
+      <div class="timeline-marker"></div>
+    </div>
+
+    <!-- CARD 5: Police appeal -->
+    <div class="event-card">
+      <div class="event-date">Wednesday, June 18</div>
+      <div class="event-text">
+        Police continue searching near Coteau-du-Lac. The SQ asks residents to check sheds and garages. Garbage collection is paused in nearby towns.
       </div>
       <div class="timeline-marker"></div>
     </div>
 
   </div>
-
 </body>
 </html>
