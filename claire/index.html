@@ -12,13 +12,6 @@
       background: #fafafa;
     }
 
-    .scroll-instruction {
-      text-align: right;
-      font-size: 0.85rem;
-      color: grey;
-      padding: 0 1rem;
-    }
-
     .timeline {
       display: flex;
       overflow-x: auto;
@@ -35,6 +28,9 @@
       scroll-snap-align: start;
       padding: 1rem;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .event-date {
@@ -53,6 +49,8 @@
       height: auto;
       margin-top: 1rem;
       border-radius: 4px;
+      max-height: 180px;
+      object-fit: cover;
     }
 
     .card-timeline {
@@ -85,81 +83,94 @@
 </head>
 <body>
 
-  <div class="scroll-instruction">Scroll right →</div>
-
   <div class="timeline">
 
-    <!-- CARD 1: Title with logo and Claire image -->
+    <!-- CARD 1: Title with Gazette logo, caption, and scroll prompt -->
     <div class="event-card">
       <img src="gazettelogo.png" alt="The Gazette logo" class="logo" />
-      <div class="event-date">Timeline:</div>
-      <div class="event-text" style="font-weight: bold; font-size: 1.05rem;">
-        The search for Claire Bell
+      <div>
+        <div class="event-date">Timeline:</div>
+        <div class="event-text" style="font-weight: bold; font-size: 1.05rem;">
+          The search for Claire Bell
+        </div>
+        <div class="event-text">Missing Sunday. Found Wednesday.</div>
+        <div style="text-align: right; color: grey; font-size: 0.85rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          Scroll right →
+        </div>
+        <img class="event-img" src="clairepic.png" alt="Claire Bell photo" />
       </div>
-      <div class="event-text">Sunday – Wednesday</div>
-      <img class="event-img" src="clairepic.png" alt="Claire Bell photo" />
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 2: Sunday -->
     <div class="event-card">
-      <div class="event-date">Sunday, June 15</div>
-      <div class="event-text">
-        Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal. She is wearing a white shirt with a red collar, grey pants, and no shoes. Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, about 60 km away. Police begin searching her home and mark the apartment door as a protected scene.
+      <div>
+        <div class="event-date">Sunday, June 15</div>
+        <div class="event-text">
+          Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal. She is wearing a white shirt with a red collar, grey pants, and no shoes. Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, about 60 km away. Police begin searching her home and mark the apartment door as a protected scene.
+        </div>
       </div>
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 3: Monday -->
     <div class="event-card">
-      <div class="event-date">Monday, June 16</div>
-      <div class="event-text">
-        <b>Morning:</b><br>
-        SQ launches a large search near Coteau-du-Lac using helicopters, ATVs, and canine teams. Officers search a 10 km stretch along Highway 20. Residents are asked to check their yards and sheds.
-      </div>
-      <div class="event-text" style="margin-top: 1rem;">
-        <b>Afternoon:</b><br>
-        A dead dog — believed to be Claire’s Chihuahua — is found near Highway 30. The search continues in LaSalle, Coteau-du-Lac, and near the Ontario border. No Amber Alert is issued.
+      <div>
+        <div class="event-date">Monday, June 16</div>
+        <div class="event-text">
+          <b>Morning:</b><br>
+          SQ launches a large search near Coteau-du-Lac using helicopters, ATVs, and canine teams. Officers search a 10 km stretch along Highway 20. Residents are asked to check their yards and sheds.
+        </div>
+        <div class="event-text" style="margin-top: 1rem;">
+          <b>Afternoon:</b><br>
+          A dead dog — believed to be Claire’s Chihuahua — is found near Highway 30. The search continues in LaSalle, Coteau-du-Lac, and near the Ontario border. No Amber Alert is issued.
+        </div>
       </div>
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 4: Tuesday -->
     <div class="event-card">
-      <div class="event-date">Tuesday, June 17</div>
-      <div class="event-text">
-        <b>Morning:</b><br>
-        <b>Rachel Todd</b> is arrested and charged with child abandonment in the early hours. SQ officers search near Highway 30. Garbage collection is paused. Volunteers are not being called.
-      </div>
-      <div class="event-text" style="margin-top: 1rem;">
-        <b>Afternoon:</b><br>
-        Todd appears in court by video wearing a red shirt and grey blanket. She says little as the Crown opposes her release. A bail hearing is set for Wednesday. The investigation continues.
+      <div>
+        <div class="event-date">Tuesday, June 17</div>
+        <div class="event-text">
+          <b>Morning:</b><br>
+          <b>Rachel Todd</b> is arrested and charged with child abandonment in the early hours. SQ officers search near Highway 30. Garbage collection is paused. Volunteers are not being called.
+        </div>
+        <div class="event-text" style="margin-top: 1rem;">
+          <b>Afternoon:</b><br>
+          Todd appears in court by video wearing a red shirt and grey blanket. She says little as the Crown opposes her release. A bail hearing is set for Wednesday. The investigation continues.
+        </div>
       </div>
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 5: Wednesday -->
     <div class="event-card">
-      <div class="event-date">Wednesday, June 18</div>
-      <div class="event-text">
-        <b>Morning:</b><br>
-        Officers search an abandoned sand pit near St-Télesphore and along Highway 30. Police are seen in Pointe-Claire and Coteau-du-Lac. A rescue boat is deployed. Public urged not to join the search.
-      </div>
-      <div class="event-text" style="margin-top: 1rem;">
-        <b>Afternoon:</b><br>
-        SQ confirms a sighting of Claire around 2 p.m. in eastern Ontario. Police appeal for dashcam footage and issue a witness alert for a woman wearing an apron with “Abondance” on it. Todd returns to court.
+      <div>
+        <div class="event-date">Wednesday, June 18</div>
+        <div class="event-text">
+          <b>Morning:</b><br>
+          Officers search an abandoned sand pit near St-Télesphore and along Highway 30. Police are seen in Pointe-Claire and Coteau-du-Lac. A rescue boat is deployed. Public urged not to join the search.
+        </div>
+        <div class="event-text" style="margin-top: 1rem;">
+          <b>Afternoon:</b><br>
+          SQ confirms a sighting of Claire around 2 p.m. in eastern Ontario. Police appeal for dashcam footage and issue a witness alert for a woman wearing an apron with “Abondance” on it. Todd returns to court.
+        </div>
       </div>
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 6: Claire found -->
     <div class="event-card">
-      <div class="event-date">Wednesday, June 18 – 3 p.m.</div>
-      <div class="event-text">
-        <b>Claire Bell is found alive</b> by Ontario Provincial Police near Casselman, Ont. She is safe. The OPP confirms she was found over 150 km from where she was last seen in Montreal.
-      </div>
-      <div class="event-text" style="margin-top: 1rem;">
-        Her father posts: <br><i>“Thank you everyone. Please allow me and my family this time with our girl.”</i>
+      <div>
+        <div class="event-date">Wednesday, June 18 – 3 p.m.</div>
+        <div class="event-text">
+          <b>Claire Bell is found alive</b> by Ontario Provincial Police near Casselman, Ont. She is safe. The OPP confirms she was found over 150 km from where she was last seen in Montreal.
+        </div>
+        <div class="event-text" style="margin-top: 1rem;">
+          Her father posts: <br><i>“Thank you everyone. Please allow me and my family this time with our girl.”</i>
+        </div>
       </div>
       <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
