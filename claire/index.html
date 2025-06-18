@@ -12,26 +12,27 @@
 
     /* Wrapper */
     .timeline-wrapper {
-      max-width: 800px;
+      max-width: 1200px;
       margin: auto;
       padding: 2rem 1rem 3rem;
       position: relative;
     }
 
-    /* Scrollable timeline - one card at a time */
+    /* Scrollable timeline */
     .timeline {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       gap: 1rem;
+      padding-bottom: 1rem;
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
     .timeline::-webkit-scrollbar { display: none; }
 
-    /* Card styling - full width */
+    /* Card styling: show multiple cards */
     .event-card {
-      flex: 0 0 100%;
+      flex: 0 0 calc((100% / 3) - 1rem);
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -43,8 +44,10 @@
       position: relative;
     }
     .event-card:hover { transform: translateY(-5px); }
+    .event-card:last-child { margin-right: 0; }
 
-    /* First card only logo */
+    /* Title card specifics */
+    .event-card:first-child { flex: 0 0 calc((100% / 2) - 1rem); }
     .logo {
       position: absolute;
       top: 16px;
@@ -53,8 +56,6 @@
       height: auto;
       z-index: 2;
     }
-
-    /* Headings */
     .event-date, .event-title { margin: 0; }
     .event-date {
       font-family: 'Roboto', sans-serif;
@@ -101,6 +102,7 @@
       background: #b30000;
       border-radius: 2px;
       position: relative;
+      margin-bottom: 1rem;
     }
     .card-marker {
       width: 12px;
@@ -111,6 +113,15 @@
       top: -4px;
       left: 50%;
       transform: translateX(-50%);
+    }
+
+    /* Responsive rules */
+    @media (max-width: 900px) {
+      .event-card { flex: 0 0 calc((100% / 2) - 1rem); }
+      .event-card:first-child { flex: 0 0 100%; }
+    }
+    @media (max-width: 600px) {
+      .event-card { flex: 0 0 90%; }
     }
   </style>
 </head>
@@ -188,7 +199,7 @@
         <h2 class="event-title">Claire is found</h2>
         <div class="event-text">
           <ul>
-            <li>Found by Ontario Provincial Police in the St. Albert region at 3:06 p.m.</li>
+            <li>Found by Ontario Provincial Police in the St. Albert region at 3:06 p.m.</li>
             <li>She was conscious and able to speak.</li>
           </ul>
           <p>Matt Bell, her father, posted on Instagram: “Thank you everyone. Please allow me and my family this time with our girl.”</p>
