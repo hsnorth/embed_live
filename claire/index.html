@@ -4,145 +4,121 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Claire Bell Timeline</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Georgia, serif;
-      margin: 0;
-      background: #fafafa;
-    }
-
+    body { margin: 0; font-family: Georgia, serif; background: #fafafa; }
     .timeline {
+      position: relative;
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       padding: 2rem 1rem 3rem;
     }
-
+    .timeline-line {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #b30000;
+      z-index: 0;
+    }
     .event-card {
+      position: relative;
+      margin-right: 1rem;
       background: white;
       border-radius: 10px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      flex: 0 0 300px;
-      margin-right: 1rem;
       scroll-snap-align: start;
       padding: 1rem;
-      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      z-index: 1;
+      /* default for desktop: three cards */
+      flex: 0 0 calc((100% / 3) - 1rem);
     }
-
+    .event-card:last-child { margin-right: 0; }
     .event-date {
-      font-weight: bold;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
       color: #b30000;
-      font-family: Georgia, serif;
+      line-height: 1.3;
     }
-
     .event-text {
       margin-top: 0.5rem;
-      font-size: 0.95rem;
-      line-height: 1.4;
+      font-size: 1.1rem;
+      line-height: 1.5;
       font-family: Georgia, serif;
     }
-
     .event-img {
       width: 100%;
-      height: auto;
-      margin-top: 1rem;
       border-radius: 4px;
-      max-height: 280px;
       object-fit: cover;
+      max-height: 260px;
+      margin-top: 1rem;
     }
-
-    .card-timeline {
-      height: 4px;
-      background: #b30000;
-      position: relative;
-      margin-top: 1.5rem;
-      border-radius: 2px;
-    }
-
-    .card-marker {
+    .event-marker {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
       width: 12px;
       height: 12px;
       background: #b30000;
       border-radius: 2px;
-      position: absolute;
-      top: -4px;
-      left: 50%;
       transform: translateX(-50%);
+      z-index: 2;
     }
-
     .logo {
       position: absolute;
       top: 10px;
       right: 10px;
       width: 40px;
       height: auto;
+      z-index: 3;
     }
-
     .scroll-instruction {
       text-align: right;
       color: grey;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      font-family: Georgia, serif;
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
-      font-family: Georgia, serif;
     }
-
-    .roboto {
-      font-family: 'Roboto', sans-serif;
-    }
-
-    .headline {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.8rem;
-      font-weight: bold;
-      line-height: 1.3;
-    }
-
-    @media screen and (max-width: 600px) {
-      .timeline {
-        padding: 1rem 0.5rem 2rem;
-      }
-
+    /* medium screens: two cards visible */
+    @media (max-width: 900px) {
       .event-card {
-        flex: 0 0 260px;
-        padding: 0.75rem;
+        flex: 0 0 calc((100% / 2) - 1rem);
       }
-
-      .headline {
-        font-size: 1.4rem;
-      }
-
-      .event-text {
-        font-size: 0.9rem;
-      }
-
-      .event-img {
-        max-height: 240px;
-      }
+    }
+    /* small screens: one card visible */
+    @media (max-width: 600px) {
+      .timeline { padding: 1rem 0.5rem 2rem; }
+      .event-card { flex: 0 0 calc(100% - 1rem); padding: 0.75rem; }
+      .event-date { font-size: 1.1rem; }
+      .event-text { font-size: 1rem; }
+      .event-img { max-height: 200px; }
+      .scroll-instruction { font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
-
   <div class="timeline">
+    <!-- Global line -->
+    <div class="timeline-line"></div>
 
-    <!-- CARD 1: Title with Gazette logo and image -->
+    <!-- CARD 1: Title -->
     <div class="event-card">
       <img src="gazettelogo.png" alt="The Gazette logo" class="logo" />
       <div>
-        <div class="event-date roboto headline">Timeline:</div>
-        <div class="event-text roboto headline">
-          The disappearance of Claire Bell
-        </div>
-        <div class="event-text">Missing Sunday. Found Wednesday.</div>
+        <div class="event-date">Timeline:</div>
+        <div class="event-date" style="font-size:1.4rem; margin-top:0.2rem;">The search for Claire Bell</div>
+        <div class="event-text" style="font-weight:bold; margin-top:0.4rem;">Missing Sunday. Found Wednesday.</div>
         <div class="scroll-instruction">Scroll right →</div>
-        <img class="event-img" src="clairepic.png" alt="Claire Bell photo" />
+        <img src="clairepic.png" alt="Claire Bell photo" class="event-img" />
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
     <!-- CARD 2: Sunday -->
@@ -150,10 +126,10 @@
       <div>
         <div class="event-date">Sunday, June 15</div>
         <div class="event-text">
-          Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal. She is wearing a white shirt with a red collar, grey pants, and no shoes. Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, about 60 km away. Police begin searching her home and mark the apartment door as a protected scene.
+          Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal, wearing a white shirt with a red collar, grey pants, and no shoes. Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, about 60 km away. Police mark the apartment door as a protected scene.
         </div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
     <!-- CARD 3: Monday -->
@@ -161,54 +137,43 @@
       <div>
         <div class="event-date">Monday, June 16</div>
         <div class="event-text">
-          Police search LaSalle, Coteau-du-Lac, and areas near the Ontario border. A dead dog, believed to be the Chihuahua seen with Claire, is found near Highway 30. A command post is established. Police urge residents to check their yards. No Amber Alert is issued.
+          Police search LaSalle, Coteau-du-Lac, and areas near the Ontario border. A dead dog, believed to be the Chihuahua seen with Claire, is found near Highway 30. A command post is established. Residents are asked to check yards and sheds. No Amber Alert is issued.
         </div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
-    <!-- CARD 4: Tuesday Morning -->
+    <!-- CARD 4: Tuesday -->
     <div class="event-card">
       <div>
-        <div class="event-date">Tuesday Morning, June 17</div>
+        <div class="event-date">Tuesday, June 17</div>
         <div class="event-text">
-          Claire’s mother, Rachel Todd, is arrested overnight and charged with child abandonment. Police search areas around Vaudreuil-Dorion. A black minibus with officers is seen at the command post. Residents gather outside the fireworks store.
+          Claire’s mother, Rachel Todd, is arrested early morning and appears in court in the afternoon, charged with child abandonment. SQ continues searching around Vaudreuil-Dorion. Volunteers are not requested to join the search.
         </div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
-    <!-- CARD 5: Tuesday Afternoon -->
+    <!-- CARD 5: Wednesday -->
     <div class="event-card">
       <div>
-        <div class="event-date">Tuesday Afternoon, June 17</div>
+        <div class="event-date">Wednesday, June 18</div>
         <div class="event-text">
-          Rachel Todd appears in court via video. She nods throughout and says only “OK” and “bye.” The Crown says more charges could come. Volunteers are not requested to assist with the search.
+          Police report a sighting of Claire near Casselman, Ontario, around 2 p.m. The search continues with 150 SQ officers. A bilingual witness wearing an "Abondance" apron is sought. Claire is found safe by Ontario Provincial Police around 3 p.m.
         </div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
-    <!-- CARD 6: Wednesday Morning -->
+    <!-- CARD 6: Found -->
     <div class="event-card">
       <div>
-        <div class="event-date">Wednesday Morning, June 18</div>
+        <div class="event-date">Wednesday, June 18 – 3 p.m.</div>
         <div class="event-text">
-          Police say Claire was seen in Ontario near Casselman around 2 p.m. Sunday. Search continues with 150 SQ officers and trained civilian teams. Police seek a key witness: a bilingual woman wearing an apron that says "Abondance."
+          <b>Claire Bell is found alive</b> by Ontario Provincial Police near Casselman, 150 km from Montreal. Her father posts: “Thank you everyone. Please allow me and my family this time with our girl.”
         </div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
-
-    <!-- CARD 7: Wednesday Afternoon -->
-    <div class="event-card">
-      <div>
-        <div class="event-date">Wednesday Afternoon, June 18</div>
-        <div class="event-text">
-          Claire is found safe by Ontario Provincial Police around 3 p.m. Her father posts: “Thank you everyone. Please allow me and my family to [have] this time with our girl.”
-        </div>
-      </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
+      <div class="event-marker"></div>
     </div>
 
   </div>
