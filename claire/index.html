@@ -164,7 +164,7 @@
       <div class="event-card">
         <img src="gazettelogo.png" alt="The Gazette logo" class="logo">
         <h2 class="event-date">Timeline:</h2>
-        <h2 class="event-title">The finding of missing girl Claire Bell</h2>
+        <h2 class="event-title">The search for Claire Bell</h2>
         <div class="scroll-instruction">Scroll right →</div>
         <img src="clairepic.png" alt="Claire Bell" class="event-img">
         <div class="card-footer">
@@ -226,6 +226,7 @@
 
       <!-- Found Card -->
       <div class="event-card">
+        <h2 class="event-date">Wednesday, June 18 – 3:06 p.m.</h2>
         <h2 class="event-title">Claire is found</h2>
         <div class="event-text">
           <ul>
@@ -238,19 +239,17 @@
           <div class="card-timeline"><div class="card-marker"></div></div>
         </div>
       </div>
-        </div>
-      </div>
 
     </div>
     <div class="progress-bar"><div class="progress-filled"></div></div>
   </div>
   <script>
     const timeline = document.querySelector('.timeline');
-    const progress = document.querySelector('.progress-filled');
+    const progressFilled = document.querySelector('.progress-filled');
     timeline.addEventListener('scroll', () => {
-      const max = timeline.scrollWidth - timeline.clientWidth;
-      const pct = (timeline.scrollLeft / max) * 100;
-      progress.style.width = pct + '%';
+      const maxScroll = timeline.scrollWidth - timeline.clientWidth;
+      const pct = (timeline.scrollLeft / maxScroll) * 100;
+      progressFilled.style.width = pct + '%';
     });
   </script>
 </body>
