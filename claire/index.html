@@ -24,7 +24,6 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       padding: 2rem 1rem 3rem;
-      position: relative;
     }
 
     .event-card {
@@ -56,38 +55,31 @@
       border-radius: 4px;
     }
 
-    .timeline-line {
-      position: absolute;
+    .card-timeline {
       height: 4px;
       background: red;
-      bottom: 0;
-      left: 0;
-      min-width: 100%;
-      z-index: 0;
+      position: relative;
+      margin-top: 1.5rem;
+      border-radius: 2px;
     }
 
-    .timeline-marker {
-      position: absolute;
+    .card-marker {
       width: 12px;
       height: 12px;
       background: red;
       border-radius: 2px;
-      bottom: -6px;
+      position: absolute;
+      top: -4px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1;
     }
 
-    .event-card::after {
-      content: '';
+    .logo {
       position: absolute;
-      width: 2px;
-      height: 20px;
-      background: red;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: auto;
     }
   </style>
 </head>
@@ -97,19 +89,16 @@
 
   <div class="timeline">
 
-    <!-- CARD 1: Title card -->
-    <div class="event-card" style="position: relative;">
-      <div style="color: #b30000; font-weight: bold; font-size: 1.1rem; margin-bottom: 0.3rem;">
-        Timeline:
-      </div>
-      <div style="font-weight: bold; font-size: 1.1rem; line-height: 1.4;">
+    <!-- CARD 1: Title with logo and Claire image -->
+    <div class="event-card">
+      <img src="gazettelogo.png" alt="The Gazette logo" class="logo" />
+      <div class="event-date">Timeline:</div>
+      <div class="event-text" style="font-weight: bold; font-size: 1.05rem;">
         The search for Claire Bell
       </div>
-      <div style="font-size: 1rem; margin-bottom: 1rem;">
-        Sunday – Wednesday
-      </div>
-      <img class="event-img" src="clairepic.jpg" alt="Claire Bell photo" />
-      <div class="timeline-marker"></div>
+      <div class="event-text">Sunday – Wednesday</div>
+      <img class="event-img" src="clairepic.png" alt="Claire Bell photo" />
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 2: Sunday -->
@@ -118,7 +107,7 @@
       <div class="event-text">
         Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal. She is wearing a white shirt with a red collar, grey pants, and no shoes. Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, about 60 km away. Police begin searching her home and mark the apartment door as a protected scene.
       </div>
-      <div class="timeline-marker"></div>
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 3: Monday -->
@@ -132,7 +121,7 @@
         <b>Afternoon:</b><br>
         A dead dog — believed to be Claire’s Chihuahua — is found near Highway 30. The search continues in LaSalle, Coteau-du-Lac, and near the Ontario border. No Amber Alert is issued.
       </div>
-      <div class="timeline-marker"></div>
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 4: Tuesday -->
@@ -146,7 +135,7 @@
         <b>Afternoon:</b><br>
         Todd appears in court by video wearing a red shirt and grey blanket. She says little as the Crown opposes her release. A bail hearing is set for Wednesday. The investigation continues.
       </div>
-      <div class="timeline-marker"></div>
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 5: Wednesday -->
@@ -160,7 +149,7 @@
         <b>Afternoon:</b><br>
         SQ confirms a sighting of Claire around 2 p.m. in eastern Ontario. Police appeal for dashcam footage and issue a witness alert for a woman wearing an apron with “Abondance” on it. Todd returns to court.
       </div>
-      <div class="timeline-marker"></div>
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
     <!-- CARD 6: Claire found -->
@@ -172,12 +161,9 @@
       <div class="event-text" style="margin-top: 1rem;">
         Her father posts: <br><i>“Thank you everyone. Please allow me and my family this time with our girl.”</i>
       </div>
-      <div class="timeline-marker"></div>
+      <div class="card-timeline"><div class="card-marker"></div></div>
     </div>
 
-    <!-- Red timeline line at bottom -->
-    <div class="timeline-line"></div>
   </div>
-
 </body>
 </html>
