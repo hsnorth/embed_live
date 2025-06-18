@@ -6,53 +6,88 @@
   <title>Claire Bell Timeline</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; font-family: Georgia, serif; background: #fafafa; }
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: Georgia, serif; background: #f0f0f0; }
+
+    /* Centered timeline wrapper */
+    .timeline-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Hide scrollbar */
     .timeline {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding: 2rem 1rem 3rem;
+      gap: 1rem;
+      padding-bottom: 2rem;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
+    .timeline::-webkit-scrollbar { display: none; }
+
+    /* Card styling */
     .event-card {
       position: relative;
-      margin-right: 1rem;
+      flex: 0 0 calc((100% / 3) - 1rem);
       background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 1rem;
-      flex: 0 0 calc((100% / 3) - 1rem);
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+    .event-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
     .event-card:last-child { margin-right: 0; }
+
     .event-date {
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: #b30000;
-      margin: 0;
+      margin: 0 0 0.5rem;
     }
     .event-title {
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: #000;
-      margin: 0.2rem 0 1rem;
+      margin: 0 0 1rem;
     }
-    .event-text p {
-      margin: 0.5rem 0;
-      font-size: 1.05rem;
-      line-height: 1.5;
+    .scroll-instruction {
+      text-align: right;
+      color: #777;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      font-family: Georgia, serif;
     }
+
+    .event-text p, .event-text ul {
+      margin: 0.75rem 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .event-text ul { padding-left: 1.4rem; }
+    .event-text li { margin-bottom: 0.5rem; }
+
     .event-img {
       width: 100%;
-      border-radius: 4px;
+      border-radius: 6px;
       object-fit: cover;
-      max-height: 280px;
+      max-height: 260px;
       margin: 1rem 0;
     }
+
+    /* Bottom line and marker */
     .card-timeline {
       height: 4px;
       background: #b30000;
@@ -70,100 +105,109 @@
       border-radius: 2px;
       transform: translateX(-50%);
     }
+
     .logo {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 40px;
+      top: 16px;
+      right: 16px;
+      width: 48px;
       height: auto;
     }
-    .scroll-instruction {
-      text-align: right;
-      color: #888;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      font-family: Georgia, serif;
-    }
-    @media (max-width: 900px) {
-      .event-card { flex: 0 0 calc((100% / 2) - 1rem); }
-    }
+
+    /* Responsive: two cards */
+    @media (max-width: 900px) { .event-card { flex: 0 0 calc((100% / 2) - 1rem); } }
+    /* Responsive: one card */
     @media (max-width: 600px) {
-      .event-card { flex: 0 0 calc(100% - 1rem); padding: 0.75rem; }
-      .event-date, .event-title { font-size: 1.2rem; }
-      .event-text p { font-size: 1rem; }
+      .event-card { flex: 0 0 calc(100% - 1rem); padding: 1rem; }
+      .event-date, .event-title { font-size: 1.3rem; }
+      .event-text p, .event-text ul { font-size: 1rem; }
       .event-img { max-height: 200px; }
       .scroll-instruction { font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
-  <div class="timeline">
+  <div class="timeline-wrapper">
+    <div class="timeline">
 
-    <!-- CARD 1: Title -->
-    <div class="event-card">
-      <img src="gazettelogo.png" alt="The Gazette logo" class="logo" />
-      <h2 class="event-date">Timeline:</h2>
-      <h2 class="event-title">The search for Claire Bell</h2>
-      <div class="scroll-instruction">Scroll right →</div>
-      <p class="event-text" style="font-weight:bold;">Missing Sunday. Found Wednesday.</p>
-      <img src="clairepic.png" alt="Claire Bell photo" class="event-img" />
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
-
-    <!-- CARD 2: Sunday -->
-    <div class="event-card">
-      <h2 class="event-date">Sunday, June 15</h2>
-      <div class="event-text">
-        <p>Claire Bell, 3, is last seen at 9:45 a.m. near Newman Blvd. in LaSalle, Montreal.</p>
-        <p>Her mother reports her missing six hours later at a fireworks shop in Coteau-du-Lac, 60 km away.</p>
-        <p>Police mark the apartment door as a protected scene and begin searching her home.</p>
+      <!-- CARD 1: Title -->
+      <div class="event-card">
+        <img src="gazettelogo.png" alt="The Gazette logo" class="logo" />
+        <h2 class="event-date">Timeline:</h2>
+        <h2 class="event-title">The search for Claire Bell</h2>
+        <div class="scroll-instruction">Scroll right →</div>
+        <div class="event-text">
+          <p><strong>Missing Sunday.</strong> Found Wednesday.</p>
+        </div>
+        <img src="clairepic.png" alt="Claire Bell photo" class="event-img" />
+        <div class="card-timeline"><div class="card-marker"></div></div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
 
-    <!-- CARD 3: Monday -->
-    <div class="event-card">
-      <h2 class="event-date">Monday, June 16</h2>
-      <div class="event-text">
-        <p>Police search LaSalle, Coteau‑du‑Lac, and areas near the Ontario border.</p>
-        <p>A dead dog, believed to be Claire’s Chihuahua, is found near Highway 30.</p>
-        <p>Command posts are set up; residents are asked to check yards and sheds.</p>
+      <!-- CARD 2: Sunday -->
+      <div class="event-card">
+        <h2 class="event-date">Sunday, June 15</h2>
+        <div class="event-text">
+          <ul>
+            <li>Last seen at 9:45 a.m. near Newman Blvd., LaSalle, Montreal.</li>
+            <li>Reported missing six hours later at a fireworks shop in Coteau‑du‑Lac (60 km away).</li>
+            <li>Police mark her home as a protected scene and launch initial searches.</li>
+          </ul>
+        </div>
+        <div class="card-timeline"><div class="card-marker"></div></div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
 
-    <!-- CARD 4: Tuesday -->
-    <div class="event-card">
-      <h2 class="event-date">Tuesday, June 17</h2>
-      <div class="event-text">
-        <p>Claire’s mother, Rachel Todd, is arrested early morning and charged with child abandonment.</p>
-        <p>She appears in court in the afternoon via video; the Crown opposes her release.</p>
-        <p>Searches continue around Vaudreuil‑Dorion; volunteers are not requested.</p>
+      <!-- CARD 3: Monday -->
+      <div class="event-card">
+        <h2 class="event-date">Monday, June 16</h2>
+        <div class="event-text">
+          <ul>
+            <li>Search expands to LaSalle, Coteau‑du‑Lac, and Ontario border.</li>
+            <li>Dead Chihuahua, believed to be Claire’s, found near Highway 30.</li>
+            <li>Command posts established; residents asked to check yards and sheds.</li>
+          </ul>
+        </div>
+        <div class="card-timeline"><div class="card-marker"></div></div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
 
-    <!-- CARD 5: Wednesday -->
-    <div class="event-card">
-      <h2 class="event-date">Wednesday, June 18</h2>
-      <div class="event-text">
-        <p>An SQ sighting places Claire near Casselman, Ontario, around 2 p.m.</p>
-        <p>Searches continue with 150 officers; witnesses include a bilingual woman in an “Abondance” apron.</p>
-        <p>Later, OPP find her safe near Casselman around 3 p.m.</p>
+      <!-- CARD 4: Tuesday -->
+      <div class="event-card">
+        <h2 class="event-date">Tuesday, June 17</h2>
+        <div class="event-text">
+          <ul>
+            <li>Morning: Rachel Todd arrested and charged with child abandonment.</li>
+            <li>Afternoon: Todd appears via video; Crown opposes her release.</li>
+            <li>Searches continue around Vaudreuil‑Dorion; volunteers not requested.</li>
+          </ul>
+        </div>
+        <div class="card-timeline"><div class="card-marker"></div></div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
 
-    <!-- CARD 6: Found -->
-    <div class="event-card">
-      <h2 class="event-date">Wednesday, June 18 – 3 p.m.</h2>
-      <div class="event-text">
-        <p><b>Claire Bell is found alive</b> by Ontario Provincial Police, 150 km from Montreal.</p>
-        <p>Her father posts: “Thank you everyone. Please allow me and my family this time with our girl.”</p>
+      <!-- CARD 5: Wednesday -->
+      <div class="event-card">
+        <h2 class="event-date">Wednesday, June 18</h2>
+        <div class="event-text">
+          <ul>
+            <li>Reported sighting near Casselman, Ont., at about 2 p.m.</li>
+            <li>Search by 150 SQ officers with civilian teams.</li>
+            <li>Witness sought: bilingual woman in “Abondance” apron.</li>
+          </ul>
+        </div>
+        <div class="card-timeline"><div class="card-marker"></div></div>
       </div>
-      <div class="card-timeline"><div class="card-marker"></div></div>
-    </div>
 
+      <!-- CARD 6: Found -->
+      <div class="event-card">
+        <h2 class="event-date">Wednesday, June 18 – 3 p.m.</h2>
+        <div class="event-text">
+          <ul>
+            <li>Claire Bell found alive by OPP, 150 km from Montreal.</li>
+            <li>Father: “Thank you everyone. Please allow me and my family this time with our girl.”</li>
+          </ul>
+        </div>
+        <div class="card-timeline"><div class="card-marker"></div></div>
+      </div>
+
+    </div>
   </div>
 </body>
 </html>
