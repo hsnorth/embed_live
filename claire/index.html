@@ -41,6 +41,17 @@
       border-radius: 2px;
       overflow: hidden;
     }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      background: #b30000;
+      border-radius: 2px;
+      transform: translate(-50%, -50%);
+    }
     .progress-filled {
       width: 0;
       height: 100%;
@@ -64,13 +75,14 @@
     .event-card:last-child { margin-right: 0; }
 
     /* Title card specifics */
-    .event-card:first-child { flex: 1 0 calc(50% - 1rem); }
+    .event-card:first-child { flex: 1 0 calc(50% - 1rem); position: relative; }
     .logo {
       position: absolute;
       top: 16px;
       right: 16px;
       width: 48px;
       height: auto;
+      z-index: 2;
     }
     .event-date, .event-title { margin: 0; }
     .event-date {
@@ -164,8 +176,8 @@
       <div class="event-card">
         <h2 class="event-date">Sunday, June 15</h2>
         <div class="event-text">
-          <p>Claire Bell, aged three, was last seen at 9:45 a.m. near Newman Boulevard in LaSalle, Montreal.</p>
-          <p>Her mother reported her missing six hours later at a fireworks shop in Coteau‑du‑Lac.</p>
+          <p>Claire Bell, aged three, was last seen at 9:45 a.m. near Newman Boulevard in LaSalle, Montreal.</p>
+          <p>Her mother reported her missing six hours later at a fireworks shop in Coteau-du-Lac.</p>
         </div>
         <div class="card-footer">
           <div class="card-timeline"><div class="card-marker"></div></div>
@@ -177,8 +189,8 @@
         <h2 class="event-date">Monday, June 16</h2>
         <div class="event-text">
           <ul>
-            <li>Search extended to LaSalle, Coteau‑du‑Lac and the Ontario border.</li>
-            <li>Dead Chihuahua, believed to be Claire’s, found near Highway 30.</li>
+            <li>Search extended to LaSalle, Coteau-du-Lac and the Ontario border.</li>
+            <li>Dead Chihuahua, believed to be Claire’s, found near Highway 30.</li>
           </ul>
         </div>
         <div class="card-footer">
@@ -204,7 +216,7 @@
       <div class="event-card">
         <h2 class="event-date">Wednesday, June 18</h2>
         <div class="event-text">
-          <p>Claire was spotted near Casselman, Ontario, around 2 p.m.</p>
+          <p>Claire was spotted near Casselman, Ontario, around 2 p.m.</p>
           <p>Ontario Provincial Police later confirmed she was found alive the same afternoon.</p>
         </div>
         <div class="card-footer">
@@ -214,10 +226,10 @@
 
       <!-- Found Card -->
       <div class="event-card">
-        <h2 class="event-date">Wednesday, June 18 – 3 p.m.</h2>
+        <h2 class="event-date">Wednesday, June 18 – 3 p.m.</h2>
         <div class="event-text">
           <ul>
-            <li>Claire Bell was found alive by Ontario Provincial Police, some 150 km from Montreal.</li>
+            <li>Claire Bell was found alive by Ontario Provincial Police, about 150 km from Montreal.</li>
             <li>Her father said: “Thank you everyone. Please allow me and my family this time with our girl.”</li>
           </ul>
         </div>
