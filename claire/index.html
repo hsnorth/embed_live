@@ -12,33 +12,11 @@
       background: #fafafa;
     }
 
-    .timeline-wrapper {
-      max-width: 100%;
-      padding: 1rem;
-    }
-
-    .timeline-title {
-      font-family: 'Roboto', sans-serif;
-      font-weight: 700;
-      font-size: 1.6rem;
-    }
-
-    .timeline-sub {
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-    }
-
-    .scroll-instruction {
-      text-align: right;
-      font-size: 0.85rem;
-      color: grey;
-    }
-
     .timeline {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding-bottom: 2rem;
+      padding: 2rem 1rem 3rem;
       position: relative;
     }
 
@@ -97,52 +75,49 @@
       z-index: 2;
     }
 
-    .event-img {
-      margin-top: 0.75rem;
-      max-width: 100%;
-      border-radius: 5px;
+    .scroll-instruction {
+      text-align: right;
+      font-size: 0.85rem;
+      color: grey;
+      margin-right: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="timeline-wrapper">
-    <div class="timeline-title">Timeline:<br>The search for Claire Bell</div>
-    <div class="timeline-sub">2025</div>
-    <div class="scroll-instruction">Scroll right →</div>
 
-    <div class="timeline">
-      <!-- Red timeline line underneath -->
-      <div class="timeline-line"></div>
+  <div class="scroll-instruction">Scroll right →</div>
 
-      <!-- CARD 1: Intro -->
-      <div class="event-card">
-        <div class="event-date">Sunday, June 15 – Wednesday, June 18</div>
-        <div class="event-text">
-          A young girl disappears. A city joins the search. This timeline shows the key moments in the first days of the Claire Bell case.
-        </div>
-        <div class="timeline-marker"></div>
+  <div class="timeline">
+    <div class="timeline-line"></div>
+
+    <!-- CARD 1: Title card inside timeline -->
+    <div class="event-card">
+      <div class="event-date">Timeline: The Search for Claire Bell<br>2025</div>
+      <div class="event-text">
+        A young girl disappears. A city joins the search. This timeline shows the key moments in the first days of the Claire Bell case.
       </div>
-
-      <!-- CARD 2: Claire goes missing -->
-      <div class="event-card">
-        <div class="event-date">Sunday, June 15</div>
-        <div class="event-text">
-          Claire Bell, 3, is last seen near <b>Newman Blvd.</b> in Montreal’s LaSalle borough. Her mother reports her missing at a souvenir shop 60 km away later that day.
-        </div>
-        <div class="timeline-marker"></div>
-      </div>
-
-      <!-- Add more cards here -->
-      <!-- Example: Dog found -->
-      <div class="event-card">
-        <div class="event-date">Monday, June 16</div>
-        <div class="event-text">
-          Police discover a dead Chihuahua near <b>Highway 30</b>, believed to have been with Claire. Search efforts intensify in the Montérégie region.
-        </div>
-        <div class="timeline-marker"></div>
-      </div>
-
+      <div class="timeline-marker"></div>
     </div>
+
+    <!-- CARD 2 -->
+    <div class="event-card">
+      <div class="event-date">Sunday, June 15</div>
+      <div class="event-text">
+        Claire Bell, 3, is last seen near <b>Newman Blvd.</b> in Montreal’s LaSalle borough. Her mother reports her missing at a souvenir shop 60 km away later that day.
+      </div>
+      <div class="timeline-marker"></div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="event-card">
+      <div class="event-date">Monday, June 16</div>
+      <div class="event-text">
+        Police discover a dead Chihuahua near <b>Highway 30</b>, believed to have been with Claire. Search efforts intensify in the Montérégie region.
+      </div>
+      <div class="timeline-marker"></div>
+    </div>
+
   </div>
+
 </body>
 </html>
