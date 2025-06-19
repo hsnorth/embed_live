@@ -11,8 +11,17 @@
     .timeline-wrapper { max-width: 1200px; margin: auto; padding: 2rem 1rem 3rem; position: relative; }
     .timeline { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 2rem; -ms-overflow-style: none; scrollbar-width: none; }
     .timeline::-webkit-scrollbar { display: none; }
+    /* Base: three cards visible */
     .event-card { flex: 0 0 calc((100% / 3) - 1rem); background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); scroll-snap-align: start; display: flex; flex-direction: column; padding: 1.5rem; position: relative; }
-    .event-card:first-child { flex: 0 0 calc((100% / 2) - 1rem); }
+    /* First card wider on screens >=750px but not full width */
+    @media (min-width: 750px) {
+      .event-card:first-child { flex: 0 0 calc((100% * 2 / 3) - 1rem); }
+    }
+    /* Two cards visible <=900px */
+    @media (max-width: 900px) { .event-card { flex: 0 0 calc((100% / 2) - 1rem); } }
+    /* Narrow cards on mobile <=600px */
+    @media (max-width: 600px) { .event-card { flex: 0 0 90%; } }
+
     .logo { position: absolute; top: 16px; right: 16px; width: 48px; height: auto; z-index: 2; }
     .event-date { margin: 0; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 1.5rem; color: #b30000; }
     .event-title { margin: 0.25rem 0 1rem; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 1.5rem; color: #000; }
@@ -24,14 +33,11 @@
     .card-marker { width: 12px; height: 12px; background: #b30000; border-radius: 2px; position: absolute; top: -4px; left: 50%; transform: translateX(-50%); }
     .progress-bar { position: absolute; bottom: 1rem; left: 1rem; right: 1rem; height: 4px; background: #ddd; border-radius: 2px; overflow: hidden; }
     .progress-filled { width: 0; height: 100%; background: #b30000; transition: width 0.1s ease-out; }
-    @media (max-width: 900px) { .event-card { flex: 0 0 calc((100% / 2) - 1rem); } .event-card:first-child { flex: 0 0 100%; } }
-    @media (max-width: 600px) { .event-card { flex: 0 0 90%; } }
   </style>
 </head>
 <body>
   <div class="timeline-wrapper">
     <div class="timeline">
-
       <!-- Title Card -->
       <div class="event-card">
         <img src="gazettelogo.png" class="logo" alt="Gazette logo">
@@ -41,7 +47,6 @@
         <img src="clairepic.png" alt="Claire Bell" class="event-img">
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Sunday Card -->
       <div class="event-card">
         <h2 class="event-date">Sunday</h2>
@@ -51,27 +56,24 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Monday Card -->
       <div class="event-card">
         <h2 class="event-date">Monday</h2>
         <div class="event-text">
           <p>Search efforts expanded across LaSalle, Coteau‑du‑Lac and the Ontario border as teams combed fields and woods.</p>
-          <p>A dead Chihuahua, believed to be last seen with Claire, was found Monday afternoon along the highway, 10 km from the firework store.</p>
+          <p>A dead Chihuahua, believed to be last seen with Claire, was found Monday afternoon along the highway, 10 km from the fireworks shop.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Monday Night Card -->
       <div class="event-card">
         <h2 class="event-date">Monday Night</h2>
         <div class="event-text">
           <p>Claire’s mother, Rachel Todd, was arrested and charged with child abandonment following the latest search efforts.</p>
-          <p>That night, media outlets uncovered her TikTok account and highlighted a video posted hours before Claire vanished, where Todd warned: “You try that again and it’s going to get ugly.”</p>
+          <p>That night, media uncovered her TikTok video posted hours before Claire vanished, warning: “You try that again and it’s going to get ugly.”</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Tuesday Card -->
       <div class="event-card">
         <h2 class="event-date">Tuesday</h2>
@@ -81,27 +83,24 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Wednesday Card -->
       <div class="event-card">
         <h2 class="event-date">Wednesday</h2>
         <div class="event-text">
-          <p>Police confirmed Claire was seen Sunday around 2 p.m. in the Casselman–St. Albert area and appealed for a key witness.</p>
+          <p>Police confirmed Claire was seen Sunday around 2 p.m. in the Casselman–St. Albert area and appealed for a key witness.</p>
           <p>That sighting narrowed the search near Highway 417, with SQ and OPP deploying drones and additional teams.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
       <!-- Found Card -->
       <div class="event-card">
         <h2 class="event-date">Later Wednesday</h2>
         <div class="event-text">
           <p><strong>Claire is found</strong> by Ontario Provincial Police in the St. Albert region at 3:06 p.m.; she was conscious and able to speak.</p>
-          <p>Her father, Matt Bell, posted: “Thank you everyone. Please allow me and my family this time with our girl.”</p>
+          <p>Her father, Matt Bell, posted: “Thank you everyone. Please allow me and my family this time with our girl.”</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-
     </div>
     <div class="progress-bar"><div class="progress-filled"></div></div>
   </div>
