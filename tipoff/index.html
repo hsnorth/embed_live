@@ -30,17 +30,15 @@
     .tip-embed h3 {
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      /* fluid between 1.5rem and 2rem */
       font-size: clamp(1.5rem, 6vw, 2rem);
-      text-align: left;
+      text-align: center;
       margin: 0 0 0.5rem;
     }
     .tip-embed p {
       font-family: 'Roboto', sans-serif;
       font-weight: 700;
-      /* fluid between 1rem and 1.2rem */
       font-size: clamp(1rem, 4vw, 1.2rem);
-      text-align: left;
+      text-align: center;
       color: #555;
       margin: 0 0 1rem;
     }
@@ -70,13 +68,13 @@
       font-size: 0.9rem;
     }
 
-    /* Mobile: fill full width, remove gutters */
+    /* Mobile: full-width, left-aligned, friendlier rounding */
     @media (max-width: 600px) {
       .tip-embed {
         max-width: 100% !important;
-        margin: 0;
-        border-radius: 0;
+        margin: 1rem 0;         /* flush left/right, with top/bottom space */
         padding: 0.75rem;
+        border-radius: 1rem;    /* more rounded */
       }
     }
     /* Extra-small phones */
