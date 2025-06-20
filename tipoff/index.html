@@ -1,6 +1,21 @@
-<!-- Tip embed for The Gazette: copy/paste this -->
-<div style="border:1px solid #ccc; padding:20px; border-radius:12px; max-width:500px; font-family:sans-serif; margin:0 auto;">
-  <h3 style="margin-top:0;">Got a tip for The Gazette?</h3>
+<!-- Tip embed for The Gazette with centered heading & subheading -->
+<div style="position: relative; border:1px solid #ccc; padding:20px; border-radius:12px; max-width:500px; font-family:sans-serif; margin:0 auto;">
+  <!-- Logo -->
+  <img
+    src="gazettelogo.png"
+    alt="The Gazette"
+    style="position:absolute; top:16px; right:16px; width:60px; height:auto;"
+  >
+
+  <!-- Centered heading -->
+  <h3 style="text-align:center; margin:0 0 10px;">
+    Got a tip?
+  </h3>
+  <!-- Centered subheading -->
+  <p style="text-align:center; margin:0 0 20px; font-size:.95rem; color:#555;">
+    Share any information with us about this story
+  </p>
+
   <form id="tip-form" action="https://formspree.io/f/xkgbvzbl" method="POST">
     <!-- spam trap -->
     <input type="text" name="_gotcha" style="display:none;">
@@ -55,11 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     })
-    .catch(function(error) {
+    .catch(function() {
       status.style.color = 'red';
       status.textContent = 'Network error. Please try again.';
     });
   });
 });
 </script>
-
