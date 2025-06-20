@@ -1,142 +1,162 @@
-<!-- Include in your <head> if not already present -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tip Embed for The Gazette</title>
 
-<!-- Roboto Bold -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <!-- Roboto Bold -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 
-<style>
-  .tip-embed {
-    position: relative;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    padding: 1rem;
-    max-width: 500px;
-    width: 100%;
-    margin: 1rem auto;
-    font-family: sans-serif;
-    box-sizing: border-box;
-  }
-  .tip-embed img.tip-logo {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 3.5rem;
-    height: auto;
-  }
-  .tip-embed h3 {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    /* fluid between 1.5rem and 2rem based on viewport */
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    text-align: center;
-    margin: 0 0 .5rem;
-  }
-  .tip-embed p {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    /* fluid between 1rem and 1.2rem */
-    font-size: clamp(1rem, 4vw, 1.2rem);
-    text-align: center;
-    color: #555;
-    margin: 0 0 1rem;
-  }
-  .tip-embed textarea {
-    width: 100%;
-    padding: .5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-    margin-bottom: .75rem;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 1rem;
-  }
-  .tip-embed button {
-    width: 100%;
-    padding: .75rem;
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  .tip-embed #form-status {
-    margin-top: .75rem;
-    font-size: .9rem;
-  }
-  /* Extra small phones */
-  @media (max-width: 360px) {
+  <style>
     .tip-embed {
-      padding: .75rem;
+      position: relative;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 1rem;
+      max-width: 500px;
+      width: 100%;
+      margin: 1rem auto;
+      box-sizing: border-box;
+      font-family: sans-serif;
     }
     .tip-embed img.tip-logo {
-      width: 2.5rem;
-      top: .75rem;
-      right: .75rem;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 3.5rem;
+      height: auto;
+    }
+    .tip-embed h3 {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      /* fluid between 1.5rem and 2rem */
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      text-align: center;
+      margin: 0 0 0.5rem;
+    }
+    .tip-embed p {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      /* fluid between 1rem and 1.2rem */
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      text-align: center;
+      color: #555;
+      margin: 0 0 1rem;
     }
     .tip-embed textarea {
-      margin-bottom: .5rem;
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 1rem;
     }
-  }
-</style>
+    .tip-embed button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .tip-embed #form-status {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+    }
 
-<div class="tip-embed">
-  <img src="gazettelogo.png" alt="The Gazette logo" class="tip-logo">
+    /* Mobile: fill full width, remove gutters */
+    @media (max-width: 600px) {
+      .tip-embed {
+        max-width: 100% !important;
+        margin: 0;
+        border-radius: 0;
+        padding: 0.75rem;
+      }
+    }
+    /* Extra-small phones */
+    @media (max-width: 360px) {
+      .tip-embed img.tip-logo {
+        width: 2.5rem;
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+      .tip-embed textarea {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
 
-  <h3>Got a tip?</h3>
-  <p>Share any information with us about this story</p>
+  <div class="tip-embed">
+    <!-- Logo -->
+    <img src="gazettelogo.png" alt="The Gazette logo" class="tip-logo">
 
-  <form id="tip-form" action="https://formspree.io/f/xkgbvzbl" method="POST">
-    <input type="text" name="_gotcha" style="display:none;">
+    <!-- Headings -->
+    <h3>Got a tip?</h3>
+    <p>Share any information with us about this story</p>
 
-    <textarea
-      name="info"
-      id="info"
-      rows="1"
-      placeholder="Your name, contact info & tip…"
-      required
-    ></textarea>
+    <!-- Form -->
+    <form id="tip-form" action="https://formspree.io/f/xkgbvzbl" method="POST">
+      <!-- spam trap -->
+      <input type="text" name="_gotcha" style="display:none;">
 
-    <button type="submit">Send</button>
-    <div id="form-status"></div>
-  </form>
-</div>
+      <textarea
+        name="info"
+        id="info"
+        rows="1"
+        placeholder="Your name, contact info & tip…"
+        required
+      ></textarea>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var form = document.getElementById('tip-form');
-    var status = document.getElementById('form-status');
+      <button type="submit">Send</button>
+      <div id="form-status"></div>
+    </form>
+  </div>
 
-    form.addEventListener('submit', function(ev) {
-      ev.preventDefault();
-      status.style.color = '';
-      status.textContent = 'Sending…';
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var form = document.getElementById('tip-form');
+      var status = document.getElementById('form-status');
 
-      var data = new FormData(form);
-      fetch(form.action, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      })
-      .then(function(response) {
-        if (response.ok) {
-          form.reset();
-          status.style.color = 'green';
-          status.textContent = 'Thanks! Your tip is on its way.';
-        } else {
-          response.json().then(function(data) {
-            status.style.color = 'red';
-            var errors = data.errors || [];
-            status.textContent = errors.map(function(err) { return err.message; }).join(', ')
-                               || 'Oops! There was a problem.';
-          });
-        }
-      })
-      .catch(function() {
-        status.style.color = 'red';
-        status.textContent = 'Network error. Please try again.';
+      form.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        status.style.color = '';
+        status.textContent = 'Sending…';
+
+        var data = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function(response) {
+          if (response.ok) {
+            form.reset();
+            status.style.color = 'green';
+            status.textContent = 'Thanks! Your tip is on its way.';
+          } else {
+            response.json().then(function(data) {
+              status.style.color = 'red';
+              var errors = data.errors || [];
+              status.textContent = errors.map(function(err) { return err.message; }).join(', ')
+                                 || 'Oops! There was a problem.';
+            });
+          }
+        })
+        .catch(function() {
+          status.style.color = 'red';
+          status.textContent = 'Network error. Please try again.';
+        });
       });
     });
-  });
-</script>
+  </script>
+
+</body>
+</html>
