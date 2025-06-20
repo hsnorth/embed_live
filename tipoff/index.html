@@ -1,25 +1,20 @@
 <div style="border: 1px solid #ccc; padding: 20px; border-radius: 12px; max-width: 500px; font-family: sans-serif; margin: 0 auto;">
   <h3 style="margin-top: 0;">
-    Do you have more information to share with The Gazette about this story?
+    Got a tip for The Gazette?
   </h3>
-  <p>Tip us off here:</p>
   <form action="https://formspree.io/f/xkgbvzbl" method="POST">
     <!-- Spam trap -->
     <input type="text" name="_gotcha" style="display:none;">
-
     <!-- Redirect on success -->
     <input type="hidden" name="_redirect" value="https://yourdomain.com/thank-you.html">
 
-    <label for="info" style="display:block; margin-bottom:5px; font-size:.9rem;">
-      Your name, contact info, and tip:
-    </label>
     <textarea
       id="info"
       name="info"
-      rows="6"
-      placeholder="e.g. Jane Doe, jane@example.com, here’s what happened…"
+      rows="1"
+      placeholder="Your name, contact info & tip…"
       required
-      style="width:100%; padding:8px; margin-bottom:20px; border:1px solid #ccc; border-radius:4px;"
+      style="width:100%; padding:8px; margin-bottom:20px; border:1px solid #ccc; border-radius:4px; resize: vertical;"
     ></textarea>
 
     <button
