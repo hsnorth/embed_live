@@ -1,0 +1,24 @@
+<div style="border: 1px solid #ccc; padding: 20px; border-radius: 12px; max-width: 500px; font-family: sans-serif;">
+  <h3>Have more information for The Gazette?</h3>
+  <p>Tip us off here:</p>
+  <form action="https://formspree.io/f/xkgbvzbl" method="POST">
+    <!-- Spam trap (hide from human users) -->
+    <input type="text" name="_gotcha" style="display:none">
+
+    <!-- Redirect to your hosted thank-you page -->
+    <input type="hidden" name="_redirect" value="https://yourdomain.com/thank-you.html">
+
+    <label for="name">Your name (optional):</label><br>
+    <input type="text" id="name" name="name" style="width: 100%; margin-bottom: 10px;"><br>
+
+    <label for="contact">Contact info (email or phone):</label><br>
+    <input type="text" id="contact" name="contact" required style="width: 100%; margin-bottom: 10px;"><br>
+
+    <label for="tip">Your tip:</label><br>
+    <textarea id="tip" name="tip" rows="5" required style="width: 100%; margin-bottom: 10px;"></textarea><br>
+
+    <button type="submit" style="background-color: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+      Send
+    </button>
+  </form>
+</div>
