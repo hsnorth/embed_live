@@ -1,4 +1,7 @@
-<!-- Roboto Bold from Google Fonts -->
+<!-- Include in your <head> if not already present -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Roboto Bold -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 
 <style>
@@ -6,47 +9,51 @@
     position: relative;
     border: 1px solid #ccc;
     border-radius: 12px;
-    padding: 20px;
+    padding: 1rem;
     max-width: 500px;
     width: 100%;
-    margin: 0 auto;
+    margin: 1rem auto;
     font-family: sans-serif;
     box-sizing: border-box;
   }
   .tip-embed img.tip-logo {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 60px;
+    top: 1rem;
+    right: 1rem;
+    width: 3.5rem;
     height: auto;
   }
   .tip-embed h3 {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
-    font-size: 2rem;
-    text-align: left;
-    margin: 0 0 8px;
+    /* fluid between 1.5rem and 2rem based on viewport */
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    text-align: center;
+    margin: 0 0 .5rem;
   }
   .tip-embed p {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
-    font-size: 1.2rem;
-    text-align: left;
+    /* fluid between 1rem and 1.2rem */
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    text-align: center;
     color: #555;
-    margin: 0 0 20px;
+    margin: 0 0 1rem;
   }
   .tip-embed textarea {
     width: 100%;
-    padding: 8px;
+    padding: .5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     resize: vertical;
-    margin-bottom: 10px;
+    margin-bottom: .75rem;
     box-sizing: border-box;
+    font-family: inherit;
+    font-size: 1rem;
   }
   .tip-embed button {
     width: 100%;
-    padding: 12px;
+    padding: .75rem;
     background: #000;
     color: #fff;
     border: none;
@@ -55,40 +62,32 @@
     cursor: pointer;
   }
   .tip-embed #form-status {
-    margin-top: 15px;
+    margin-top: .75rem;
     font-size: .9rem;
   }
-
-  /* Mobile adjustments */
-  @media (max-width: 600px) {
-    .tip-embed h3 {
-      font-size: 1.5rem;
-    }
-    .tip-embed p {
-      font-size: 1rem;
+  /* Extra small phones */
+  @media (max-width: 360px) {
+    .tip-embed {
+      padding: .75rem;
     }
     .tip-embed img.tip-logo {
-      width: 40px;
-      top: 12px;
-      right: 12px;
+      width: 2.5rem;
+      top: .75rem;
+      right: .75rem;
     }
-    .tip-embed {
-      padding: 15px;
+    .tip-embed textarea {
+      margin-bottom: .5rem;
     }
   }
 </style>
 
 <div class="tip-embed">
-  <!-- Logo (update path if needed) -->
   <img src="gazettelogo.png" alt="The Gazette logo" class="tip-logo">
 
-  <!-- Headings -->
   <h3>Got a tip?</h3>
   <p>Share any information with us about this story</p>
 
-  <!-- Form -->
   <form id="tip-form" action="https://formspree.io/f/xkgbvzbl" method="POST">
-    <!-- spam trap -->
     <input type="text" name="_gotcha" style="display:none;">
 
     <textarea
