@@ -11,16 +11,14 @@
   <style>
     .tip-embed {
       position: relative;
-      /* remove the grey border and add a soft shadow */
+      background: #fff;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       padding: 1rem;
-      max-width: 500px;
       width: 100%;
-      margin: 1rem auto;
+      margin: 1rem 0;
       box-sizing: border-box;
       font-family: sans-serif;
-      background: #fff;
     }
     .tip-embed img.tip-logo {
       position: absolute;
@@ -54,36 +52,35 @@
       box-sizing: border-box;
       font-family: inherit;
       font-size: 1rem;
-      /* about 1.3 lines tall by default */
       min-height: 2em;
       line-height: 1.3em;
     }
     .tip-embed button {
+      /* full width up to a max, then center */
       width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+      display: block;
       padding: 0.75rem;
       background: #003b73;
       color: #fff;
       border: none;
-      border-radius: 6px;  /* slightly more rounded */
+      border-radius: 6px;
       font-size: 1rem;
       cursor: pointer;
     }
     .tip-embed #form-status {
       margin-top: 0.75rem;
       font-size: 0.9rem;
+      text-align: center;
     }
 
-    /* Mobile: full-width, left aligned, friendlier rounding */
+    /* Mobile: friendlier rounding */
     @media (max-width: 600px) {
       .tip-embed {
-        max-width: 100% !important;
-        margin: 1rem 0;
-        padding: 0.75rem;
         border-radius: 1rem;
+        padding: 0.75rem;
       }
-    }
-    /* Extra-small phones */
-    @media (max-width: 360px) {
       .tip-embed img.tip-logo {
         width: 2.5rem;
         top: 0.75rem;
