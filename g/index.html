@@ -9,13 +9,20 @@
     *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
-      background-image: url('g/cinemas_guzzo_cover.jpg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
       font-family: Georgia, serif;
       color: #333;
+      position: relative;
+    }
+
+    /* Full-screen background image via <img> */
+    .background-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
     }
 
     .timeline-wrapper {
@@ -54,7 +61,7 @@
       flex-direction: column;
       padding: 1.5rem;
       position: relative;
-      height: 500px; /* Fixed height */
+      height: 500px;
       overflow: hidden;
     }
 
@@ -200,6 +207,10 @@
   </style>
 </head>
 <body>
+  <!-- Fullscreen background image using <img> -->
+  <img src="g/cinemas_guzzo_cover.jpg" alt="Background" class="background-img">
+
+  <!-- Timeline content -->
   <div style="height: 0; margin-left: 1rem;"></div>
   <div class="timeline-wrapper">
     <div class="timeline">
