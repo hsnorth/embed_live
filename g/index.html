@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Claire Bell Timeline</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #fff;
-      font-family: Georgia, serif;
-      color: #333;
-    }
-
+    body { margin: 0; background: #fff; font-family: Georgia, serif; color: #333; }
     .timeline-wrapper {
       max-width: 1200px;
       margin: auto;
@@ -33,9 +27,7 @@
       scrollbar-width: none;
     }
 
-    .timeline::-webkit-scrollbar {
-      display: none;
-    }
+    .timeline::-webkit-scrollbar { display: none; }
 
     .timeline-spacer {
       flex: 0 0 1rem;
@@ -59,11 +51,9 @@
         flex: 0 0 calc((100% * 2 / 3) - 1rem);
       }
     }
-
     @media (max-width: 900px) {
       .event-card { flex: 0 0 calc((100% / 2) - 1rem); }
     }
-
     @media (max-width: 600px) {
       .event-card { flex: 0 0 90%; }
     }
@@ -135,7 +125,6 @@
     }
 
     .card-footer { margin-top: auto; }
-
     .card-timeline {
       height: 4px;
       background: #1a53f4;
@@ -143,7 +132,6 @@
       position: relative;
       margin-bottom: 1rem;
     }
-
     .card-marker {
       width: 12px;
       height: 12px;
@@ -194,11 +182,11 @@
   </style>
 </head>
 <body>
+  <!-- LEFT margin outside scroll -->
+  <div style="height: 0; margin-left: 1rem;"></div>
+
   <div class="timeline-wrapper">
     <div class="timeline">
-      <!-- Left Spacer -->
-      <div class="timeline-spacer"></div>
-
       <!-- Title Card -->
       <div class="event-card">
         <img src="gazettelogo.png" class="logo" alt="Gazette logo">
@@ -206,9 +194,7 @@
         <h2 class="event-title">The rise and fall of Guzzo Cinemas</h2>
         <div class="scroll-instruction">Scroll right →</div>
         <img src="guzzocinemas.png" class="event-img square-img" alt="Guzzo Cinemas">
-        <div class="card-footer">
-          <div class="card-timeline"><div class="card-marker"></div></div>
-        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
       <!-- Sunday Card -->
@@ -249,7 +235,7 @@
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
-      <!-- Right Spacer -->
+      <!-- Spacer: Right -->
       <div class="timeline-spacer"></div>
     </div>
 
