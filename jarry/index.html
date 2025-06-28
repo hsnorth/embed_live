@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tip Embed for The Gazette</title>
+
+  <!-- Roboto Bold -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    .tip-embed {
+      position: relative;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      width: 100%;
+      margin: 1rem 0;
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+    .tip-embed img.tip-logo {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 3.5rem;
+      height: auto;
+    }
+    .tip-embed h3 {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      text-align: left;
+      margin: 0 0 0.5rem;
+    }
+    .tip-embed p {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      text-align: left;
+      color: #555;
+      margin: 0 0 1rem;
+    }
+    .tip-embed textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 1rem;
+      min-height: 2em;
+      line-height: 1.3em;
+    }
+    .tip-embed button {
+      /* full width up to a max, then center */
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+      display: block;
+      padding: 0.75rem;
+      background: #003b73;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .tip-embed #form-status {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Mobile: friendlier rounding */
+    @media (max-width: 600px) {
+      .tip-embed {
+        border-radius: 1rem;
+        padding: 0.75rem;
+      }
+      .tip-embed img.tip-logo {
+        width: 2.5rem;
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+      .tip-embed textarea {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tip-embed">
+    <!-- Logo -->
+    <img src="gazettelogo.png" alt="The Gazette logo" class="tip-logo">
+
+    <!-- Headings -->
+    <h3>Got a story tip about local politics?</h3>
+    <p>Help us uncover the full story.</p>
+
+    <!-- Form -->
+    <form id="tip-form" action="https://formspree.io/f/xkgbvzbl" method="POST">
+      <!-- spam trap -->
+      <input type="text" name="_gotcha" style="display:none;">
+
+      <textarea
+        name="info"
+        id="info"
+        placeholder="Your name, contact info & tip…"
+        required
+      ></textarea>
+
+      <button type="submit">Send</button>
+      <div id="form-status"></div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var form = document.getElementById('tip-form');
+      var status = document.getElementById('form-status');
+
+      form.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        status.style.color = '';
+        status.textContent = 'Sending…';
+
+        var data = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function(response) {
+          if (response.ok) {
+            form.reset();
+            status.style.color = 'green';
+            status.textContent = 'Thanks! Your tip is on its way.';
+          } else {
+            response.json().then(function(data) {
+              status.style.color = 'red';
+              var errors = data.errors || [];
+              status.textContent = errors.map(function(err) { return err.message; }).join(', ')
+                                 || 'Oops! There was a problem.';
+            });
+          }
+        })
+        .catch(function() {
+          status.style.color = 'red';
+          status.textContent = 'Network error. Please try again.';
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
