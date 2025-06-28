@@ -8,6 +8,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; background: #f2f2f2; font-family: Georgia, serif; color: #333; }
+
     .timeline-wrapper {
       max-width: 1200px;
       margin: auto;
@@ -44,6 +45,8 @@
       flex-direction: column;
       padding: 1.5rem;
       position: relative;
+      height: 500px; /* Fixed height */
+      overflow: hidden;
     }
 
     @media (min-width: 750px) {
@@ -51,11 +54,13 @@
         flex: 0 0 calc((100% * 2 / 3) - 1rem);
       }
     }
+
     @media (max-width: 900px) {
-      .event-card { flex: 0 0 calc((100% / 2) - 1rem); }
+      .event-card { flex: 0 0 calc((100% / 2) - 1rem); height: 500px; }
     }
+
     @media (max-width: 600px) {
-      .event-card { flex: 0 0 90%; }
+      .event-card { flex: 0 0 90%; height: 500px; }
     }
 
     .logo {
@@ -91,27 +96,29 @@
       font-family: Georgia, serif;
     }
 
+    .event-text {
+      overflow-y: auto;
+      padding-right: 0.25rem;
+      flex-grow: 1;
+    }
+
     .event-text p {
       margin: 0.75rem 0;
       font-size: 1.1rem;
       line-height: 1.6;
     }
 
-    .event-img {
+    .event-img,
+    .square-img {
       width: 100%;
-      max-height: 250px;
       object-fit: cover;
       border-radius: 6px;
       margin: 1rem 0;
+      max-height: 180px;
     }
 
     .square-img {
       aspect-ratio: 1 / 1;
-      object-fit: cover;
-      width: 100%;
-      max-height: none;
-      border-radius: 6px;
-      margin: 1rem 0;
     }
 
     @media (min-width: 750px) {
@@ -125,6 +132,7 @@
     }
 
     .card-footer { margin-top: auto; }
+
     .card-timeline {
       height: 4px;
       background: #1a53f4;
@@ -132,6 +140,7 @@
       position: relative;
       margin-bottom: 1rem;
     }
+
     .card-marker {
       width: 12px;
       height: 12px;
@@ -182,12 +191,9 @@
   </style>
 </head>
 <body>
-  <!-- LEFT margin outside scroll -->
   <div style="height: 0; margin-left: 1rem;"></div>
-
   <div class="timeline-wrapper">
     <div class="timeline">
-      <!-- Title Card -->
       <div class="event-card">
         <img src="gazettelogo.png" class="logo" alt="Gazette logo">
         <h2 class="event-date">Roll the credits</h2>
@@ -197,7 +203,6 @@
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
-      <!-- Card 1 -->
       <div class="event-card">
         <h2 class="event-date">Lights, camera, launch (1974)</h2>
         <div class="event-text">
@@ -205,8 +210,7 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-      
-      <!-- Card 2 -->
+
       <div class="event-card">
         <h2 class="event-date">The empire builds</h2>
         <div class="event-text">
@@ -214,8 +218,7 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-      
-      <!-- Card 3 -->
+
       <div class="event-card">
         <img src="guzzo.png" class="event-img square-img" alt="Guzzo Cinemas">
         <h2 class="event-date">Enter: the pandemic</h2>
@@ -224,8 +227,7 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-      
-      <!-- Card 4 -->
+
       <div class="event-card">
         <h2 class="event-date">The curtain falls</h2>
         <div class="event-text">
@@ -233,8 +235,7 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-      
-      <!-- Card 5 -->
+
       <div class="event-card">
         <h2 class="event-date">First property sale</h2>
         <div class="event-text">
@@ -242,18 +243,16 @@
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
-      
-      <!-- Card 6 -->
+
       <div class="event-card">
         <h2 class="event-date">Vincenzo’s comeback?</h2>
         <div class="event-text">
-          <p>Amid the asset sale, Vincenzo reopens the Terrebonne Mega-Plex and tells media he wants to revive theatres in Lacordaire and Pont-Viau. He remains optimisitc.</p>
+          <p>Amid the asset sale, Vincenzo reopens the Terrebonne Mega-Plex and tells media he wants to revive theatres in Lacordaire and Pont-Viau. He remains optimistic.</p>
         </div>
         <img src="guzzoface.png" class="event-img square-img" alt="Guzzo Cinemas">
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
-      <!-- Spacer: Right -->
       <div class="timeline-spacer"></div>
     </div>
 
