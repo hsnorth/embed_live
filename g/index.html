@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Claire Bell Timeline</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -14,7 +14,6 @@
       position: relative;
     }
 
-    /* Full-screen background image via <img> */
     .background-img {
       position: fixed;
       top: 0;
@@ -61,7 +60,7 @@
       flex-direction: column;
       padding: 1.5rem;
       position: relative;
-      height: 500px;
+      height: 560px; /* Taller fixed height */
       overflow: hidden;
     }
 
@@ -72,11 +71,11 @@
     }
 
     @media (max-width: 900px) {
-      .event-card { flex: 0 0 calc((100% / 2) - 1rem); height: 500px; }
+      .event-card { flex: 0 0 calc((100% / 2) - 1rem); height: 560px; }
     }
 
     @media (max-width: 600px) {
-      .event-card { flex: 0 0 90%; height: 500px; }
+      .event-card { flex: 0 0 90%; height: 560px; }
     }
 
     .logo {
@@ -127,24 +126,10 @@
     .event-img,
     .square-img {
       width: 100%;
+      aspect-ratio: 1 / 1;
       object-fit: cover;
       border-radius: 6px;
       margin: 1rem 0;
-      max-height: 180px;
-    }
-
-    .square-img {
-      aspect-ratio: 1 / 1;
-    }
-
-    @media (min-width: 750px) {
-      .square-img {
-        max-width: 300px;
-        max-height: 300px;
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-      }
     }
 
     .card-footer { margin-top: auto; }
@@ -207,10 +192,8 @@
   </style>
 </head>
 <body>
-  <!-- Fullscreen background image using <img> -->
-  <img src="cinemas_guzzo_cover.jpg" alt="Background" class="background-img">
+  <img src="g/cinemas_guzzo_cover.jpg" alt="Background" class="background-img">
 
-  <!-- Timeline content -->
   <div style="height: 0; margin-left: 1rem;"></div>
   <div class="timeline-wrapper">
     <div class="timeline">
@@ -219,31 +202,31 @@
         <h2 class="event-date">Roll the credits</h2>
         <h2 class="event-title">What happened to Guzzo Cinemas?</h2>
         <div class="scroll-instruction">Scroll right →</div>
-        <img src="guzzocinemas.png" class="event-img square-img" alt="Guzzo Cinemas">
+        <img src="guzzocinemas.png" class="square-img" alt="Guzzo Cinemas">
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
       <div class="event-card">
         <h2 class="event-date">Lights, camera, launch (1974)</h2>
         <div class="event-text">
-          <p><strong>Angelo Guzzo</strong> opened his first cinema after arriving from Italy. It marked the beginning of a <strong>homegrown empire</strong> in Quebec’s movie business.</p>
+          <p><strong>Angelo Guzzo</strong> opened his first cinema after arriving from Italy. It marked the beginning of a homegrown empire in Quebec’s movie business.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
       <div class="event-card">
-        <h2 class="event-date">Business is booming</h2>
+        <h2 class="event-date">The empire builds</h2>
         <div class="event-text">
-          <p>By the 2010s, <strong>Cinémas Guzzo</strong> boasted over 150 screens and several IMAX theatres. Vincenzo Guzzo, Angelo’s son, expressed ambitions to <strong>expand beyond Quebec</strong>.</p>
+          <p>By the 2010s, Cinémas Guzzo boasted over 150 screens and five IMAX theatres. Vincenzo Guzzo, Angelo’s son, expressed ambitions to expand beyond Quebec to cities like Calgary and Vancouver.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
       <div class="event-card">
-        <img src="guzzo.png" class="event-img square-img" alt="Guzzo Cinemas">
+        <img src="guzzo.png" class="square-img" alt="Guzzo Cinemas">
         <h2 class="event-date">Enter: the pandemic</h2>
         <div class="event-text">
-          <p><strong>COVID-19 hit hard</strong>, coupled with the rising trend of moviegoers <strong>turning to streaming services</strong>.</p>
+          <p>COVID-19 hit hard, coupled with the rising trend of moviegoers turning to streaming services like Netflix.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
@@ -251,7 +234,7 @@
       <div class="event-card">
         <h2 class="event-date">The curtain falls</h2>
         <div class="event-text">
-          <p>A late 2024 court order marked the end of core operations. Marché Central shut in January.The remaining <strong>seven theatres</strong> were temporarily closed in February and assets were listed for sale.</p>
+          <p>A December liquidation order marked the end of core operations. Marché Central shut in January. Seven more theatres were temporarily closed in February and assets were listed for sale.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
@@ -259,7 +242,7 @@
       <div class="event-card">
         <h2 class="event-date">First property sale</h2>
         <div class="event-text">
-          <p>In June 2025, the <strong>court approved the first real estate sale</strong> — a Laval property sold to a buyer linked to the Wilnor Group. <strong>Two real estate assets</strong> remain on the market, according to the receiver.</p>
+          <p>In June 2025, the court approved the first real estate sale — a Laval property sold to a buyer linked to the Wilnor Group. Two properties remain on the market, according to the receiver.</p>
         </div>
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
@@ -267,9 +250,9 @@
       <div class="event-card">
         <h2 class="event-date">Vincenzo’s comeback?</h2>
         <div class="event-text">
-          <p>Amid the asset sales, Vincenzo <strong>reopened a cinema</strong> in Terrebonne and tells media he wants to revive more.</p>
+          <p>Amid the asset sale, Vincenzo reopens the Terrebonne Mega-Plex and tells media he wants to revive theatres in Lacordaire and Pont-Viau. He remains optimistic.</p>
         </div>
-        <img src="guzzoface.png" class="event-img square-img" alt="Guzzo Cinemas">
+        <img src="guzzoface.png" class="square-img" alt="Guzzo Cinemas">
         <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
       </div>
 
