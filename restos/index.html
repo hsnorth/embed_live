@@ -11,7 +11,21 @@
     .timeline-wrapper { max-width: 1200px; margin: auto; padding: 2rem 1rem 3rem; position: relative; }
     .timeline { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 2rem; -ms-overflow-style: none; scrollbar-width: none; }
     .timeline::-webkit-scrollbar { display: none; }
-    .event-card { flex: 0 0 calc((100% / 3) - 1rem); background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); scroll-snap-align: start; display: flex; flex-direction: column; padding: 1.5rem; position: relative; }
+    .event-card {
+      flex: 0 0 calc((100% / 3) - 1rem);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      position: relative;
+      height: auto;
+      min-height: 360px;
+      max-height: 480px;
+      flex-grow: 1;
+    }
     @media (min-width: 750px) { .event-card:first-child { flex: 0 0 calc((100% * 2 / 3) - 1rem); } }
     @media (max-width: 900px) { .event-card { flex: 0 0 calc((100% / 2) - 1rem); } }
     @media (max-width: 600px) { .event-card { flex: 0 0 90%; } }
