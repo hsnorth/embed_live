@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quebec Family Foundations</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 120%; }
+    body {
+      font-family: Georgia, serif;
+      background: #fff;
+      color: #111;
+      line-height: 1.6;
+    }
+
+    .section-header {
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      margin-left: -50vw;
+      background: #000;
+      padding: 2rem 0;
+    }
+    .section-header .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .section-header h1,
+    .section-header p {
+      font-family: 'Roboto', sans-serif;
+      color: #B59410;
+      text-align: left;
+      margin: 0;
+    }
+    .section-header h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+    }
+    .section-header p {
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+    .date-line {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    .description {
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 0.5rem;
+    }
+    table {
+      width: 100%; 
+      border-collapse: collapse; 
+      table-layout: auto;
+    }
+    th, td {
+      padding: 0.85rem 0.5rem;
+      font-size: 1rem;
+      color: #000;
+    }
+    th {
+      font-family: 'Roboto', sans-serif;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: left;
+    }
+    td.center { text-align: center; }
+    td.name   { text-align: left; }
+    td.bold { font-weight: bold; }
+
+    th.name, td.name {
+      padding-left: 1rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover td {
+      background-color: #F0D6A6 !important;
+    }
+
+    .table-footer {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: left;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-bleed header -->
+  <div class="section-header">
+    <div class="container">
+      <h1>How Quebec’s Family Foundations Stack Up</h1>
+      <p>According to 2023 data</p>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="center">Rank</th>
+            <th class="name">Foundation</th>
+            <th class="center">Assets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="center">1</td><td class="name">Azrieli Foundation</td><td class="center bold">$2.43B</td></tr>
+          <tr><td class="center">2</td><td class="name">Lucie et André Chagnon Foundation</td><td class="center bold">$2.13B</td></tr>
+          <tr><td class="center">3</td><td class="name">Rossy Foundation</td><td class="center bold">$1.11B</td></tr>
+          <tr><td class="center">4</td><td class="name">Mirella &amp; Lino Saputo Foundation</td><td class="center bold">$1.01B</td></tr>
+          <tr><td class="center">5</td><td class="name">Trottier Family Foundation</td><td class="center bold">$723M</td></tr>
+          <tr><td class="center">6</td><td class="name">J.W. McConnell Family Foundation</td><td class="center bold">$656M</td></tr>
+          <tr><td class="center">7</td><td class="name">Marcelle et Jean Coutu Foundation</td><td class="center bold">$640M</td></tr>
+          <tr><td class="center">8</td><td class="name">Pathy Foundation</td><td class="center bold">$326M</td></tr>
+          <tr><td class="center">9</td><td class="name">Jarislowsky Foundation</td><td class="center bold">$294M</td></tr>
+          <tr><td class="center">10</td><td class="name">Hewitt Foundation</td><td class="center bold">$283M</td></tr>
+          <tr><td class="center">11</td><td class="name">Morris and Rosalind Goodman Family Foundation</td><td class="center bold">$274M</td></tr>
+          <tr><td class="center">12</td><td class="name">Molson Foundation</td><td class="center bold">$254M</td></tr>
+          <tr><td class="center">13</td><td class="name">Courtois Foundation</td><td class="center bold">$216M</td></tr>
+          <tr><td class="center">14</td><td class="name">J.A. DeSève Foundation</td><td class="center bold">$210M</td></tr>
+          <tr><td class="center">15</td><td class="name">J. Armand Bombardier Foundation</td><td class="center bold">$177M</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">Table: Montreal Gazette</div>
+  </div>
+
+</body>
+</html>
