@@ -149,7 +149,6 @@
     </header>
 
     <div id="profile-container"></div>
-    <div id="pagination" class="pagination"></div>
     <div class="graphic-credit">Graphic: The Gazette Rich List 2025</div>
   </div>
 
@@ -234,21 +233,10 @@
   ]
 
 
-  function getPerPage() {
-    return window.innerWidth > 600 ? 3 : 2;
-  }
+const container = document.getElementById('profile-container');
 
-  let currentPage = 0;
-  const container = document.getElementById('profile-container');
-  const pager     = document.getElementById('pagination');
-
-  function render() {
-    const perPage    = getPerPage();
-    const totalPages = Math.ceil(profiles.length / perPage);
-    const start      = currentPage * perPage;
-    const slice      = profiles.slice(start, start + perPage);
-
-    container.innerHTML = slice.map(p => `
+  function renderAll() {
+    container.innerHTML = profiles.map(p => `
       <div class="profile">
         <div class="avatar-wrap">
           <img src="${p.avatar}" alt="Portrait of ${p.name}">
@@ -259,33 +247,10 @@
         <p class="bio-text">${p.bio}</p>
       </div>
     `).join('');
-
-    pager.innerHTML = '';
-    for (let i = 0; i < totalPages; i++) {
-      const s     = i * perPage + 1;
-      const e     = Math.min((i + 1) * perPage, profiles.length);
-      const label = s === e ? `${s}` : `${s} – ${e}`;
-      const btn   = document.createElement('button');
-      btn.textContent = label;
-      btn.className  = i === currentPage ? 'active' : '';
-      btn.disabled   = i === currentPage;
-      btn.onclick    = () => {
-        currentPage = i;
-        render();
-        window.scrollTo(0,0);
-      };
-      btn.setAttribute('aria-label', `Profiles ${label}`);
-      pager.appendChild(btn);
-    }
   }
 
   window.onload = () => {
-    render();
-    window.addEventListener('resize', () => {
-      const maxPage = Math.ceil(profiles.length / getPerPage()) - 1;
-      if (currentPage > maxPage) currentPage = maxPage;
-      render();
-    });
+    renderAll();
   };
 </script>
 </body>
