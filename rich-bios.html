@@ -109,29 +109,29 @@
     @media (min-width: 550px) {
       .profile {
         flex-direction: row-reverse;   /* image on the right */
+        height: auto;                  /* ⬅︎ let the card grow */
       }
+    
       .avatar-wrap {
         width: 180px;
         height: 180px;
-        margin: 0 0 0 2rem;            /* space on the left of avatar now */
+        margin: 0 0 0 2rem;
       }
+    
       .profile-content {
-        text-align: left; 
         display: flex;
-        flex-direction: column;   /* stack header then bio */
-        height: 100%;  /* ensure left-aligned text */
+        flex-direction: column;
+        height: auto;                  /* takes as much as needed */
       }
+    
       .profile-header {
-        margin-bottom: 1rem;   /* was 0.5rem */
+        margin-bottom: 1rem;
       }
-    }
-
-    .graphic-credit {
-      font-size: 1rem;
-      color: #666;
-      text-align: right;
-      margin-top: 3rem;
-      font-family: Georgia, serif;
+    
+      .bio-text {
+        max-height: none;              /* ⬅︎ remove the 200-px cap */
+        overflow: visible;             /* ⬅︎ no scrollbar */
+      }
     }
   </style>
 </head>
