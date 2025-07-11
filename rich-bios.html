@@ -197,6 +197,18 @@
     .profile-header { margin-bottom: 1rem; }
     .bio-text      { max-height: none; overflow: visible; }
   }
+
+    .filler-strip {
+    width: 100vw;          /* span the whole viewport */
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;    /* centre it, even inside the 800-px container */
+  }
+  .filler-strip img {
+    width: 100%;
+    height: auto;
+    display: block;        /* kill the default inline gap */
+  }
   
   </style>
 </head>
@@ -208,6 +220,11 @@
 
     <div id="profile-container"></div>
     <div class="graphic-credit">Graphic: The Gazette Rich List 2025</div>
+  </div>
+  <div class="filler-strip">
+    <img src="images/richlist-back.jpg" alt="">
+    <img src="images/richlist-back.jpg" alt="">
+    <img src="images/richlist-back.jpg" alt="">
   </div>
 
   <script>
