@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quebec Family Foundations</title>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+    /* --- Base reset & typography ---------------------------------------- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 120%; }
+    html { font-size: 120%; }                /* scales with media-query below */
     body {
       font-family: Georgia, serif;
       background: #fff;
@@ -16,6 +18,7 @@
       line-height: 1.6;
     }
 
+    /* --- Full-bleed header ---------------------------------------------- */
     .section-header {
       width: 100vw;
       position: relative;
@@ -34,50 +37,25 @@
       font-family: 'Roboto', sans-serif;
       color: #B59410;
       text-align: left;
-      margin: 0;
     }
-    .section-header h1 {
-      font-size: 2.75rem;
-      font-weight: 700;
-    }
-    .section-header p {
-      font-size: 1.4rem;
-      font-weight: 400;
-      margin-top: 0.5rem;
-    }
+    .section-header h1 { font-size: 2.75rem; font-weight: 700; }
+    .section-header p  { font-size: 1.4rem;  font-weight: 400; margin-top: .5rem; }
 
+    /* --- Body container -------------------------------------------------- */
     .container {
       max-width: 800px;
       margin: 0 auto;
       padding: 1.5rem 1rem;
     }
-    .date-line {
-      font-size: 1rem;
-      color: #666;
-      margin-bottom: 1rem;
-    }
-    .description {
-      font-size: 1.05rem;
-      margin-bottom: 1.5rem;
-    }
 
-    .table-wrapper {
-      overflow-x: auto;
-      margin-bottom: 0.5rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: auto;
-    }
+    /* --- Table ----------------------------------------------------------- */
+    .table-wrapper { overflow-x: auto; margin-bottom: .5rem; }
+    table { width: 100%; border-collapse: collapse; }
+
     th, td {
-      padding: 1rem 0.75rem;
+      padding: 1.1rem .5rem;        /* ↑ beefed up from .85rem for height  */
       font-size: 1rem;
       color: #000;
-      height: 3.5rem;       /* Consistent row height */
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
     }
     th {
       font-family: 'Roboto', sans-serif;
@@ -85,41 +63,50 @@
       font-weight: 700;
       text-align: left;
     }
-    td.center {
-      text-align: center;
-    }
-    td.name {
-      text-align: left;
-    }
-    td.bold {
-      font-weight: bold;
-    }
+    td.center { text-align: center; }
+    td.name   { text-align: left;  }
 
-    th.name, td.name {
-      padding-left: 1rem;
-    }
+    th.name, td.name { padding-left: 1rem; }
 
-    tbody tr:nth-child(even) {
-      background: #f9f9f9;
-    }
-    tr:hover td {
-      background-color: #F0D6A6 !important;
-    }
+    /* give each row a minimum two-line height (about 3.2rem here) */
+    tbody tr { min-height: 3.2rem; }
 
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+    tr:hover td { background-color: #F0D6A6 !important; }
+
+    /* --- Footer ---------------------------------------------------------- */
     .table-footer {
-      font-size: 0.9rem;
+      font-size: .9rem;
       color: #666;
       text-align: left;
-      margin-top: 0.5rem;
+      margin-top: .5rem;
+    }
+
+    /* --- Small-screen tweaks -------------------------------------------- */
+    @media (max-width: 600px) {
+      html { font-size: 100%; }           /* shrink overall type size        */
+      th, td {                            /* keep tap-friendly row height    */
+        padding: 1.3rem .5rem;
+        font-size: .95rem;
+      }
+      .section-header h1 { font-size: 2.2rem; }
+      .section-header p  { font-size: 1.2rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Full-bleed header -->
+  <!-- Optional full-bleed header (uncomment if you want it) -->
+  <!--
+  <header class="section-header">
+    <div class="container">
+      <h1>Quebec’s Largest Family Foundations</h1>
+      <p>How the province’s biggest philanthropists stack up</p>
+    </div>
+  </header>
+  -->
 
-  <!-- Main content -->
-  <div class="container">
+  <main class="container">
     <div class="table-wrapper">
       <table>
         <thead>
@@ -149,8 +136,8 @@
       </table>
     </div>
 
-    <div class="table-footer">Table: Montreal Gazette.  Source: Latest available charity data from 2023</div>
-  </div>
+    <div class="table-footer">Table: Montreal&nbsp;Gazette. Source: latest available charity data from 2023.</div>
+  </main>
 
 </body>
 </html>
