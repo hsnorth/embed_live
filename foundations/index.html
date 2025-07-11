@@ -61,14 +61,27 @@
       margin-bottom: 1.5rem;
     }
 
+    /* Fixed-height table wrapper with vertical scroll */
     .table-wrapper {
+      max-height: clamp(300px, 50vh, 600px);
+      height: clamp(300px, 50vh, 600px);
+      overflow-y: auto;
       overflow-x: auto;
       margin-bottom: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
+
     table {
-      width: 100%; 
-      border-collapse: collapse; 
+      width: 100%;
+      border-collapse: collapse;
       table-layout: auto;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
     }
     th, td {
       padding: 0.85rem 0.5rem;
@@ -106,8 +119,6 @@
 </head>
 <body>
 
-  <!-- Full-bleed header -->
-
   <!-- Main content -->
   <div class="container">
     <div class="table-wrapper">
@@ -139,7 +150,7 @@
       </table>
     </div>
 
-    <div class="table-footer">Table: Montreal Gazette.  Source: Latest available charity data from 2023</div>
+    <div class="table-footer">Table: Montreal Gazette. Source: Latest available charity data from 2023</div>
   </div>
 
 </body>
