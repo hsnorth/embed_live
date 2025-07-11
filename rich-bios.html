@@ -106,13 +106,14 @@
     }
 
     /* ---------- TABLET & DESKTOP (≥ 550 px) ---------- */
-    @media (min-width: 550px) {
-      .profile {
-        flex-direction: row-reverse;   /* image on the right */
-        height: auto;                  /* ⬅︎ let the card grow */
+    /* ===== 550 px – 599 px ===== */
+    @media (min-width: 550px) and (max-width: 599px) {
+      .profile {                       /* desktop-ish layout still applies */
+        flex-direction: row-reverse;
+        height: auto;
       }
     
-      .avatar-wrap {
+      .avatar-wrap {                   /* 180 × 180 */
         width: 180px;
         height: 180px;
         margin: 0 0 0 2rem;
@@ -121,18 +122,37 @@
       .profile-content {
         display: flex;
         flex-direction: column;
-        height: auto;                  /* takes as much as needed */
+        height: auto;
       }
     
-      .profile-header {
-        margin-bottom: 1rem;
-      }
-    
-      .bio-text {
-        max-height: none;              /* ⬅︎ remove the 200-px cap */
-        overflow: visible;             /* ⬅︎ no scrollbar */
-      }
+      .profile-header { margin-bottom: 1rem; }
+      .bio-text      { max-height: none; overflow: visible; }
     }
+    
+    /* ===== 600 px and up ===== */
+    @media (min-width: 600px) {
+      .profile {
+        flex-direction: row-reverse;
+        height: auto;
+      }
+    
+      .avatar-wrap {                   /* bump to 230 × 230 */
+        width: 230px;
+        height: 230px;
+        margin: 0 0 0 2rem;
+      }
+    
+      .profile-content {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+      }
+    
+      .profile-header { margin-bottom: 1rem; }
+      .bio-text      { max-height: none; overflow: visible; }
+    }
+    
+  }
   </style>
 </head>
 <body>
