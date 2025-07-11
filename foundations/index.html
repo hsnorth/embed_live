@@ -8,12 +8,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 120%; }
+    html { font-size: 100%; }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
-      line-height: 1.6;
+      line-height: 1.4;
     }
 
     .container {
@@ -32,20 +32,22 @@
       border-collapse: collapse;
       table-layout: fixed;
     }
+    colgroup col:nth-child(1) { width: 10%; }
+    colgroup col:nth-child(2) { width: 60%; }
+    colgroup col:nth-child(3) { width: 30%; }
+
     thead th {
       background: #fff;
       position: sticky;
       top: 0;
       z-index: 1;
+      padding: 0.6rem;
     }
 
     th, td {
-      padding: 0.85rem 0.5rem;
+      padding: 0.5rem;
       font-size: 1rem;
-      line-height: 1.4;
-      height: clamp(2.8rem, 4vh, 3.5rem);
       overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     th {
@@ -54,22 +56,27 @@
       font-weight: 700;
       text-align: left;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
     }
 
-    td.center { text-align: center; white-space: nowrap; }
+    td {
+      display: flex;
+      align-items: center;
+    }
+    td.center {
+      justify-content: center;
+      white-space: nowrap;
+    }
     td.name {
+      justify-content: flex-start;
       text-align: left;
-      white-space: normal;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
     }
-    td.bold { font-weight: bold; }
-
-    th.name, td.name {
-      padding-left: 1rem;
-    }
+    td.bold { font-weight: bold; justify-content: flex-end; }
 
     tbody tr:nth-child(even) {
       background: #f9f9f9;
@@ -89,6 +96,11 @@
   <div class="container">
     <div class="table-wrapper">
       <table>
+        <colgroup>
+          <col />
+          <col />
+          <col />
+        </colgroup>
         <thead>
           <tr>
             <th class="center">Rank</th>
@@ -108,14 +120,4 @@
           <tr><td class="center">9</td><td class="name">Jarislowsky Foundation</td><td class="center bold">$294M</td></tr>
           <tr><td class="center">10</td><td class="name">Hewitt Foundation</td><td class="center bold">$283M</td></tr>
           <tr><td class="center">11</td><td class="name">Morris and Rosalind Goodman Family Foundation</td><td class="center bold">$274M</td></tr>
-          <tr><td class="center">12</td><td class="name">Molson Foundation</td><td class="center bold">$254M</td></tr>
-          <tr><td class="center">13</td><td class="name">Courtois Foundation</td><td class="center bold">$216M</td></tr>
-          <tr><td class="center">14</td><td class="name">J.A. DeSève Foundation</td><td class="center bold">$210M</td></tr>
-          <tr><td class="center">15</td><td class="name">J. Armand Bombardier Foundation</td><td class="center bold">$177M</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="table-footer">Table: Montreal Gazette. Source: Latest available charity data from 2023</div>
-  </div>
-</body>
-</html>
+          <tr><td class="center">12</td><td class="name">Molson Foundation</td><td class
