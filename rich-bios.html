@@ -8,11 +8,22 @@
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
 
-    body{
-      font-family:Georgia,serif;
-      background:#fff;
-      color:#111;
-      padding:1rem;
+    body {
+      font-family: Georgia, serif;
+      background: url('images/richlist-final.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #111;
+      padding: 2rem;
+    }
+    
+    /* White box container over background */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
     }
 
     .content{max-width:800px;margin:0 auto}
@@ -120,11 +131,6 @@
     <div class="graphic-credit">Graphic: The Gazette Rich List 2025</div>
   </div>
 
-  <div class="filler-strip">
-    <img src="images/richlist-back.jpg" alt="">
-    <img src="images/richlist-back.jpg" alt="">
-    <img src="images/richlist-back.jpg" alt="">
-  </div>
 
   <script>
     const profiles = [
