@@ -46,7 +46,6 @@
       width: 150px;
       height: 150px;
       margin-right: 2rem;
-      overflow: hidden;
       border-radius: 50%;
     }
     .avatar-wrap img {
@@ -102,7 +101,6 @@
       .bio-text {
         font-size: 1.2rem;
         max-height: none;
-        overflow: visible;
         padding-right: 0;
       }
     }
@@ -118,10 +116,13 @@
         margin: 0 0 0 2rem;            /* space on the left of avatar now */
       }
       .profile-content {
-        text-align: left;              /* ensure left-aligned text */
+        text-align: left; 
+        display: flex;
+        flex-direction: column;   /* stack header then bio */
+        height: 100%;  /* ensure left-aligned text */
       }
       .profile-header {
-        margin-bottom: 0.8rem;   /* was 0.5rem */
+        margin-bottom: 1rem;   /* was 0.5rem */
       }
     }
 
