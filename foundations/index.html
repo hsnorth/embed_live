@@ -7,90 +7,42 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    /* --- Base reset & typography ---------------------------------------- */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 120%; }                /* scales with media-query below */
-    body {
-      font-family: Georgia, serif;
-      background: #fff;
-      color: #111;
-      line-height: 1.6;
-    }
-
-    /* --- Full-bleed header ---------------------------------------------- */
-    .section-header {
-      width: 100vw;
-      position: relative;
-      left: 50%;
-      margin-left: -50vw;
-      background: #000;
-      padding: 2rem 0;
-    }
-    .section-header .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-    .section-header h1,
-    .section-header p {
-      font-family: 'Roboto', sans-serif;
-      color: #B59410;
-      text-align: left;
-    }
-    .section-header h1 { font-size: 2.75rem; font-weight: 700; }
-    .section-header p  { font-size: 1.4rem;  font-weight: 400; margin-top: .5rem; }
-
-    /* --- Body container -------------------------------------------------- */
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-
-    /* --- Table ----------------------------------------------------------- */
-    .table-wrapper { overflow-x: auto; margin-bottom: .5rem; }
-    table { width: 100%; border-collapse: collapse; }
-
-    th, td {
-      padding: 1.1rem .5rem;        /* ↑ beefed up from .85rem for height  */
-      font-size: 1rem;
-      color: #000;
-    }
-    th {
-      font-family: 'Roboto', sans-serif;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: left;
-    }
-    td.center { text-align: center; }
-    td.name   { text-align: left;  }
-
-    th.name, td.name { padding-left: 1rem; }
-
-    /* give each row a minimum two-line height (about 3.2rem here) */
-    tbody tr { min-height: 3.2rem; }
-
-    tbody tr:nth-child(even) { background: #f9f9f9; }
-    tr:hover td { background-color: #F0D6A6 !important; }
-
-    /* --- Footer ---------------------------------------------------------- */
-    .table-footer {
-      font-size: .9rem;
-      color: #666;
-      text-align: left;
-      margin-top: .5rem;
-    }
-
-    /* --- Small-screen tweaks -------------------------------------------- */
-    @media (max-width: 600px) {
-      html { font-size: 100%; }           /* shrink overall type size        */
-      th, td {                            /* keep tap-friendly row height    */
-        padding: 1.3rem .5rem;
-        font-size: .95rem;
-      }
-      .section-header h1 { font-size: 2.2rem; }
-      .section-header p  { font-size: 1.2rem; }
+  
+    /* reset & basics */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size:120%; }
+    body { font-family:Georgia,serif; background:#fff; color:#111; line-height:1.6; }
+  
+    /* layout helpers */
+    .container       { max-width:800px; margin:0 auto; padding:1.5rem 1rem; }
+    .table-wrapper   { overflow-x:auto; margin-bottom:.5rem; }
+  
+    /* TABLE ------------------------------------------------------------- */
+    table            { width:100%; border-collapse:collapse; }
+    colgroup col:nth-child(1) { width: 4rem;  } /* Rank   */
+    colgroup col:nth-child(2) { width:auto;  }  /* Name   */
+    colgroup col:nth-child(3) { width: 6.5rem;} /* Assets */
+  
+    th, td           { padding:1.1rem .5rem; font-size:1rem; }
+    th               { font-family:'Roboto',sans-serif; text-transform:uppercase; font-weight:700; }
+  
+    /* alignment + bold numbers */
+    .center          { text-align:center;  }
+    .bold,           /* we’ll add this to <td> cells that need bolding   */
+    td.center        { font-weight:700;    }
+  
+    th.name, td.name { padding-left:1rem; text-align:left; }
+  
+    tbody tr         { min-height:3.2rem; }
+    tbody tr:nth-child(even){ background:#f9f9f9; }
+    tr:hover td      { background:#F0D6A6 !important; }
+  
+    .table-footer    { font-size:.9rem; color:#666; text-align:left; margin-top:.5rem; }
+  
+    /* small-screen tweaks */
+    @media (max-width:600px){
+      html      { font-size:100%; }
+      th, td    { padding:1.3rem .5rem; font-size:.95rem; }
     }
   </style>
 </head>
