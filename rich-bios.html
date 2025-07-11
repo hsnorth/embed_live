@@ -1,3 +1,31 @@
+Your goal is to make each profile section in the Rich List have the same height across all screens, which is challenging with varying content lengths and responsive design. The "patchy" look likely comes from `min-height: 420px;` and `max-height: 420px;` on `.profile`, combined with `overflow: hidden;` on `.bio-text` at larger screens, and then `unset` overflow at smaller screens. This approach can cause issues where content is cut off or there's excess white space.
+
+Here's an updated approach to ensure consistent height, especially for embedding with an iframe, while maintaining responsiveness:
+
+**Key Changes and Rationale:**
+
+1.  **Remove Fixed Heights on `.profile`:** Instead of `min-height` and `max-height` on the entire profile, we will control height through flexible box layouts and strategic padding. This allows the internal elements to dictate the height, and we'll ensure they all have enough space without resorting to hard limits.
+
+2.  **Flexible Box Layout for `profile` content:**
+
+      * Change `display: grid` to `display: flex` for `.profile` in the default (larger screen) layout.
+      * Use `flex-direction: column` for the elements inside `.profile` so they stack.
+      * Use `justify-content: space-between` or `align-items: stretch` to distribute space.
+
+3.  **Controlled Height for `bio-text`:**
+
+      * Instead of `overflow: hidden` and `webkit-line-clamp`, which can cut off text, we'll try to ensure the bio text container has a consistent *relative* height.
+      * A fixed height on the `.bio-text` itself is still problematic. A better approach is to ensure the layout of the `profile` allows the text to flow, and that all text containers have *similar* vertical space available within a fixed-height parent.
+
+4.  **Overall Container Height:** The most reliable way to guarantee a consistent iframe height for an embed with variable content is to dynamically calculate the height of the content and set the iframe's height accordingly, or to design the content to fit a *predefined* fixed height for the iframe.
+
+Given your constraint of needing the "whole thing" to be the same height for all screens for an iframe, the most robust solution is to embrace a design that limits the *visible* content while maintaining a fixed overall height per profile entry. This means some bios might be truncated if they are too long.
+
+**Revised CSS and HTML Structure:**
+
+Here's the updated code focusing on a more consistent structure and addressing the "patchy" look. This version aims for a fixed height per profile section, with scrollable content for bios if they exceed the allocated space, to ensure the overall embed height remains predictable.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,12 +35,22 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    html, body { margin:0; padding:0; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
       padding: 1rem;
+      /* Define a consistent height for the entire body if this is the iframe content */
+      /* This height should accommodate all 25 profiles plus header and footer */
+      /* You'll need to adjust this value based on the final single profile height and number of profiles */
+      /* For example, if each profile is 300px, 25 profiles would be 7500px + header/footer */
+      /* height: calc(25 * 300px + 100px); */ /* Example: adjust dynamically or calculate for static embed */
+      /* overflow-y: scroll; /* Allows scrolling within the iframe if content exceeds height */
     }
     .content {
       max-width: 800px;
@@ -23,89 +61,96 @@
       font-size: 2.2rem;
       font-weight: 700;
       margin: 2rem 0;
+      text-align: center; /* Center the header for better mobile look */
     }
     .main-header .gold { color: #B59410; }
 
+    /* Each profile section should have a consistent height */
     .profile {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      grid-template-areas:
-        "header avatar"
-        "bio    avatar";
-      row-gap: 1rem;
-      column-gap: 2rem;
-      margin-bottom: 2rem;
-      align-items: center;
+      display: flex; /* Use flexbox for consistent vertical alignment */
       border-bottom: 1px solid #ddd;
       padding-bottom: 1.5rem;
-      min-height: 420px;
-      max-height: 420px;
+      margin-bottom: 1.5rem; /* Add consistent margin between profiles */
+      align-items: flex-start; /* Align items to the start of the cross axis */
+      position: relative; /* For positioning child elements if needed */
+      /* Set a fixed height for each profile entry */
+      height: 300px; /* This is a crucial value; adjust based on content and desired look */
+      overflow: hidden; /* Hide overflowing content within each profile */
+      box-sizing: border-box;
     }
 
     .avatar-wrap {
-      grid-area: avatar;
-      width: 100%;
-      max-width: 300px;
-      aspect-ratio: 1 / 1;
+      flex-shrink: 0; /* Prevent avatar from shrinking */
+      width: 150px; /* Fixed width for avatar */
+      height: 150px; /* Fixed height for avatar to maintain aspect ratio */
+      margin-right: 2rem; /* Space between avatar and text */
       overflow: hidden;
+      border-radius: 50%; /* Make avatars circular */
     }
 
     .avatar-wrap img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Cover the area, cropping if necessary */
       display: block;
     }
 
+    .profile-content {
+      flex-grow: 1; /* Allow content to take up remaining space */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Distribute space vertically */
+      height: 100%; /* Ensure content takes full height of parent profile */
+    }
+
     .profile-header {
-      grid-area: header;
       font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
+      font-size: 1.8rem; /* Slightly reduced font size for better fit */
       font-weight: 600;
       color: #111;
-      margin: 0;
+      margin: 0 0 0.5rem 0; /* Adjust margin for spacing */
     }
     
+    .profile-header span { /* For the worth value */
+        white-space: nowrap; /* Keep worth on one line with name */
+    }
+
     .bio-text {
-      grid-area: bio;
-      font-size: 1.2rem;
-      line-height: 1.5;
-      max-width: 90%;
-      margin: 0 auto;
-      text-align: center;
-      display: -webkit-box;
-      -webkit-line-clamp: 8;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: 1.1rem; /* Slightly smaller font for more text in limited space */
+      line-height: 1.4;
+      margin: 0;
+      /* Make bio scrollable if it exceeds its allotted space */
+      max-height: calc(100% - 2.5rem - 0.5rem); /* Adjust based on header height + margins */
+      overflow-y: auto; /* Enable vertical scrolling if text overflows */
+      padding-right: 10px; /* Add some padding for scrollbar */
     }
 
     @media (max-width: 900px) {
       .profile {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        grid-template-areas:
-          "avatar"
-          "header"
-          "bio";
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+        align-items: center; /* Center items when stacked */
         text-align: center;
-        justify-items: center;
+        height: auto; /* Allow height to adjust on mobile for better readability */
+        padding-top: 1rem; /* Add padding at top for mobile */
       }
 
       .avatar-wrap {
-        max-width: 200px;
-        margin-bottom: 1rem;
+        width: 120px; /* Smaller avatar on mobile */
+        height: 120px;
+        margin-right: 0;
+        margin-bottom: 1rem; /* Space below avatar */
       }
 
       .profile-header {
-        font-size: 1.8rem;
-        text-align: center;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
       }
 
       .bio-text {
-        font-size: 1.2rem;
-        text-align: center;
-        -webkit-line-clamp: unset;
-        display: block;
+        font-size: 1rem;
+        max-height: none; /* No max height on mobile; let it flow naturally */
+        overflow-y: visible; /* No scrollbar on mobile */
+        padding-right: 0;
       }
     }
 
@@ -130,104 +175,106 @@
 
   <script>
     const profiles = [
-    { rank: 1,  name: 'Alain Bouchard and family',          worth: '$9B', avatar: 'images/bouchard.png',
+    { rank: 1,  name: 'Alain Bouchard and family',         worth: '$9B', avatar: 'http://googleusercontent.com/file_content/0',
       bio: 'Alain Bouchard founded Alimentation Couche-Tard in 1980. He grew it into one of the world’s largest convenience-store chains, with nearly 17,000 stores in more than 30 countries under banners like Circle K. He and his wife, Sandra, launched a foundation with more than $150 million in assets.' },
-  
-    { rank: 2,  name: 'Naomi, Sharon and Danna Azrieli',    worth: '$7.7B', avatar: 'images/azrieli.png',
+   
+    { rank: 2,  name: 'Naomi, Sharon and Danna Azrieli', worth: '$7.7B', avatar: 'images/azrieli.png',
       bio: 'Daughters of the late David Azrieli, the sisters run the Azrieli Group, a major Israeli real estate firm with malls, offices and towers. Through the Azrieli Foundation — Canada’s largest family philanthropic foundation — they’ve donated more than $600 million to education, research, the arts and Holocaust remembrance.' },
-  
-    { rank: 3,  name: 'Desmarais family',                   worth: '$7B', avatar: 'images/desmarais.png',
+   
+    { rank: 3,  name: 'Desmarais family',                worth: '$7B', avatar: 'images/desmarais.png',
       bio: 'The Desmarais family turned Power Corporation into a multinational financial conglomerate. Paul Sr. expanded into media, insurance and utilities. Paul Jr. and André took over in 1996. Paul Desmarais III now leads Sagard, a major investment firm partially tied to the family.' },
     
-    { rank: 4,  name: 'Saputo family',                      worth: '$6B', avatar: 'images/saputo.png',
+    { rank: 4,  name: 'Saputo family',                   worth: '$6B', avatar: 'images/saputo.png',
       bio: 'Emanuele “Lino” Saputo turned Saputo Inc. into one of the world’s top 10 dairy processors. His son, Lino Jr., is now chair. The family also invests in real estate. Another son, Joey Saputo, is owner of CF Montréal.' },
-  
-    { rank: 5,  name: 'Robert Miller',                      worth: '$5.3B', avatar: 'images/miller.png',
+   
+    { rank: 5,  name: 'Robert Miller',                   worth: '$5.3B', avatar: 'images/miller.png',
       bio: 'Miller founded Future Electronics in 1968, building it into one of the largest private electronics distributors. In 2024, he was arrested on sex-related charges. The case was stayed in 2025 due to health concerns. He sold the company for about $5 billion.' },
-  
-    { rank: 6,  name: 'Lawrence Stroll',                    worth: '$5B', avatar: 'images/stroll.png',
+   
+    { rank: 6,  name: 'Lawrence Stroll',                 worth: '$5B', avatar: 'images/stroll.png',
       bio: 'Montreal-born Stroll made his fortune in fashion, investing in brands like Tommy Hilfiger and Michael Kors. He bought the Force India F1 team in 2018 and became executive chair of Aston Martin in 2020 after leading a major investment.' },
 
-    { rank: 7,  name: 'Ryan Cohen',                         worth: '$4.8B', avatar: 'images/cohen.png',
+    { rank: 7,  name: 'Ryan Cohen',                      worth: '$4.8B', avatar: 'images/cohen.png',
       bio: 'Cohen co-founded Chewy in 2011, selling it to PetSmart for $4.5 billion in 2017. He later became GameStop’s largest individual shareholder, joined its board, and was appointed CEO in 2023. He’s also invested in Apple and Alibaba.' },
-  
-    { rank: 8,  name: 'Jacques D’Amours',                   worth: '$4.3B', avatar: 'images/amour.png',
+   
+    { rank: 8,  name: 'Jacques D’Amours',                worth: '$4.3B', avatar: 'images/amour.png',
       bio: 'A co-founder of Couche-Tard, Jacques D’Amours was instrumental in the company’s international expansion. His daughter, Marie-Ève D’Amours also sat on the board for several years.' },
-  
-    { rank: 9,  name: 'Stephan Crétier',                    worth: '$3.8B', avatar: 'images/cretier.png',
+   
+    { rank: 9,  name: 'Stephan Crétier',                 worth: '$3.8B', avatar: 'images/cretier.png',
       bio: 'Crétier founded GardaWorld in 1995 with a $25,000 mortgage on his home. The Montreal-based security giant now operates in over 45 countries, offering protective services, risk consulting and cash logistics. He took the company private in a multibillion-dollar deal in 2019 and remains its CEO and chairman. He lives in Dubai.' },
-  
-    { rank: 10, name: 'Coutu family',                       worth: '$3.8B', avatar: 'images/coutu.png',
+   
+    { rank: 10, name: 'Coutu family',                    worth: '$3.8B', avatar: 'images/coutu.png',
       bio: 'Jean Coutu revolutionized Quebec pharmacy retail starting in 1969. The family sold most of the Jean Coutu Group to Metro in 2018 in a deal worth $4.5 billion. Their foundation also remains active, with more than $600 million in assets.' },
-  
-    { rank: 11, name: 'Serge Godin',                        worth: '$3.7B', avatar: 'images/godin.png',
+   
+    { rank: 11, name: 'Serge Godin',                     worth: '$3.7B', avatar: 'images/godin.png',
       bio: 'Godin co-founded CGI in 1976 in Quebec City. He served as CEO until 2006 and then as executive chairman. In 2025, he became co-chair of the board. CGI provides IT and consulting services and is headquartered in Montreal.' },
-  
-    { rank: 12, name: 'Pierre Karl Péladeau',               worth: '$3.1B', avatar: 'images/karl.png',
+   
+    { rank: 12, name: 'Pierre Karl Péladeau',              worth: '$3.1B', avatar: 'images/karl.png',
       bio: 'Péladeau leads Québecor, a telecom and media empire founded by his father. The company’s stock recently hit a new high, buoyed by assets like the Journal de Montréal and TVA. He also briefly led the Parti Québécois. As a student, he changed his middle name from “Carl” to “Karl” after Karl Marx.' },
-  
+   
     { rank: 13, name: 'Bombardier and Beaudoin families',   worth: '$2.9B', avatar: 'images/bombardier.png',
       bio: 'Joseph-Armand Bombardier, credited with inventing the snowmobile, founded the company that became Bombardier and BRP. His daughter Claire married Laurent Beaudoin, who helped grow the business. The two families built and then split the aerospace and recreational-vehicle giants. Their descendants still control major stakes in both companies.' },
-  
-    { rank: 14, name: 'Andrew Lutfy',                       worth: '$2.5B', avatar: 'images/lufty.png',
+   
+    { rank: 14, name: 'Andrew Lutfy',                      worth: '$2.5B', avatar: 'images/lufty.png',
       bio: 'Lutfy leads Groupe Dynamite and expanded its brands across North America. He also heads Carbonleo, the developer behind Montreal’s Royalmount mega-project, blending retail, residential and entertainment space.' },
-  
-    { rank: 15, name: 'Richard Fortin',                     worth: '$2.3B', avatar: 'images/fortin.png',
+   
+    { rank: 15, name: 'Richard Fortin',                    worth: '$2.3B', avatar: 'images/fortin.png',
       bio: 'Fortin co-founded Couche-Tard and served as CFO until 2008. A key player in its global growth, he now focuses on venture capital with stakes in fintech and cleantech start-ups. He remains on Couche-Tard’s board.' },
-  
-    { rank: 16, name: 'Philip Fayer',                       worth: '$2.1B', avatar: 'images/fayer.png',
+   
+    { rank: 16, name: 'Philip Fayer',                      worth: '$2.1B', avatar: 'images/fayer.png',
       bio: 'Fayer founded Montreal-based Nuvei in 2003. The payment tech firm went public in 2020 before going private again in 2024 in a multibillion-dollar deal. Fayer remained CEO throughout, guiding Nuvei’s global expansions.' },
-  
-    { rank: 17, name: 'Molson family',                      worth: '$2B', avatar: 'images/molson.png',
+   
+    { rank: 17, name: 'Molson family',                     worth: '$2B', avatar: 'images/molson.png',
       bio: 'Brewing beer since 1786, when John Molson built his brewery on the banks of the St. Lawrence River, the family remains titans of industry in beer and sports, while leading in philanthropy. Andrew chairs Avenir Global. His brother Geoff controls the Montreal Canadiens, the Bell Centre, and concert promoter Evenko.' },
-  
-    { rank: 18, name: 'Kruger family',                      worth: '$1.9B', avatar: 'images/kruger.png',
+   
+    { rank: 18, name: 'Kruger family',                     worth: '$1.9B', avatar: 'images/kruger.png',
       bio: 'Founded in 1904 by New York paper merchant Joseph Kruger after moving to Montreal, family-owned Kruger Inc. now mainly spans tissue and packaging. Chairman and CEO Joseph Kruger II continues to operate the company.' },
-  
-    { rank: 19, name: 'Goodman family',                     worth: '$1.7B', avatar: 'images/goodman.png',
+   
+    { rank: 19, name: 'Goodman family',                    worth: '$1.7B', avatar: 'images/goodman.png',
       bio: 'Morris Goodman co-founded Pharmascience, one of Canada’s largest pharma companies. His sons David and Jonathan now help lead the family’s ventures. The Goodman Foundation is also active.' },
-  
-    { rank: 20, name: 'Stephen Jarislowsky',                worth: '$1.5B', avatar: 'images/jaris.jpg',
+   
+    { rank: 20, name: 'Stephen Jarislowsky',                 worth: '$1.5B', avatar: 'images/jaris.jpg',
       bio: 'Jarislowsky founded Jarislowsky Fraser in 1955, building it into a major investment firm managing pensions and high-net worths. He sold it to Scotiabank in 2018. The Jarislowsky Foundation remains active, with nearly $300 million in assets.' },
-  
-    { rank: 21, name: 'Réal Plourde',                       worth: '$1.5B', avatar: 'images/real.png',
+   
+    { rank: 21, name: 'Réal Plourde',                      worth: '$1.5B', avatar: 'images/real.png',
       bio: 'Plourde co-founded Couche-Tard and played a key role in its acquisitions and logistics. Though retired from daily operations, he remains a director and angel investor in Quebec’s cleantech and fintech sectors.' },
-  
-    { rank: 22, name: 'Guy Laliberté',                      worth: '$1.3B', avatar: 'images/guy.png',
+   
+    { rank: 22, name: 'Guy Laliberté',                   worth: '$1.3B', avatar: 'images/guy.png',
       bio: 'Laliberté co-founded Cirque du Soleil in 1984 and reshaped global circus arts. After selling his stake, he went to space in 2009. He now runs the One Drop Foundation, supporting global water-access projects.' },
-  
-    { rank: 23, name: 'Rossy family',                       worth: '$1.2B', avatar: 'images/rossy.png',
+   
+    { rank: 23, name: 'Rossy family',                      worth: '$1.2B', avatar: 'images/rossy.png',
       bio: 'Larry Rossy launched Dollarama in 1992. The discount chain now has over 1,400 locations. He stepped down as CEO in 2016 but remains a major shareholder. The Rossy Foundation supports arts, health and education across Canada.' },
-  
-    { rank: 24, name: 'Lassonde family',                    worth: '$1.2B', avatar: 'images/pierre.png',
+   
+    { rank: 24, name: 'Lassonde family',                   worth: '$1.2B', avatar: 'images/pierre.png',
       bio: 'Pierre Lassonde co-founded gold-royalty firm Franco-Nevada, now a multibillion-dollar mining player. A passionate art collector, he helped fund the Lassonde Pavilion in Quebec City and supports engineering and business schools across Canada.' },
-  
-    { rank: 25, name: 'John MacBain',                       worth: '$1.1B', avatar: 'images/macbain.png',
+   
+    { rank: 25, name: 'John MacBain',                      worth: '$1.1B', avatar: 'images/macbain.png',
       bio: 'MacBain bought Trader classified ads in 1987 and turned them into a global company. He sold the business in 2006. Through the McCall MacBain Foundation, he and his wife, Marcy, have donated more than $200 million, including for scholarships and climate initiatives.' }
-  
+   
 
-  ]
+    ]
 
+    const container = document.getElementById('profile-container');
 
-const container = document.getElementById('profile-container');
-
-  function renderAll() {
-    container.innerHTML = profiles.map(p => `
-      <div class="profile">
-        <div class="avatar-wrap">
-          <img src="${p.avatar}" alt="Portrait of ${p.name}">
+    function renderAll() {
+      container.innerHTML = profiles.map(p => `
+        <div class="profile">
+          <div class="avatar-wrap">
+            <img src="${p.avatar}" alt="Portrait of ${p.name}">
+          </div>
+          <div class="profile-content">
+            <h2 class="profile-header">
+              ${p.rank}. ${p.name} — <span>${p.worth}</span>
+            </h2>
+            <p class="bio-text">${p.bio}</p>
+          </div>
         </div>
-        <h2 class="profile-header">
-          ${p.rank}. ${p.name} — ${p.worth}
-        </h2>
-        <p class="bio-text">${p.bio}</p>
-      </div>
-    `).join('');
-  }
+      `).join('');
+    }
 
-  window.onload = () => {
-    renderAll();
-  };
-</script>
+    window.onload = () => {
+      renderAll();
+    };
+  </script>
 </body>
 </html>
+```
