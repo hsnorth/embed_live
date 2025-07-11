@@ -221,26 +221,19 @@
     ];
 
     const container = document.getElementById('profile-container');
-
-    function renderAll() {
-      container.innerHTML = profiles.map(p => `
-        <div class="profile">
-          <div class="avatar-wrap">
-            <img src="${p.avatar}" alt="Portrait of ${p.name}">
-          </div>
-          <div class="profile-content">
-            <h2 class="profile-header">
-              ${p.rank}. ${p.name} <span class="worth-value">${p.worth}</span>
-            </h2>
-            <p class="bio-text">${p.bio}</p>
-          </div>
+    container.innerHTML = profiles.map(p => `
+      <div class="profile">
+        <div class="avatar-wrap">
+          <img src="${p.avatar}" alt="Portrait of ${p.name}">
         </div>
-      `).join('');
-    }
-
-    window.onload = () => {
-      renderAll();
-    };
+        <div class="profile-content">
+          <h2 class="profile-header">
+            ${p.rank}. ${p.name} <span class="worth-value">${p.worth}</span>
+          </h2>
+          <p class="bio-text">${p.bio}</p>
+        </div>
+      </div>
+    `).join('');
   </script>
 </body>
 </html>
