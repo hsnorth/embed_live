@@ -289,20 +289,25 @@
    
     ];
 
-    const container = document.getElementById('profile-container');
-    container.innerHTML = profiles.map(p => 
+  const container = document.getElementById('profile-container');
+  
+  container.innerHTML = profiles
+    .map(p => `
       <div class="profile">
         <div class="avatar-wrap">
           <img src="${p.avatar}" alt="Portrait of ${p.name}">
         </div>
         <div class="profile-content">
           <h2 class="profile-header">
-            ${p.rank}. ${p.name} <span class="worth-value">${p.worth}</span>
+            ${p.rank}. ${p.name}
+            <span class="worth-value">${p.worth}</span>
           </h2>
           <p class="bio-text">${p.bio}</p>
         </div>
       </div>
-    ).join('');
-  </script>
-</body>
+    `)
+    .join('');
+
+    </script>
+  </body>
 </html>
