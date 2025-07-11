@@ -4,9 +4,11 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Gazette Rich List 2025</title>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+    /* ---------- Base styles ---------- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -30,23 +32,25 @@
     }
     .main-header .gold { color: #B59410; }
 
-    /* ---- PROFILE CARD ---- */
+    /* ---------- PROFILE CARD ---------- */
+    /* Mobile-first: avatar above, centred */
     .profile {
       display: flex;
+      flex-direction: column;       /* avatar above */
+      align-items: center;
+      text-align: center;
       border-bottom: 1px solid #ddd;
       padding: 1rem 0 1.5rem;
       margin-bottom: 1.5rem;
-      align-items: flex-start;
-      overflow: hidden;        /* tidy overflow in fixed-height desktop card */
-      height: 450px;           /* adjust if you change font sizes */
     }
 
     .avatar-wrap {
       flex-shrink: 0;
-      width: 150px;
-      height: 150px;
-      margin-right: 2rem;
-      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      margin: 0 0 1rem 0;
+      border-radius: 50%;           /* circle frame on phones */
+      overflow: hidden;
     }
     .avatar-wrap img {
       width: 100%;
@@ -60,13 +64,12 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      text-align: left;
-      height: 100%;
+      height: auto;
     }
 
     .profile-header {
       font-family: 'Roboto', sans-serif;
-      font-size: 1.9rem;
+      font-size: 1.6rem;            /* smaller on phones */
       font-weight: 600;
       margin: 0 0 0.5rem 0;
       line-height: 1.2;
@@ -74,131 +77,48 @@
     .profile-header .worth-value { white-space: nowrap; }
 
     .bio-text {
-      font-size: 1.4rem;
+      font-size: 1.2rem;            /* smaller on phones */
       line-height: 1.4;
       margin: 0;
-      max-height: 200px;
-      overflow-y: auto;
-      padding-right: 10px;     /* room for scrollbar */
+      max-height: none;             /* no scroll on phones */
     }
 
-    /* ---------- MOBILE (≤ 549 px) ---------- */
-    @media (max-width: 549px) {
+    /* ---------- ≥ 550 px ---------- */
+    @media (min-width: 550px) {
       .profile {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        height: auto;
+        flex-direction: row-reverse;  /* avatar on the right */
+        align-items: flex-start;
+        text-align: left;
       }
       .avatar-wrap {
-        width: 120px;
-        height: 120px;
-        margin: 0 0 1rem 0;
-        border-radius: 50%;       /* ← makes the frame circular */
-        overflow: hidden; 
-      }
-      .profile-header {
-        font-size: 1.6rem;
-      }
-      .bio-text {
-        font-size: 1.2rem;
-        max-height: none;
-        padding-right: 0;
-      }
-    }
-
-    /* ---------- TABLET & DESKTOP (≥ 550 px) ---------- */
-    /* ===== 550 px – 599 px ===== */
-    @media (min-width: 550px) and (max-width: 599px) {
-      .profile {                       /* desktop-ish layout still applies */
-        flex-direction: row-reverse;
-        height: auto;
-      }
-    
-      .avatar-wrap {                   /* 180 × 180 */
         width: 180px;
         height: 180px;
         margin: 0 0 0 2rem;
+        border-radius: 0;             /* square frame from here up */
       }
-    
-      .profile-content {
-        display: flex;
-        flex-direction: column;
-        height: auto;
+      .profile-header { font-size: 1.9rem; }
+      .bio-text      {
+        font-size: 1.4rem;
+        max-height: 200px;            /* scroll if bio is long */
+        overflow-y: auto;
+        padding-right: 10px;          /* room for scrollbar */
       }
-    
-      .profile-header { margin-bottom: 1rem; }
-      .bio-text      { max-height: none; overflow: visible; }
     }
-    
-    /* ===== 600 px and up ===== */
-    @media (min-width: 600px) and (max-width: 649px) {
-      .profile {
-        flex-direction: row-reverse;
-        height: auto;
-      }
-    
-      .avatar-wrap {                   /* bump to 230 × 230 */
-        width: 230px;
-        height: 230px;
-        margin: 0 0 0 2rem;
-      }
-    
-      .profile-content {
-        display: flex;
-        flex-direction: column;
-        height: auto;
-      }
-    
-      .profile-header { margin-bottom: 1rem; }
-      .bio-text      { max-height: none; overflow: visible; }
+
+    /* ---------- ≥ 600 px ---------- */
+    @media (min-width: 600px) {
+      .avatar-wrap { width: 230px; height: 230px; }
     }
-    
-  
-    @media (min-width: 650px) and (max-width: 699px) {
-    .profile {
-      flex-direction: row-reverse;
-      height: auto;
+
+    /* ---------- ≥ 650 px ---------- */
+    @media (min-width: 650px) {
+      .avatar-wrap { width: 280px; height: 280px; }
     }
-  
-    .avatar-wrap {                   /* bump to 230 × 230 */
-      width: 280px;
-      height: 280px;
-      margin: 0 0 0 2rem;
+
+    /* ---------- ≥ 700 px ---------- */
+    @media (min-width: 700px) {
+      .avatar-wrap { width: 310px; height: 310px; }
     }
-  
-    .profile-content {
-      display: flex;
-      flex-direction: column;
-      height: auto;
-    }
-  
-    .profile-header { margin-bottom: 1rem; }
-    .bio-text      { max-height: none; overflow: visible; }
-  }
-  @media (min-width: 700px) {
-    .profile {
-      flex-direction: row-reverse;
-      height: auto;
-    }
-  
-    .avatar-wrap {                   /* bump to 230 × 230 */
-      width: 310px;
-      height: 310px;
-      margin: 0 0 0 2rem;
-    }
-  
-    .profile-content {
-      display: flex;
-      flex-direction: column;
-      height: auto;
-    }
-  
-    .profile-header { margin-bottom: 1rem; }
-    .bio-text      { max-height: none; overflow: visible; }
-  }
-  
-}
   </style>
 </head>
 <body>
