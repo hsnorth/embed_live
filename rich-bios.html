@@ -154,8 +154,8 @@
       .bio-text      { max-height: none; overflow: visible; }
     }
     
-  }
-    @media (min-width: 650px) {
+  
+    @media (min-width: 650px) and (max-width: 699px) {
     .profile {
       flex-direction: row-reverse;
       height: auto;
@@ -164,6 +164,27 @@
     .avatar-wrap {                   /* bump to 230 × 230 */
       width: 280px;
       height: 280px;
+      margin: 0 0 0 2rem;
+    }
+  
+    .profile-content {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .profile-header { margin-bottom: 1rem; }
+    .bio-text      { max-height: none; overflow: visible; }
+  }
+  @media (min-width: 700px) {
+    .profile {
+      flex-direction: row-reverse;
+      height: auto;
+    }
+  
+    .avatar-wrap {                   /* bump to 230 × 230 */
+      width: 310px;
+      height: 310px;
       margin: 0 0 0 2rem;
     }
   
