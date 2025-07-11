@@ -7,126 +7,118 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: Georgia, serif;
       background: #fff;
       color: #111;
       padding: 1rem;
-      /* If this HTML is the entire content of the iframe, its height will be calculated
-         by the sum of all profile heights + header + footer. */
     }
+
     .content {
       max-width: 800px;
       margin: 0 auto;
     }
+
     .main-header {
       font-family: 'Roboto', sans-serif;
       font-size: 2.3rem;
       font-weight: 700;
       margin: 2rem 0;
-      text-align: left; /* Center the header for better mobile look */
+      text-align: left;
     }
     .main-header .gold { color: #B59410; }
 
-    /* Each profile section should have a consistent height */
+    /* ---- PROFILE CARD ---- */
     .profile {
-      display: flex; /* Use flexbox for consistent horizontal layout */
+      display: flex;
       border-bottom: 1px solid #ddd;
-      padding-bottom: 1.5rem;
+      padding: 1rem 0 1.5rem;
       margin-bottom: 1.5rem;
-      align-items: flex-start; /* Align avatar and text block to the top */
-      position: relative;
-      
-      /* Fixed height for each profile entry for consistent iframe sizing */
-      /* This is the key to consistent vertical space. Adjust this value carefully. */
-      height: 350px; /* Example: adjust based on content and desired look */
-      overflow: hidden; /* Hide overflowing content within each profile */
-      box-sizing: border-box;
-      padding-top: 1rem; /* Add some consistent padding from the top inside the profile box */
+      align-items: flex-start;
+      overflow: hidden;        /* tidy overflow in fixed-height desktop card */
+      height: 350px;           /* adjust if you change font sizes */
     }
 
     .avatar-wrap {
-      flex-shrink: 0; /* Prevent avatar from shrinking */
-      width: 150px; /* Fixed width for avatar */
-      height: 150px; /* Fixed height for avatar to maintain aspect ratio */
-      margin-right: 2rem; /* Space between avatar and text */
+      flex-shrink: 0;
+      width: 150px;
+      height: 150px;
+      margin-right: 2rem;
       overflow: hidden;
-      border-radius: 50%; /* Make avatars circular */
+      border-radius: 50%;
     }
-
     .avatar-wrap img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Cover the area, cropping if necessary */
+      object-fit: cover;
       display: block;
     }
 
     .profile-content {
-      flex-grow: 1; /* Allow content to take up remaining space */
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start; /* Ensure header and bio stick to the top */
-      height: 100%; /* Ensure content takes full height of parent profile */
-      /* Removed justify-content: space-between to prevent patchy look */
+      justify-content: flex-start;
+      text-align: left;
+      height: 100%;
     }
 
     .profile-header {
       font-family: 'Roboto', sans-serif;
-      font-size: 1.9rem; /* Consistent font size */
+      font-size: 1.9rem;
       font-weight: 600;
-      color: #111;
-      margin: 0 0 0.5rem 0; /* Margin below header */
-      line-height: 1.2; /* Tighter line height for header */
+      margin: 0 0 0.5rem 0;
+      line-height: 1.2;
     }
-    
-    .profile-header .worth-value { /* For the worth value */
-        white-space: nowrap; /* Keep worth on one line with name */
-    }
+    .profile-header .worth-value { white-space: nowrap; }
 
     .bio-text {
-      font-size: 1.4rem; /* Slightly smaller font for more text in limited space */
+      font-size: 1.4rem;
       line-height: 1.4;
       margin: 0;
-      /* Crucial for fixed height entries: allow scrolling if text exceeds available space */
-      /* This max-height needs to be finely tuned to your chosen .profile height */
-      /* (Profile height - .profile-padding-top - .profile-padding-bottom - header height - header margin-bottom) */
-      max-height: 200px; /* A consistent pixel value for bio area before scrolling */
-      overflow-y: auto; /* Enable vertical scrolling if text overflows */
-      padding-right: 10px; /* Add some padding for scrollbar to avoid text overlap */
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 10px;     /* room for scrollbar */
     }
 
-    @media (max-width: 900px) {
+    /* ---------- MOBILE (≤ 549 px) ---------- */
+    @media (max-width: 549px) {
       .profile {
-        flex-direction: column; /* Stack elements vertically on smaller screens */
-        align-items: center; /* Center items when stacked */
+        flex-direction: column;
+        align-items: center;
         text-align: center;
-        height: auto; /* Allow height to adjust on mobile for better readability */
-        padding-top: 1rem; /* Add padding at top for mobile */
-        overflow: visible; /* No fixed height/overflow on mobile */
+        height: auto;
       }
-
       .avatar-wrap {
-        width: 120px; /* Smaller avatar on mobile */
+        width: 120px;
         height: 120px;
-        margin-right: 0;
-        margin-bottom: 1rem; /* Space below avatar */
+        margin: 0 0 1rem 0;
       }
-
       .profile-header {
         font-size: 1.6rem;
-        margin-bottom: 1rem;
       }
-
       .bio-text {
         font-size: 1.2rem;
-        max-height: none; /* No max height on mobile; let it flow naturally */
-        overflow-y: visible; /* No scrollbar on mobile */
+        max-height: none;
+        overflow: visible;
         padding-right: 0;
+      }
+    }
+
+    /* ---------- TABLET & DESKTOP (≥ 550 px) ---------- */
+    @media (min-width: 550px) {
+      .profile {
+        flex-direction: row-reverse;   /* image on the right */
+      }
+      .avatar-wrap {
+        width: 180px;
+        height: 180px;
+        margin: 0 0 0 2rem;            /* space on the left of avatar now */
+      }
+      .profile-content {
+        text-align: left;              /* ensure left-aligned text */
       }
     }
 
