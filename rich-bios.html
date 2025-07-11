@@ -6,213 +6,108 @@
   <title>Gazette Rich List 2025</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: Georgia, serif;
-      background: #fff;
-      color: #111;
-      padding: 1rem;
+    body{
+      font-family:Georgia,serif;
+      background:#fff;
+      color:#111;
+      padding:1rem;
     }
 
-    .content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
+    .content{max-width:800px;margin:0 auto}
 
-    .main-header {
-      font-family: 'Roboto', sans-serif;
-      font-size: 2.3rem;
-      font-weight: 700;
-      margin: 2rem 0;
-      text-align: left;
+    .main-header{
+      font-family:'Roboto',sans-serif;
+      font-size:2.3rem;
+      font-weight:700;
+      margin:2rem 0;
+      text-align:left;
     }
-    .main-header .gold { color: #B59410; }
+    .main-header .gold{color:#B59410}
 
     /* ---- PROFILE CARD ---- */
-    .profile {
-      display: flex;
-      border-bottom: 1px solid #ddd;
-      padding: 1rem 0 1.5rem;
-      margin-bottom: 1.5rem;
-      align-items: flex-start;
-      overflow: hidden;        /* tidy overflow in fixed-height desktop card */
-      height: 450px;           /* adjust if you change font sizes */
+    .profile{
+      display:flex;
+      border-bottom:1px solid #ddd;
+      padding:1rem 0 1.5rem;
+      margin-bottom:1.5rem;
+      align-items:flex-start;
+      overflow:hidden;
+      height:450px;
+    }
+    .avatar-wrap{
+      flex-shrink:0;
+      width:150px;height:150px;
+      margin-right:2rem;
+      border-radius:50%;
+    }
+    .avatar-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .profile-content{
+      flex-grow:1;
+      display:flex;flex-direction:column;
+      text-align:left;height:100%;
     }
 
-    .avatar-wrap {
-      flex-shrink: 0;
-      width: 150px;
-      height: 150px;
-      margin-right: 2rem;
-      border-radius: 50%;
+    .profile-header{
+      font-family:'Roboto',sans-serif;
+      font-size:1.9rem;font-weight:600;
+      margin:0 0 .5rem 0;line-height:1.2;
     }
-    .avatar-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .profile-header .worth-value{white-space:nowrap}
+
+    .bio-text{
+      font-size:1.4rem;line-height:1.4;
+      margin:0;max-height:200px;
+      overflow-y:auto;padding-right:10px;
     }
 
-    .profile-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      text-align: left;
-      height: 100%;
+    /* spacing under credit */
+    .graphic-credit{margin:2rem auto 4rem;text-align:center;font-size:.9rem;color:#666}
+
+    /* ---------- MOBILE (≤549px) ---------- */
+    @media (max-width:549px){
+      .profile{flex-direction:column;align-items:center;text-align:center;height:auto}
+      .avatar-wrap{width:120px;height:120px;margin:0 0 1rem 0;border-radius:50%;overflow:hidden}
+      .profile-header{font-size:1.6rem}
+      .bio-text{font-size:1.2rem;max-height:none;padding-right:0}
     }
 
-    .profile-header {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.9rem;
-      font-weight: 600;
-      margin: 0 0 0.5rem 0;
-      line-height: 1.2;
+    /* ---------- TABLET & DESKTOP ---------- */
+    @media (min-width:550px) and (max-width:599px){
+      .profile{flex-direction:row-reverse;height:auto}
+      .avatar-wrap{width:180px;height:180px;margin:0 0 0 2rem}
+      .profile-header{margin-bottom:1rem}
+      .bio-text{max-height:none;overflow:visible}
     }
-    .profile-header .worth-value { white-space: nowrap; }
-
-    .bio-text {
-      font-size: 1.4rem;
-      line-height: 1.4;
-      margin: 0;
-      max-height: 200px;
-      overflow-y: auto;
-      padding-right: 10px;     /* room for scrollbar */
+    @media (min-width:600px) and (max-width:649px){
+      .profile{flex-direction:row-reverse;height:auto}
+      .avatar-wrap{width:230px;height:230px;margin:0 0 0 2rem}
+      .profile-header{margin-bottom:1rem}
+      .bio-text{max-height:none;overflow:visible}
     }
-    .graphic-credit {
-      margin: 2rem auto 3rem;
+    @media (min-width:650px) and (max-width:699px){
+      .profile{flex-direction:row-reverse;height:auto}
+      .avatar-wrap{width:280px;height:280px;margin:0 0 0 2rem}
+      .profile-header{margin-bottom:1rem}
+      .bio-text{max-height:none;overflow:visible}
     }
-
-    /* ---------- MOBILE (≤ 549 px) ---------- */
-    @media (max-width: 549px) {
-      .profile {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        height: auto;
-      }
-      .avatar-wrap {
-        width: 120px;
-        height: 120px;
-        margin: 0 0 1rem 0;
-        border-radius: 50%;       /* ← makes the frame circular */
-        overflow: hidden; 
-      }
-      .profile-header {
-        font-size: 1.6rem;
-      }
-      .bio-text {
-        font-size: 1.2rem;
-        max-height: none;
-        padding-right: 0;
-      }
+    @media (min-width:700px){
+      .profile{flex-direction:row-reverse;height:auto}
+      .avatar-wrap{width:310px;height:310px;margin:0 0 0 2rem}
+      .profile-header{margin-bottom:1rem}
+      .bio-text{max-height:none;overflow:visible}
     }
 
-    /* ---------- TABLET & DESKTOP (≥ 550 px) ---------- */
-    /* ===== 550 px – 599 px ===== */
-    @media (min-width: 550px) and (max-width: 599px) {
-      .profile {                       /* desktop-ish layout still applies */
-        flex-direction: row-reverse;
-        height: auto;
-      }
-    
-      .avatar-wrap {                   /* 180 × 180 */
-        width: 180px;
-        height: 180px;
-        margin: 0 0 0 2rem;
-      }
-    
-      .profile-content {
-        display: flex;
-        flex-direction: column;
-        height: auto;
-      }
-    
-      .profile-header { margin-bottom: 1rem; }
-      .bio-text      { max-height: none; overflow: visible; }
+    /* --- FULL-WIDTH FILLER STRIP(S) --- */
+    .filler-strip{
+      width:100vw;
+      position:relative;
+      left:50%;margin-left:-50vw;
+      margin-top:2rem;          /* extra gap above images */
     }
-    
-    /* ===== 600 px and up ===== */
-    @media (min-width: 600px) and (max-width: 649px) {
-      .profile {
-        flex-direction: row-reverse;
-        height: auto;
-      }
-    
-      .avatar-wrap {                   /* bump to 230 × 230 */
-        width: 230px;
-        height: 230px;
-        margin: 0 0 0 2rem;
-      }
-    
-      .profile-content {
-        display: flex;
-        flex-direction: column;
-        height: auto;
-      }
-    
-      .profile-header { margin-bottom: 1rem; }
-      .bio-text      { max-height: none; overflow: visible; }
-    }
-    
-  
-    @media (min-width: 650px) and (max-width: 699px) {
-    .profile {
-      flex-direction: row-reverse;
-      height: auto;
-    }
-  
-    .avatar-wrap {                   /* bump to 230 × 230 */
-      width: 280px;
-      height: 280px;
-      margin: 0 0 0 2rem;
-    }
-  
-    .profile-content {
-      display: flex;
-      flex-direction: column;
-      height: auto;
-    }
-  
-    .profile-header { margin-bottom: 1rem; }
-    .bio-text      { max-height: none; overflow: visible; }
-  }
-  @media (min-width: 700px) {
-    .profile {
-      flex-direction: row-reverse;
-      height: auto;
-    }
-  
-    .avatar-wrap {                   /* bump to 230 × 230 */
-      width: 310px;
-      height: 310px;
-      margin: 0 0 0 2rem;
-    }
-  
-    .profile-content {
-      display: flex;
-      flex-direction: column;
-      height: auto;
-    }
-  
-    .profile-header { margin-bottom: 1rem; }
-    .bio-text      { max-height: none; overflow: visible; }
-  }
-
-    .filler-strip {
-    width: 100vw;          /* span the whole viewport */
-    position: relative;
-    left: 50%;
-    margin-left: -50vw;    /* centre it, even inside the 800-px container */
-  }
-  .filler-strip img {
-    width: 100%;
-    height: auto;
-    display: block;        /* kill the default inline gap */
-  }
-  
+    .filler-strip img{width:100%;height:auto;display:block}
   </style>
 </head>
 <body>
@@ -224,6 +119,7 @@
     <div id="profile-container"></div>
     <div class="graphic-credit">Graphic: The Gazette Rich List 2025</div>
   </div>
+
   <div class="filler-strip">
     <img src="images/richlist-back.jpg" alt="">
     <img src="images/richlist-back.jpg" alt="">
