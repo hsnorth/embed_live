@@ -36,9 +36,6 @@
       column-gap: 2rem;
       margin-bottom: 2rem;
       align-items: start;
-      min-height: 320px;
-      max-height: 360px;
-      overflow: hidden;
       border-bottom: 1px solid #ddd;
       padding-bottom: 1.5rem;
     }
@@ -66,7 +63,7 @@
       color: #111;
       margin: 0;
     }
-
+    
     .bio-text {
       grid-area: bio;
       font-size: 1.2rem;
@@ -74,11 +71,10 @@
       max-width: 90%;
       margin: 0 auto;
       text-align: center;
-      overflow: auto;
-      max-height: 6.5em;
       display: -webkit-box;
       -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     @media (max-width: 900px) {
@@ -108,7 +104,6 @@
       .bio-text {
         font-size: 1.2rem;
         text-align: center;
-        max-height: none;
         -webkit-line-clamp: unset;
         display: block;
       }
