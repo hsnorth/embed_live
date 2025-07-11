@@ -94,6 +94,8 @@
         width: 120px;
         height: 120px;
         margin: 0 0 1rem 0;
+        border-radius: 50%;       /* ← makes the frame circular */
+        overflow: hidden; 
       }
       .profile-header {
         font-size: 1.6rem;
@@ -153,6 +155,29 @@
     }
     
   }
+    @media (min-width: 650px) {
+    .profile {
+      flex-direction: row-reverse;
+      height: auto;
+    }
+  
+    .avatar-wrap {                   /* bump to 230 × 230 */
+      width: 280px;
+      height: 280px;
+      margin: 0 0 0 2rem;
+    }
+  
+    .profile-content {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .profile-header { margin-bottom: 1rem; }
+    .bio-text      { max-height: none; overflow: visible; }
+  }
+  
+}
   </style>
 </head>
 <body>
