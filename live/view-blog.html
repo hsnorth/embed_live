@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previous Live Blogs</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for view-blogs.html */
+        .previous-blogs-container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .previous-blogs-container h2 {
+            margin-top: 0;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .blog-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .blog-list li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .blog-list li:hover {
+            background-color: #f0f0f0;
+        }
+        .blog-list a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .blog-list span {
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Previous Live Blogs</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="create-blog.html">Create New Blog</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="previous-blogs-container">
+            <h2>Archived Live Blogs</h2>
+            <div class="blog-list">
+                <ul>
+                    <li>
+                        <a href="#">Epstein Files Controversy Update (July 15, 2025)</a>
+                        <span>Created: 2025-07-15 10:00 AM</span>
+                    </li>
+                    <li>
+                        <a href="#">Canada-US Trade Deal Negotiations (July 14, 2025)</a>
+                        <span>Created: 2025-07-14 02:30 PM</span>
+                    </li>
+                    <li>
+                        <a href="#">City Council Meeting Live (July 10, 2025)</a>
+                        <span>Created: 2025-07-10 09:00 AM</span>
+                    </li>
+                    </ul>
+                <p style="text-align: center; margin-top: 30px; color: #777;">
+                    (Note: This is a static list. In a real application, previous blogs would be loaded from a database.)
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Live Blog</p>
+    </footer>
+</body>
+</html>
