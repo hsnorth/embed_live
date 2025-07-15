@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Live Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> </head>
+<body>
+    <header>
+        <h1>My Live Blog</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="view-blogs.html">Previous Blogs</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="live-blog-posts">
+            <h2>Live Updates</h2>
+
+            <div class="new-post-form">
+                <h3>Create a New Post</h3>
+                <form id="postForm">
+                    <textarea id="postContent" placeholder="What's happening?" rows="5"></textarea>
+                    <input type="file" id="postMedia" accept="image/*,video/*">
+                    <button type="submit">Post Update</button>
+                </form>
+            </div>
+
+            <div id="postsContainer">
+                <div class="blog-post">
+                    <div class="post-header">
+                        <div class="author-info">
+                            <div class="author-avatar"></div> <div class="author-details">
+                                <span class="time-since-post">11 minutes ago</span>
+                                <span class="author-name">Ian Austen</span>
+                                <span class="reporting-from">Reporting from Ottawa</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>Canada's leader now says there is little hope of avoiding U.S. tariffs in a trade deal.</p>
+                        <img src="Screen Shot 2025-07-15 at 7.20.56 PM.jpg" alt="Canadian Prime Minister Mark Carney">
+                        <p class="image-caption">Prime Minister Mark Carney of Canada has grown less optimistic about avoiding U.S. tariffs in a trade deal. Kenny Holston/The New York Times</p>
+                        <p>Prime Minister Mark Carney of Canada, in a reversal, said on Tuesday that “there’s not a lot of evidence right now” that his country can get a trade deal with the United States that does not impose tariffs.</p>
+                    </div>
+                    <div class="post-divider"></div>
+                </div>
+
+                <div class="blog-post">
+                    <div class="post-header">
+                        <div class="author-info">
+                            <div class="author-avatar"></div>
+                            <div class="author-details">
+                                <span class="time-since-post">3 hours ago</span>
+                                <span class="author-name">Glenn Thrush</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>Attorney General Pam Bondi, addressing reporters for the first time since the controversy over the Epstein files erupted last week, dodged questions about her relationship with the F.B.I.'s No. 2 official, Dan Bongino, whom she has accused of leaking negative stories to the press.</p>
+                        <p>Bondi, speaking at the headquarters of the Drug Enforcement Administration, said that she intended to serve a full four-year term and that she had spent the morning meeting with Bongino's boss, Kash Patel, about law enforcement matters.</p>
+                    </div>
+                    <div class="post-divider"></div>
+                </div>
+
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Live Blog</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
