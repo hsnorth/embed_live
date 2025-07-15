@@ -1,0 +1,256 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+header {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+header nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+main {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+/* Specific styles for index.html - if you had other pages, their specific styles would go here or in their own files */
+.main-menu {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    /* Added for index.html centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.main-menu h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+.main-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.main-menu li {
+    margin-bottom: 20px;
+}
+.main-menu a {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+.main-menu a:hover {
+    background-color: #0056b3;
+}
+
+/* Specific styles for view-blogs.html */
+.previous-blogs-container {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.previous-blogs-container h2 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.blog-list ul {
+    list-style: none;
+    padding: 0;
+}
+.blog-list li {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.blog-list li:hover {
+    background-color: #f0f0f0;
+}
+.blog-list a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+.blog-list span {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Common styles for live blog posts and forms */
+.new-post-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.new-post-form h3 {
+    margin-top: 0;
+    color: #555;
+}
+
+.new-post-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.new-post-form input[type="file"] {
+    margin-bottom: 10px;
+}
+
+.new-post-form button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.new-post-form button:hover {
+    background-color: #0056b3;
+}
+
+
+.live-blog-posts {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.live-blog-posts h2 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.blog-post {
+    margin-bottom: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+}
+
+.author-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc; /* Placeholder for avatar */
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-since-post {
+    font-size: 12px;
+    color: #777;
+}
+
+.author-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.reporting-from {
+    font-size: 12px;
+    color: #777;
+    margin-left: 5px; /* Adjust as needed */
+}
+
+.post-body p {
+    margin: 0 0 10px 0;
+    line-height: 1.6;
+}
+
+.post-body img,
+.post-body video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.image-caption {
+    font-size: 12px;
+    color: #555;
+    margin-top: -5px; /* Pull caption closer to image */
+    margin-bottom: 15px;
+}
+
+.post-divider {
+    border-bottom: 1px solid #eee;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-size: 14px;
+    margin-top: 20px;
+}
