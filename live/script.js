@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
-        // Updated placeholder size to match new avatar size
         const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/36/CCCCCC/FFFFFF?text=AV';
         const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
 
@@ -124,11 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="post-header">
                 <div class="author-avatar">${authorPicHtml}</div>
                 <div class="author-details">
-                    <span class="time-since-post">${timeSince}</span>
-                    <div class="author-line">
+                    <div class="name-and-time">
                         <span class="author-name">${postData.authorName || 'Anonymous'}</span>
-                        <span class="reporting-from">Reporting from ${postData.reportingFrom || 'Unknown Location'}</span>
+                        <span class="time-since-post">${timeSince}</span>
                     </div>
+                    <span class="reporting-from">Reporting from ${postData.reportingFrom || 'Unknown Location'}</span>
                 </div>
             </div>
             <div class="post-body">
