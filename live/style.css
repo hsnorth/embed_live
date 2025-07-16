@@ -3,22 +3,23 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     color: #000; /* Assuming a light theme for the embed based on provided images */
-    background-color: transparent; /* Keep for embed */
-    margin: 0; /* Keep for embed */
-    padding: 0; /* Keep for embed */
-    overflow-x: hidden; /* Keep for embed */
+    background-color: #f4f7f6; /* Light grey background for admin/archive, transparent for embed */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 main {
-    max-width: 600px; /* Typical content width, adjust as needed */
-    margin: 0 auto; /* Center the content for larger screens */
-    padding: 0; /* Remove padding if not needed for the embed box itself */
-    box-shadow: none; /* Keep for embed */
-    border-radius: 0; /* Keep for embed */
-    background-color: transparent; /* Keep for embed */
+    max-width: 800px; /* General max width for admin/archive content */
+    margin: 20px auto; /* Center content with margin */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
-/* Live Blog Posts Section - Main Container */
+/* Live Blog Posts Section - Main Container for Embed */
+/* Note: `max-width` for embed posts is now in embed-posts.html's inline style */
 .live-blog-posts {
     margin-bottom: 0;
     padding: 0;
@@ -26,72 +27,79 @@ main {
     background-color: transparent;
 }
 
-/* Individual Post Card Styling */
+/* Individual Post Card Styling (for embed and potentially admin display) */
 .post-card {
-    display: flex; /* Use flexbox for avatar and content alignment */
-    padding: 12px 16px; /* Vertical and horizontal padding for the entire post card */
-    border-bottom: 1px solid #ebeef0; /* Subtle separator line between posts */
-    background-color: #fff; /* White background for posts, similar to light theme X */
-    word-wrap: break-word; /* Ensure long words wrap */
+    display: flex;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebeef0;
+    background-color: #fff;
+    word-wrap: break-word;
 }
 
 /* Author Avatar Styling */
 .author-avatar {
-    flex-shrink: 0; /* Prevent avatar from shrinking */
-    margin-right: 12px; /* Space between avatar and post content */
+    flex-shrink: 0;
+    margin-right: 12px;
 }
 
 .author-avatar-img {
-    width: 48px; /* Slightly larger avatar for better visibility */
+    width: 48px;
     height: 48px;
-    border-radius: 50%; /* Circular avatar */
-    object-fit: cover; /* Ensures image covers the area without distortion */
-    display: block; /* Remove any extra space below image */
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
 }
 
 /* Post Content Area */
 .post-content-area {
-    flex-grow: 1; /* Allows content area to take up remaining space */
-    min-width: 0; /* Prevents overflow issues with long content in flex item */
+    flex-grow: 1;
+    min-width: 0;
 }
 
 /* Post Meta (Author Name, Reporting From, Time) */
 .post-meta {
-    font-size: 15px; /* Adjust font size for meta */
-    line-height: 20px; /* Ensure line height matches X */
-    margin-bottom: 4px; /* Space between meta and post content */
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 4px;
 }
 
 .post-meta strong {
-    font-weight: bold; /* Author name is bold */
-    margin-right: 4px; /* Space between name and @handle/reporting from */
-    color: #0f1419; /* Darker color for author name */
+    font-weight: bold;
+    color: #0f1419;
+    margin-right: 4px;
 }
 
-.post-meta span {
-    color: #536471; /* Lighter color for time ago and reporting from */
-    font-size: 14px; /* Slightly smaller font for time/reporting */
+.post-meta span.time-ago {
+    color: #536471;
+    font-size: 14px;
+}
+
+.post-meta .reporting-from {
+    display: block; /* Forces it to a new line */
+    color: #536471;
+    font-size: 14px;
+    margin-top: 2px;
 }
 
 /* Post Text Content */
 .post-text {
-    font-size: 15px; /* Standard tweet text size */
+    font-size: 15px;
     margin-top: 0;
-    margin-bottom: 8px; /* Space below text, before media */
-    color: #0f1419; /* Darker color for post text */
+    margin-bottom: 8px;
+    color: #0f1419;
     line-height: 20px;
 }
 
 /* Post Media (Image/Video) */
 .post-media {
-    max-width: 100%; /* Ensures media fits within its container */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Remove extra space below images */
-    border-radius: 8px; /* Slightly rounded corners for media */
-    margin-top: 8px; /* Space above media if text exists */
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    margin-top: 8px;
 }
 
-/* No Posts Message */
+/* No Posts Message & Error Messages */
 .no-posts-message, .error-message {
     text-align: center;
     padding: 20px;
@@ -103,12 +111,13 @@ main {
 /* Pagination Controls */
 .pagination-controls {
     display: flex;
-    justify-content: center; /* Center the pagination buttons */
+    justify-content: center;
     align-items: center;
     padding: 15px 16px;
     background-color: #fff;
-    border-top: 1px solid #ebeef0; /* Separator above pagination */
-    gap: 10px; /* Space between buttons and page info */
+    border-top: 1px solid #ebeef0;
+    gap: 10px;
+    font-family: inherit; /* Inherit from body for consistency */
 }
 
 .pagination-controls button {
@@ -116,42 +125,51 @@ main {
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 20px; /* Rounded buttons */
+    border-radius: 20px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .pagination-controls button:disabled {
-    background-color: #bfdcfc; /* Lighter blue when disabled */
+    background-color: #bfdcfc;
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .pagination-controls button:hover:not(:disabled) {
-    background-color: #1A92DA; /* Darker blue on hover */
+    background-color: #1A92DA;
+    transform: translateY(-1px);
+}
+
+.pagination-controls button:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .pagination-controls span {
     font-size: 14px;
     color: #536471;
+    font-weight: 500;
 }
 
 /* --- Responsive Design (Mobile First) --- */
 
-/* For smaller screens (phones) - styles are already fairly compact */
 @media (max-width: 600px) {
+    /* Main container adjustments for small screens (admin/archive) */
     main {
-        margin: 0; /* No side margins on small screens */
-        max-width: 100%; /* Take full width */
+        margin: 10px;
+        padding: 15px;
+        box-shadow: none; /* Reduce shadow on small screens */
     }
 
+    /* Post Card adjustments for small screens */
     .post-card {
-        padding: 10px 12px; /* Slightly less padding for smaller screens */
+        padding: 10px 12px;
     }
 
     .author-avatar-img {
-        width: 40px; /* Slightly smaller avatar on mobile */
+        width: 40px;
         height: 40px;
     }
 
@@ -166,7 +184,8 @@ main {
     .post-meta strong {
         font-size: 14px;
     }
-    .post-meta span {
+    .post-meta span.time-ago,
+    .post-meta .reporting-from {
         font-size: 13px;
     }
 
@@ -175,12 +194,150 @@ main {
         line-height: 18px;
     }
 
+    /* Pagination adjustments for small screens */
+    .pagination-controls {
+        padding: 10px 12px;
+        gap: 8px;
+    }
     .pagination-controls button {
         padding: 6px 12px;
         font-size: 13px;
     }
-
     .pagination-controls span {
         font-size: 13px;
+    }
+}
+
+
+/* --- Admin/Archive Page Specific Styles --- */
+/* These assume you have elements like header, h1, new-post-form, archived-blogs-list etc. */
+
+header {
+    background-color: #2c3e50; /* Dark blue/grey */
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+h2 {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Create Post Form Styles */
+.new-post-form {
+    padding: 20px 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-field,
+.textarea-field {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.textarea-field {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.submit-button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #2980b9;
+}
+
+/* Archive Posts Styles */
+.archived-blogs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.archived-blog-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.archived-blog-item:hover {
+    background-color: #f0f0f0;
+}
+
+.blog-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    text-decoration: none;
+}
+
+.blog-title:hover {
+    text-decoration: underline;
+}
+
+.blog-meta {
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+}
+
+/* Responsive for admin/archive pages */
+@media (max-width: 768px) {
+    .input-field,
+    .textarea-field {
+        width: 100%;
+    }
+    .submit-button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .archived-blog-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+    .blog-meta {
+        text-align: left;
+        margin-top: 5px;
     }
 }
