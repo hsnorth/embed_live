@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const blogHeaderTitle = document.getElementById('blogHeaderTitle');
     const mainContent = document.getElementById('mainContent');
     const loadingContainer = document.getElementById('loadingContainer');
-    const paginationContainer = document.getElementById('paginationControls'); // Ensure this ID matches your HTML
+    const paginationContainer = document.getElementById('paginationControls');
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentBlogId = urlParams.get('blogId');
@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
         interval = seconds / 2592000;
         if (interval > 1) { return Math.floor(interval) + " months ago"; }
+        interval = seconds / 86400;
         if (interval > 1) { return Math.floor(interval) + " days ago"; }
         interval = seconds / 3600;
         if (interval > 1) { return Math.floor(interval) + " hours ago"; }
@@ -100,11 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let mediaHtml = '';
         if (postData.mediaUrl) {
             if (postData.mediaType && postData.mediaType.startsWith('image/')) {
-                mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Image" onload="measurePostHeight()">`; // Added onload for dynamic height
+                mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Image" onload="window.measurePostHeight()">`; // Added onload for dynamic height
             } else if (postData.mediaType && postData.mediaType.startsWith('video/')) {
-                mediaHtml = `<video controls src="${postData.mediaUrl}" onloadstart="measurePostHeight()"></video>`; // Added onloadstart
+                mediaHtml = `<video controls src="${postData.mediaUrl}" onloadstart="window.measurePostHeight()"></video>`; // Added onloadstart
             } else {
-                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media" onload="measurePostHeight()">`;
+                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media" onload="window.measurePostHeight()">`;
             }
         }
 
@@ -158,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     initialContent.classList.remove('hidden');
                     readMoreButton.textContent = 'Read more';
                 }
+                // When content expands/collapses, we might need to re-evaluate page heights
+                // For simplicity here, we re-paginate on next load.
+                // For immediate reflow, you would call displayCurrentPagePosts() or a dedicated reflow function.
             });
         }
 
@@ -195,14 +199,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (media.complete || media.readyState >= 2) { // complete for img, readyState for video
                         loadedCount++;
                     } else {
-                        media.addEventListener('load', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); });
-                        media.addEventListener('loadeddata', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); }); // For video
-                        media.addEventListener('error', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); }); // Handle errors too
+                        const mediaLoadHandler = () => {
+                            loadedCount++;
+                            if (loadedCount === mediaElements.length) {
+                                resolve();
+                                media.removeEventListener('load', mediaLoadHandler);
+                                media.removeEventListener('loadeddata', mediaLoadHandler);
+                                media.removeEventListener('error', mediaLoadHandler);
+                            }
+                        };
+                        media.addEventListener('load', mediaLoadHandler);
+                        media.addEventListener('loadeddata', mediaLoadHandler); // For video
+                        media.addEventListener('error', mediaLoadHandler); // Handle errors too
                     }
                 });
                 if (loadedCount === mediaElements.length) resolve(); // All media already loaded
             });
-
 
             const postHeight = postElement.offsetHeight; // Get the rendered height
 
@@ -245,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             noPostsMessage.textContent = 'No posts yet. Be the first to add an update!';
             postsContainer.appendChild(noPostsMessage);
         }
+
         renderPaginationControls();
     };
 
@@ -346,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let mediaUrl = '';
             let mediaType = '';
+            // For now, we'll store media locally. In a real app, you'd upload to cloud storage
             if (mediaFile) {
                 mediaUrl = URL.createObjectURL(mediaFile);
                 mediaType = mediaFile.type;
@@ -365,9 +379,14 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
+                // Add the new post to Firestore
                 await window.addDoc(window.collection(window.db, "posts"), postData);
+
+                // Clear the form
                 postContent.value = '';
                 postMedia.value = '';
+
+                // Reload all posts and reset to the first page to see the new post
                 currentPageIndex = 0; // Go to first page after new post
                 await loadPosts(); // Reload and re-paginate
             } catch (e) {
@@ -389,5 +408,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.auth.currentUser && currentBlogId) {
             loadPosts();
         }
-    }, 60000);
+    }, 60000); // Every 60 seconds
 });
