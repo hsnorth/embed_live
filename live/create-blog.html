@@ -3,36 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="blogPageTitle">Create New Live Blog</title>
+    <title>Previous Live Blogs</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Specific styles for view-blogs.html (rest of style.css handles common styles) */
+        .previous-blogs-container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .previous-blogs-container h2 {
+            margin-top: 0;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .blog-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .blog-list li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .blog-list li:hover {
+            background-color: #f0f0f0;
+        }
+        .blog-list a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .blog-list span {
+            font-size: 14px;
+            color: #777;
+        }
+        .no-blogs-message {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1 id="blogHeaderTitle">My Live Blog</h1>
+        <h1>Previous Live Blogs</h1>
         <nav>
             <a href="dashboard.html">Dashboard</a>
-            <a href="view-blogs.html">Previous Blogs</a>
+            <a href="create-blog.html">Create New Blog</a>
             <a href="#" id="signOutButtonHeader">Sign Out</a>
         </nav>
     </header>
 
     <main>
-        <section class="live-blog-posts">
-            <h2>Live Updates</h2>
-
-            <div class="new-post-form">
-                <h3>Create a New Post</h3>
-                <form id="postForm">
-                    <input type="text" id="authorNameInput" placeholder="Your Name" readonly>
-                    <input type="text" id="reportingFromInput" placeholder="Reporting From" value="Montreal, Quebec, Canada">
-                    <textarea id="postContent" placeholder="What's happening?" rows="5"></textarea>
-                    <input type="file" id="postMedia" accept="image/*,video/*">
-                    <button type="submit">Post Update</button>
-                </form>
-            </div>
-
-            <div id="postsContainer">
+        <section class="previous-blogs-container">
+            <h2>Archived Live Blogs</h2>
+            <div class="blog-list" id="blogListContainer">
+                <ul id="liveBlogsList">
+                    </ul>
+                <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No blogs created yet. Go to Dashboard to create one!</p>
             </div>
         </section>
     </main>
@@ -43,7 +82,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -60,22 +99,60 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Make db, auth and other Firestore/Auth functions globally accessible to script.js
+        // Authentication Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // No user is signed in, redirect to login
+                window.location.href = 'index.html';
+            } else {
+                // User is signed in, load blogs
+                loadBlogs();
+            }
+        });
+
+        // Make db globally accessible (temporary workaround for module scripts)
         window.db = db;
         window.collection = collection;
-        window.addDoc = addDoc;
         window.query = query;
-        window.where = where;
         window.orderBy = orderBy;
         window.getDocs = getDocs;
-        window.serverTimestamp = serverTimestamp;
+        window.signOut = signOut;
         window.auth = auth; // Expose auth
-        window.onAuthStateChanged = onAuthStateChanged; // Expose onAuthStateChanged
-        window.getDoc = getDoc; // Expose getDoc
-        window.doc = doc; // Expose doc
-        window.signOut = signOut; // Expose signOut
 
-        // Sign out button in header
+        const loadBlogs = async () => {
+            const liveBlogsList = document.getElementById('liveBlogsList');
+            const noBlogsMessage = document.getElementById('noBlogsMessage');
+
+            try {
+                const q = query(collection(db, "blogs"), orderBy("created", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    liveBlogsList.innerHTML = ''; // Clear any static content
+                    querySnapshot.forEach(doc => {
+                        const blog = doc.data();
+                        const blogId = doc.id;
+                        const listItem = document.createElement('li');
+
+                        const createdDate = blog.created ? blog.created.toDate().toLocaleString() : 'N/A';
+
+                        listItem.innerHTML = `
+                            <a href="create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}">${blog.name}</a>
+                            <span>Created: ${createdDate}</span>
+                        `;
+                        liveBlogsList.appendChild(listItem);
+                    });
+                    noBlogsMessage.style.display = 'none';
+                } else {
+                    noBlogsMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error fetching blogs: ", error);
+                noBlogsMessage.textContent = "Error loading blogs. Check console for details.";
+                noBlogsMessage.style.display = 'block';
+            }
+        };
+
         document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
             e.preventDefault();
             try {
@@ -87,7 +164,5 @@
             }
         });
     </script>
-
-    <script src="script.js"></script>
 </body>
 </html>
