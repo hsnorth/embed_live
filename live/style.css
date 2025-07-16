@@ -72,62 +72,70 @@ main {
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-/* --- NEW/MODIFIED STYLES FOR POSTS --- */
+/* --- MODIFIED STYLES FOR POSTS LAYOUT --- */
 
 .post-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Align avatar and text to the top */
     margin-bottom: 10px;
 }
 
 .author-info {
     display: flex;
-    align-items: center; /* Keeps everything centered vertically */
-    flex-wrap: wrap; /* Allow wrapping on small screens */
+    align-items: flex-start;
+    flex-wrap: nowrap; /* Prevent wrapping within author-info */
+    width: 100%; /* Take full width of its container */
 }
 
 .author-avatar {
-    /* Removed old background-color as it's now handled by the image */
     width: 35px; /* Slightly smaller avatar container */
     height: 35px; /* Slightly smaller avatar container */
     border-radius: 50%;
     margin-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
     flex-shrink: 0; /* Prevent avatar from shrinking */
+    overflow: hidden;
 }
 
 .author-avatar-img {
-    width: 100%; /* Make image fill its container */
-    height: 100%; /* Make image fill its container */
-    object-fit: cover; /* Ensures image covers the area nicely without distortion */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .author-details {
     display: flex;
-    flex-direction: row; /* Arranges name, location, time in a row */
-    align-items: baseline; /* Align text baselines */
-    flex-wrap: wrap; /* Allow wrapping if content is too long */
-}
-
-.author-name {
-    font-weight: bold;
-    color: #333;
-    margin-right: 5px; /* Space between name and location */
-}
-
-.reporting-from {
-    font-size: 0.9em;
-    color: #666;
-    margin-right: 8px; /* Space after reporting from */
+    flex-direction: column; /* Stack time, then name/location */
+    flex-grow: 1; /* Allow details to take available space */
 }
 
 .time-since-post {
     font-size: 0.8em;
     color: #777;
-    white-space: nowrap; /* Prevent time from wrapping */
+    margin-bottom: 2px; /* Small space below time */
+}
+
+.author-line {
+    display: flex; /* Contains name and reporting from */
+    align-items: baseline;
+    flex-wrap: wrap; /* Allow wrapping of name/location if content is too long */
+}
+
+.author-name {
+    font-weight: bold;
+    color: #333;
+    margin-right: 5px;
+}
+
+.reporting-from {
+    font-size: 0.9em;
+    color: #666;
+    /* Removed margin-right, as it's the last in its line for now */
+}
+
+
+.post-body {
+    /* Adjust margin-left to align with author name */
+    margin-left: 45px; /* (Avatar width + margin-right from avatar) */
 }
 
 .post-body p {
@@ -164,7 +172,7 @@ main {
 .read-more-button:hover {
     color: #0056b3;
 }
-/* --- END NEW/MODIFIED STYLES --- */
+/* --- END MODIFIED STYLES --- */
 
 
 .post-divider {
@@ -238,11 +246,19 @@ footer {
         margin: 10px auto;
     }
     .author-details {
-        flex-direction: column; /* Stack on very small screens */
+        /* On very small screens, maybe stack the name and location again */
+        flex-direction: column;
         align-items: flex-start;
     }
-    .author-name, .reporting-from, .time-since-post {
+    .author-line {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .author-name, .reporting-from {
         margin-right: 0;
-        margin-bottom: 2px; /* Small space between stacked elements */
+        margin-bottom: 2px;
+    }
+    .post-body {
+        margin-left: 0; /* Remove left margin for smaller screens */
     }
 }
