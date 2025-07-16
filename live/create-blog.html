@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         main {
-            display: none;
+            display: none; /* Hidden until Firebase authentication and data loading is complete */
         }
         .loading-message {
             text-align: center;
@@ -99,10 +99,8 @@
 
             <div id="postsContainer">
             </div>
-            <div id="paginationControls"></div> <!-- Ensure this is present -->
-        </section>
+            <div id="paginationControls"></div> </section>
 
-        <!-- New Embed Section -->
         <section class="embed-section">
             <h3>Embed This Live Blog</h3>
             <p>Copy the code below to embed this blog's posts on another website.</p>
@@ -116,7 +114,6 @@
         <p>&copy; 2025 Live Blog</p>
     </footer>
 
-    <!-- Firebase SDK and Initialization -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -195,7 +192,7 @@
                     const iframe = document.getElementById(`liveBlogEmbed-${currentBlogId}`);
                     if (iframe) {
                         // Add a small buffer to the height
-                        iframe.style.height = (event.data.height + 20) + 'px';
+                        iframe.style.height = (event.data.height + 20) + 'px'; // +20px for minor padding/margin
                     }
                 }
             });
@@ -206,7 +203,6 @@
         }
     </script>
 
-    <!-- Your main application script -->
     <script src="script.js"></script>
 </body>
 </html>
