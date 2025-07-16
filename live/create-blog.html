@@ -3,119 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="blogPageTitle">Create New Live Blog</title>
+    <title>Create/Manage Live Blog</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Embed-specific styles (from previous iterations) - KEEP these as they are for the embed code generator part */
-        .embed-section {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 30px;
-        }
-        .embed-section h3 {
-            color: #555;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .embed-section textarea {
-            width: calc(100% - 22px);
-            height: 120px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9em;
-            resize: vertical;
-            margin-bottom: 10px;
-        }
-        .embed-section button {
-            background-color: #28a745;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        .embed-section button:hover {
-            background-color: #218838;
-        }
-        .copy-message {
-            margin-top: 10px;
-            color: green;
-            font-size: 0.9em;
-        }
-        /* Loading message for this page */
-        .loading-message {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2em;
-            color: #555;
-        }
-        /* Main content hidden until loaded/authenticated (good practice) */
-        #mainContent {
-            display: none; 
-        }
-    </style>
 </head>
 <body>
     <header>
-        <h1 id="blogHeaderTitle">My Live Blog</h1>
+        <h1 id="blogTitleHeader">Loading Blog...</h1>
         <nav>
             <a href="dashboard.html">Dashboard</a>
-            <a href="view-blogs.html">Previous Blogs</a>
+            <a href="view-blogs.html">Archived Blogs</a>
             <a href="#" id="signOutButtonHeader">Sign Out</a>
         </nav>
     </header>
 
-    <div id="loadingContainer" class="loading-message">
-        Loading blog... Please wait.
-    </div>
-
-    <main id="mainContent">
-        <section class="live-blog-posts">
-            <h2>Live Updates</h2>
-
-            <div class="new-post-form">
-                <h3>Create a New Post</h3>
-                <form id="postForm">
-                    <div class="form-group">
-                        <label for="authorNameInput">Author Name:</label>
-                        <input type="text" id="authorNameInput" class="input-field" placeholder="Your Name" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="reportingFromInput">Reporting From:</label>
-                        <input type="text" id="reportingFromInput" class="input-field" placeholder="Reporting From" value="Montreal, Quebec, Canada">
-                    </div>
-                    <div class="form-group">
-                        <label for="postContent">Post Content:</label>
-                        <textarea id="postContent" class="textarea-field" placeholder="What's happening?" rows="5"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="postMedia">Add Media:</label>
-                        <input type="file" id="postMedia" accept="image/*,video/*">
-                    </div>
-                    <button type="submit" class="submit-button">Post Update</button>
-                </form>
-            </div>
-
-            <div id="postsContainer">
+    <main>
+        <section class="new-post-form">
+            <h2>Post an Update</h2>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="authorNameInput">Author Name:</label>
+                    <input type="text" id="authorNameInput" class="input-field" placeholder="Your Name" required>
                 </div>
-            <div id="paginationControls"></div>
+
+                <div class="form-group">
+                    <label for="postSubtitleInput">Subtitle (Optional):</label>
+                    <input type="text" id="postSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
+                </div>
+
+                <div class="form-group">
+                    <label for="postContentInput">Post Content:</label>
+                    <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="reportingFromInput">Reporting From:</label>
+                    <input type="text" id="reportingFromInput" class="input-field" value="Montreal, Quebec, Canada">
+                </div>
+                <div class="form-group">
+                    <label for="postMediaInput">Image or Video:</label>
+                    <input type="file" id="postMediaInput" accept="image/*,video/*">
+                </div>
+                <button type="submit" class="submit-button">Post Update</button>
+            </form>
         </section>
 
-        <section class="embed-section">
-            <h3>Embed This Live Blog</h3>
-            <p>Copy the code below to embed this blog's posts on another website.</p>
-            <textarea id="embedCode" rows="6" readonly></textarea>
-            <button id="copyEmbedCode">Copy Code</button>
-            <span id="copyMessage" class="copy-message" style="display: none;">Copied!</span>
+        <section class="live-blog-posts">
+            <h2>Live Blog Posts</h2>
+            <div id="postsContainer">
+                <p class="no-posts-message">No posts yet. Be the first to add an update!</p>
+            </div>
+            <div id="paginationControls" class="pagination-controls"></div>
         </section>
     </main>
 
@@ -125,11 +62,11 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
-
+        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
@@ -139,354 +76,178 @@
             appId: "1:324824649312:web:c0750693346091d853bd05",
             measurementId: "G-EZN90844XF"
         };
-        
+        // !!! END IMPORTANT !!!
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const auth = getAuth(app);
-        const storage = getStorage(app); // Initialize storage
 
+        let currentUser = null;
+        let currentBlogId = null;
+        let adminAllPostsCached = []; // Cache for admin posts
+        let adminCurrentPage = 0;
+        const adminPostsPerPage = 5;
+        let editingPostId = null; // To track which post is being edited
 
-        // Expose to window if needed by script.js, or better, pass as arguments
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-        window.getDocs = getDocs;
-        window.serverTimestamp = serverTimestamp;
-        window.auth = auth;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.getDoc = getDoc;
-        window.doc = doc;
-        window.signOut = signOut;
-        window.storage = storage; // Expose storage
-        window.deleteDoc = deleteDoc; // Expose deleteDoc
-
-
-        // Sign out logic (already there)
-        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Could not sign out. Please try again.");
-            }
-        });
-
-        // Embed code generation logic (already there)
-        const embedCodeTextarea = document.getElementById('embedCode');
-        const copyEmbedCodeButton = document.getElementById('copyEmbedCode');
-        const copyMessage = document.getElementById('copyMessage');
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentBlogId = urlParams.get('blogId');
-
-        if (currentBlogId && embedCodeTextarea) {
-            // Construct the URL for the embeddable page, respecting your repo structure
-            const embedUrl = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${currentBlogId}`;
-            // The height of the iframe in the embed code is a fixed starting point.
-            // The parent page's JS (Section 3) will then make it dynamic.
-            const iframeCode = `<iframe src="${embedUrl}" width="100%" height="800px" frameborder="0" scrolling="no" style="border: none; overflow: hidden;" id="liveBlogEmbed-${currentBlogId}"></iframe>`;
-            embedCodeTextarea.value = iframeCode;
-
-            copyEmbedCodeButton.addEventListener('click', () => {
-                embedCodeTextarea.select();
-                document.execCommand('copy');
-                copyMessage.style.display = 'inline';
-                setTimeout(() => {
-                    copyMessage.style.display = 'none';
-                }, 2000);
-            });
-
-            // This message listener in create-blog.html is likely for live updates of the *preview* iframe
-            // if you have one on this page. For the public embed, the listener is on the parent page.
-            window.addEventListener('message', (event) => {
-                if (event.origin === window.location.origin && event.data.type === 'iframeHeight') {
-                    // This listener is mostly for if you embed the 'embed-posts.html' *within* create-blog.html
-                    // as a preview. If not, this block can be removed or ignored.
-                    const iframe = document.getElementById(`liveBlogEmbed-${currentBlogId}`);
-                    if (iframe) {
-                        iframe.style.height = (event.data.height + 20) + 'px';
-                    }
-                }
-            });
-
-        } else if (embedCodeTextarea) {
-            embedCodeTextarea.value = "Please create or select a blog to generate embed code.";
-            copyEmbedCodeButton.disabled = true;
-        }
-
-        // --- Post Creation Logic (formerly in script.js, now here or referenced) ---
-        const postForm = document.getElementById('postForm');
+        const blogTitleHeader = document.getElementById('blogTitleHeader');
         const authorNameInput = document.getElementById('authorNameInput');
+        const postSubtitleInput = document.getElementById('postSubtitleInput'); // New subtitle input
+        const postContentInput = document.getElementById('postContentInput');
         const reportingFromInput = document.getElementById('reportingFromInput');
-        const postContentInput = document.getElementById('postContent');
-        const postMediaInput = document.getElementById('postMedia');
+        const postMediaInput = document.getElementById('postMediaInput');
+        const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
-        const loadingContainer = document.getElementById('loadingContainer');
-        const mainContent = document.getElementById('mainContent');
+        const submitButton = document.querySelector('.submit-button');
 
-        let currentUser = null; // Store current logged-in user info
-        let authorAvatarUrl = ''; // Store user's avatar URL
 
+        // --- Authentication Guard ---
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                authorNameInput.value = user.displayName || user.email; // Prefill author name
-
-                // Fetch user's custom avatar from 'users' collection
-                const userDocRef = doc(db, 'users', user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    if (userData.avatarUrl) {
-                        authorAvatarUrl = userData.avatarUrl;
-                        console.log("User avatar URL:", authorAvatarUrl);
-                    }
-                }
-
-                loadingContainer.style.display = 'none';
-                mainContent.style.display = 'block';
-                loadPostsForAdmin(); // Load posts in admin view
+            if (!user) {
+                // No user is signed in, redirect to login
+                window.location.href = 'index.html';
             } else {
-                window.location.href = 'index.html'; // Redirect to login
+                currentUser = user;
+                // Try to load author name from localStorage if available
+                authorNameInput.value = localStorage.getItem('authorName') || '';
+
+                const urlParams = new URLSearchParams(window.location.search);
+                currentBlogId = urlParams.get('blogId');
+                const blogNameFromUrl = urlParams.get('blogName');
+
+                if (currentBlogId && blogNameFromUrl) {
+                    blogTitleHeader.textContent = `Managing: ${decodeURIComponent(blogNameFromUrl)}`;
+                    loadPostsForAdmin();
+                } else if (currentBlogId) {
+                    // Fetch blog name from Firestore if not in URL (e.g., direct access)
+                    const blogDocRef = doc(db, 'blogs', currentBlogId);
+                    const blogDocSnap = await getDoc(blogDocRef);
+                    if (blogDocSnap.exists()) {
+                        blogTitleHeader.textContent = `Managing: ${blogDocSnap.data().name}`;
+                        loadPostsForAdmin();
+                    } else {
+                        blogTitleHeader.textContent = 'Blog Not Found';
+                        postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
+                    }
+                } else {
+                    blogTitleHeader.textContent = 'No Blog Selected';
+                    postsContainer.innerHTML = '<p class="error-message">No blog selected. Please go to your <a href="dashboard.html">dashboard</a> to create or select a blog.</p>';
+                }
             }
         });
 
-        // Post submission handler
+        // --- Post Form Submission ---
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!currentUser) {
-                alert("You must be logged in to post.");
-                return;
-            }
-
+            const authorName = authorNameInput.value.trim();
             const content = postContentInput.value.trim();
+            const subtitle = postSubtitleInput.value.trim(); // Get new subtitle value
             const reportingFrom = reportingFromInput.value.trim();
             const mediaFile = postMediaInput.files[0];
 
-            if (!content && !mediaFile) {
-                alert("Please enter some content or select a media file.");
+            if (!authorName || !content) {
+                alert("Author Name and Post Content are required!");
                 return;
             }
+
+            if (!currentBlogId) {
+                alert("No blog selected. Please go to Dashboard to select a blog.");
+                return;
+            }
+
+            submitButton.disabled = true; // Disable button to prevent multiple submissions
+            submitButton.textContent = "Posting..."; // Change button text
 
             let mediaUrl = '';
             let mediaType = '';
 
-            // Upload media if present
-            if (mediaFile) {
-                const storageRef = ref(storage, `post_media/${currentBlogId}/${Date.now()}-${mediaFile.name}`);
-                const uploadTask = uploadBytesResumable(storageRef, mediaFile);
-
-                try {
-                    // Show upload progress (optional)
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            console.log('Upload is ' + progress + '% done');
-                            // You can update a progress bar here
-                        },
-                        (error) => {
-                            console.error("Media upload failed:", error);
-                            alert("Failed to upload media. Please try again.");
-                            return; // Stop post creation
-                        }
-                    );
-                    await uploadTask;
-                    mediaUrl = await getDownloadURL(storageRef);
-                    mediaType = mediaFile.type;
-                    console.log("Media uploaded:", mediaUrl);
-                } catch (error) {
-                    console.error("Error during media upload or getting URL:", error);
-                    alert("Failed to process media. Please try again.");
-                    return;
-                }
-            }
-
             try {
-                const postsCollectionRef = collection(db, 'posts'); // Targeting top-level 'posts'
-                await addDoc(postsCollectionRef, {
-                    blogId: currentBlogId, // Link post to current blog
-                    authorId: currentUser.uid,
-                    authorName: authorNameInput.value,
-                    authorAvatar: authorAvatarUrl, // Use the fetched avatar URL
-                    content: content,
-                    reportingFrom: reportingFrom,
-                    mediaUrl: mediaUrl,
-                    mediaType: mediaType,
-                    timestamp: serverTimestamp()
-                });
+                if (mediaFile) {
+                    const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
+                    const uploadTask = await uploadBytes(storageRef, mediaFile);
+                    mediaUrl = await getDownloadURL(uploadTask.ref);
+                    mediaType = mediaFile.type;
+                }
 
+                const postsCollectionRef = collection(db, 'posts');
+                const authorAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // Static avatar for now
+
+                if (editingPostId) {
+                    // Update existing post
+                    const postDocRef = doc(db, 'posts', editingPostId);
+                    const updateData = {
+                        authorName: authorName,
+                        authorAvatar: authorAvatarUrl,
+                        subtitle: subtitle, // Include subtitle
+                        content: content,
+                        reportingFrom: reportingFrom,
+                        timestamp: serverTimestamp() // Update timestamp to bring to top
+                    };
+
+                    // Only update mediaUrl/Type if a new file was selected
+                    if (mediaFile) {
+                        // If there was an old media, delete it first (optional, but good for cleanup)
+                        const oldPostSnap = await getDoc(postDocRef);
+                        if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
+                            try {
+                                const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
+                                await deleteObject(oldMediaRef);
+                            } catch (error) {
+                                console.warn("Could not delete old media file (might not exist or permission issue):", error);
+                            }
+                        }
+                        updateData.mediaUrl = mediaUrl;
+                        updateData.mediaType = mediaType;
+                    }
+
+                    await updateDoc(postDocRef, updateData);
+                    alert("Post updated successfully!");
+                    editingPostId = null; // Clear editing state
+                    submitButton.textContent = "Post Update"; // Change button back to default
+                } else {
+                    // Add new post
+                    await addDoc(postsCollectionRef, {
+                        blogId: currentBlogId,
+                        authorId: currentUser.uid,
+                        authorName: authorName,
+                        authorAvatar: authorAvatarUrl,
+                        subtitle: subtitle, // Include subtitle
+                        content: content,
+                        reportingFrom: reportingFrom,
+                        mediaUrl: mediaUrl,
+                        mediaType: mediaType,
+                        timestamp: serverTimestamp()
+                    });
+                    alert("Post added successfully!");
+                }
+
+                // Clear form after submission
                 postContentInput.value = '';
-                reportingFromInput.value = 'Montreal, Quebec, Canada'; // Reset to default
+                postSubtitleInput.value = ''; // Clear subtitle input
                 postMediaInput.value = ''; // Clear file input
-                alert("Post added successfully!");
-                adminAllPostsCached = []; // Clear cache to force a re-fetch
-                loadPostsForAdmin(); // Reload posts to show new one
-                if (window.parent && window.parent.document.getElementById(`liveBlogEmbed-${currentBlogId}`)) {
-                    // If you have a live preview iframe on this page, force it to refresh
-                    // by sending a message or reloading its content if necessary.
-                    // A simple flag could work:
-                    window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, window.location.origin);
+                authorNameInput.value = authorName; // Keep author name for next post
+                localStorage.setItem('authorName', authorName); // Save author name for persistence
+
+                // Invalidate cache and reload posts for admin view
+                adminAllPostsCached = [];
+                adminCurrentPage = 0; // Go to first page after adding/editing
+                await loadPostsForAdmin();
+
+                // Notify embed to refresh itself
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*'); // Use '*' for targetOrigin for broader compatibility
                 }
 
             } catch (error) {
-                console.error("Error adding post:", error);
-                alert("Failed to add post. Please try again.");
+                console.error("Error saving post:", error);
+                alert("Failed to save post. Please try again. " + error.message);
+            } finally {
+                submitButton.disabled = false; // Re-enable button
             }
         });
 
-        // --- Functions for Admin View Post Rendering (similar to embed, but in admin context) ---
-
-        // Pagination variables for Admin view
-        let adminCurrentPage = 0;
-        const adminPostsPerPage = 5; 
-        let adminAllPostsCached = []; 
-
-        // Admin-specific render posts function
-        const renderAdminPosts = (posts, containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error(`Admin container with ID "${containerId}" not found.`);
-                return;
-            }
-            container.innerHTML = ''; // Clear existing posts
-
-            if (posts.length === 0) {
-                container.innerHTML = '<p class="no-posts-message">No posts yet. Add your first update above!</p>';
-                return;
-            }
-
-            posts.forEach(post => {
-                const postCard = document.createElement('div');
-                postCard.className = 'post-card'; // Re-use the post-card style
-                postCard.dataset.postId = post.id; 
-
-                let mediaHtml = '';
-                if (post.mediaUrl) {
-                    if (post.mediaType && post.mediaType.startsWith('image')) {
-                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        mediaHtml = `<video controls src="${post.mediaUrl}" class="post-media"></video>`;
-                    }
-                }
-
-                const avatarUrl = post.authorAvatar || 'https://via.placeholder.com/50?text=👤'; 
-
-                postCard.innerHTML = `
-                    <div class="author-avatar">
-                        <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
-                    </div>
-                    <div class="post-content-area">
-                        <div class="post-meta">
-                            <strong>${post.authorName || 'Anonymous'}</strong> 
-                            <span class="time-ago">${timeAgo(post.timestamp)}</span>
-                            ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
-                        </div>
-                        <p class="post-text">${post.content}</p>
-                        ${mediaHtml}
-                        <div class="post-actions">
-                            <button class="delete-post-button" data-post-id="${post.id}"><i class="fas fa-trash"></i> Delete</button>
-                            </div>
-                    </div>
-                `;
-                container.appendChild(postCard);
-            });
-
-            // Add event listeners for delete buttons
-            container.querySelectorAll('.delete-post-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const postIdToDelete = e.currentTarget.dataset.postId;
-                    if (confirm('Are you sure you want to delete this post?')) {
-                        try {
-                            const postDocRef = doc(db, 'posts', postIdToDelete);
-                            await deleteDoc(postDocRef); 
-                            alert('Post deleted successfully!');
-                            adminAllPostsCached = []; // Clear cache
-                            loadPostsForAdmin(); // Reload posts
-                        } catch (error) {
-                            console.error('Error deleting post:', error);
-                            alert('Failed to delete post.');
-                        }
-                    }
-                });
-            });
-        };
-
-        // Function to load and display posts for admin view
-        const loadPostsForAdmin = async () => {
-            if (!currentBlogId) {
-                postsContainer.innerHTML = '<p class="error-message">Error: No Blog ID. Please go to Dashboard to select or create a blog.</p>';
-                paginationControls.innerHTML = '';
-                return;
-            }
-
-            try {
-                if (adminAllPostsCached.length === 0) {
-                    const postsCollectionRef = collection(db, 'posts');
-                    const q = query(
-                        postsCollectionRef,
-                        where('blogId', '==', currentBlogId),
-                        orderBy('timestamp', 'desc')
-                    );
-                    const querySnapshot = await getDocs(q);
-                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log("Admin Fetched posts:", adminAllPostsCached);
-                }
-
-                const startIndex = adminCurrentPage * adminPostsPerPage;
-                const endIndex = startIndex + adminPostsPerPage;
-                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
-
-                renderAdminPosts(postsToShow, 'postsContainer');
-                updateAdminPaginationControls(adminAllPostsCached.length);
-
-            } catch (error) {
-                console.error("Error loading admin posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading posts. Please try again later.</p>';
-            }
-        };
-
-        // Function to update pagination controls for Admin view
-        const updateAdminPaginationControls = (totalPosts) => {
-            const paginationControls = document.getElementById('paginationControls');
-            if (!paginationControls) return;
-
-            paginationControls.innerHTML = '';
-
-            const totalPages = Math.ceil(totalPosts / adminPostsPerPage);
-
-            if (totalPages > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.textContent = 'Previous';
-                prevButton.disabled = adminCurrentPage === 0;
-                prevButton.addEventListener('click', () => {
-                    adminCurrentPage--;
-                    loadPostsForAdmin();
-                });
-                paginationControls.appendChild(prevButton);
-
-                const pageInfo = document.createElement('span');
-                pageInfo.textContent = `Page ${adminCurrentPage + 1} of ${totalPages}`;
-                paginationControls.appendChild(pageInfo);
-
-                const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
-                nextButton.disabled = adminCurrentPage >= totalPages - 1;
-                nextButton.addEventListener('click', () => {
-                    adminCurrentPage++;
-                    loadPostsForAdmin();
-                });
-                paginationControls.appendChild(nextButton);
-            }
-        };
-
-        // Helper function for timeAgo (re-used from embed-posts.html)
+        // --- Time Formatting Function ---
         function timeAgo(timestamp) {
             const now = new Date();
             const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
@@ -514,8 +275,206 @@
             }
             return Math.floor(seconds) + " seconds ago";
         }
-        
+
+        // --- Render Posts for Admin View ---
+        const renderAdminPosts = (posts, containerId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear previous posts
+
+            if (posts.length === 0) {
+                container.innerHTML = '<p class="no-posts-message">No posts yet. Be the first to add an update!</p>';
+                return;
+            }
+
+            posts.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                postCard.dataset.postId = post.id;
+
+                let mediaHtml = '';
+                if (post.mediaUrl) {
+                    if (post.mediaType && post.mediaType.startsWith('image')) {
+                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
+                        mediaHtml = `<video controls src="${post.mediaUrl}" class="post-media"></video>`;
+                    }
+                }
+
+                const avatarUrl = post.authorAvatar || 'https://via.placeholder.com/50?text=👤'; // Placeholder for admin view
+
+                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+
+                postCard.innerHTML = `
+                    <div class="post-header-line">
+                        <div class="author-avatar">
+                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
+                        </div>
+                        <div class="post-meta">
+                            <span class="time-ago">${timeAgo(post.timestamp)}</span> <span class="bullet">•</span> <strong>${post.authorName || 'Anonymous'}</strong>
+                            ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
+                        </div>
+                        <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
+                    </div>
+                    ${subtitleHtml}
+                    <p class="post-text">${post.content}</p>
+                    ${mediaHtml}
+                    <div class="post-actions">
+                        <button class="edit-post-button" data-post-id="${post.id}" title="Edit Post"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-post-button" data-post-id="${post.id}" data-media-url="${post.mediaUrl || ''}" title="Delete Post"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(postCard);
+            });
+
+            // Add event listeners for edit buttons
+            container.querySelectorAll('.edit-post-button').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const postIdToEdit = e.currentTarget.dataset.postId;
+                    const postToEdit = adminAllPostsCached.find(p => p.id === postIdToEdit);
+                    if (postToEdit) {
+                        editingPostId = postIdToEdit;
+                        postContentInput.value = postToEdit.content || '';
+                        postSubtitleInput.value = postToEdit.subtitle || ''; // Populate subtitle input
+                        reportingFromInput.value = postToEdit.reportingFrom || '';
+                        authorNameInput.value = postToEdit.authorName || '';
+                        // Note: media input cannot be pre-filled for security. User will re-select if needed.
+                        submitButton.textContent = "Save Changes"; // Change button text for edit mode
+                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top to see form
+                    }
+                });
+            });
+
+            // Add event listeners for share buttons
+            container.querySelectorAll('.share-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    alert('Share functionality coming soon!');
+                    // In a real application, you'd implement Web Share API or custom share links here.
+                });
+            });
+
+            // Add event listeners for delete buttons
+            container.querySelectorAll('.delete-post-button').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const postIdToDelete = e.currentTarget.dataset.postId;
+                    const mediaUrlToDelete = e.currentTarget.dataset.mediaUrl;
+
+                    if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+                        try {
+                            // Delete document from Firestore
+                            await deleteDoc(doc(db, 'posts', postIdToDelete));
+
+                            // If post had media, delete it from storage
+                            if (mediaUrlToDelete) {
+                                const mediaRef = ref(storage, mediaUrlToDelete);
+                                await deleteObject(mediaRef);
+                            }
+
+                            alert("Post deleted successfully!");
+                            adminAllPostsCached = []; // Invalidate cache
+                            adminCurrentPage = 0; // Reset to first page
+                            await loadPostsForAdmin(); // Reload posts
+                            // Notify embed to refresh
+                            if (window.parent && window.parent.postMessage) {
+                                window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
+                            }
+                        } catch (error) {
+                            console.error("Error deleting post:", error);
+                            alert("Failed to delete post. Please try again.");
+                        }
+                    }
+                });
+            });
+        };
+
+        // --- Load Posts for Admin ---
+        const loadPostsForAdmin = async () => {
+            if (!currentBlogId) return;
+
+            try {
+                // Fetch all posts for the current blog only if cache is empty
+                if (adminAllPostsCached.length === 0) {
+                    const postsCollectionRef = collection(db, 'posts');
+                    const q = query(
+                        postsCollectionRef,
+                        where('blogId', '==', currentBlogId),
+                        orderBy('timestamp', 'desc')
+                    );
+                    const querySnapshot = await getDocs(q);
+                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                }
+
+                // Apply pagination
+                const startIndex = adminCurrentPage * adminPostsPerPage;
+                const endIndex = startIndex + adminPostsPerPage;
+                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
+
+                renderAdminPosts(postsToShow, 'postsContainer');
+                updateAdminPaginationControls(adminAllPostsCached.length);
+
+            } catch (error) {
+                console.error("Error loading admin posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading posts for this blog. Please try again later.</p>';
+            }
+        };
+
+        // --- Update Admin Pagination Controls ---
+        const updateAdminPaginationControls = (totalPosts) => {
+            const paginationControls = document.getElementById('paginationControls');
+            if (!paginationControls) return;
+
+            paginationControls.innerHTML = ''; // Clear previous controls
+
+            const totalPages = Math.ceil(totalPosts / adminPostsPerPage);
+
+            if (totalPages > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.disabled = adminCurrentPage === 0;
+                prevButton.addEventListener('click', () => {
+                    adminCurrentPage--;
+                    loadPostsForAdmin();
+                });
+                paginationControls.appendChild(prevButton);
+
+                // Dynamically create page number buttons/spans
+                for (let i = 0; i < totalPages; i++) {
+                    const pageNumSpan = document.createElement('span');
+                    pageNumSpan.textContent = i + 1;
+                    pageNumSpan.className = 'page-number';
+                    if (i === adminCurrentPage) {
+                        pageNumSpan.classList.add('current-page');
+                    }
+                    pageNumSpan.addEventListener('click', () => {
+                        if (adminCurrentPage !== i) { // Only load if different page
+                            adminCurrentPage = i;
+                            loadPostsForAdmin();
+                        }
+                    });
+                    paginationControls.appendChild(pageNumSpan);
+                }
+
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.disabled = adminCurrentPage >= totalPages - 1;
+                nextButton.addEventListener('click', () => {
+                    adminCurrentPage++;
+                    loadPostsForAdmin();
+                });
+                paginationControls.appendChild(nextButton);
+            }
+        };
+
+        // --- Sign Out ---
+        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html'; // Redirect to login after sign out
+            } catch (error) {
+                console.error("Error signing out:", error);
+                alert("Could not sign out. Please try again.");
+            }
+        });
     </script>
-    <script src="script.js"></script> 
 </body>
 </html>
