@@ -181,6 +181,30 @@ main {
     justify-content: flex-end; /* Align action buttons to the right */
 }
 
+/* Show More Button */
+.show-more-button {
+    background-color: #f0f0f0; /* Light grey */
+    color: #333; /* Dark text */
+    border: 1px solid #ddd; /* Subtle border */
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500; /* Slightly bolder than regular text */
+    margin-top: 10px; /* Space above button */
+    display: block; /* Make it a block element to control centering */
+    width: fit-content; /* Only as wide as its content */
+    margin-left: auto; /* Center the button */
+    margin-right: auto; /* Center the button */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.show-more-button:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+
 /* Pagination Controls */
 .pagination-controls {
     display: flex; /* Use flexbox for horizontal alignment */
