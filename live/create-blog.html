@@ -136,7 +136,7 @@
                         currentBlogName = blogDocSnap.data().name;
                         blogTitleHeader.textContent = `Managing: ${currentBlogName}`;
                         generateEmbedCode(); // Generate embed code once blog details are known
-                        loadPostsForAdmin();
+                        await loadPostsForAdmin(); // <--- FIX: Load posts here
                     } else {
                         blogTitleHeader.textContent = 'Blog Not Found';
                         postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
@@ -333,7 +333,7 @@
                     }
                 }
 
-                const avatarUrl = post.authorAvatar || 'https://via.placeholder.com/50?text=👤'; // Placeholder for admin view
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Placeholder for admin view
 
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
@@ -432,4 +432,109 @@
                             alert("Post deleted successfully!");
                             adminAllPostsCached = []; // Invalidate cache
                             adminCurrentPage = 0; // Reset to first page
-                            await loadPostsForAdmin(); // Reload
+                            await loadPostsForAdmin(); // Reload posts
+                            // Notify embed to refresh
+                            if (window.parent && window.parent.postMessage) {
+                                window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
+                            }
+                        } catch (error) {
+                            console.error("Error deleting post:", error);
+                            alert("Failed to delete post. Please try again.");
+                        }
+                    }
+                });
+            });
+        };
+
+        // --- Load Posts for Admin ---
+        const loadPostsForAdmin = async () => {
+            if (!currentBlogId) return;
+
+            try {
+                // Fetch all posts for the current blog only if cache is empty
+                if (adminAllPostsCached.length === 0) {
+                    const postsCollectionRef = collection(db, 'posts');
+                    const q = query(
+                        postsCollectionRef,
+                        where('blogId', '==', currentBlogId),
+                        orderBy('timestamp', 'desc')
+                    );
+                    const querySnapshot = await getDocs(q);
+                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                }
+
+                // Apply pagination
+                const startIndex = adminCurrentPage * adminPostsPerPage;
+                const endIndex = startIndex + adminPostsPerPage;
+                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
+
+                renderAdminPosts(postsToShow, 'postsContainer');
+                updateAdminPaginationControls(adminAllPostsCached.length);
+
+            } catch (error) {
+                console.error("Error loading admin posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading posts for this blog. Please try again later.</p>';
+            }
+        };
+
+        // --- Update Admin Pagination Controls ---
+        const updateAdminPaginationControls = (totalPosts) => {
+            const paginationControls = document.getElementById('paginationControls');
+            if (!paginationControls) return;
+
+            paginationControls.innerHTML = ''; // Clear previous controls
+
+            const totalPages = Math.ceil(totalPosts / adminPostsPerPage);
+
+            if (totalPages > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Previous';
+                prevButton.disabled = adminCurrentPage === 0;
+                prevButton.addEventListener('click', () => {
+                    adminCurrentPage--;
+                    loadPostsForAdmin();
+                });
+                paginationControls.appendChild(prevButton);
+
+                // Dynamically create page number buttons/spans
+                for (let i = 0; i < totalPages; i++) {
+                    const pageNumSpan = document.createElement('span');
+                    pageNumSpan.textContent = i + 1;
+                    pageNumSpan.className = 'page-number';
+                    if (i === adminCurrentPage) {
+                        pageNumSpan.classList.add('current-page');
+                    }
+                    pageNumSpan.addEventListener('click', () => {
+                        if (adminCurrentPage !== i) { // Only load if different page
+                            adminCurrentPage = i;
+                            loadPostsForAdmin();
+                        }
+                    });
+                    paginationControls.appendChild(pageNumSpan);
+                }
+
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Next';
+                nextButton.disabled = adminCurrentPage >= totalPages - 1;
+                nextButton.addEventListener('click', () => {
+                    adminCurrentPage++;
+                    loadPostsForAdmin();
+                });
+                paginationControls.appendChild(nextButton);
+            }
+        };
+
+        // --- Sign Out ---
+        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html'; // Redirect to login after sign out
+            } catch (error) {
+                console.error("Error signing out:", error);
+                alert("Could not sign out. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
