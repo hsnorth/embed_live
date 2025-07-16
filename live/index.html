@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Blog App</title>
+    <title>Live Blog Login</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Specific styles for index.html */
         body {
             display: flex;
             justify-content: center;
@@ -16,83 +15,62 @@
             margin: 0;
             flex-direction: column;
         }
-        .main-menu {
+        .login-container {
             background-color: #fff;
             padding: 40px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             text-align: center;
+            width: 350px;
+            max-width: 90%;
         }
-        .main-menu h1 {
+        .login-container h1 {
             color: #333;
             margin-bottom: 30px;
         }
-        .main-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .main-menu li {
-            margin-bottom: 20px;
-        }
-        .main-menu a {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-            width: 250px; /* Make buttons consistent width */
-        }
-        .main-menu a:hover {
-            background-color: #0056b3;
-        }
-        .new-blog-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .new-blog-section input[type="text"] {
+        .login-form input {
+            width: calc(100% - 20px);
             padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-right: 10px;
-            width: 200px;
-        }
-        .new-blog-section button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
             font-size: 16px;
         }
-        .new-blog-section button:hover {
-            background-color: #218838;
+        .login-form button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+        #loginError {
+            color: red;
+            margin-top: 15px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="main-menu">
-        <h1>Welcome to Your Live Blog</h1>
-        <ul>
-            <li><a href="view-blogs.html">Access Previous Live Blogs</a></li>
-        </ul>
-
-        <div class="new-blog-section">
-            <h3>Start a New Blog</h3>
-            <input type="text" id="newBlogName" placeholder="Enter blog title">
-            <button id="startNewBlogBtn">Start Blog</button>
-        </div>
+    <div class="login-container">
+        <h1>Welcome to Live Blog</h1>
+        <form id="loginForm" class="login-form">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+            <p id="loginError"></p>
+        </form>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; // Only if you plan to use Analytics
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -105,34 +83,45 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        // const analytics = getAnalytics(app); // Only if you plan to use Analytics
+        const auth = getAuth(app);
 
-        document.getElementById('startNewBlogBtn').addEventListener('click', async () => {
-            const blogName = document.getElementById('newBlogName').value.trim();
-            if (blogName) {
-                try {
-                    const docRef = await addDoc(collection(db, "blogs"), {
-                        name: blogName,
-                        created: serverTimestamp()
-                    });
-                    const blogId = docRef.id;
-
-                    window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
-
-                } catch (e) {
-                    console.error("Error adding document: ", e);
-                    alert("Error creating blog. Please try again. Check console for details.");
-                }
-            } else {
-                alert('Please enter a name for your new blog.');
+        // Check auth state on page load
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to dashboard
+                window.location.href = 'dashboard.html';
             }
+            // Else, stay on login page
         });
 
-        document.getElementById('createNewBlogLink').addEventListener('click', (e) => {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            document.querySelector('.new-blog-section').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('newBlogName').focus();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginError = document.getElementById('loginError');
+            loginError.textContent = ''; // Clear previous errors
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // Redirect handled by onAuthStateChanged listener
+            } catch (error) {
+                console.error("Login failed:", error);
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        loginError.textContent = 'Invalid email or password.';
+                        break;
+                    case 'auth/invalid-email':
+                        loginError.textContent = 'Please enter a valid email address.';
+                        break;
+                    case 'auth/too-many-requests':
+                        loginError.textContent = 'Too many failed login attempts. Try again later.';
+                        break;
+                    default:
+                        loginError.textContent = 'An unknown error occurred. Please try again.';
+                        break;
+                }
+            }
         });
     </script>
 </body>
