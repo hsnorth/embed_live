@@ -71,8 +71,9 @@ main {
     padding: 12px 15px;
 }
 
+/* Removed individual post divider style, pagination handles breaks */
 .post-divider {
-    display: none; /* Still no individual post dividers as pages handle breaks */
+    display: none;
 }
 
 .live-blog-posts .blog-post:first-of-type {
@@ -217,7 +218,7 @@ main {
     background-color: #0056b3;
 }
 
-/* Pagination styles (remain the same) */
+/* Pagination styles */
 .pagination-controls {
     display: flex;
     justify-content: center;
@@ -277,6 +278,51 @@ footer {
     border-top: 1px solid #ddd;
 }
 
+/* Embed section styles for create-blog.html */
+.embed-section {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 30px;
+}
+.embed-section h3 {
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.embed-section textarea {
+    width: calc(100% - 22px);
+    height: 120px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+.embed-section button {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+.embed-section button:hover {
+    background-color: #218838;
+}
+.copy-message {
+    margin-top: 10px;
+    color: green;
+    font-size: 0.9em;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 600px) {
     header h1 {
@@ -307,3 +353,42 @@ footer {
     }
     /* .post-divider will remain hidden */
 }
+
+/* --- Styles specifically for embed-posts.html (to be included directly in its <style> tag) --- */
+/* These override default styles for the embedded content */
+body {
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+main {
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    background-color: transparent;
+    max-width: none;
+}
+.live-blog-posts {
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+.live-blog-posts h2 {
+    display: none;
+}
+.new-post-form {
+    display: none;
+}
+footer {
+    display: none;
+}
+header {
+    display: none;
+}
+.pagination-controls {
+    padding-bottom: 15px;
+}
+/* --- END Embed-specific styles --- */
