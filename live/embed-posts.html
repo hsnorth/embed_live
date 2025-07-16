@@ -119,6 +119,8 @@
                 return;
             }
 
+            const MAX_CHARS_PREVIEW = 450; // Adjust this value as needed
+
             posts.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
@@ -135,8 +137,18 @@
 
                 const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
                 
-                // New: Subtitle HTML
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+
+                let displayContentHtml = post.content;
+                let showMoreButtonHtml = '';
+                let isTruncated = false;
+
+                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
+                    displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    isTruncated = true;
+                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
+                }
+
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -150,24 +162,32 @@
                         <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
                     </div>
                     ${subtitleHtml}
-                    <p class="post-text">${post.content}</p>
+                    <p class="post-text">${displayContentHtml}</p>
                     ${mediaHtml}
+                    ${showMoreButtonHtml}
                 `;
                 container.appendChild(postCard);
+
+                // Add event listener for show more button if content was truncated
+                if (isTruncated) {
+                    const showMoreButton = postCard.querySelector('.show-more-button');
+                    const contentParagraph = postCard.querySelector('.post-text');
+
+                    showMoreButton.addEventListener('click', () => {
+                        contentParagraph.innerHTML = post.content; // Set full content
+                        showMoreButton.style.display = 'none'; // Hide the button
+                        
+                        // Notify parent iframe to adjust height after expansion
+                        if (window.parent) {
+                            const height = document.body.scrollHeight;
+                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                        }
+                    });
+                }
 
                 postCard.querySelector('.share-button').addEventListener('click', () => {
                     alert('Share functionality coming soon!');
                     // In a real application, you'd implement Web Share API or custom share links here.
-                    // For example:
-                    // if (navigator.share) {
-                    //     navigator.share({
-                    //         title: document.title,
-                    //         text: post.content.substring(0, 100) + '...',
-                    //         url: window.location.href // Or a specific permalink to the post
-                    //     }).then(() => console.log('Shared successfully')).catch((error) => console.error('Error sharing:', error));
-                    // } else {
-                    //     prompt("Copy this link to share:", window.location.href);
-                    // }
                 });
             });
 
