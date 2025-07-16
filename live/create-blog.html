@@ -99,7 +99,8 @@
 
             <div id="postsContainer">
             </div>
-            <div id="paginationControls"></div> </section>
+            <div id="paginationControls"></div>
+        </section>
 
         <section class="embed-section">
             <h3>Embed This Live Blog</h3>
@@ -119,7 +120,8 @@
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
+        // 🚨🚨🚨 YOUR ACTUAL FIREBASE CONFIGURATION 🚨🚨🚨
+        // This is the configuration you provided.
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
@@ -129,7 +131,7 @@
             appId: "1:324824649312:web:c0750693346091d853bd05",
             measurementId: "G-EZN90844XF"
         };
-        // !!! END IMPORTANT !!!
+        // 🚨🚨🚨 END OF YOUR FIREBASE CONFIGURATION 🚨🚨🚨
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -170,7 +172,9 @@
 
         if (currentBlogId && embedCodeTextarea) {
             // Construct the URL for the embeddable page
-            const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
+            // Adjust this path based on your GitHub Pages structure
+            // Example: If embed-posts.html is in embed_live/live/, then it's /embed_live/live/embed-posts.html
+            const embedUrl = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${currentBlogId}`;
             // Construct the iframe code. Adjust width/height as needed.
             // Height is set to 800px initially, but can be dynamically adjusted by the iframe's content
             const iframeCode = `<iframe src="${embedUrl}" width="100%" height="800px" frameborder="0" scrolling="no" style="border: none; overflow: hidden;" id="liveBlogEmbed-${currentBlogId}"></iframe>`;
@@ -178,7 +182,7 @@
 
             copyEmbedCodeButton.addEventListener('click', () => {
                 embedCodeTextarea.select();
-                document.execCommand('copy'); // Use execCommand for broader compatibility in iframes
+                document.execCommand('copy');
                 copyMessage.style.display = 'inline';
                 setTimeout(() => {
                     copyMessage.style.display = 'none';
