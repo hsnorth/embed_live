@@ -39,7 +39,7 @@ header nav a:hover {
 }
 
 main {
-    padding: 0 20px; /* Removed top/bottom padding to let posts handle it */
+    padding: 0 20px;
     max-width: 800px;
     margin: 20px auto;
     background-color: #fff;
@@ -49,20 +49,18 @@ main {
 
 .live-blog-posts, .new-blog-section {
     margin-bottom: 30px;
-    padding: 0px; /* Adjusted padding here */
-    border: none; /* Removed section border to blend posts more */
-    border-radius: 0; /* Removed section border-radius */
-    background-color: #fff; /* Ensure section background is white */
+    padding: 0px;
+    border: none;
+    border-radius: 0;
+    background-color: #fff;
 }
 
 .live-blog-posts h2, .new-post-form h3 {
     color: #555;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
-    margin: 20px 0; /* Add margin for title */
+    margin: 20px 0;
 }
-
-/* --- MODIFIED STYLES FOR REFINED SPACING --- */
 
 .blog-post {
     margin-bottom: 0;
@@ -70,32 +68,21 @@ main {
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    padding: 12px 15px; /* Reduced vertical padding, added horizontal padding back */
+    padding: 12px 15px;
 }
 
 .post-divider {
-    border-top: 1px solid #eee;
-    margin-top: 0; /* No margin above divider */
-    margin-bottom: 0; /* No margin below divider */
-    padding-top: 0;
-    padding-bottom: 0;
-    width: calc(100% - 46px); /* Align divider with content */
-    margin-left: 46px; /* Align divider with content */
+    display: none; /* Still no individual post dividers as pages handle breaks */
 }
 
-/* Ensure the first post doesn't have extra top padding/margin */
 .live-blog-posts .blog-post:first-of-type {
-    padding-top: 15px; /* Add some padding to the very first post if it's at the top of the container */
-}
-
-.blog-post:last-of-type .post-divider {
-    display: none; /* Hide divider after the last post */
+    padding-top: 15px;
 }
 
 .post-header {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 0px; /* Reduced margin to bring body closer */
+    margin-bottom: 0px;
 }
 
 .author-avatar {
@@ -123,7 +110,7 @@ main {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    margin-bottom: 0px; /* Reduced space below name/time line */
+    margin-bottom: 0px;
 }
 
 .author-name {
@@ -144,12 +131,12 @@ main {
     font-size: 0.85em;
     color: #666;
     white-space: nowrap;
-    margin-top: 2px; /* Small space above reporting from */
+    margin-top: 2px;
 }
 
 .post-body {
-    margin-left: 46px; /* Keep consistent alignment */
-    margin-top: 5px; /* Reduced margin to bring body closer to header */
+    margin-left: 46px;
+    margin-top: 5px;
 }
 
 .post-body p {
@@ -187,7 +174,6 @@ main {
 .read-more-button:hover {
     color: #0056b3;
 }
-/* --- END MODIFIED STYLES --- */
 
 .new-post-form form {
     display: flex;
@@ -231,6 +217,56 @@ main {
     background-color: #0056b3;
 }
 
+/* Pagination styles (remain the same) */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.pagination-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.page-number {
+    padding: 8px 12px;
+    margin: 0 2px;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.page-number.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.page-number:hover:not(.active) {
+    background-color: #e0e0e0;
+}
+
 footer {
     text-align: center;
     padding: 20px;
@@ -269,8 +305,5 @@ footer {
         margin-left: 0;
         margin-top: 5px;
     }
-    .post-divider {
-        width: 100%;
-        margin-left: 0;
-    }
+    /* .post-divider will remain hidden */
 }
