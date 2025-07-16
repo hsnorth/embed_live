@@ -11,8 +11,9 @@
     <header>
         <h1 id="blogHeaderTitle">My Live Blog</h1>
         <nav>
-            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
             <a href="view-blogs.html">Previous Blogs</a>
+            <a href="#" id="signOutButtonHeader">Sign Out</a>
         </nav>
     </header>
 
@@ -23,7 +24,7 @@
             <div class="new-post-form">
                 <h3>Create a New Post</h3>
                 <form id="postForm">
-                    <input type="text" id="authorNameInput" placeholder="Your Name" value="You">
+                    <input type="text" id="authorNameInput" placeholder="Your Name" readonly>
                     <input type="text" id="reportingFromInput" placeholder="Reporting From" value="Montreal, Quebec, Canada">
                     <textarea id="postContent" placeholder="What's happening?" rows="5"></textarea>
                     <input type="file" id="postMedia" accept="image/*,video/*">
@@ -32,7 +33,7 @@
             </div>
 
             <div id="postsContainer">
-                </div>
+            </div>
         </section>
     </main>
 
@@ -41,31 +42,25 @@
     </footer>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        // If you enabled Analytics, you'd also import:
-        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // Your actual API Key
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // Your actual Auth Domain
-            projectId: "myliveblogapp-cf9df", // Your actual Project ID
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // Your actual Storage Bucket
-            messagingSenderId: "324824649312", // Your actual Messaging Sender ID
-            appId: "1:324824649312:web:c0750693346091d853bd05", // Your actual App ID
-            measurementId: "G-EZN90844XF" // Your actual Measurement ID (if using analytics)
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+            measurementId: "G-EZN90844XF"
         };
-        // !!! END IMPORTANT !!!
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        // If you enabled Analytics:
-        // const analytics = getAnalytics(app);
+        const auth = getAuth(app);
 
-        // Make db and other Firestore functions globally accessible to script.js
-        // This is a common workaround when script.js is not a module itself.
+        // Make db, auth and other Firestore/Auth functions globally accessible to script.js
         window.db = db;
         window.collection = collection;
         window.addDoc = addDoc;
@@ -74,6 +69,23 @@
         window.orderBy = orderBy;
         window.getDocs = getDocs;
         window.serverTimestamp = serverTimestamp;
+        window.auth = auth; // Expose auth
+        window.onAuthStateChanged = onAuthStateChanged; // Expose onAuthStateChanged
+        window.getDoc = getDoc; // Expose getDoc
+        window.doc = doc; // Expose doc
+        window.signOut = signOut; // Expose signOut
+
+        // Sign out button in header
+        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html'; // Redirect to login after sign out
+            } catch (error) {
+                console.error("Error signing out:", error);
+                alert("Could not sign out. Please try again.");
+            }
+        });
     </script>
 
     <script src="script.js"></script>
