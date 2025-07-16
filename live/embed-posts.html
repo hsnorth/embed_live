@@ -102,15 +102,8 @@
         // it's better to export them all if they are called independently.
         // For simplicity and quick fix, the previous method of putting them on `window`
         // should work if `embed-script.js` is run *after* this module has set up `window` properties.
-        // My previous advice to simply include it with <script src="embed-script.js"></script>
-        // after the module was trying to leverage implicit ordering, but that's unreliable for modules.
-        // The safest is to explicitly import/call.
-
-        // Let's re-assess. Your embed-script.js is NOT a module.
-        // So, the `window` method *should* work if embed-script.js runs *after* the module has set everything on window.
-        // The fact that it's not means the timing or module scope is still interfering.
-
-        // Let's simplify and make embed-script.js a module as well. This is the cleanest fix.
+        // My previous advice to simply include it with <script src="embed-script.js">
     </script>
+
     </body>
 </html>
