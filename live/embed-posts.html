@@ -270,12 +270,13 @@
             border-radius: 3px;
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
+            font-size: 15px;
         }
 
         .pagination-controls .page-number.current-page {
-            text-decoration: underline;
-            text-decoration-color: rgb(208, 2, 27);
-            text-decoration-thickness: 2px;
+            text-decoration: none;
+            border-bottom: 2px solid rgb(208, 2, 27);
+            padding-bottom: 3px;
             font-weight: bold;
             color: rgb(208, 2, 27);
         }
@@ -297,24 +298,25 @@
                 border-radius: 3px;
             }
             .pagination-controls .page-number {
-                font-size: 15px;
+                font-size: 14px;
+                padding: 4px 6px;
             }
         }
 
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
             position: sticky;
-            top: 0; /* Makes it stick to the top */
+            top: 0;
             background-color: #fff;
             border-bottom: 1px solid #ebeef0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            z-index: 1000; /* Ensure it stays on top of other content */
+            z-index: 1000;
             display: flex;
-            overflow-x: auto; /* Enable horizontal scrolling for many tabs */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            white-space: nowrap; /* Prevent tabs from wrapping */
-            padding: 0 10px; /* Some padding on the sides */
-            justify-content: flex-start; /* Align tabs to the start */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            padding: 0 10px;
+            justify-content: flex-start;
         }
 
         .tab-navigation button {
@@ -326,11 +328,11 @@
             color: #555;
             cursor: pointer;
             transition: color 0.2s ease, border-bottom 0.2s ease;
-            flex-shrink: 0; /* Prevent buttons from shrinking */
+            flex-shrink: 0;
         }
 
         .tab-navigation button.active-tab {
-            color: rgb(208, 2, 27); /* Red for active tab */
+            color: rgb(208, 2, 27);
             border-bottom: 2px solid rgb(208, 2, 27);
             font-weight: bold;
         }
@@ -528,19 +530,16 @@
                     customTabs = blogDocSnap.data().customTabs || [];
                 }
 
-                // Fetch all posts initially or if refresh is requested
-                if (allPostsCached.length === 0 || window.reFetchPosts) {
-                    const postsCollectionRef = collection(db, 'posts');
-                    const q = query(
-                        postsCollectionRef,
-                        where('blogId', '==', currentBlogId),
-                        orderBy('timestamp', 'desc')
-                    );
-                    const querySnapshot = await getDocs(q);
-                    allPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    window.reFetchPosts = false;
-                }
-
+                // Always re-fetch all posts associated with the current blogId when loadPosts is called
+                const postsCollectionRef = collection(db, 'posts');
+                const q = query(
+                    postsCollectionRef,
+                    where('blogId', '==', currentBlogId),
+                    orderBy('timestamp', 'desc')
+                );
+                const querySnapshot = await getDocs(q);
+                allPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
                 renderTabs(); // Render/update tabs
                 filterAndRenderPosts(); // Filter and render based on current tab
             } catch (error) {
@@ -560,15 +559,9 @@
                 );
             }
 
-            currentPage = 0; // Reset to the first page when tab changes
-            const startIndex = currentPage * postsPerPage;
-            const endIndex = startIndex + postsPerPage;
-            const postsToShow = filteredPosts.slice(startIndex, endIndex);
-
-            renderPosts(postsToShow, 'postsContainer');
-            updatePaginationControls(filteredPosts.length);
+            currentPage = 0; // Reset to the first page when tab changes or initially loads
+            renderCurrentPage(); // Call the new function to render and update pagination
         };
-
 
         const updatePaginationControls = (totalPosts) => {
             const paginationControls = document.getElementById('paginationControls');
@@ -584,7 +577,7 @@
                 prevButton.disabled = currentPage === 0;
                 prevButton.addEventListener('click', () => {
                     currentPage--;
-                    filterAndRenderPosts(); // Re-render filtered posts
+                    renderCurrentPage();
                 });
                 paginationControls.appendChild(prevButton);
 
@@ -598,7 +591,7 @@
                     pageNumSpan.addEventListener('click', () => {
                         if (currentPage !== i) {
                             currentPage = i;
-                            filterAndRenderPosts(); // Re-render filtered posts
+                            renderCurrentPage();
                         }
                     });
                     paginationControls.appendChild(pageNumSpan);
@@ -609,11 +602,22 @@
                 nextButton.disabled = currentPage >= totalPages - 1;
                 nextButton.addEventListener('click', () => {
                     currentPage++;
-                    filterAndRenderPosts(); // Re-render filtered posts
+                    renderCurrentPage();
                 });
                 paginationControls.appendChild(nextButton);
             }
         };
+
+        // New function to render the posts for the current page
+        const renderCurrentPage = () => {
+            const startIndex = currentPage * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const postsToShow = filteredPosts.slice(startIndex, endIndex);
+
+            renderPosts(postsToShow, 'postsContainer');
+            updatePaginationControls(filteredPosts.length); // Update pagination controls to reflect current page
+        };
+
 
         // --- Tab Rendering and Interaction ---
         const renderTabs = () => {
@@ -659,9 +663,9 @@
             
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update.');
-                window.reFetchPosts = true; // Set flag to force re-fetch from Firestore
-                // No need to reset currentPage here, as filterAndRenderPosts will do it
-                loadPosts(); // Reload everything, including tabs and posts
+                // We no longer need window.reFetchPosts flag explicitly.
+                // Calling loadPosts directly will re-fetch allPostsCached.
+                loadPosts();
             }
         });
     </script>
