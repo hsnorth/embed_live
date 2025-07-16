@@ -156,7 +156,11 @@
                             <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
                         </div>
                         <div class="post-meta">
-                            <span class="time-ago">${timeAgo(post.timestamp)}</span> <span class="bullet">•</span> <strong>${post.authorName || 'Anonymous'}</strong>
+                            <div class="meta-line-one">
+                                <strong>${post.authorName || 'Anonymous'}</strong>
+                                <span class="bullet">•</span>
+                                <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                            </div>
                             ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
                         <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
