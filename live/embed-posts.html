@@ -6,41 +6,41 @@
     <title>Live Blog Posts Embed</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Override main container styles for embed */
+        /* Embed-specific styles - ONLY for this page */
         body {
-            background-color: transparent; /* Make background transparent for embedding */
+            background-color: transparent;
             margin: 0;
             padding: 0;
-            overflow-x: hidden; /* Prevent horizontal scrollbar */
+            overflow-x: hidden;
         }
         main {
-            padding: 0; /* Remove main padding */
-            margin: 0; /* Remove main margin */
-            box-shadow: none; /* Remove main shadow */
-            border-radius: 0; /* Remove main border-radius */
-            background-color: transparent; /* Make main background transparent */
-            max-width: none; /* Allow iframe to control width */
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+            background-color: transparent;
+            max-width: none;
         }
         .live-blog-posts {
             margin-bottom: 0;
             padding: 0;
             border: none;
-            background-color: transparent; /* Make section background transparent */
+            background-color: transparent;
         }
         .live-blog-posts h2 {
-            display: none; /* Hide "Live Updates" heading */
+            display: none; /* Hide "Live Updates" heading for embed */
         }
         .new-post-form {
-            display: none; /* Ensure post form is hidden */
+            display: none; /* HIDE THE POST FORM FOR EMBED */
         }
         footer {
-            display: none; /* Hide footer */
+            display: none; /* Hide footer for embed */
         }
         header {
-            display: none; /* Hide header */
+            display: none; /* Hide header for embed */
         }
         .pagination-controls {
-            padding-bottom: 15px; /* Add some padding at the bottom of pagination */
+            padding-bottom: 15px;
         }
     </style>
 </head>
@@ -57,8 +57,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-        // 🚨🚨🚨 YOUR ACTUAL FIREBASE CONFIGURATION 🚨🚨🚨
-        // This is the configuration you provided.
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
@@ -68,12 +66,10 @@
             appId: "1:324824649312:web:c0750693346091d853bd05",
             measurementId: "G-EZN90844XF"
         };
-        // 🚨🚨🚨 END OF YOUR FIREBASE CONFIGURATION 🚨🚨🚨
-
+        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Expose only necessary Firestore functions to the embed script
         window.db = db;
         window.collection = collection;
         window.query = query;
