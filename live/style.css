@@ -1,394 +1,85 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f2f5;
-    color: #333;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Blog Posts Embed</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Embed-specific styles - ONLY for this page */
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        main {
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+            background-color: transparent;
+            max-width: none;
+        }
+        .live-blog-posts {
+            margin-bottom: 0;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+        }
+        .live-blog-posts h2 {
+            display: none; /* Hide "Live Updates" heading for embed */
+        }
+        .new-post-form {
+            display: none; /* HIDE THE POST FORM FOR EMBED */
+        }
+        footer {
+            display: none; /* Hide footer for embed */
+        }
+        header {
+            display: none; /* Hide header for embed */
+        }
+        .pagination-controls {
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="live-blog-posts">
+            <div id="postsContainer">
+                </div>
+            <div id="paginationControls"></div>
+        </section>
+    </main>
 
-header {
-    background-color: #333;
-    color: white;
-    padding: 1em 0;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-header h1 {
-    margin: 0;
-}
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+            measurementId: "G-EZN90844XF"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-header nav {
-    margin-top: 10px;
-}
+        window.db = db;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.getDoc = getDoc;
+    </script>
 
-header nav a {
-    color: white;
-    text-decoration: none;
-    padding: 0.5em 1em;
-    margin: 0 5px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-header nav a:hover {
-    background-color: #555;
-}
-
-main {
-    padding: 0 20px;
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-radius: 8px;
-}
-
-.live-blog-posts, .new-blog-section {
-    margin-bottom: 30px;
-    padding: 0px;
-    border: none;
-    border-radius: 0;
-    background-color: #fff;
-}
-
-.live-blog-posts h2, .new-post-form h3 {
-    color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin: 20px 0;
-}
-
-.blog-post {
-    margin-bottom: 0;
-    background-color: #fff;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    padding: 12px 15px;
-}
-
-/* Removed individual post divider style, pagination handles breaks */
-.post-divider {
-    display: none;
-}
-
-.live-blog-posts .blog-post:first-of-type {
-    padding-top: 15px;
-}
-
-.post-header {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 0px;
-}
-
-.author-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    margin-right: 10px;
-    flex-shrink: 0;
-    overflow: hidden;
-}
-
-.author-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.author-details {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.name-and-time {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    margin-bottom: 0px;
-}
-
-.author-name {
-    font-weight: bold;
-    color: #333;
-    font-size: 0.95em;
-    margin-right: 5px;
-    white-space: nowrap;
-}
-
-.time-since-post {
-    font-size: 0.75em;
-    color: #777;
-    white-space: nowrap;
-}
-
-.reporting-from {
-    font-size: 0.85em;
-    color: #666;
-    white-space: nowrap;
-    margin-top: 2px;
-}
-
-.post-body {
-    margin-left: 46px;
-    margin-top: 5px;
-}
-
-.post-body p {
-    font-family: Georgia, serif;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    color: #444;
-    font-size: 0.95em;
-}
-
-.post-body img, .post-body video {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 10px 0;
-    border-radius: 4px;
-}
-
-.read-more-content.hidden {
-    display: none;
-}
-
-.read-more-button {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 0.85em;
-    margin-top: 5px;
-    padding: 0;
-    margin-left: 0;
-}
-
-.read-more-button:hover {
-    color: #0056b3;
-}
-
-.new-post-form form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.new-post-form input[type="text"],
-.new-post-form textarea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-    width: calc(100% - 22px);
-}
-
-.new-post-form textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.new-post-form input[type="file"] {
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-}
-
-.new-post-form button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.new-post-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Pagination styles */
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    padding-bottom: 20px;
-}
-
-.pagination-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    margin: 0 5px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
-}
-
-.pagination-button:hover:not(:disabled) {
-    background-color: #0056b3;
-}
-
-.pagination-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.page-number {
-    padding: 8px 12px;
-    margin: 0 2px;
-    border-radius: 4px;
-    background-color: #f0f0f0;
-    color: #333;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
-}
-
-.page-number.active {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-.page-number:hover:not(.active) {
-    background-color: #e0e0e0;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    margin-top: 30px;
-    color: #777;
-    font-size: 0.9em;
-    background-color: #eee;
-    border-top: 1px solid #ddd;
-}
-
-/* Embed section styles for create-blog.html */
-.embed-section {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 30px;
-}
-.embed-section h3 {
-    color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-.embed-section textarea {
-    width: calc(100% - 22px);
-    height: 120px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.9em;
-    resize: vertical;
-    margin-bottom: 10px;
-}
-.embed-section button {
-    background-color: #28a745;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-.embed-section button:hover {
-    background-color: #218838;
-}
-.copy-message {
-    margin-top: 10px;
-    color: green;
-    font-size: 0.9em;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
-    header h1 {
-        font-size: 1.5em;
-    }
-    header nav a {
-        padding: 0.5em 0.8em;
-    }
-    main {
-        padding: 10px;
-        margin: 10px auto;
-    }
-    .author-details {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .name-and-time {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .author-name, .time-since-post, .reporting-from {
-        margin-right: 0;
-        margin-bottom: 2px;
-    }
-    .post-body {
-        margin-left: 0;
-        margin-top: 5px;
-    }
-    /* .post-divider will remain hidden */
-}
-
-/* --- Styles specifically for embed-posts.html (to be included directly in its <style> tag) --- */
-/* These override default styles for the embedded content */
-body {
-    background-color: transparent;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-}
-main {
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-    border-radius: 0;
-    background-color: transparent;
-    max-width: none;
-}
-.live-blog-posts {
-    margin-bottom: 0;
-    padding: 0;
-    border: none;
-    background-color: transparent;
-}
-.live-blog-posts h2 {
-    display: none;
-}
-.new-post-form {
-    display: none;
-}
-footer {
-    display: none;
-}
-header {
-    display: none;
-}
-.pagination-controls {
-    padding-bottom: 15px;
-}
-/* --- END Embed-specific styles --- */
+    <script src="embed-script.js"></script>
+</body>
+</html>
