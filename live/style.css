@@ -50,7 +50,7 @@ main {
 .live-blog-posts, .new-blog-section {
     margin-bottom: 30px;
     padding: 15px;
-    border: 1px solid #ddd; /* Keep a subtle border for the main section container */
+    border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
 }
@@ -63,33 +63,29 @@ main {
     margin-bottom: 20px;
 }
 
-/* --- MODIFIED STYLES FOR CLEANER POSTS --- */
-
 .blog-post {
-    /* Removed border and padding from individual posts */
-    margin-bottom: 0; /* Remove bottom margin to control spacing with divider */
-    background-color: #fff; /* Ensure background is white */
-    box-shadow: none; /* Remove individual post shadow */
+    margin-bottom: 0;
+    background-color: #fff;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
-    padding: 15px 0; /* Add vertical padding for content within the post */
+    padding: 15px 0;
 }
 
-/* The divider now separates posts */
 .post-divider {
-    border-top: 1px solid #eee; /* Solid light line for separation */
-    margin-top: 15px; /* Space above divider */
-    margin-bottom: 15px; /* Space below divider */
-    padding-top: 0; /* No padding */
-    width: calc(100% - 50px); /* Match left alignment of body content (Avatar width + margin-right) */
-    margin-left: 50px; /* Align divider with post body text */
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding-top: 0;
+    width: calc(100% - 46px); /* Match left alignment of body content */
+    margin-left: 46px; /* Align divider with post body text */
 }
 
 .blog-post:first-of-type {
-    padding-top: 0; /* No top padding for the very first post */
+    padding-top: 0;
 }
 .blog-post:last-of-type .post-divider {
-    display: none; /* Hide divider after the last post */
+    display: none;
 }
 
 .post-header {
@@ -99,7 +95,7 @@ main {
 }
 
 .author-avatar {
-    width: 36px; /* Slightly smaller avatar */
+    width: 36px;
     height: 36px;
     border-radius: 50%;
     margin-right: 10px;
@@ -113,41 +109,45 @@ main {
     object-fit: cover;
 }
 
+/* --- MODIFIED: AUTHOR DETAILS LAYOUT --- */
 .author-details {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Stack name/time line, then reporting from */
     flex-grow: 1;
 }
 
-.author-line {
-    display: flex;
+.name-and-time {
+    display: flex; /* Contains name and time */
     align-items: baseline;
     flex-wrap: wrap;
-    margin-bottom: 2px;
+    margin-bottom: 2px; /* Space between this line and 'Reporting from' */
 }
 
 .author-name {
     font-weight: bold;
     color: #333;
-    font-size: 0.95em; /* Slightly smaller font */
+    font-size: 0.95em;
     margin-right: 5px;
     white-space: nowrap;
 }
 
-.reporting-from {
-    font-size: 0.85em; /* Slightly smaller font */
-    color: #666;
-    white-space: nowrap;
-}
-
 .time-since-post {
-    font-size: 0.75em; /* Slightly smaller font */
+    font-size: 0.75em;
     color: #777;
     white-space: nowrap;
 }
 
+.reporting-from {
+    font-size: 0.85em;
+    color: #666;
+    /* No margin-right needed here, as it's typically the last element on its line */
+    white-space: nowrap;
+}
+/* --- END MODIFIED: AUTHOR DETAILS LAYOUT --- */
+
+
 .post-body {
-    margin-left: 46px; /* Adjusted margin: avatar width (36px) + margin-right (10px) = 46px */
+    margin-left: 46px; /* Avatar width (36px) + margin-right (10px) = 46px */
 }
 
 .post-body p {
@@ -155,7 +155,7 @@ main {
     line-height: 1.6;
     margin-bottom: 15px;
     color: #444;
-    font-size: 0.95em; /* Slightly smaller body font */
+    font-size: 0.95em;
 }
 
 .post-body img, .post-body video {
@@ -176,7 +176,7 @@ main {
     color: #007bff;
     cursor: pointer;
     text-decoration: underline;
-    font-size: 0.85em; /* Slightly smaller button font */
+    font-size: 0.85em;
     margin-top: 5px;
     padding: 0;
     margin-left: 0;
@@ -185,7 +185,6 @@ main {
 .read-more-button:hover {
     color: #0056b3;
 }
-/* --- END MODIFIED STYLES --- */
 
 .new-post-form form {
     display: flex;
@@ -255,11 +254,11 @@ footer {
         flex-direction: column;
         align-items: flex-start;
     }
-    .author-line {
+    .name-and-time {
         flex-direction: column;
         align-items: flex-start;
     }
-    .author-name, .reporting-from, .time-since-post {
+    .author-name, .time-since-post, .reporting-from {
         margin-right: 0;
         margin-bottom: 2px;
     }
