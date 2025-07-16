@@ -49,6 +49,94 @@
                 max-width: 100%; /* Full width on smaller screens within the embed */
             }
         }
+
+        /* --- Pagination Controls (duplicated for embed to ensure display) --- */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 16px;
+            background-color: #fff;
+            border-top: 1px solid #ebeef0;
+            gap: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .pagination-controls button {
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: normal;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .pagination-controls button:disabled {
+            background-color: #f0f0f0;
+            color: #999;
+            border-color: #ddd;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #d0d0d0;
+            border-color: #bbb;
+        }
+
+        .pagination-controls button:active:not(:disabled) {
+            background-color: #c0c0c0;
+            border-color: #aaa;
+        }
+
+        .pagination-controls .page-number {
+            display: inline-block;
+            padding: 5px 8px;
+            margin: 0 3px;
+            text-decoration: none;
+            color: #000;
+            font-weight: normal;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .pagination-controls .page-number.current-page {
+            text-decoration: underline;
+            text-decoration-color: rgb(208, 2, 27);
+            text-decoration-thickness: 2px;
+            font-weight: bold;
+            color: rgb(208, 2, 27);
+        }
+
+        .pagination-controls .page-number:hover:not(.current-page) {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .pagination-controls {
+                padding: 10px 12px;
+                gap: 10px;
+                border-radius: 0;
+            }
+            .pagination-controls button {
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 3px;
+            }
+            .pagination-controls .page-number {
+                font-size: 15px;
+            }
+        }
     </style>
 </head>
 <body>
