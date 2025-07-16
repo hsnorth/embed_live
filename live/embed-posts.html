@@ -582,12 +582,13 @@
                 });
                 paginationControls.appendChild(prevButton);
 
+                // Ensure this loop for page numbers is robust
                 for (let i = 0; i < totalPages; i++) {
-                    const pageNumSpan = document.createElement('span');
+                    const pageNumSpan = document.createElement('span'); // 👈 Creates the span element
                     pageNumSpan.textContent = i + 1;
-                    pageNumSpan.className = 'page-number';
+                    pageNumSpan.className = 'page-number'; // 👈 Assigns the base class
                     if (i === currentPage) {
-                        pageNumSpan.classList.add('current-page');
+                        pageNumSpan.classList.add('current-page'); // 👈 Adds the active class if it's the current page
                     }
                     pageNumSpan.addEventListener('click', () => {
                         if (currentPage !== i) {
@@ -607,8 +608,12 @@
                 });
                 paginationControls.appendChild(nextButton);
             }
+            // Notify parent iframe to adjust height after pagination update
+            if (window.parent) {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+            }
         };
-
         // New function to render the posts for the current page
         const renderCurrentPage = () => {
             const startIndex = currentPage * postsPerPage;
