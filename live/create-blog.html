@@ -7,9 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Temporarily hide main content until authentication state is determined */
         main {
-            display: none; /* Hide main content by default */
+            display: none;
         }
         .loading-message {
             text-align: center;
@@ -18,11 +17,54 @@
             color: #555;
         }
         .author-avatar-img {
-            width: 50px; /* Adjust as needed */
-            height: 50px; /* Adjust as needed */
-            border-radius: 50%; /* Makes it round */
-            object-fit: cover; /* Ensures image covers the area nicely */
-            margin-right: 10px; /* Space between avatar and details */
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* Embed section styles */
+        .embed-section {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+        .embed-section h3 {
+            color: #555;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .embed-section textarea {
+            width: calc(100% - 22px);
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        .embed-section button {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .embed-section button:hover {
+            background-color: #218838;
+        }
+        .copy-message {
+            margin-top: 10px;
+            color: green;
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -57,6 +99,16 @@
 
             <div id="postsContainer">
             </div>
+            <div id="paginationControls"></div> <!-- Ensure this is present -->
+        </section>
+
+        <!-- New Embed Section -->
+        <section class="embed-section">
+            <h3>Embed This Live Blog</h3>
+            <p>Copy the code below to embed this blog's posts on another website.</p>
+            <textarea id="embedCode" rows="6" readonly></textarea>
+            <button id="copyEmbedCode">Copy Code</button>
+            <span id="copyMessage" class="copy-message" style="display: none;">Copied!</span>
         </section>
     </main>
 
@@ -64,6 +116,7 @@
         <p>&copy; 2025 Live Blog</p>
     </footer>
 
+    <!-- Firebase SDK and Initialization -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -85,7 +138,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Make db, auth and other Firestore/Auth functions globally accessible to script.js
         window.db = db;
         window.collection = collection;
         window.addDoc = addDoc;
@@ -94,25 +146,67 @@
         window.orderBy = orderBy;
         window.getDocs = getDocs;
         window.serverTimestamp = serverTimestamp;
-        window.auth = auth; // Expose auth
-        window.onAuthStateChanged = onAuthStateChanged; // Expose onAuthStateChanged
-        window.getDoc = getDoc; // Expose getDoc
-        window.doc = doc; // Expose doc
-        window.signOut = signOut; // Expose signOut
+        window.auth = auth;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.getDoc = getDoc;
+        window.doc = doc;
+        window.signOut = signOut;
 
-        // Sign out button in header
         document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
             e.preventDefault();
             try {
                 await signOut(auth);
-                window.location.href = 'index.html'; // Redirect to login after sign out
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
             }
         });
+
+        // Embed code generation logic
+        const embedCodeTextarea = document.getElementById('embedCode');
+        const copyEmbedCodeButton = document.getElementById('copyEmbedCode');
+        const copyMessage = document.getElementById('copyMessage');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentBlogId = urlParams.get('blogId');
+
+        if (currentBlogId && embedCodeTextarea) {
+            // Construct the URL for the embeddable page
+            const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
+            // Construct the iframe code. Adjust width/height as needed.
+            // Height is set to 800px initially, but can be dynamically adjusted by the iframe's content
+            const iframeCode = `<iframe src="${embedUrl}" width="100%" height="800px" frameborder="0" scrolling="no" style="border: none; overflow: hidden;" id="liveBlogEmbed-${currentBlogId}"></iframe>`;
+            embedCodeTextarea.value = iframeCode;
+
+            copyEmbedCodeButton.addEventListener('click', () => {
+                embedCodeTextarea.select();
+                document.execCommand('copy'); // Use execCommand for broader compatibility in iframes
+                copyMessage.style.display = 'inline';
+                setTimeout(() => {
+                    copyMessage.style.display = 'none';
+                }, 2000);
+            });
+
+            // Listen for messages from the iframe to adjust its height
+            window.addEventListener('message', (event) => {
+                // Ensure the message is from a trusted origin (your own domain)
+                if (event.origin === window.location.origin && event.data.type === 'iframeHeight') {
+                    const iframe = document.getElementById(`liveBlogEmbed-${currentBlogId}`);
+                    if (iframe) {
+                        // Add a small buffer to the height
+                        iframe.style.height = (event.data.height + 20) + 'px';
+                    }
+                }
+            });
+
+        } else if (embedCodeTextarea) {
+            embedCodeTextarea.value = "Please create or select a blog to generate embed code.";
+            copyEmbedCodeButton.disabled = true;
+        }
     </script>
 
+    <!-- Your main application script -->
     <script src="script.js"></script>
 </body>
 </html>
