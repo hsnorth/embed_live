@@ -39,7 +39,7 @@ header nav a:hover {
 }
 
 main {
-    padding: 20px;
+    padding: 0 20px; /* Removed top/bottom padding to let posts handle it */
     max-width: 800px;
     margin: 20px auto;
     background-color: #fff;
@@ -49,19 +49,20 @@ main {
 
 .live-blog-posts, .new-blog-section {
     margin-bottom: 30px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    padding: 0px; /* Adjusted padding here */
+    border: none; /* Removed section border to blend posts more */
+    border-radius: 0; /* Removed section border-radius */
+    background-color: #fff; /* Ensure section background is white */
 }
 
 .live-blog-posts h2, .new-post-form h3 {
     color: #555;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
-    margin-top: 0;
-    margin-bottom: 20px;
+    margin: 20px 0; /* Add margin for title */
 }
+
+/* --- MODIFIED STYLES FOR REFINED SPACING --- */
 
 .blog-post {
     margin-bottom: 0;
@@ -69,29 +70,32 @@ main {
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    padding: 15px 0;
+    padding: 12px 15px; /* Reduced vertical padding, added horizontal padding back */
 }
 
 .post-divider {
     border-top: 1px solid #eee;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 0; /* No margin above divider */
+    margin-bottom: 0; /* No margin below divider */
     padding-top: 0;
-    width: calc(100% - 46px); /* Match left alignment of body content */
-    margin-left: 46px; /* Align divider with post body text */
+    padding-bottom: 0;
+    width: calc(100% - 46px); /* Align divider with content */
+    margin-left: 46px; /* Align divider with content */
 }
 
-.blog-post:first-of-type {
-    padding-top: 0;
+/* Ensure the first post doesn't have extra top padding/margin */
+.live-blog-posts .blog-post:first-of-type {
+    padding-top: 15px; /* Add some padding to the very first post if it's at the top of the container */
 }
+
 .blog-post:last-of-type .post-divider {
-    display: none;
+    display: none; /* Hide divider after the last post */
 }
 
 .post-header {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 5px;
+    margin-bottom: 0px; /* Reduced margin to bring body closer */
 }
 
 .author-avatar {
@@ -109,18 +113,17 @@ main {
     object-fit: cover;
 }
 
-/* --- MODIFIED: AUTHOR DETAILS LAYOUT --- */
 .author-details {
     display: flex;
-    flex-direction: column; /* Stack name/time line, then reporting from */
+    flex-direction: column;
     flex-grow: 1;
 }
 
 .name-and-time {
-    display: flex; /* Contains name and time */
+    display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    margin-bottom: 2px; /* Space between this line and 'Reporting from' */
+    margin-bottom: 0px; /* Reduced space below name/time line */
 }
 
 .author-name {
@@ -140,14 +143,13 @@ main {
 .reporting-from {
     font-size: 0.85em;
     color: #666;
-    /* No margin-right needed here, as it's typically the last element on its line */
     white-space: nowrap;
+    margin-top: 2px; /* Small space above reporting from */
 }
-/* --- END MODIFIED: AUTHOR DETAILS LAYOUT --- */
-
 
 .post-body {
-    margin-left: 46px; /* Avatar width (36px) + margin-right (10px) = 46px */
+    margin-left: 46px; /* Keep consistent alignment */
+    margin-top: 5px; /* Reduced margin to bring body closer to header */
 }
 
 .post-body p {
@@ -185,6 +187,7 @@ main {
 .read-more-button:hover {
     color: #0056b3;
 }
+/* --- END MODIFIED STYLES --- */
 
 .new-post-form form {
     display: flex;
@@ -264,6 +267,7 @@ footer {
     }
     .post-body {
         margin-left: 0;
+        margin-top: 5px;
     }
     .post-divider {
         width: 100%;
