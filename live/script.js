@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ensure Firebase is initialized and its modules are exposed to window
     // This script (script.js) assumes the Firebase initialization script
     // in the HTML has completed and set window.db, window.collection etc.
-    // If you ever convert script.js to type="module", you'd import directly.
 
     const postForm = document.getElementById('postForm');
     const authorNameInput = document.getElementById('authorNameInput');
@@ -17,11 +16,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentBlogId = urlParams.get('blogId');
     const currentBlogName = urlParams.get('blogName');
 
+    let currentUserProfile = null; // Store fetched user profile
+
+    // Authentication Guard & User Profile Fetching
+    window.onAuthStateChanged(window.auth, async (user) => {
+        if (!user) {
+            // No user is signed in, redirect to login
+            window.location.href = 'index.html';
+        } else {
+            // User is signed in, fetch their profile
+            try {
+                const userDocRef = window.doc(window.db, "users", user.uid);
+                const userDocSnap = await window.getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    currentUserProfile = userDocSnap.data();
+                    // Pre-fill author name from profile, make it readonly
+                    authorNameInput.value = currentUserProfile.name || user.email; // Fallback to email
+                } else {
+                    console.warn("User profile not found in Firestore for UID:", user.uid);
+                    authorNameInput.value = user.email || "Unknown User"; // Use email if profile missing
+                }
+                loadPosts(); // Load posts only after user is authenticated and profile potentially loaded
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                authorNameInput.value = user.email || "Error Loading User"; // Fallback on error
+                loadPosts(); // Still try to load posts even if profile fetch fails
+            }
+        }
+    });
+
     if (currentBlogName && blogPageTitle && blogHeaderTitle) {
         blogPageTitle.textContent = currentBlogName;
         blogHeaderTitle.textContent = currentBlogName;
     } else {
-        // Default behavior if not coming from index.html (e.g., direct access without blogId)
+        // Default behavior if not coming from dashboard (e.g., direct access without blogId)
         if (blogPageTitle) blogPageTitle.textContent = "Create New Live Blog";
         if (blogHeaderTitle) blogHeaderTitle.textContent = "My Live Blog";
     }
@@ -32,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
         interval = seconds / 2592000; // months
-        if (interval > 1) { return Math.floor(interval) + " months ago"; }
+        if (interval > 1) { return Math.floor(interval) + " days ago"; }
         interval = seconds / 86400; // days
         if (interval > 1) { return Math.floor(interval) + " hours ago"; }
         interval = seconds / 3600; // hours
@@ -60,10 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
+        // Use postData.authorPic if available, fallback to a default avatar or no image
+        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=AV'; // Default grey avatar
+        const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
+
+
         newPost.innerHTML = `
             <div class="post-header">
                 <div class="author-info">
-                    <div class="author-avatar"></div>
+                    <div class="author-avatar">${authorPicHtml}</div>
                     <div class="author-details">
                         <span class="time-since-post">${timeSince}</span>
                         <span class="author-name">${postData.authorName || 'Anonymous'}</span>
@@ -91,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageDiv = document.createElement('div');
             messageDiv.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Please create or select a blog to view posts.</p>`;
             postsContainer.appendChild(messageDiv);
+            // Hide the form if no blog is selected
+            if (postForm) postForm.style.display = 'none';
             return;
         }
 
@@ -121,12 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (postForm && currentBlogId) { // Only enable form if a blogId is present
+    // Only add submit listener if postForm exists (it might be hidden if no blogId)
+    if (postForm) {
         postForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const content = postContent.value.trim();
-            const authorName = authorNameInput.value.trim();
+            const authorName = authorNameInput.value.trim(); // Will be pre-filled
             const reportingFrom = reportingFromInput.value.trim();
             const mediaFile = postMedia.files[0];
 
@@ -147,37 +184,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const postData = {
                 blogId: currentBlogId,
                 content: content,
-                authorName: authorName || "Anonymous",
+                authorName: currentUserProfile ? currentUserProfile.name : (window.auth.currentUser ? window.auth.currentUser.email : "Anonymous"), // Use fetched profile name or auth email
+                authorEmail: currentUserProfile ? currentUserProfile.email : (window.auth.currentUser ? window.auth.currentUser.email : "N/A"), // Store email
+                authorPic: currentUserProfile ? currentUserProfile.pic : 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=AV', // Use fetched profile pic
                 reportingFrom: reportingFrom || "Unknown Location",
                 timestamp: window.serverTimestamp(),
                 mediaUrl: mediaUrl,
-                mediaType: mediaType
+                mediaType: mediaType,
+                uid: window.auth.currentUser ? window.auth.currentUser.uid : null // Store the user's UID
             };
 
             try {
                 await window.addDoc(window.collection(window.db, "posts"), postData);
-                postContent.value = '';
-                if (authorNameInput) authorNameInput.value = 'You';
-                if (reportingFromInput) reportingFromInput.value = 'Montreal, Quebec, Canada';
-                postMedia.value = '';
+                postContent.value = ''; // Clear form fields
+                postMedia.value = ''; // Clear file input
                 loadPosts(); // Reload all posts to display the new one at the top
             } catch (e) {
                 console.error("Error adding post: ", e);
                 alert("Error posting update. Please try again. Check console for details.");
             }
         });
-    } else if (postForm) { // If on create-blog.html but no blogId (direct access without selecting a blog)
-        // Hide the form and show a message
-        postForm.style.display = 'none';
-        const messageDiv = document.createElement('div');
-        messageDiv.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Please select an existing blog or create a new one from the <a href="index.html">Home page</a> to post updates.</p>`;
-        postsContainer.parentNode.insertBefore(messageDiv, postsContainer);
     }
 
-    if (postsContainer) {
-        loadPosts();
-    }
-
-    // Update "time since post" periodically by reloading all posts
-    setInterval(loadPosts, 60000); // Every minute
+    // `loadPosts()` is now called inside `onAuthStateChanged` to ensure user is logged in first.
+    // The setInterval is also now conditionally set after auth check to ensure `loadPosts` has context.
+    setInterval(() => {
+        if (window.auth.currentUser && currentBlogId) {
+            loadPosts(); // Only refresh if user is logged in and a blog is selected
+        }
+    }, 60000); // Every minute
 });
