@@ -4,53 +4,212 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Blog Posts Embed</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Embed-specific styles - ONLY for this page, overriding main style.css for embed context */
+        /* Base styles for the embed */
         body {
-            background-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            color: #000;
+            background-color: transparent; /* Essential for iframe transparency */
             margin: 0;
             padding: 0;
             overflow-x: hidden;
         }
         main {
             padding: 0;
-            margin: 0 auto; /* Center for larger screens */
+            margin: 0 auto;
             box-shadow: none;
             border-radius: 0;
             background-color: transparent;
-            max-width: none; /* Let the section below control max-width */
+            max-width: none;
         }
         .live-blog-posts {
             margin-bottom: 0;
             padding: 0;
             border: none;
             background-color: transparent;
-            max-width: 600px; /* Constrain max width for posts, similar to X feed */
+            max-width: 600px; /* Constrain max width for posts */
             margin: 0 auto; /* Center the posts content */
         }
+
         /* Hide elements not needed in the embed */
         .live-blog-posts h2,
         .new-post-form,
         footer,
         header {
-            display: none !important; /* Use !important to ensure override */
-        }
-        /* Adjust padding for pagination controls if needed, but style.css will handle most */
-        .pagination-controls {
-            padding-bottom: 15px; /* Ensure some space below controls */
+            display: none !important;
         }
 
-        /* Responsive for iframe width on parent page - this CSS applies *within* the iframe */
-        @media (max-width: 600px) {
-            .live-blog-posts {
-                max-width: 100%; /* Full width on smaller screens within the embed */
-            }
+        /* --- Individual Post Card Styling (duplicated from style.css) --- */
+        .post-card {
+            display: block;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ebeef0;
+            background-color: #fff;
+            word-wrap: break-word;
+            position: relative;
         }
 
-        /* --- Pagination Controls (duplicated for embed to ensure display) --- */
+        .post-header-line {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .author-avatar {
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+
+        .author-avatar-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            position: relative;
+        }
+
+        .author-avatar-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(208, 2, 27, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .post-meta {
+            flex-grow: 1;
+            font-size: 15px;
+            line-height: 1.4;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .meta-line-one {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .post-meta strong {
+            font-weight: bold;
+            color: #0f1419;
+            margin-right: 4px;
+        }
+
+        .post-meta span.time-ago {
+            color: rgb(208, 2, 27);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .post-meta .bullet {
+            color: #536471;
+            font-size: 14px;
+            margin: 0 4px;
+            display: inline;
+        }
+
+        .post-meta .reporting-from {
+            display: block;
+            color: #536471;
+            font-size: 14px;
+            margin-left: 0;
+            margin-top: 0;
+        }
+
+        .post-subtitle {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .post-text {
+            font-family: "Noto Serif", Georgia, serif;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #0f1419;
+            line-height: 20px;
+        }
+
+        .post-media {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .no-posts-message, .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #536471;
+            font-style: italic;
+            font-size: 16px;
+        }
+
+        .share-button {
+            background: none;
+            border: none;
+            color: #657786;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .post-card .share-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2em;
+        }
+
+        .share-button:hover {
+            background-color: rgba(208, 2, 27, 0.1);
+            color: rgb(208, 2, 27);
+        }
+
+        .show-more-button {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .show-more-button:hover {
+            background-color: #e0e0e0;
+            border-color: #ccc;
+        }
+
+        /* --- Pagination Controls (critical for embed) --- */
         .pagination-controls {
             display: flex;
             justify-content: center;
