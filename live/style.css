@@ -1,85 +1,404 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Blog Posts Embed</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Embed-specific styles - ONLY for this page */
-        body {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        main {
-            padding: 0;
-            margin: 0;
-            box-shadow: none;
-            border-radius: 0;
-            background-color: transparent;
-            max-width: none;
-        }
-        .live-blog-posts {
-            margin-bottom: 0;
-            padding: 0;
-            border: none;
-            background-color: transparent;
-        }
-        .live-blog-posts h2 {
-            display: none; /* Hide "Live Updates" heading for embed */
-        }
-        .new-post-form {
-            display: none; /* HIDE THE POST FORM FOR EMBED */
-        }
-        footer {
-            display: none; /* Hide footer for embed */
-        }
-        header {
-            display: none; /* Hide header for embed */
-        }
-        .pagination-controls {
-            padding-bottom: 15px;
-        }
-    </style>
-</head>
-<body>
-    <main>
-        <section class="live-blog-posts">
-            <div id="postsContainer">
-                </div>
-            <div id="paginationControls"></div>
-        </section>
-    </main>
+/* General Body and Layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6; /* Light background for overall page */
+    color: #333;
+    line-height: 1.6;
+}
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+/* Header */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        window.db = db;
-        window.collection = collection;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.getDoc = getDoc;
-    </script>
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
 
-    <script src="embed-script.js"></script>
-</body>
-</html>
+header nav {
+    margin-top: 10px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+header nav a:hover {
+    color: #e2e6ea;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    color: #777;
+    font-size: 0.9em;
+    border-top: 1px solid #eee;
+}
+
+/* Sections */
+section {
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #007bff;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+h3 {
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+/* Form Styles */
+.new-post-form {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.new-post-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.new-post-form input[type="text"],
+.new-post-form textarea {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.new-post-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.new-post-form button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.new-post-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Post Cards */
+.post-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+    display: flex; /* Use flexbox for layout */
+    align-items: flex-start; /* Align items to the top */
+    gap: 15px; /* Space between avatar and content */
+}
+
+.post-card.new-post-highlight {
+    animation: fadeInBorder 0.5s forwards;
+}
+
+@keyframes fadeInBorder {
+    from { border-color: #e0e0e0; }
+    to { border-color: #007bff; } /* Highlight with primary color */
+}
+
+.author-avatar {
+    flex-shrink: 0; /* Prevent avatar from shrinking */
+}
+
+.author-avatar-img {
+    width: 50px; /* Larger avatar size */
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff; /* Small border around avatar */
+}
+
+.post-content-area {
+    flex-grow: 1; /* Allow content to take remaining space */
+}
+
+.post-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.post-meta strong {
+    color: #333;
+    font-size: 1.1em;
+    display: block; /* New line for author name */
+    margin-bottom: 2px;
+}
+
+.post-meta .time-ago {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 5px;
+}
+
+.post-text {
+    margin-bottom: 10px;
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    word-wrap: break-word; /* Break long words */
+}
+
+.post-media {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block; /* Ensures it doesn't leave space below */
+    margin-top: 10px;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.pagination-controls button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.pagination-controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-controls span {
+    align-self: center;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Utility classes */
+.hidden {
+    display: none !important;
+}
+
+/* Specific styles for dashboard/view-blogs */
+.blog-list {
+    list-style: none;
+    padding: 0;
+}
+
+.blog-list li {
+    background-color: #f0f8ff;
+    border: 1px solid #cfe2ff;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.blog-list li a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.blog-list li a:hover {
+    text-decoration: underline;
+}
+
+.blog-list li span {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.dashboard-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.dashboard-actions button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard-actions button:hover {
+    background-color: #218838;
+}
+
+/* Authentication Page Styles */
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.auth-form button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.auth-form button:hover {
+    background-color: #0056b3;
+}
+
+.auth-message {
+    color: red;
+    margin-top: 10px;
+}
+
+.toggle-auth {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.toggle-auth a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.toggle-auth a:hover {
+    text-decoration: underline;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    header nav a {
+        margin: 0 10px;
+    }
+
+    .new-post-form input[type="text"],
+    .new-post-form textarea,
+    .auth-form input {
+        width: calc(100% - 20px); /* Adjust for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    header nav {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    header nav a {
+        margin: 5px 0;
+    }
+
+    .post-card {
+        flex-direction: column; /* Stack avatar and content on small screens */
+        align-items: center;
+        text-align: center;
+    }
+
+    .author-avatar {
+        margin-bottom: 10px;
+    }
+
+    .post-meta strong {
+        display: inline; /* Keep author name on the same line if stacked */
+    }
+}
