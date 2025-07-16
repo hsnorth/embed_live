@@ -57,17 +57,18 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
+        // 🚨🚨🚨 IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG 🚨🚨🚨
+        // You can find this in your Firebase project settings -> Project settings -> General -> Your apps -> Web app
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
+            apiKey: "YOUR_API_KEY", // <--- ⚠️ REPLACE THIS
+            authDomain: "YOUR_AUTH_DOMAIN", // <--- ⚠️ REPLACE THIS
+            projectId: "YOUR_PROJECT_ID", // <--- ⚠️ REPLACE THIS
+            storageBucket: "YOUR_STORAGE_BUCKET", // <--- ⚠️ REPLACE THIS
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <--- ⚠️ REPLACE THIS
+            appId: "YOUR_APP_ID", // <--- ⚠️ REPLACE THIS
+            measurementId: "YOUR_MEASUREMENT_ID" // <--- ⚠️ REPLACE THIS (optional, if you use Analytics)
         };
-        // !!! END IMPORTANT !!!
+        // 🚨🚨🚨 END IMPORTANT 🚨🚨🚨
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
