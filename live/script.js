@@ -7,47 +7,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const postsContainer = document.getElementById('postsContainer');
     const blogPageTitle = document.getElementById('blogPageTitle');
     const blogHeaderTitle = document.getElementById('blogHeaderTitle');
-    const mainContent = document.getElementById('mainContent'); // The main content area
-    const loadingContainer = document.getElementById('loadingContainer'); // The loading message area
+    const mainContent = document.getElementById('mainContent');
+    const loadingContainer = document.getElementById('loadingContainer');
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentBlogId = urlParams.get('blogId');
     const currentBlogName = urlParams.get('blogName');
 
-    let currentUserProfile = null; // Store fetched user profile
+    let currentUserProfile = null;
 
-    // Authentication Guard & User Profile Fetching
     window.onAuthStateChanged(window.auth, async (user) => {
         if (!user) {
-            // No user is signed in, redirect to login
             window.location.href = 'index.html';
         } else {
-            // User is signed in, fetch their profile
             try {
                 const userDocRef = window.doc(window.db, "users", user.uid);
                 const userDocSnap = await window.getDoc(userDocRef);
 
                 if (userDocSnap.exists()) {
                     currentUserProfile = userDocSnap.data();
-                    // Pre-fill author name from profile, make it readonly
-                    authorNameInput.value = currentUserProfile.name || user.email; // Fallback to email
+                    authorNameInput.value = currentUserProfile.name || user.email;
                 } else {
                     console.warn("User profile not found in Firestore for UID:", user.uid);
-                    authorNameInput.value = user.email || "Unknown User"; // Use email if profile missing
+                    authorNameInput.value = user.email || "Unknown User";
                 }
 
-                // --- THIS IS THE KEY PART ---
-                // Only now that auth and profile are (potentially) loaded, display content and load posts
                 if (loadingContainer) loadingContainer.style.display = 'none';
                 if (mainContent) mainContent.style.display = 'block';
 
-                loadPosts(); // Load posts only after user is authenticated and profile potentially loaded
+                loadPosts();
 
             } catch (error) {
                 console.error("Error fetching user profile:", error);
-                authorNameInput.value = user.email || "Error Loading User"; // Fallback on error
+                authorNameInput.value = user.email || "Error Loading User";
 
-                // Still attempt to display content and load posts even if profile fetch fails
                 if (loadingContainer) loadingContainer.style.display = 'none';
                 if (mainContent) mainContent.style.display = 'block';
                 loadPosts();
@@ -59,25 +52,41 @@ document.addEventListener('DOMContentLoaded', () => {
         blogPageTitle.textContent = currentBlogName;
         blogHeaderTitle.textContent = currentBlogName;
     } else {
-        // Default behavior if not coming from dashboard (e.g., direct access without blogId)
         if (blogPageTitle) blogPageTitle.textContent = "Create New Live Blog";
         if (blogHeaderTitle) blogHeaderTitle.textContent = "My Live Blog";
     }
 
     const formatTimeAgo = (date) => {
         const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = seconds / 31536000; // years
+        let interval = seconds / 31536000;
 
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
-        interval = seconds / 2592000; // months
+        interval = seconds / 2592000;
+        if (interval > 1) { return Math.floor(interval) + " months ago"; } // Fixed this, was "days ago"
+        interval = seconds / 86400;
         if (interval > 1) { return Math.floor(interval) + " days ago"; }
-        interval = seconds / 86400; // days
+        interval = seconds / 3600;
         if (interval > 1) { return Math.floor(interval) + " hours ago"; }
-        interval = seconds / 3600; // hours
-        if (interval > 1) { return Math.floor(interval) + " minutes ago"; }
-        interval = seconds / 60; // minutes
+        interval = seconds / 60;
         if (interval > 1) { return Math.floor(interval) + " minutes ago"; }
         return "Just now";
+    };
+
+    // --- NEW: Truncate text function ---
+    const truncateText = (text, maxLength) => {
+        if (!text || text.length <= maxLength) {
+            return {
+                truncated: false,
+                display: text
+            };
+        }
+        // Find the last space before maxLength to avoid cutting words
+        let trimmedText = text.substring(0, maxLength);
+        trimmedText = trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" ")));
+        return {
+            truncated: true,
+            display: trimmedText + '...'
+        };
     };
 
     const createPostElement = (postData) => {
@@ -91,49 +100,80 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (postData.mediaType && postData.mediaType.startsWith('video/')) {
                 mediaHtml = `<video controls src="${postData.mediaUrl}"></video>`;
             } else {
-                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media">`; // Fallback for general media
+                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media">`;
             }
         }
 
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
-        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=AV'; // Default grey avatar
+        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/35/CCCCCC/FFFFFF?text=AV'; // Smaller placeholder text
         const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
 
+        // --- NEW: Read More Logic ---
+        const maxLength = 200; // Characters before truncation
+        const { truncated, display } = truncateText(postData.content, maxLength);
+
+        let contentHtml = postData.content ? `<p class="post-text-body">${display}</p>` : '';
+        let readMoreButtonHtml = '';
+
+        if (truncated) {
+            contentHtml += `<p class="read-more-content hidden">${postData.content}</p>`;
+            readMoreButtonHtml = `<button class="read-more-button">Read more</button>`;
+        }
+        // --- END NEW: Read More Logic ---
 
         newPost.innerHTML = `
             <div class="post-header">
                 <div class="author-info">
                     <div class="author-avatar">${authorPicHtml}</div>
                     <div class="author-details">
-                        <span class="time-since-post">${timeSince}</span>
                         <span class="author-name">${postData.authorName || 'Anonymous'}</span>
-                        <span class="reporting-from">${postData.reportingFrom || 'Unknown Location'}</span>
+                        <span class="reporting-from">Reporting from ${postData.reportingFrom || 'Unknown Location'}</span>
+                        <span class="time-since-post">${timeSince}</span>
                     </div>
                 </div>
             </div>
             <div class="post-body">
-                ${postData.content ? `<p>${postData.content}</p>` : ''}
+                ${contentHtml}
+                ${readMoreButtonHtml}
                 ${mediaHtml}
             </div>
             <div class="post-divider"></div>
         `;
+
+        // --- NEW: Add event listener for Read More button ---
+        if (truncated) {
+            const readMoreButton = newPost.querySelector('.read-more-button');
+            const fullContent = newPost.querySelector('.read-more-content');
+            const initialContent = newPost.querySelector('.post-text-body');
+
+            readMoreButton.addEventListener('click', () => {
+                if (fullContent.classList.contains('hidden')) {
+                    fullContent.classList.remove('hidden');
+                    initialContent.classList.add('hidden');
+                    readMoreButton.textContent = 'Show less';
+                } else {
+                    fullContent.classList.add('hidden');
+                    initialContent.classList.remove('hidden');
+                    readMoreButton.textContent = 'Read more';
+                }
+            });
+        }
+        // --- END NEW: Add event listener ---
+
         return newPost;
     };
 
     const loadPosts = async () => {
         if (!postsContainer) return;
 
-        postsContainer.innerHTML = ''; // Clear existing content
+        postsContainer.innerHTML = '';
 
-        // If no blogId, display a message but don't try to load from Firestore
-        // This handles cases where create-blog.html is accessed directly without parameters.
         if (!currentBlogId) {
             const messageDiv = document.createElement('div');
             messageDiv.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Please create or select a blog to view posts.</p>`;
             postsContainer.appendChild(messageDiv);
-            // Hide the form if no blog is selected
             if (postForm) postForm.style.display = 'none';
             return;
         }
@@ -165,13 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Only add submit listener if postForm exists (it might be hidden if no blogId)
     if (postForm) {
         postForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const content = postContent.value.trim();
-            const authorName = authorNameInput.value.trim(); // Will be pre-filled
+            const authorName = authorNameInput.value.trim();
             const reportingFrom = reportingFromInput.value.trim();
             const mediaFile = postMedia.files[0];
 
@@ -183,8 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let mediaUrl = '';
             let mediaType = '';
             if (mediaFile) {
-                // IMPORTANT: This creates a temporary URL. For persistent media,
-                // you would need Firebase Storage.
                 mediaUrl = URL.createObjectURL(mediaFile);
                 mediaType = mediaFile.type;
             }
@@ -192,21 +229,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const postData = {
                 blogId: currentBlogId,
                 content: content,
-                authorName: currentUserProfile ? currentUserProfile.name : (window.auth.currentUser ? window.auth.currentUser.email : "Anonymous"), // Use fetched profile name or auth email
-                authorEmail: currentUserProfile ? currentUserProfile.email : (window.auth.currentUser ? window.auth.currentUser.email : "N/A"), // Store email
-                authorPic: currentUserProfile ? currentUserProfile.pic : 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=AV', // Use fetched profile pic
+                authorName: currentUserProfile ? currentUserProfile.name : (window.auth.currentUser ? window.auth.currentUser.email : "Anonymous"),
+                authorEmail: currentUserProfile ? currentUserProfile.email : (window.auth.currentUser ? window.auth.currentUser.email : "N/A"),
+                authorPic: currentUserProfile ? currentUserProfile.pic : 'https://via.placeholder.com/35/CCCCCC/FFFFFF?text=AV',
                 reportingFrom: reportingFrom || "Unknown Location",
                 timestamp: window.serverTimestamp(),
                 mediaUrl: mediaUrl,
                 mediaType: mediaType,
-                uid: window.auth.currentUser ? window.auth.currentUser.uid : null // Store the user's UID
+                uid: window.auth.currentUser ? window.auth.currentUser.uid : null
             };
 
             try {
                 await window.addDoc(window.collection(window.db, "posts"), postData);
-                postContent.value = ''; // Clear form fields
-                postMedia.value = ''; // Clear file input
-                loadPosts(); // Reload all posts to display the new one at the top
+                postContent.value = '';
+                postMedia.value = '';
+                loadPosts();
             } catch (e) {
                 console.error("Error adding post: ", e);
                 alert("Error posting update. Please try again. Check console for details.");
@@ -214,11 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // The setInterval is now conditionally set after auth check to ensure `loadPosts` has context.
-    // It's still good to call loadPosts() once inside onAuthStateChanged to ensure initial load.
     setInterval(() => {
         if (window.auth.currentUser && currentBlogId) {
-            loadPosts(); // Only refresh if user is logged in and a blog is selected
+            loadPosts();
         }
-    }, 60000); // Every minute
+    }, 60000);
 });
