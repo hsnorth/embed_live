@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Embed-specific styles (from previous iterations) - KEEP these as they are for the embed generator part */
+        /* Embed-specific styles (from previous iterations) - KEEP these as they are for the embed code generator part */
         .embed-section {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
@@ -79,8 +79,8 @@
     </div>
 
     <main id="mainContent">
-        <h2>Live Updates</h2>
         <section class="live-blog-posts">
+            <h2>Live Updates</h2>
 
             <div class="new-post-form">
                 <h3>Create a New Post</h3>
@@ -101,7 +101,7 @@
                         <label for="postMedia">Add Media:</label>
                         <input type="file" id="postMedia" accept="image/*,video/*">
                     </div>
-                    <button type="submit" class="submit-button">Add new post</button>
+                    <button type="submit" class="submit-button">Post Update</button>
                 </form>
             </div>
 
@@ -125,7 +125,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 
@@ -161,6 +161,7 @@
         window.doc = doc;
         window.signOut = signOut;
         window.storage = storage; // Expose storage
+        window.deleteDoc = deleteDoc; // Expose deleteDoc
 
 
         // Sign out logic (already there)
@@ -325,7 +326,7 @@
                 reportingFromInput.value = 'Montreal, Quebec, Canada'; // Reset to default
                 postMediaInput.value = ''; // Clear file input
                 alert("Post added successfully!");
-                allPostsCached = []; // Clear cache to force a re-fetch
+                adminAllPostsCached = []; // Clear cache to force a re-fetch
                 loadPostsForAdmin(); // Reload posts to show new one
                 if (window.parent && window.parent.document.getElementById(`liveBlogEmbed-${currentBlogId}`)) {
                     // If you have a live preview iframe on this page, force it to refresh
@@ -404,7 +405,7 @@
                     if (confirm('Are you sure you want to delete this post?')) {
                         try {
                             const postDocRef = doc(db, 'posts', postIdToDelete);
-                            await deleteDoc(postDocRef); // Need to import deleteDoc
+                            await deleteDoc(postDocRef); 
                             alert('Post deleted successfully!');
                             adminAllPostsCached = []; // Clear cache
                             loadPostsForAdmin(); // Reload posts
