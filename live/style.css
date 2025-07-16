@@ -123,18 +123,18 @@ main {
 
 /* New: Subtitle Font */
 .post-subtitle {
-    font-family: "Noto Sans", Verdana, sans-serif; /* Noto Sans for subtitle */
-    font-size: 16px;
+    font-family: 'Roboto', sans-serif; /* Roboto for subtitle */
+    font-size: 17px; /* Slightly larger */
     color: #333;
     margin-top: 5px;
     margin-bottom: 5px;
-    font-weight: normal;
+    font-weight: bold; /* Bold */
 }
 
 /* Post Text Content */
 .post-text {
     font-family: "Noto Serif", Georgia, serif; /* Noto Serif for body content */
-    font-size: 15px;
+    font-size: 16px; /* Increased from 15px */
     margin-top: 0;
     margin-bottom: 8px;
     color: #0f1419;
@@ -390,6 +390,42 @@ h2 {
     background-color: #2980b9;
 }
 
+/* Embed Code Section */
+.embed-code-section {
+    background-color: #e9f0f4; /* Light blue/grey background */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px; /* Space below the section */
+    border: 1px solid #d4e0e8;
+}
+
+.embed-code-section h2 {
+    font-size: 20px;
+    margin-top: 0;
+    border-bottom: 1px solid #c2d4e3;
+    padding-bottom: 10px;
+    color: #2c3e50;
+}
+
+.embed-code-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.embed-code-container .input-field {
+    flex-grow: 1;
+    cursor: text;
+    background-color: #fff;
+}
+
+.embed-code-container .submit-button {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+
 /* Archive Posts Styles */
 .archived-blogs-list {
     list-style: none;
@@ -449,5 +485,14 @@ h2 {
     .blog-meta {
         text-align: left;
         margin-top: 5px;
+    }
+    .embed-code-container {
+        flex-direction: column;
+    }
+    .embed-code-container .input-field {
+        width: 100%;
+    }
+    .embed-code-container .submit-button {
+        width: 100%;
     }
 }
