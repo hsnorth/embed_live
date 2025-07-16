@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
         interval = seconds / 2592000;
-        if (interval > 1) { return Math.floor(interval) + " months ago"; } // Fixed this, was "days ago"
+        if (interval > 1) { return Math.floor(interval) + " months ago"; }
         interval = seconds / 86400;
         if (interval > 1) { return Math.floor(interval) + " days ago"; }
         interval = seconds / 3600;
@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return "Just now";
     };
 
-    // --- NEW: Truncate text function ---
     const truncateText = (text, maxLength) => {
         if (!text || text.length <= maxLength) {
             return {
@@ -80,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: text
             };
         }
-        // Find the last space before maxLength to avoid cutting words
         let trimmedText = text.substring(0, maxLength);
         trimmedText = trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" ")));
         return {
@@ -107,11 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
-        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/35/CCCCCC/FFFFFF?text=AV'; // Smaller placeholder text
+        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/35/CCCCCC/FFFFFF?text=AV';
         const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
 
-        // --- NEW: Read More Logic ---
-        const maxLength = 200; // Characters before truncation
+        const maxLength = 200;
         const { truncated, display } = truncateText(postData.content, maxLength);
 
         let contentHtml = postData.content ? `<p class="post-text-body">${display}</p>` : '';
@@ -121,16 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
             contentHtml += `<p class="read-more-content hidden">${postData.content}</p>`;
             readMoreButtonHtml = `<button class="read-more-button">Read more</button>`;
         }
-        // --- END NEW: Read More Logic ---
 
         newPost.innerHTML = `
             <div class="post-header">
-                <div class="author-info">
-                    <div class="author-avatar">${authorPicHtml}</div>
-                    <div class="author-details">
+                <div class="author-avatar">${authorPicHtml}</div>
+                <div class="author-details">
+                    <span class="time-since-post">${timeSince}</span>
+                    <div class="author-line">
                         <span class="author-name">${postData.authorName || 'Anonymous'}</span>
                         <span class="reporting-from">Reporting from ${postData.reportingFrom || 'Unknown Location'}</span>
-                        <span class="time-since-post">${timeSince}</span>
                     </div>
                 </div>
             </div>
@@ -142,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="post-divider"></div>
         `;
 
-        // --- NEW: Add event listener for Read More button ---
         if (truncated) {
             const readMoreButton = newPost.querySelector('.read-more-button');
             const fullContent = newPost.querySelector('.read-more-content');
@@ -160,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        // --- END NEW: Add event listener ---
 
         return newPost;
     };
