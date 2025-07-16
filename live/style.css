@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5; /* Slightly lighter background */
+    background-color: #f0f2f5;
     color: #333;
 }
 
@@ -70,29 +70,24 @@ main {
     margin-bottom: 20px;
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex; /* Use flexbox for the main post layout */
+    flex-direction: column; /* Stack header and body */
 }
 
-/* --- MODIFIED STYLES FOR POSTS LAYOUT --- */
+/* --- MODIFIED STYLES FOR TWITTER-LIKE LAYOUT --- */
 
 .post-header {
-    display: flex;
-    align-items: flex-start; /* Align avatar and text to the top */
-    margin-bottom: 10px;
-}
-
-.author-info {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: nowrap; /* Prevent wrapping within author-info */
-    width: 100%; /* Take full width of its container */
+    display: flex; /* Aligns avatar and text details side-by-side */
+    align-items: flex-start; /* Aligns content to the top */
+    margin-bottom: 5px; /* Reduced margin */
 }
 
 .author-avatar {
-    width: 35px; /* Slightly smaller avatar container */
-    height: 35px; /* Slightly smaller avatar container */
+    width: 40px; /* Slightly larger than previous 35px, closer to Twitter */
+    height: 40px;
     border-radius: 50%;
-    margin-right: 10px;
-    flex-shrink: 0; /* Prevent avatar from shrinking */
+    margin-right: 10px; /* Space between avatar and text */
+    flex-shrink: 0;
     overflow: hidden;
 }
 
@@ -104,42 +99,43 @@ main {
 
 .author-details {
     display: flex;
-    flex-direction: column; /* Stack time, then name/location */
-    flex-grow: 1; /* Allow details to take available space */
-}
-
-.time-since-post {
-    font-size: 0.8em;
-    color: #777;
-    margin-bottom: 2px; /* Small space below time */
+    flex-direction: column; /* Stacks name/location and time */
+    flex-grow: 1; /* Allows it to take up available horizontal space */
 }
 
 .author-line {
-    display: flex; /* Contains name and reporting from */
+    display: flex; /* Keeps name and reporting from on the same line */
     align-items: baseline;
-    flex-wrap: wrap; /* Allow wrapping of name/location if content is too long */
+    flex-wrap: wrap; /* Allow wrapping if content is too long */
+    margin-bottom: 2px; /* Small space between author line and time */
 }
 
 .author-name {
     font-weight: bold;
     color: #333;
-    margin-right: 5px;
+    margin-right: 5px; /* Space between name and location */
+    white-space: nowrap; /* Prevent author name from wrapping */
 }
 
 .reporting-from {
     font-size: 0.9em;
     color: #666;
-    /* Removed margin-right, as it's the last in its line for now */
+    white-space: nowrap; /* Prevent reporting from from wrapping */
 }
 
+.time-since-post {
+    font-size: 0.8em;
+    color: #777;
+    white-space: nowrap; /* Prevent time from wrapping */
+}
 
 .post-body {
-    /* Adjust margin-left to align with author name */
-    margin-left: 45px; /* (Avatar width + margin-right from avatar) */
+    /* Align with the text content (author name) */
+    margin-left: 50px; /* Avatar width (40px) + margin-right (10px) = 50px */
 }
 
 .post-body p {
-    font-family: Georgia, serif; /* New font for body */
+    font-family: Georgia, serif;
     line-height: 1.6;
     margin-bottom: 15px;
     color: #444;
@@ -167,6 +163,7 @@ main {
     font-size: 0.9em;
     margin-top: 5px;
     padding: 0;
+    margin-left: 0; /* Ensure button aligns with post body */
 }
 
 .read-more-button:hover {
@@ -193,7 +190,7 @@ main {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1em;
-    width: calc(100% - 22px); /* Account for padding and border */
+    width: calc(100% - 22px);
 }
 
 .new-post-form textarea {
@@ -246,7 +243,6 @@ footer {
         margin: 10px auto;
     }
     .author-details {
-        /* On very small screens, maybe stack the name and location again */
         flex-direction: column;
         align-items: flex-start;
     }
@@ -254,7 +250,7 @@ footer {
         flex-direction: column;
         align-items: flex-start;
     }
-    .author-name, .reporting-from {
+    .author-name, .reporting-from, .time-since-post {
         margin-right: 0;
         margin-bottom: 2px;
     }
