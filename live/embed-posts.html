@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Blog Posts Embed</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Embed-specific styles - ONLY for this page, overriding main style.css for embed context */
         body {
@@ -53,7 +54,7 @@
     <main>
         <section class="live-blog-posts">
             <div id="postsContainer">
-                </div>
+            </div>
             <div id="paginationControls"></div>
         </section>
     </main>
@@ -132,23 +133,42 @@
                     }
                 }
 
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; 
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
+                
+                // New: Subtitle HTML
+                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
                 postCard.innerHTML = `
-                    <div class="author-avatar">
-                        <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
-                    </div>
-                    <div class="post-content-area">
+                    <div class="post-header-line">
+                        <div class="author-avatar">
+                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
+                        </div>
                         <div class="post-meta">
-                            <strong>${post.authorName || 'Anonymous'}</strong> 
-                            <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                            <span class="time-ago">${timeAgo(post.timestamp)}</span> <span class="bullet">•</span> <strong>${post.authorName || 'Anonymous'}</strong>
                             ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
-                        <p class="post-text">${post.content}</p>
-                        ${mediaHtml}
+                        <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
                     </div>
+                    ${subtitleHtml}
+                    <p class="post-text">${post.content}</p>
+                    ${mediaHtml}
                 `;
                 container.appendChild(postCard);
+
+                postCard.querySelector('.share-button').addEventListener('click', () => {
+                    alert('Share functionality coming soon!');
+                    // In a real application, you'd implement Web Share API or custom share links here.
+                    // For example:
+                    // if (navigator.share) {
+                    //     navigator.share({
+                    //         title: document.title,
+                    //         text: post.content.substring(0, 100) + '...',
+                    //         url: window.location.href // Or a specific permalink to the post
+                    //     }).then(() => console.log('Shared successfully')).catch((error) => console.error('Error sharing:', error));
+                    // } else {
+                    //     prompt("Copy this link to share:", window.location.href);
+                    // }
+                });
             });
 
             // Notify parent iframe (if any) to adjust height
@@ -229,9 +249,21 @@
                 });
                 paginationControls.appendChild(prevButton);
 
-                const pageInfo = document.createElement('span');
-                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages}`;
-                paginationControls.appendChild(pageInfo);
+                for (let i = 0; i < totalPages; i++) {
+                    const pageNumSpan = document.createElement('span');
+                    pageNumSpan.textContent = i + 1;
+                    pageNumSpan.className = 'page-number';
+                    if (i === currentPage) {
+                        pageNumSpan.classList.add('current-page');
+                    }
+                    pageNumSpan.addEventListener('click', () => {
+                        if (currentPage !== i) { // Only load if different page
+                            currentPage = i;
+                            loadPosts();
+                        }
+                    });
+                    paginationControls.appendChild(pageNumSpan);
+                }
 
                 const nextButton = document.createElement('button');
                 nextButton.textContent = 'Next';
@@ -246,6 +278,19 @@
 
         document.addEventListener('DOMContentLoaded', loadPosts);
 
+        // Listen for messages from parent window (e.g., admin page) to refresh
+        window.addEventListener('message', (event) => {
+            // Ensure the message is from a trusted origin, or handle carefully
+            // For development, '*' might be used, but for production, specify origin.
+            // if (event.origin !== "http://your-admin-domain.com") return; // Example
+            
+            if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
+                console.log('Refreshing embed posts due to admin update.');
+                window.reFetchPosts = true; // Set flag to force re-fetch from Firestore
+                currentPage = 0; // Reset to first page on refresh
+                loadPosts();
+            }
+        });
     </script>
 </body>
 </html>
