@@ -6,7 +6,7 @@
     <title>Previous Live Blogs</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Specific styles for view-blogs.html */
+        /* Specific styles for view-blogs.html (rest of style.css handles common styles) */
         .previous-blogs-container {
             max-width: 700px;
             margin: 20px auto;
@@ -48,6 +48,11 @@
             font-size: 14px;
             color: #777;
         }
+        .no-blogs-message {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -62,24 +67,10 @@
     <main>
         <section class="previous-blogs-container">
             <h2>Archived Live Blogs</h2>
-            <div class="blog-list">
-                <ul>
-                    <li>
-                        <a href="#">Epstein Files Controversy Update (July 15, 2025)</a>
-                        <span>Created: 2025-07-15 10:00 AM</span>
-                    </li>
-                    <li>
-                        <a href="#">Canada-US Trade Deal Negotiations (July 14, 2025)</a>
-                        <span>Created: 2025-07-14 02:30 PM</span>
-                    </li>
-                    <li>
-                        <a href="#">City Council Meeting Live (July 10, 2025)</a>
-                        <span>Created: 2025-07-10 09:00 AM</span>
-                    </li>
+            <div class="blog-list" id="blogListContainer">
+                <ul id="liveBlogsList">
                     </ul>
-                <p style="text-align: center; margin-top: 30px; color: #777;">
-                    (Note: This is a static list. In a real application, previous blogs would be loaded from a database.)
-                </p>
+                <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No blogs created yet. Go to Home to create one!</p>
             </div>
         </section>
     </main>
@@ -87,5 +78,65 @@
     <footer>
         <p>&copy; 2025 Live Blog</p>
     </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; // Only if you plan to use Analytics
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+            measurementId: "G-EZN90844XF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Make db globally accessible (temporary workaround for module scripts)
+        window.db = db;
+        window.collection = collection;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const liveBlogsList = document.getElementById('liveBlogsList');
+            const noBlogsMessage = document.getElementById('noBlogsMessage');
+
+            try {
+                const q = query(collection(db, "blogs"), orderBy("created", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    liveBlogsList.innerHTML = ''; // Clear any static content
+                    querySnapshot.forEach(doc => {
+                        const blog = doc.data();
+                        const blogId = doc.id;
+                        const listItem = document.createElement('li');
+
+                        const createdDate = blog.created ? blog.created.toDate().toLocaleString() : 'N/A';
+
+                        listItem.innerHTML = `
+                            <a href="create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}">${blog.name}</a>
+                            <span>Created: ${createdDate}</span>
+                        `;
+                        liveBlogsList.appendChild(listItem);
+                    });
+                    noBlogsMessage.style.display = 'none';
+                } else {
+                    noBlogsMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error fetching blogs: ", error);
+                noBlogsMessage.textContent = "Error loading blogs. Check console for details.";
+                noBlogsMessage.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
