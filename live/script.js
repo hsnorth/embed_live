@@ -9,12 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const blogHeaderTitle = document.getElementById('blogHeaderTitle');
     const mainContent = document.getElementById('mainContent');
     const loadingContainer = document.getElementById('loadingContainer');
+    const paginationContainer = document.getElementById('paginationControls'); // Ensure this ID matches your HTML
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentBlogId = urlParams.get('blogId');
     const currentBlogName = urlParams.get('blogName');
 
     let currentUserProfile = null;
+    let allPostsData = []; // Store all fetched post data
+    let paginatedPosts = []; // Stores arrays of post data, each array representing a page
+    let currentPageIndex = 0; // 0-indexed current page
+
+    // Define the maximum height for a page of posts in pixels
+    // You might need to adjust this value based on your content and screen size
+    const maxPageHeight = 700; // Example: 700 pixels
 
     window.onAuthStateChanged(window.auth, async (user) => {
         if (!user) {
@@ -35,15 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingContainer) loadingContainer.style.display = 'none';
                 if (mainContent) mainContent.style.display = 'block';
 
-                loadPosts();
-
+                await loadPosts(); // Initial load posts and paginate
             } catch (error) {
-                console.error("Error fetching user profile:", error);
+                console.error("Error fetching user profile or loading posts:", error);
                 authorNameInput.value = user.email || "Error Loading User";
 
                 if (loadingContainer) loadingContainer.style.display = 'none';
                 if (mainContent) mainContent.style.display = 'block';
-                loadPosts();
+                await loadPosts(); // Still try to load posts even if profile fails
             }
         }
     });
@@ -63,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
         interval = seconds / 2592000;
         if (interval > 1) { return Math.floor(interval) + " months ago"; }
-        interval = seconds / 86400;
         if (interval > 1) { return Math.floor(interval) + " days ago"; }
         interval = seconds / 3600;
         if (interval > 1) { return Math.floor(interval) + " hours ago"; }
@@ -94,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let mediaHtml = '';
         if (postData.mediaUrl) {
             if (postData.mediaType && postData.mediaType.startsWith('image/')) {
-                mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Image">`;
+                mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Image" onload="measurePostHeight()">`; // Added onload for dynamic height
             } else if (postData.mediaType && postData.mediaType.startsWith('video/')) {
-                mediaHtml = `<video controls src="${postData.mediaUrl}"></video>`;
+                mediaHtml = `<video controls src="${postData.mediaUrl}" onloadstart="measurePostHeight()"></video>`; // Added onloadstart
             } else {
-                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media">`;
+                 mediaHtml = `<img src="${postData.mediaUrl}" alt="Posted Media" onload="measurePostHeight()">`;
             }
         }
 
@@ -135,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${readMoreButtonHtml}
                 ${mediaHtml}
             </div>
-            <div class="post-divider"></div>
         `;
 
         if (truncated) {
@@ -159,16 +164,146 @@ document.addEventListener('DOMContentLoaded', () => {
         return newPost;
     };
 
+    // This function will re-paginate allPostsData based on height
+    const paginatePostsByHeight = async () => {
+        paginatedPosts = [];
+        let currentPagePosts = [];
+        let currentPageHeight = 0;
+
+        // Temporarily render all posts off-screen to measure their heights
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.visibility = 'hidden';
+        tempContainer.style.height = 'auto'; // Allow content to determine height
+        tempContainer.style.width = postsContainer.offsetWidth + 'px'; // Match container width for accurate measurement
+        document.body.appendChild(tempContainer);
+
+        for (const postData of allPostsData) {
+            const postElement = createPostElement(postData);
+            tempContainer.appendChild(postElement);
+
+            // Wait for images/videos to load if present, to get accurate height
+            await new Promise(resolve => {
+                const mediaElements = postElement.querySelectorAll('img, video');
+                if (mediaElements.length === 0) {
+                    resolve();
+                    return;
+                }
+                let loadedCount = 0;
+                mediaElements.forEach(media => {
+                    // Check if already loaded/cached
+                    if (media.complete || media.readyState >= 2) { // complete for img, readyState for video
+                        loadedCount++;
+                    } else {
+                        media.addEventListener('load', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); });
+                        media.addEventListener('loadeddata', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); }); // For video
+                        media.addEventListener('error', () => { loadedCount++; if (loadedCount === mediaElements.length) resolve(); }); // Handle errors too
+                    }
+                });
+                if (loadedCount === mediaElements.length) resolve(); // All media already loaded
+            });
+
+
+            const postHeight = postElement.offsetHeight; // Get the rendered height
+
+            if (currentPageHeight + postHeight > maxPageHeight && currentPagePosts.length > 0) {
+                // If adding this post exceeds max height, start a new page
+                paginatedPosts.push(currentPagePosts);
+                currentPagePosts = [postData];
+                currentPageHeight = postHeight;
+            } else {
+                // Otherwise, add to current page
+                currentPagePosts.push(postData);
+                currentPageHeight += postHeight;
+            }
+        }
+
+        // Add any remaining posts as the last page
+        if (currentPagePosts.length > 0) {
+            paginatedPosts.push(currentPagePosts);
+        }
+
+        document.body.removeChild(tempContainer); // Clean up the temporary container
+    };
+
+    const displayCurrentPagePosts = () => {
+        if (!postsContainer) return;
+
+        postsContainer.innerHTML = ''; // Clear current posts
+
+        const postsOnPage = paginatedPosts[currentPageIndex];
+
+        if (postsOnPage && postsOnPage.length > 0) {
+            postsOnPage.forEach((postData, index) => {
+                const postElement = createPostElement(postData);
+                postsContainer.appendChild(postElement);
+            });
+        } else {
+            const noPostsMessage = document.createElement('p');
+            noPostsMessage.style.textAlign = 'center';
+            noPostsMessage.style.color = '#888';
+            noPostsMessage.textContent = 'No posts yet. Be the first to add an update!';
+            postsContainer.appendChild(noPostsMessage);
+        }
+        renderPaginationControls();
+    };
+
+    const renderPaginationControls = () => {
+        if (!paginationContainer) return;
+
+        paginationContainer.innerHTML = ''; // Clear existing controls
+        const totalPages = paginatedPosts.length;
+
+        if (totalPages <= 1) {
+            return; // No pagination needed for 1 or less pages
+        }
+
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.classList.add('pagination-button');
+        prevButton.disabled = currentPageIndex === 0;
+        prevButton.addEventListener('click', () => {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                displayCurrentPagePosts();
+            }
+        });
+        paginationContainer.appendChild(prevButton);
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageButton = document.createElement('span');
+            pageButton.textContent = i + 1; // Display 1-indexed page numbers
+            pageButton.classList.add('page-number');
+            if (i === currentPageIndex) {
+                pageButton.classList.add('active');
+            }
+            pageButton.addEventListener('click', () => {
+                currentPageIndex = i;
+                displayCurrentPagePosts();
+            });
+            paginationContainer.appendChild(pageButton);
+        }
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.classList.add('pagination-button');
+        nextButton.disabled = currentPageIndex === totalPages - 1;
+        nextButton.addEventListener('click', () => {
+            if (currentPageIndex < totalPages - 1) {
+                currentPageIndex++;
+                displayCurrentPagePosts();
+            }
+        });
+        paginationContainer.appendChild(nextButton);
+    };
+
     const loadPosts = async () => {
         if (!postsContainer) return;
 
-        postsContainer.innerHTML = '';
-
         if (!currentBlogId) {
-            const messageDiv = document.createElement('div');
-            messageDiv.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Please create or select a blog to view posts.</p>`;
-            postsContainer.appendChild(messageDiv);
+            postsContainer.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Please create or select a blog to view posts.</p>`;
             if (postForm) postForm.style.display = 'none';
+            paginationContainer.innerHTML = '';
             return;
         }
 
@@ -176,26 +311,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const q = window.query(window.collection(window.db, "posts"), window.where("blogId", "==", currentBlogId), window.orderBy("timestamp", "desc"));
             const querySnapshot = await window.getDocs(q);
 
+            allPostsData = [];
             if (!querySnapshot.empty) {
                 querySnapshot.forEach(doc => {
-                    const postData = doc.data();
-                    const postElement = createPostElement(postData);
-                    postsContainer.appendChild(postElement);
+                    allPostsData.push(doc.data());
                 });
-            } else {
-                const noPostsMessage = document.createElement('p');
-                noPostsMessage.style.textAlign = 'center';
-                noPostsMessage.style.color = '#888';
-                noPostsMessage.textContent = 'No posts yet. Be the first to add an update!';
-                postsContainer.appendChild(noPostsMessage);
             }
+
+            // After fetching all posts, paginate them based on height
+            await paginatePostsByHeight();
+            // Then display the current page
+            displayCurrentPagePosts();
+
         } catch (error) {
             console.error("Error fetching posts: ", error);
-            const errorMessage = document.createElement('p');
-            errorMessage.style.textAlign = 'center';
-            errorMessage.style.color = 'red';
-            errorMessage.textContent = 'Error loading posts.';
-            postsContainer.appendChild(errorMessage);
+            postsContainer.innerHTML = `<p style="text-align: center; color: red;">Error loading posts.</p>`;
+            paginationContainer.innerHTML = '';
         }
     };
 
@@ -237,13 +368,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 await window.addDoc(window.collection(window.db, "posts"), postData);
                 postContent.value = '';
                 postMedia.value = '';
-                loadPosts();
+                currentPageIndex = 0; // Go to first page after new post
+                await loadPosts(); // Reload and re-paginate
             } catch (e) {
                 console.error("Error adding post: ", e);
                 alert("Error posting update. Please try again. Check console for details.");
             }
         });
     }
+
+    // This function can be called by onload/loadeddata of media to trigger re-pagination if media loads late
+    // However, the `paginatePostsByHeight` already waits for media in the temp container
+    // so this is more of a fallback/redundancy or for very complex dynamic content.
+    window.measurePostHeight = () => {
+        // Debounce or only re-paginate if truly necessary
+        // For simplicity, we assume paginatePostsByHeight handles initial measurement correctly.
+    };
 
     setInterval(() => {
         if (window.auth.currentUser && currentBlogId) {
