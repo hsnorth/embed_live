@@ -1,5 +1,5 @@
 // Function to calculate time ago for posts
-function timeAgo(timestamp) {
+export function timeAgo(timestamp) { // Export if used elsewhere
     const now = new Date();
     const postDate = timestamp.toDate();
     const seconds = Math.floor((now - postDate) / 1000);
@@ -28,7 +28,7 @@ function timeAgo(timestamp) {
 }
 
 // Function to render posts
-const renderPosts = (posts, containerId) => {
+export const renderPosts = (posts, containerId) => { // Export if used elsewhere
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container with ID "${containerId}" not found.`);
@@ -89,7 +89,7 @@ const postsPerPage = 5; // You can adjust this number
 let currentBlogId = null; // Store the blog ID from the URL
 
 // Function to load and display posts
-const loadPosts = async () => {
+export const loadPosts = async () => { // Export this function
     const urlParams = new URLSearchParams(window.location.search);
     currentBlogId = urlParams.get('blogId');
 
@@ -107,6 +107,7 @@ const loadPosts = async () => {
     }
 
     // Ensure Firebase is initialized and db is available
+    // Now these checks should pass because window.db etc. will be set by embed-posts.html's module
     if (!window.db || !window.collection || !window.query || !window.where || !window.orderBy || !window.getDocs) {
         console.error("Firebase services not initialized in embed-script.js");
         if (postsContainer) {
@@ -139,7 +140,7 @@ const loadPosts = async () => {
 };
 
 // Function to update pagination controls
-const updatePaginationControls = (totalPosts) => {
+export const updatePaginationControls = (totalPosts) => { // Export if used elsewhere
     const paginationControls = document.getElementById('paginationControls');
     if (!paginationControls) return;
 
@@ -172,23 +173,10 @@ const updatePaginationControls = (totalPosts) => {
     }
 };
 
-// 🚨 Call loadPosts AFTER the DOM is fully loaded 🚨
-document.addEventListener('DOMContentLoaded', loadPosts);
+// 🚨 REMOVE this line from embed-script.js:
+// document.addEventListener('DOMContentLoaded', loadPosts);
 
-// Also set up a real-time listener for new posts (optional, but good for live updates)
-// Make sure this doesn't conflict with pagination if implementing full real-time updates.
-// For a simple embed, a periodic refresh or a more complex Firebase snapshot listener might be needed if not paginating.
-// const setupRealtimeListener = () => {
-//     if (!currentBlogId) return; // Ensure blogId is set
-//     const postsCollectionRef = window.collection(window.db, `blogs/${currentBlogId}/posts`);
-//     window.onSnapshot(window.query(postsCollectionRef, window.orderBy('timestamp', 'desc'), window.limit(postsPerPage)), (snapshot) => {
-//         const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-//         renderPosts(newPosts, 'postsContainer');
-//         // Re-evaluate pagination or just display latest posts
-//     });
-// };
-// After initial load, if you want live updates without manual refresh:
-// document.addEventListener('DOMContentLoaded', () => {
-//     loadPosts(); // Initial load
-//     // setupRealtimeListener(); // Then set up real-time listener (might need adjustment for pagination)
-// });
+// The DOMContentLoaded listener should now be in embed-posts.html to ensure Firebase is ready first.
+
+// Real-time listener commented out as before
+// const setupRealtimeListener = () => { /* ... */ };
