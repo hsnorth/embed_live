@@ -136,7 +136,7 @@
                         currentBlogName = blogDocSnap.data().name;
                         blogTitleHeader.textContent = `Managing: ${currentBlogName}`;
                         generateEmbedCode(); // Generate embed code once blog details are known
-                        await loadPostsForAdmin(); // <--- FIX: Load posts here
+                        await loadPostsForAdmin();
                     } else {
                         blogTitleHeader.textContent = 'Blog Not Found';
                         postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
@@ -213,7 +213,7 @@
                         subtitle: subtitle, // Include subtitle
                         content: content,
                         reportingFrom: reportingFrom,
-                        timestamp: serverTimestamp() // Update timestamp to bring to top
+                        // timestamp: serverTimestamp() // <--- COMMENTED OUT: Do NOT update timestamp on edit
                     };
 
                     // Only update mediaUrl/Type if a new file was selected
@@ -248,7 +248,7 @@
                         reportingFrom: reportingFrom,
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
-                        timestamp: serverTimestamp()
+                        timestamp: serverTimestamp() // New posts get a timestamp
                     });
                     alert("Post added successfully!");
                 }
