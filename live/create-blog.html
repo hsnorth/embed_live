@@ -286,6 +286,8 @@
                 return;
             }
 
+            const MAX_CHARS_PREVIEW = 450; // Adjust this value as needed
+
             posts.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
@@ -304,6 +306,17 @@
 
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
+                let displayContentHtml = post.content;
+                let showMoreButtonHtml = '';
+                let isTruncated = false;
+
+                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
+                    displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    isTruncated = true;
+                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
+                }
+
+
                 postCard.innerHTML = `
                     <div class="post-header-line">
                         <div class="author-avatar">
@@ -316,14 +329,27 @@
                         <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
                     </div>
                     ${subtitleHtml}
-                    <p class="post-text">${post.content}</p>
+                    <p class="post-text">${displayContentHtml}</p>
                     ${mediaHtml}
+                    ${showMoreButtonHtml}
                     <div class="post-actions">
                         <button class="edit-post-button" data-post-id="${post.id}" title="Edit Post"><i class="fas fa-edit"></i> Edit</button>
                         <button class="delete-post-button" data-post-id="${post.id}" data-media-url="${post.mediaUrl || ''}" title="Delete Post"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 `;
                 container.appendChild(postCard);
+
+                // Add event listener for show more button if content was truncated
+                if (isTruncated) {
+                    const showMoreButton = postCard.querySelector('.show-more-button');
+                    const contentParagraph = postCard.querySelector('.post-text');
+
+                    showMoreButton.addEventListener('click', () => {
+                        contentParagraph.innerHTML = post.content; // Set full content
+                        showMoreButton.style.display = 'none'; // Hide the button
+                    });
+                }
+
             });
 
             // Add event listeners for edit buttons
@@ -348,7 +374,6 @@
             container.querySelectorAll('.share-button').forEach(button => {
                 button.addEventListener('click', () => {
                     alert('Share functionality coming soon!');
-                    // In a real application, you'd implement Web Share API or custom share links here.
                 });
             });
 
