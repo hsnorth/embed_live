@@ -124,7 +124,7 @@ main {
 /* New: Subtitle Font */
 .post-subtitle {
     font-family: 'Roboto', sans-serif; /* Roboto for subtitle */
-    font-size: 17px; /* Slightly larger */
+    font-size: 1.5em; /* Dynamically bigger */
     color: #333;
     margin-top: 5px;
     margin-bottom: 5px;
