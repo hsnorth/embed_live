@@ -29,11 +29,18 @@ main {
 
 /* Individual Post Card Styling (for embed and potentially admin display) */
 .post-card {
-    display: flex;
+    display: block; /* Changed from flex to block to stack elements for new layout */
     padding: 12px 16px;
     border-bottom: 1px solid #ebeef0;
     background-color: #fff;
     word-wrap: break-word;
+    position: relative; /* For positioning share button */
+}
+
+.post-header-line {
+    display: flex; /* Flex for avatar, meta, and share button on one line */
+    align-items: flex-start; /* Align items to the top if their heights differ */
+    margin-bottom: 8px; /* Space between header line and post content */
 }
 
 /* Author Avatar Styling */
@@ -43,24 +50,28 @@ main {
 }
 
 .author-avatar-img {
-    width: 48px;
-    height: 48px;
+    width: 38px; /* Slightly smaller profile pic */
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
+    /* Filter for red tint - trying a combination of grayscale, sepia, hue-rotate, saturate, brightness */
+    /* This combination attempts to shift colors towards a red hue while retaining image details. */
+    filter: grayscale(100%) brightness(0.8) sepia(1) hue-rotate(330deg) saturate(3);
 }
 
-/* Post Content Area */
-.post-content-area {
+/* Post Content Area - now only for text/media, not containing meta */
+.post-content-area { /* This class is less relevant now with new structure, but kept for clarity */
     flex-grow: 1;
     min-width: 0;
 }
 
 /* Post Meta (Author Name, Reporting From, Time) */
 .post-meta {
+    flex-grow: 1; /* Allow meta to take available space */
     font-size: 15px;
     line-height: 20px;
-    margin-bottom: 4px;
+    margin-bottom: 0; /* No margin-bottom here, it's handled by post-header-line */
 }
 
 .post-meta strong {
@@ -70,19 +81,37 @@ main {
 }
 
 .post-meta span.time-ago {
-    color: #536471;
+    color: rgb(208, 2, 27); /* Red color for timestamp */
     font-size: 14px;
+    font-weight: bold; /* Bold timestamp */
+}
+
+.post-meta .bullet {
+    color: #536471; /* Color for the bullet point */
+    font-size: 14px;
+    margin: 0 4px; /* Space around the bullet */
 }
 
 .post-meta .reporting-from {
-    display: block; /* Forces it to a new line */
+    display: inline; /* Keep on same line as name/time if space allows */
     color: #536471;
     font-size: 14px;
-    margin-top: 2px;
+    margin-left: 4px; /* Space after name/bullet */
+}
+
+/* New: Subtitle Font */
+.post-subtitle {
+    font-family: "Noto Sans", Verdana, sans-serif; /* Noto Sans for subtitle */
+    font-size: 16px;
+    color: #333;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: normal;
 }
 
 /* Post Text Content */
 .post-text {
+    font-family: "Noto Serif", Georgia, serif; /* Noto Serif for body content */
     font-size: 15px;
     margin-top: 0;
     margin-bottom: 8px;
@@ -106,6 +135,50 @@ main {
     color: #536471;
     font-style: italic;
     font-size: 16px;
+}
+
+/* Action Buttons (Share, Edit, Delete) */
+.share-button, .edit-post-button, .delete-post-button {
+    background: none;
+    border: none;
+    color: #657786; /* Default grey for icons */
+    cursor: pointer;
+    font-size: 1em; /* Adjust as needed */
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Share button specific positioning */
+.post-card .share-button {
+    position: absolute; /* Position relative to post-card */
+    top: 10px;
+    right: 10px;
+    font-size: 1.2em; /* Make share icon slightly larger */
+}
+
+.share-button:hover, .edit-post-button:hover {
+    background-color: rgba(208, 2, 27, 0.1); /* Light red tint on hover */
+    color: rgb(208, 2, 27); /* Red color on hover */
+}
+
+.delete-post-button {
+    color: #dc3545; /* Red for delete button */
+}
+
+.delete-post-button:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #c82333;
+}
+
+.post-actions {
+    display: flex;
+    gap: 10px; /* Space between edit and delete buttons */
+    margin-top: 10px; /* Space above action buttons */
+    justify-content: flex-end; /* Align action buttons to the right */
 }
 
 /* Pagination Controls */
@@ -156,12 +229,30 @@ main {
     border-color: #aaa;
 }
 
-/* Page Information Text (e.g., "Page 1 of 3") */
-.pagination-controls span {
-    font-size: 16px; /* Larger font size to match screenshot */
-    color: #000; /* Black for strong visibility as in screenshot */
-    font-weight: normal; /* Normal weight for the look in the screenshot */
-    margin: 0 10px; /* Space around the text */
+/* Page Numbers in Pagination */
+.pagination-controls .page-number {
+    display: inline-block; /* To allow padding/margin */
+    padding: 5px 8px;
+    margin: 0 3px;
+    text-decoration: none;
+    color: #000;
+    font-weight: normal;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination-controls .page-number.current-page {
+    text-decoration: underline;
+    text-decoration-color: rgb(208, 2, 27); /* Red underline for current page */
+    text-decoration-thickness: 2px;
+    font-weight: bold; /* Make current page bold */
+    color: rgb(208, 2, 27); /* Current page number also red */
+}
+
+.pagination-controls .page-number:hover:not(.current-page) {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 /* Responsive adjustments for smaller screens */
@@ -176,7 +267,7 @@ main {
         font-size: 14px;
         border-radius: 3px;
     }
-    .pagination-controls span {
+    .pagination-controls .page-number {
         font-size: 15px;
     }
 }
