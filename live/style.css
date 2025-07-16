@@ -50,7 +50,7 @@ main {
 .live-blog-posts, .new-blog-section {
     margin-bottom: 30px;
     padding: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #ddd; /* Keep a subtle border for the main section container */
     border-radius: 5px;
     background-color: #f9f9f9;
 }
@@ -63,30 +63,46 @@ main {
     margin-bottom: 20px;
 }
 
+/* --- MODIFIED STYLES FOR CLEANER POSTS --- */
+
 .blog-post {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    display: flex; /* Use flexbox for the main post layout */
-    flex-direction: column; /* Stack header and body */
+    /* Removed border and padding from individual posts */
+    margin-bottom: 0; /* Remove bottom margin to control spacing with divider */
+    background-color: #fff; /* Ensure background is white */
+    box-shadow: none; /* Remove individual post shadow */
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0; /* Add vertical padding for content within the post */
 }
 
-/* --- MODIFIED STYLES FOR TWITTER-LIKE LAYOUT --- */
+/* The divider now separates posts */
+.post-divider {
+    border-top: 1px solid #eee; /* Solid light line for separation */
+    margin-top: 15px; /* Space above divider */
+    margin-bottom: 15px; /* Space below divider */
+    padding-top: 0; /* No padding */
+    width: calc(100% - 50px); /* Match left alignment of body content (Avatar width + margin-right) */
+    margin-left: 50px; /* Align divider with post body text */
+}
+
+.blog-post:first-of-type {
+    padding-top: 0; /* No top padding for the very first post */
+}
+.blog-post:last-of-type .post-divider {
+    display: none; /* Hide divider after the last post */
+}
 
 .post-header {
-    display: flex; /* Aligns avatar and text details side-by-side */
-    align-items: flex-start; /* Aligns content to the top */
-    margin-bottom: 5px; /* Reduced margin */
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 5px;
 }
 
 .author-avatar {
-    width: 40px; /* Slightly larger than previous 35px, closer to Twitter */
-    height: 40px;
+    width: 36px; /* Slightly smaller avatar */
+    height: 36px;
     border-radius: 50%;
-    margin-right: 10px; /* Space between avatar and text */
+    margin-right: 10px;
     flex-shrink: 0;
     overflow: hidden;
 }
@@ -99,39 +115,39 @@ main {
 
 .author-details {
     display: flex;
-    flex-direction: column; /* Stacks name/location and time */
-    flex-grow: 1; /* Allows it to take up available horizontal space */
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .author-line {
-    display: flex; /* Keeps name and reporting from on the same line */
+    display: flex;
     align-items: baseline;
-    flex-wrap: wrap; /* Allow wrapping if content is too long */
-    margin-bottom: 2px; /* Small space between author line and time */
+    flex-wrap: wrap;
+    margin-bottom: 2px;
 }
 
 .author-name {
     font-weight: bold;
     color: #333;
-    margin-right: 5px; /* Space between name and location */
-    white-space: nowrap; /* Prevent author name from wrapping */
+    font-size: 0.95em; /* Slightly smaller font */
+    margin-right: 5px;
+    white-space: nowrap;
 }
 
 .reporting-from {
-    font-size: 0.9em;
+    font-size: 0.85em; /* Slightly smaller font */
     color: #666;
-    white-space: nowrap; /* Prevent reporting from from wrapping */
+    white-space: nowrap;
 }
 
 .time-since-post {
-    font-size: 0.8em;
+    font-size: 0.75em; /* Slightly smaller font */
     color: #777;
-    white-space: nowrap; /* Prevent time from wrapping */
+    white-space: nowrap;
 }
 
 .post-body {
-    /* Align with the text content (author name) */
-    margin-left: 50px; /* Avatar width (40px) + margin-right (10px) = 50px */
+    margin-left: 46px; /* Adjusted margin: avatar width (36px) + margin-right (10px) = 46px */
 }
 
 .post-body p {
@@ -139,6 +155,7 @@ main {
     line-height: 1.6;
     margin-bottom: 15px;
     color: #444;
+    font-size: 0.95em; /* Slightly smaller body font */
 }
 
 .post-body img, .post-body video {
@@ -149,7 +166,6 @@ main {
     border-radius: 4px;
 }
 
-/* Read More/Show Less styles */
 .read-more-content.hidden {
     display: none;
 }
@@ -160,23 +176,16 @@ main {
     color: #007bff;
     cursor: pointer;
     text-decoration: underline;
-    font-size: 0.9em;
+    font-size: 0.85em; /* Slightly smaller button font */
     margin-top: 5px;
     padding: 0;
-    margin-left: 0; /* Ensure button aligns with post body */
+    margin-left: 0;
 }
 
 .read-more-button:hover {
     color: #0056b3;
 }
 /* --- END MODIFIED STYLES --- */
-
-
-.post-divider {
-    border-top: 1px dashed #eee;
-    margin-top: 20px;
-    padding-top: 10px;
-}
 
 .new-post-form form {
     display: flex;
@@ -255,6 +264,10 @@ footer {
         margin-bottom: 2px;
     }
     .post-body {
-        margin-left: 0; /* Remove left margin for smaller screens */
+        margin-left: 0;
+    }
+    .post-divider {
+        width: 100%;
+        margin-left: 0;
     }
 }
