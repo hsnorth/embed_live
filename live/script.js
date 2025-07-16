@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // If you ever convert script.js to type="module", you'd import directly.
 
     const postForm = document.getElementById('postForm');
+    const authorNameInput = document.getElementById('authorNameInput'); // New
+    const reportingFromInput = document.getElementById('reportingFromInput'); // New
     const postContent = document.getElementById('postContent');
     const postMedia = document.getElementById('postMedia');
     const postsContainer = document.getElementById('postsContainer');
@@ -26,16 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formatTimeAgo = (date) => {
         const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = seconds / 31536000;
+        let interval = seconds / 31536000; // years
 
         if (interval > 1) { return Math.floor(interval) + " years ago"; }
-        interval = seconds / 2592000;
+        interval = seconds / 2592000; // months
         if (interval > 1) { return Math.floor(interval) + " months ago"; }
-        interval = seconds / 86400;
+        interval = seconds / 86400; // days
         if (interval > 1) { return Math.floor(interval) + " days ago"; }
-        interval = seconds / 3600;
+        interval = seconds / 3600; // hours
         if (interval > 1) { return Math.floor(interval) + " hours ago"; }
-        interval = seconds / 60;
+        interval = seconds / 60; // minutes
         if (interval > 1) { return Math.floor(interval) + " minutes ago"; }
         return "Just now";
     };
@@ -64,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="author-avatar"></div>
                     <div class="author-details">
                         <span class="time-since-post">${timeSince}</span>
-                        <span class="author-name">${postData.authorName}</span>
-                        <span class="reporting-from">${postData.reportingFrom}</span>
+                        <span class="author-name">${postData.authorName || 'Anonymous'}</span>
+                        <span class="reporting-from">${postData.reportingFrom || 'Unknown Location'}</span>
                     </div>
                 </div>
             </div>
@@ -159,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
 
             const content = postContent.value.trim();
+            const authorName = authorNameInput.value.trim(); // Get value from input
+            const reportingFrom = reportingFromInput.value.trim(); // Get value from input
             const mediaFile = postMedia.files[0];
 
             if (!content && !mediaFile) {
@@ -178,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const postData = {
                 blogId: currentBlogId,
                 content: content,
-                authorName: "You",
-                reportingFrom: "Montreal, Quebec, Canada",
+                authorName: authorName || "Anonymous", // Use input or default
+                reportingFrom: reportingFrom || "Unknown Location", // Use input or default
                 timestamp: window.serverTimestamp(), // Use Firestore server timestamp
                 mediaUrl: mediaUrl,
                 mediaType: mediaType
@@ -188,17 +192,23 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // Ensure db and addDoc are available from the window object
                 await window.addDoc(window.collection(window.db, "posts"), postData);
-                loadPosts(); // Reload all posts to display the new one
+                postContent.value = ''; // Clear form fields *before* reloading
+                if (authorNameInput) authorNameInput.value = 'You'; // Reset to default or clear
+                if (reportingFromInput) reportingFromInput.value = 'Montreal, Quebec, Canada'; // Reset to default or clear
+                postMedia.value = ''; // Clear file input
+                loadPosts(); // Reload all posts to display the new one at the top
             } catch (e) {
                 console.error("Error adding post: ", e);
                 alert("Error posting update. Please try again. Check console for details.");
             }
-
-            postContent.value = '';
-            postMedia.value = '';
         });
     } else if (postForm) { // If on create-blog.html but no blogId (direct access without selecting a blog)
-        postForm.innerHTML = `<p style="text-align: center; color: #888;">Select an existing blog or create a new one from the Home page to post updates.</p>`;
+        // Hide the form and show a message
+        postForm.style.display = 'none'; // Hide the form
+        const messageDiv = document.createElement('div');
+        messageDiv.innerHTML = `<p style="text-align: center; color: #888; padding: 20px;">Select an existing blog or create a new one from the <a href="index.html">Home page</a> to post updates.</p>`;
+        // Insert the message before the postsContainer, or append to main section
+        postsContainer.parentNode.insertBefore(messageDiv, postsContainer);
     }
 
     if (postsContainer) {
@@ -206,5 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update "time since post" periodically by reloading all posts
+    // Be cautious with frequent reloads, might hit Firestore read limits in production
+    // For development, this is fine. Consider real-time listeners (onSnapshot) for production.
     setInterval(loadPosts, 60000); // Every minute
 });
