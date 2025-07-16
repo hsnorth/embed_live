@@ -1,3 +1,6 @@
+I can provide you with the full `embed-posts.html` file, including all the CSS and JavaScript changes we've discussed, so you can copy and paste it.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +45,7 @@
             display: none !important;
         }
 
-        /* --- Individual Post Card Styling (duplicated from style.css) --- */
+        /* --- Individual Post Card Styling --- */
         .post-card {
             display: block;
             padding: 12px 16px;
@@ -55,7 +58,7 @@
         .post-header-line {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 4px; /* Reduced to make header elements tighter */
         }
 
         .author-avatar {
@@ -100,7 +103,7 @@
         .meta-line-one {
             display: flex;
             align-items: center;
-            margin-bottom: 2px;
+            margin-bottom: 0px; /* Reduced to make name/time tighter */
         }
 
         .post-meta strong {
@@ -127,14 +130,15 @@
             color: #536471;
             font-size: 14px;
             margin-left: 0;
-            margin-top: 0;
+            margin-top: 0px; /* Ensure no extra top margin */
+            margin-bottom: 8px; /* Added margin-bottom for bigger gap before content */
         }
 
         .post-subtitle {
             font-family: 'Roboto', sans-serif;
             font-size: 1.5em;
             color: #333;
-            margin-top: 5px;
+            margin-top: 5px; /* Ensure some top margin if subtitle exists */
             margin-bottom: 5px;
             font-weight: bold;
         }
@@ -142,7 +146,7 @@
         .post-text {
             font-family: "Noto Serif", Georgia, serif;
             font-size: 16px;
-            margin-top: 0;
+            margin-top: 0; /* Remove top margin here to let .reporting-from's margin control the gap */
             margin-bottom: 8px;
             color: #0f1419;
             line-height: 20px;
@@ -671,3 +675,4 @@
     </script>
 </body>
 </html>
+```
