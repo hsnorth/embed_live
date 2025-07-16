@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Blog Posts Embed</title>
+    <!-- Include only the necessary styles for posts and pagination -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Override main container styles for embed */
+        body {
+            background-color: transparent; /* Make background transparent for embedding */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
+        main {
+            padding: 0; /* Remove main padding */
+            margin: 0; /* Remove main margin */
+            box-shadow: none; /* Remove main shadow */
+            border-radius: 0; /* Remove main border-radius */
+            background-color: transparent; /* Make main background transparent */
+            max-width: none; /* Allow iframe to control width */
+        }
+        .live-blog-posts {
+            margin-bottom: 0;
+            padding: 0;
+            border: none;
+            background-color: transparent; /* Make section background transparent */
+        }
+        .live-blog-posts h2 {
+            display: none; /* Hide "Live Updates" heading */
+        }
+        .new-post-form {
+            display: none; /* Ensure post form is hidden */
+        }
+        footer {
+            display: none; /* Hide footer */
+        }
+        header {
+            display: none; /* Hide header */
+        }
+        .pagination-controls {
+            padding-bottom: 15px; /* Add some padding at the bottom of pagination */
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="live-blog-posts">
+            <div id="postsContainer">
+                <!-- Blog posts will be loaded here by JavaScript -->
+            </div>
+            <div id="paginationControls"></div>
+        </section>
+    </main>
+
+    <!-- Firebase SDK and Initialization (minimal) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+            measurementId: "G-EZN90844XF"
+        };
+        // !!! END IMPORTANT !!!
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Expose only necessary Firestore functions to the embed script
+        window.db = db;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.getDoc = getDoc;
+    </script>
+
+    <!-- The dedicated script for embedding posts -->
+    <script src="embed-script.js"></script>
+</body>
+</html>
