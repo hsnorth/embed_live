@@ -77,11 +77,14 @@
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(208, 2, 27, 0.3);
+            width: 10px;
+            height: 10px;
+            background-color: rgb(208, 2, 27); /* Red color */
             border-radius: 50%;
-            pointer-events: none;
+            border: 2px solid white; /* White border around the dot */
+            transform: translate(-20%, -20%); /* Adjust position */
+            z-index: 1;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
 
         .post-meta {
@@ -143,6 +146,7 @@
             margin-bottom: 8px;
             color: #0f1419;
             line-height: 20px;
+            word-break: break-word; /* Ensure long words break */
         }
 
         .post-media {
@@ -209,7 +213,7 @@
             border-color: #ccc;
         }
 
-        /* --- Pagination Controls (critical for embed) --- */
+        /* --- Pagination Controls --- */
         .pagination-controls {
             display: flex;
             justify-content: center;
@@ -296,11 +300,51 @@
                 font-size: 15px;
             }
         }
+
+        /* --- Tab Navigation (Embed Page Specific) --- */
+        .tab-navigation {
+            position: sticky;
+            top: 0; /* Makes it stick to the top */
+            background-color: #fff;
+            border-bottom: 1px solid #ebeef0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000; /* Ensure it stays on top of other content */
+            display: flex;
+            overflow-x: auto; /* Enable horizontal scrolling for many tabs */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            white-space: nowrap; /* Prevent tabs from wrapping */
+            padding: 0 10px; /* Some padding on the sides */
+            justify-content: flex-start; /* Align tabs to the start */
+        }
+
+        .tab-navigation button {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s ease, border-bottom 0.2s ease;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+
+        .tab-navigation button.active-tab {
+            color: rgb(208, 2, 27); /* Red for active tab */
+            border-bottom: 2px solid rgb(208, 2, 27);
+            font-weight: bold;
+        }
+
+        .tab-navigation button:hover:not(.active-tab) {
+            color: #333;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <main>
         <section class="live-blog-posts">
+            <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
             </div>
             <div id="paginationControls"></div>
@@ -309,7 +353,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -323,6 +367,20 @@
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // --- Global Variables for Embed ---
+        let currentPage = 0;
+        const postsPerPage = 5;
+        let currentBlogId = null;
+        let allPostsCached = []; // All posts for the current blog
+        let filteredPosts = []; // Posts filtered by the currently active tab
+        let currentActiveTab = "Live Reporting"; // Default active tab
+        const defaultTab = "Live Reporting";
+        let customTabs = []; // To store custom tabs from the blog document
+
+        const postsContainer = document.getElementById('postsContainer');
+        const paginationControls = document.getElementById('paginationControls');
+        const tabNavigationDiv = document.getElementById('tabNavigation');
 
         // --- Functions for time, rendering, and pagination ---
 
@@ -354,7 +412,7 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
-        const renderPosts = (posts, containerId) => {
+        const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error(`Container with ID "${containerId}" not found.`);
@@ -362,14 +420,14 @@
             }
             container.innerHTML = '';
 
-            if (posts.length === 0) {
-                container.innerHTML = '<p class="no-posts-message">No posts yet. Be the first to add an update!</p>';
+            if (postsToRender.length === 0) {
+                container.innerHTML = '<p class="no-posts-message">No posts yet for this tab. Be the first to add an update!</p>';
                 return;
             }
 
-            const MAX_CHARS_PREVIEW = 450; // Adjust this value as needed
+            const MAX_CHARS_PREVIEW = 450;
 
-            posts.forEach(post => {
+            postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
@@ -450,31 +508,28 @@
             }
         };
 
-        let currentPage = 0;
-        const postsPerPage = 5;
-        let currentBlogId = null;
-        let allPostsCached = [];
-
         const loadPosts = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
 
-            const postsContainer = document.getElementById('postsContainer');
-            const paginationControls = document.getElementById('paginationControls');
-
             if (!currentBlogId) {
-                if (postsContainer) {
-                    postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL. Please provide a valid blog ID.</p>';
-                }
-                if (paginationControls) {
-                    paginationControls.innerHTML = '';
-                }
+                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL. Please provide a valid blog ID.</p>';
+                paginationControls.innerHTML = '';
+                tabNavigationDiv.innerHTML = '';
                 console.error("Blog ID not found in URL.");
                 return;
             }
 
             try {
-                if (allPostsCached.length === 0 || window.reFetchPosts) { // Re-fetch if explicitly requested (e.g., from admin)
+                // Fetch blog details to get custom tabs
+                const blogDocRef = doc(db, 'blogs', currentBlogId);
+                const blogDocSnap = await getDoc(blogDocRef);
+                if (blogDocSnap.exists()) {
+                    customTabs = blogDocSnap.data().customTabs || [];
+                }
+
+                // Fetch all posts initially or if refresh is requested
+                if (allPostsCached.length === 0 || window.reFetchPosts) {
                     const postsCollectionRef = collection(db, 'posts');
                     const q = query(
                         postsCollectionRef,
@@ -482,26 +537,38 @@
                         orderBy('timestamp', 'desc')
                     );
                     const querySnapshot = await getDocs(q);
-
                     allPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    console.log("Fetched posts:", allPostsCached);
-                    window.reFetchPosts = false; // Reset flag
+                    window.reFetchPosts = false;
                 }
 
-                const startIndex = currentPage * postsPerPage;
-                const endIndex = startIndex + postsPerPage;
-                const postsToShow = allPostsCached.slice(startIndex, endIndex);
-
-                renderPosts(postsToShow, 'postsContainer');
-                updatePaginationControls(allPostsCached.length);
-
+                renderTabs(); // Render/update tabs
+                filterAndRenderPosts(); // Filter and render based on current tab
             } catch (error) {
-                console.error("Error loading posts for embed:", error);
-                if (postsContainer) {
-                    postsContainer.innerHTML = '<p class="error-message">Error loading posts. Please try again later.</p>';
-                }
+                console.error("Error loading posts or blog for embed:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading posts. Please try again later.</p>';
             }
         };
+
+        const filterAndRenderPosts = () => {
+            if (currentActiveTab === defaultTab) {
+                // "Live Reporting" tab shows all posts
+                filteredPosts = allPostsCached;
+            } else {
+                // Filter posts based on the active custom tab
+                filteredPosts = allPostsCached.filter(post => 
+                    post.assignedTabs && post.assignedTabs.includes(currentActiveTab)
+                );
+            }
+
+            currentPage = 0; // Reset to the first page when tab changes
+            const startIndex = currentPage * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const postsToShow = filteredPosts.slice(startIndex, endIndex);
+
+            renderPosts(postsToShow, 'postsContainer');
+            updatePaginationControls(filteredPosts.length);
+        };
+
 
         const updatePaginationControls = (totalPosts) => {
             const paginationControls = document.getElementById('paginationControls');
@@ -517,7 +584,7 @@
                 prevButton.disabled = currentPage === 0;
                 prevButton.addEventListener('click', () => {
                     currentPage--;
-                    loadPosts();
+                    filterAndRenderPosts(); // Re-render filtered posts
                 });
                 paginationControls.appendChild(prevButton);
 
@@ -529,9 +596,9 @@
                         pageNumSpan.classList.add('current-page');
                     }
                     pageNumSpan.addEventListener('click', () => {
-                        if (currentPage !== i) { // Only load if different page
+                        if (currentPage !== i) {
                             currentPage = i;
-                            loadPosts();
+                            filterAndRenderPosts(); // Re-render filtered posts
                         }
                     });
                     paginationControls.appendChild(pageNumSpan);
@@ -542,25 +609,59 @@
                 nextButton.disabled = currentPage >= totalPages - 1;
                 nextButton.addEventListener('click', () => {
                     currentPage++;
-                    loadPosts();
+                    filterAndRenderPosts(); // Re-render filtered posts
                 });
                 paginationControls.appendChild(nextButton);
             }
+        };
+
+        // --- Tab Rendering and Interaction ---
+        const renderTabs = () => {
+            tabNavigationDiv.innerHTML = ''; // Clear existing tabs
+
+            // Always add "Live Reporting" tab first
+            const liveReportingButton = document.createElement('button');
+            liveReportingButton.textContent = defaultTab;
+            liveReportingButton.classList.add('tab-button');
+            if (currentActiveTab === defaultTab) {
+                liveReportingButton.classList.add('active-tab');
+            }
+            liveReportingButton.addEventListener('click', () => {
+                currentActiveTab = defaultTab;
+                renderTabs(); // Re-render to update active state
+                filterAndRenderPosts();
+            });
+            tabNavigationDiv.appendChild(liveReportingButton);
+
+            // Add custom tabs
+            customTabs.forEach(tabName => {
+                const tabButton = document.createElement('button');
+                tabButton.textContent = tabName;
+                tabButton.classList.add('tab-button');
+                if (currentActiveTab === tabName) {
+                    tabButton.classList.add('active-tab');
+                }
+                tabButton.addEventListener('click', () => {
+                    currentActiveTab = tabName;
+                    renderTabs(); // Re-render to update active state
+                    filterAndRenderPosts();
+                });
+                tabNavigationDiv.appendChild(tabButton);
+            });
         };
 
         document.addEventListener('DOMContentLoaded', loadPosts);
 
         // Listen for messages from parent window (e.g., admin page) to refresh
         window.addEventListener('message', (event) => {
-            // Ensure the message is from a trusted origin, or handle carefully
-            // For development, '*' might be used, but for production, specify origin.
-            // if (event.origin !== "http://your-admin-domain.com") return; // Example
+            // Validate origin in production environments
+            // if (event.origin !== "http://your-admin-domain.com") return;
             
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update.');
                 window.reFetchPosts = true; // Set flag to force re-fetch from Firestore
-                currentPage = 0; // Reset to first page on refresh
-                loadPosts();
+                // No need to reset currentPage here, as filterAndRenderPosts will do it
+                loadPosts(); // Reload everything, including tabs and posts
             }
         });
     </script>
