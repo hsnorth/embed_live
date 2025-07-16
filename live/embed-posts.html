@@ -57,10 +57,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         
-        // Import the main function from embed-script.js
-        // You'll need to add 'export default loadPosts;' to embed-script.js (see next step)
-        import { loadPosts, updatePaginationControls, renderPosts, timeAgo } from './embed-script.js'; 
-
+        // Import loadPosts and other necessary functions from your local embed-script.js
+        import { loadPosts } from './embed-script.js'; // Only need to import loadPosts as it orchestrates others
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -75,15 +73,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Make Firebase instances directly available to functions in embed-script.js
-        // by passing them or making them arguments to loadPosts if needed.
-        // Or, if you prefer the window approach, ensure embed-script.js is called
-        // AFTER these are set up.
-
-        // The better way is to pass db and other functions directly to loadPosts
-        // if embed-script.js is imported as a module.
-        // However, since embed-script.js is written to use window.db, etc.,
-        // we'll stick to that for minimal changes. Ensure this script runs first.
+        // Make Firebase instances globally available on `window` as your embed-script.js expects this.
+        // This is safe because both scripts are now modules or the import order ensures it.
         window.db = db;
         window.collection = collection;
         window.query = query;
@@ -93,17 +84,9 @@
         window.doc = doc;
         window.getDoc = getDoc;
 
-        // Now, call the loadPosts function (from embed-script.js)
-        // after the DOM is ready AND Firebase is initialized.
+        // Call loadPosts from embed-script.js after the DOM is loaded and Firebase is initialized.
         document.addEventListener('DOMContentLoaded', loadPosts); 
-
-        // If loadPosts itself imports renderPosts, updatePaginationControls, etc.,
-        // you only need to import loadPosts. But since they're sibling functions,
-        // it's better to export them all if they are called independently.
-        // For simplicity and quick fix, the previous method of putting them on `window`
-        // should work if `embed-script.js` is run *after* this module has set up `window` properties.
-        // My previous advice to simply include it with <script src="embed-script.js">
     </script>
 
-    </body>
+</body>
 </html>
