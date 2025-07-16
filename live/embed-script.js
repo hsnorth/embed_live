@@ -1,5 +1,5 @@
 // Function to calculate time ago for posts
-export function timeAgo(timestamp) { // Export if used elsewhere
+export function timeAgo(timestamp) {
     const now = new Date();
     const postDate = timestamp.toDate();
     const seconds = Math.floor((now - postDate) / 1000);
@@ -28,7 +28,7 @@ export function timeAgo(timestamp) { // Export if used elsewhere
 }
 
 // Function to render posts
-export const renderPosts = (posts, containerId) => { // Export if used elsewhere
+export const renderPosts = (posts, containerId) => {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container with ID "${containerId}" not found.`);
@@ -107,7 +107,6 @@ export const loadPosts = async () => { // Export this function
     }
 
     // Ensure Firebase is initialized and db is available
-    // Now these checks should pass because window.db etc. will be set by embed-posts.html's module
     if (!window.db || !window.collection || !window.query || !window.where || !window.orderBy || !window.getDocs) {
         console.error("Firebase services not initialized in embed-script.js");
         if (postsContainer) {
@@ -173,10 +172,5 @@ export const updatePaginationControls = (totalPosts) => { // Export if used else
     }
 };
 
-// 🚨 REMOVE this line from embed-script.js:
+// REMOVE the DOMContentLoaded listener from this file.
 // document.addEventListener('DOMContentLoaded', loadPosts);
-
-// The DOMContentLoaded listener should now be in embed-posts.html to ensure Firebase is ready first.
-
-// Real-time listener commented out as before
-// const setupRealtimeListener = () => { /* ... */ };
