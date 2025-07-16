@@ -47,15 +47,17 @@
         // If you enabled Analytics, you'd also import:
         // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
+        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // Your actual API Key
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // Your actual Auth Domain
+            projectId: "myliveblogapp-cf9df", // Your actual Project ID
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // Your actual Storage Bucket
+            messagingSenderId: "324824649312", // Your actual Messaging Sender ID
+            appId: "1:324824649312:web:c0750693346091d853bd05", // Your actual App ID
+            measurementId: "G-EZN90844XF" // Your actual Measurement ID (if using analytics)
         };
+        // !!! END IMPORTANT !!!
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
