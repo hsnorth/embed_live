@@ -108,3 +108,79 @@ main {
     padding: 15px 16px;
     background-color: #fff;
     border-top: 1px solid #ebeef0; /* Separator above pagination */
+    gap: 10px; /* Space between buttons and page info */
+}
+
+.pagination-controls button {
+    background-color: #1DA1F2; /* X blue */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px; /* Rounded buttons */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.pagination-controls button:disabled {
+    background-color: #bfdcfc; /* Lighter blue when disabled */
+    cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #1A92DA; /* Darker blue on hover */
+}
+
+.pagination-controls span {
+    font-size: 14px;
+    color: #536471;
+}
+
+/* --- Responsive Design (Mobile First) --- */
+
+/* For smaller screens (phones) - styles are already fairly compact */
+@media (max-width: 600px) {
+    main {
+        margin: 0; /* No side margins on small screens */
+        max-width: 100%; /* Take full width */
+    }
+
+    .post-card {
+        padding: 10px 12px; /* Slightly less padding for smaller screens */
+    }
+
+    .author-avatar-img {
+        width: 40px; /* Slightly smaller avatar on mobile */
+        height: 40px;
+    }
+
+    .author-avatar {
+        margin-right: 10px;
+    }
+
+    .post-meta {
+        font-size: 14px;
+        line-height: 18px;
+    }
+    .post-meta strong {
+        font-size: 14px;
+    }
+    .post-meta span {
+        font-size: 13px;
+    }
+
+    .post-text {
+        font-size: 14px;
+        line-height: 18px;
+    }
+
+    .pagination-controls button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .pagination-controls span {
+        font-size: 13px;
+    }
+}
