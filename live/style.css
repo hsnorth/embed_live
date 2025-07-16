@@ -176,7 +176,7 @@ h2 {
 .post-header-line {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 10px; /* Adjusted: Ensure the space from header line to content is consistent */
 }
 
 .author-avatar {
@@ -212,7 +212,7 @@ h2 {
 .post-meta {
     flex-grow: 1;
     font-size: 15px;
-    line-height: 1.4;
+    line-height: 1.2; /* Adjusted: Tighter spacing for author name and reporting from */
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -222,7 +222,7 @@ h2 {
 .meta-line-one {
     display: flex;
     align-items: center;
-    margin-bottom: 2px;
+    margin-bottom: 0px; /* Adjusted: Reduce or remove margin to bring reporting-from closer */
 }
 
 .post-meta strong {
@@ -249,14 +249,14 @@ h2 {
     color: #536471;
     font-size: 14px;
     margin-left: 0; /* Reset margin from strong */
-    margin-top: 0; /* Ensure it's close to the line above */
+    margin-top: 2px; /* Adjusted: Slightly adjust margin top to fine-tune closeness */
 }
 
 .post-subtitle {
     font-family: 'Roboto', sans-serif;
     font-size: 1.5em; /* Larger for subtitles */
     color: #333;
-    margin-top: 5px;
+    margin-top: 8px; /* Adjusted: Increase margin-top to create more space above subtitle */
     margin-bottom: 5px;
     font-weight: bold;
 }
@@ -264,7 +264,7 @@ h2 {
 .post-text {
     font-family: "Noto Serif", Georgia, serif; /* Serif font for main content */
     font-size: 16px;
-    margin-top: 0;
+    margin-top: 8px; /* Adjusted: Increase margin-top if no subtitle, or for the main text */
     margin-bottom: 8px;
     color: #0f1419;
     line-height: 20px;
