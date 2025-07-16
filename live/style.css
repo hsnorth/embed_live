@@ -110,101 +110,74 @@ main {
 
 /* Pagination Controls */
 .pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 16px;
-    background-color: #fff;
-    border-top: 1px solid #ebeef0;
-    gap: 10px;
-    font-family: inherit; /* Inherit from body for consistency */
+    display: flex; /* Use flexbox for horizontal alignment */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    padding: 15px 16px; /* Padding around the controls */
+    background-color: #fff; /* White background */
+    border-top: 1px solid #ebeef0; /* Subtle top border to separate from posts */
+    gap: 15px; /* Increased space between buttons and page info */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Consistent font */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03); /* Subtle shadow for a "lifted" effect */
+    border-bottom-left-radius: 8px; /* Match main container radius */
+    border-bottom-right-radius: 8px; /* Match main container radius */
 }
 
+/* Pagination Buttons (Previous/Next) */
 .pagination-controls button {
-    background-color: #1DA1F2; /* X blue */
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
+    background-color: #e0e0e0; /* Light grey for unselected buttons */
+    color: #333; /* Darker text color */
+    border: 1px solid #ccc; /* Subtle border */
+    padding: 8px 18px; /* Padding for the look in the screenshot */
+    border-radius: 4px; /* Slightly rounded corners from the screenshot */
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 15px; /* Adjust font size to match screenshot */
+    font-weight: normal; /* Normal weight for the look in the screenshot */
+    transition: background-color 0.2s ease, border-color 0.2s ease; /* Smooth transitions */
+    box-shadow: none; /* No extra shadow, just border */
+    transform: none; /* No lift effect for this style */
 }
 
 .pagination-controls button:disabled {
-    background-color: #bfdcfc;
+    background-color: #f0f0f0; /* Even lighter grey when disabled */
+    color: #999; /* Faded text color */
+    border-color: #ddd; /* Lighter border */
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 1; /* Keep full opacity, just change color */
 }
 
 .pagination-controls button:hover:not(:disabled) {
-    background-color: #1A92DA;
-    transform: translateY(-1px);
+    background-color: #d0d0d0; /* Slightly darker grey on hover */
+    border-color: #bbb; /* Darker border on hover */
 }
 
 .pagination-controls button:active:not(:disabled) {
-    transform: translateY(0);
+    background-color: #c0c0c0; /* Even darker grey on active */
+    border-color: #aaa;
 }
 
+/* Page Information Text (e.g., "Page 1 of 3") */
 .pagination-controls span {
-    font-size: 14px;
-    color: #536471;
-    font-weight: 500;
+    font-size: 16px; /* Larger font size to match screenshot */
+    color: #000; /* Black for strong visibility as in screenshot */
+    font-weight: normal; /* Normal weight for the look in the screenshot */
+    margin: 0 10px; /* Space around the text */
 }
 
-/* --- Responsive Design (Mobile First) --- */
-
+/* Responsive adjustments for smaller screens */
 @media (max-width: 600px) {
-    /* Main container adjustments for small screens (admin/archive) */
-    main {
-        margin: 10px;
-        padding: 15px;
-        box-shadow: none; /* Reduce shadow on small screens */
-    }
-
-    /* Post Card adjustments for small screens */
-    .post-card {
-        padding: 10px 12px;
-    }
-
-    .author-avatar-img {
-        width: 40px;
-        height: 40px;
-    }
-
-    .author-avatar {
-        margin-right: 10px;
-    }
-
-    .post-meta {
-        font-size: 14px;
-        line-height: 18px;
-    }
-    .post-meta strong {
-        font-size: 14px;
-    }
-    .post-meta span.time-ago,
-    .post-meta .reporting-from {
-        font-size: 13px;
-    }
-
-    .post-text {
-        font-size: 14px;
-        line-height: 18px;
-    }
-
-    /* Pagination adjustments for small screens */
     .pagination-controls {
         padding: 10px 12px;
-        gap: 8px;
+        gap: 10px;
+        border-radius: 0;
     }
     .pagination-controls button {
         padding: 6px 12px;
-        font-size: 13px;
+        font-size: 14px;
+        border-radius: 3px;
     }
     .pagination-controls span {
-        font-size: 13px;
+        font-size: 15px;
     }
 }
 
