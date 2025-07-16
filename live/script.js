@@ -105,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
-        // Avatar size in placeholder text matched to new CSS size
-        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/40/CCCCCC/FFFFFF?text=AV';
+        // Updated placeholder size to match new avatar size
+        const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/36/CCCCCC/FFFFFF?text=AV';
         const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
 
         const maxLength = 200;
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 content: content,
                 authorName: currentUserProfile ? currentUserProfile.name : (window.auth.currentUser ? window.auth.currentUser.email : "Anonymous"),
                 authorEmail: currentUserProfile ? currentUserProfile.email : (window.auth.currentUser ? window.auth.currentUser.email : "N/A"),
-                authorPic: currentUserProfile ? currentUserProfile.pic : 'https://via.placeholder.com/40/CCCCCC/FFFFFF?text=AV',
+                authorPic: currentUserProfile ? currentUserProfile.pic : 'https://via.placeholder.com/36/CCCCCC/FFFFFF?text=AV',
                 reportingFrom: reportingFrom || "Unknown Location",
                 timestamp: window.serverTimestamp(),
                 mediaUrl: mediaUrl,
