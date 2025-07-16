@@ -1,147 +1,276 @@
-/* General Body & Container for Embed */
+/* General Body and Main Layout */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
-    color: #000; /* Assuming a light theme for the embed based on provided images */
-    background-color: #f4f7f6; /* Light grey background for admin/archive, transparent for embed */
+    color: #000;
     margin: 0;
     padding: 0;
+    background-color: #f0f2f5; /* Light grey background */
     overflow-x: hidden;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: rgb(208, 2, 27); /* Dark red */
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    flex-grow: 1; /* Allows title to take available space */
+    text-align: left;
+}
+
+header nav {
+    margin-top: 0;
+    display: flex;
+    gap: 20px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+header nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 main {
-    max-width: 800px; /* General max width for admin/archive content */
-    margin: 20px auto; /* Center content with margin */
+    flex-grow: 1; /* Allows main content to fill available space */
     padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Live Blog Posts Section - Main Container for Embed */
-/* Note: `max-width` for embed posts is now in embed-posts.html's inline style */
-.live-blog-posts {
-    margin-bottom: 0;
-    padding: 0;
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: auto; /* Pushes footer to the bottom */
+}
+
+/* Form Styling */
+.new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+}
+
+h2 {
+    color: rgb(208, 2, 27);
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+    font-size: 0.95em;
+}
+
+.input-field, .textarea-field {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field:focus, .textarea-field:focus {
+    border-color: rgb(208, 2, 27);
+    box-shadow: 0 0 5px rgba(208, 2, 27, 0.3);
+    outline: none;
+}
+
+.textarea-field {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.submit-button, .button {
+    background-color: rgb(208, 2, 27);
+    color: white;
+    padding: 12px 20px;
     border: none;
-    background-color: transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
 }
 
-/* Individual Post Card Styling (for embed and potentially admin display) */
+.submit-button:hover, .button:hover {
+    background-color: rgb(170, 0, 20);
+    transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Embed Code Section */
+.embed-code-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.embed-code-container .input-field {
+    flex-grow: 1;
+    width: auto; /* Override default width */
+}
+
+/* Post Card Styling */
 .post-card {
-    display: block; /* Changed from flex to block to stack elements for new layout */
+    display: block;
     padding: 12px 16px;
     border-bottom: 1px solid #ebeef0;
     background-color: #fff;
     word-wrap: break-word;
-    position: relative; /* For positioning share button */
+    position: relative;
+}
+
+.post-card:last-child {
+    border-bottom: none; /* No border for the last post */
 }
 
 .post-header-line {
-    display: flex; /* Flex for avatar, meta, and share button on one line */
-    align-items: flex-start; /* Align items to the top if their heights differ */
-    margin-bottom: 8px; /* Space between header line and post content */
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
 }
 
-/* Author Avatar Styling */
 .author-avatar {
-    flex-shrink: 0;
+    flex-shrink: 0; /* Prevents avatar from shrinking */
     margin-right: 12px;
 }
 
 .author-avatar-img {
-    width: 38px; /* Slightly smaller profile pic */
+    width: 38px;
     height: 38px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
-    position: relative; /* Needed for ::before pseudo-element */
+    position: relative; /* For the red dot effect */
 }
 
 .author-avatar-img::before {
+    /* Red dot indicating live reporting */
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(208, 2, 27, 0.3); /* Red with 30% opacity */
+    width: 10px;
+    height: 10px;
+    background-color: rgb(208, 2, 27); /* Red color */
     border-radius: 50%;
-    pointer-events: none; /* Allows clicks to pass through to the image if it were interactive */
+    border: 2px solid white; /* White border around the dot */
+    transform: translate(-20%, -20%); /* Adjust position */
+    z-index: 1;
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
 }
 
-/* Post Content Area - now only for text/media, not containing meta */
-.post-content-area { /* This class is less relevant now with new structure, but kept for clarity */
-    flex-grow: 1;
-    min-width: 0;
-}
-
-/* Post Meta (Author Name, Reporting From, Time) */
 .post-meta {
-    flex-grow: 1; /* Allow meta to take available space */
+    flex-grow: 1;
     font-size: 15px;
-    line-height: 1.4; /* Adjust line height for stacked elements */
+    line-height: 1.4;
     margin-bottom: 0;
-    display: flex; /* Keep flex for the overall container */
-    flex-direction: column; /* Stack primary line and reporting from */
-    align-items: flex-start; /* Align text to the left */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .meta-line-one {
-    display: flex; /* Flex for name and time to keep them on one line */
-    align-items: center; /* Vertically align them */
-    margin-bottom: 2px; /* Space between this line and reporting-from */
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
 }
 
 .post-meta strong {
     font-weight: bold;
-    color: #0f1419;
-    margin-right: 4px; /* Space after name before bullet */
+    color: #0f1419; /* Dark grey for names */
+    margin-right: 4px;
 }
 
 .post-meta span.time-ago {
-    color: rgb(208, 2, 27); /* Red color for timestamp */
+    color: rgb(208, 2, 27); /* Red color for time ago */
     font-size: 14px;
-    font-weight: bold; /* Bold timestamp */
-    /* No margin-bottom here, spacing handled by meta-line-one's margin-bottom */
+    font-weight: bold;
 }
 
 .post-meta .bullet {
-    color: #536471; /* Color for the bullet point */
+    color: #536471; /* Grey for bullet point */
     font-size: 14px;
-    margin: 0 4px; /* Space around the bullet */
-    display: inline; /* Keep bullet inline */
+    margin: 0 4px;
+    display: inline;
 }
 
 .post-meta .reporting-from {
-    display: block; /* Ensure it's on a new line below everything */
+    display: block;
     color: #536471;
     font-size: 14px;
-    margin-left: 0;
-    margin-top: 0; /* No top margin, already handled by meta-line-one's margin-bottom */
+    margin-left: 0; /* Reset margin from strong */
+    margin-top: 0; /* Ensure it's close to the line above */
 }
 
-/* New: Subtitle Font */
 .post-subtitle {
-    font-family: 'Roboto', sans-serif; /* Roboto for subtitle */
-    font-size: 1.5em; /* Dynamically bigger */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em; /* Larger for subtitles */
     color: #333;
     margin-top: 5px;
     margin-bottom: 5px;
-    font-weight: bold; /* Bold */
+    font-weight: bold;
 }
 
-/* Post Text Content */
 .post-text {
-    font-family: "Noto Serif", Georgia, serif; /* Noto Serif for body content */
-    font-size: 16px; /* Increased from 15px */
+    font-family: "Noto Serif", Georgia, serif; /* Serif font for main content */
+    font-size: 16px;
     margin-top: 0;
     margin-bottom: 8px;
     color: #0f1419;
     line-height: 20px;
+    word-break: break-word; /* Ensure long words break */
 }
 
-/* Post Media (Image/Video) */
 .post-media {
     max-width: 100%;
     height: auto;
@@ -150,7 +279,6 @@ main {
     margin-top: 8px;
 }
 
-/* No Posts Message & Error Messages */
 .no-posts-message, .error-message {
     text-align: center;
     padding: 20px;
@@ -159,13 +287,49 @@ main {
     font-size: 16px;
 }
 
-/* Action Buttons (Share, Edit, Delete) */
-.share-button, .edit-post-button, .delete-post-button {
+/* Post Actions (Edit/Delete) */
+.post-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end; /* Align buttons to the right */
+}
+
+.post-actions button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: 5px;
+}
+
+.post-actions button:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.post-actions button.delete-post-button {
+    color: #d32f2f; /* Red for delete button */
+}
+
+.post-actions button.delete-post-button:hover {
+    background-color: #ffebee; /* Light red background on hover */
+    border-color: #ef9a9a;
+}
+
+/* Share Button */
+.share-button {
     background: none;
     border: none;
-    color: #657786; /* Default grey for icons */
+    color: #657786;
     cursor: pointer;
-    font-size: 1em; /* Adjust as needed */
+    font-size: 1em;
     padding: 5px;
     border-radius: 4px;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -174,50 +338,33 @@ main {
     gap: 5px;
 }
 
-/* Share button specific positioning */
 .post-card .share-button {
-    position: absolute; /* Position relative to post-card */
+    position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 1.2em; /* Make share icon slightly larger */
+    font-size: 1.2em; /* Make share icon a bit larger */
 }
 
-.share-button:hover, .edit-post-button:hover {
-    background-color: rgba(208, 2, 27, 0.1); /* Light red tint on hover */
-    color: rgb(208, 2, 27); /* Red color on hover */
-}
-
-.delete-post-button {
-    color: #dc3545; /* Red for delete button */
-}
-
-.delete-post-button:hover {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #c82333;
-}
-
-.post-actions {
-    display: flex;
-    gap: 10px; /* Space between edit and delete buttons */
-    margin-top: 10px; /* Space above action buttons */
-    justify-content: flex-end; /* Align action buttons to the right */
+.share-button:hover {
+    background-color: rgba(208, 2, 27, 0.1);
+    color: rgb(208, 2, 27);
 }
 
 /* Show More Button */
 .show-more-button {
-    background-color: #f0f0f0; /* Light grey */
-    color: #333; /* Dark text */
-    border: 1px solid #ddd; /* Subtle border */
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500; /* Slightly bolder than regular text */
-    margin-top: 10px; /* Space above button */
-    display: block; /* Make it a block element to control centering */
-    width: fit-content; /* Only as wide as its content */
-    margin-left: auto; /* Center the button */
-    margin-right: auto; /* Center the button */
+    font-weight: 500;
+    margin-top: 10px;
+    display: block; /* Make it a block to center */
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -229,55 +376,53 @@ main {
 
 /* Pagination Controls */
 .pagination-controls {
-    display: flex; /* Use flexbox for horizontal alignment */
-    justify-content: center; /* Center items horizontally */
-    align-items: center; /* Center items vertically */
-    padding: 15px 16px; /* Padding around the controls */
-    background-color: #fff; /* White background */
-    border-top: 1px solid #ebeef0; /* Subtle top border to separate from posts */
-    gap: 15px; /* Increased space between buttons and page info */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Consistent font */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03); /* Subtle shadow for a "lifted" effect */
-    border-bottom-left-radius: 8px; /* Match main container radius */
-    border-bottom-right-radius: 8px; /* Match main container radius */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 16px;
+    background-color: #fff;
+    border-top: 1px solid #ebeef0;
+    gap: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
-/* Pagination Buttons (Previous/Next) */
 .pagination-controls button {
-    background-color: #e0e0e0; /* Light grey for unselected buttons */
-    color: #333; /* Darker text color */
-    border: 1px solid #ccc; /* Subtle border */
-    padding: 8px 18px; /* Padding for the look in the screenshot */
-    border-radius: 4px; /* Slightly rounded corners from the screenshot */
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 18px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 15px; /* Adjust font size to match screenshot */
-    font-weight: normal; /* Normal weight for the look in the screenshot */
-    transition: background-color 0.2s ease, border-color 0.2s ease; /* Smooth transitions */
-    box-shadow: none; /* No extra shadow, just border */
-    transform: none; /* No lift effect for this style */
+    font-size: 15px;
+    font-weight: normal;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: none; /* Remove default button shadow */
+    transform: none; /* Remove default button transform */
 }
 
 .pagination-controls button:disabled {
-    background-color: #f0f0f0; /* Even lighter grey when disabled */
-    color: #999; /* Faded text color */
-    border-color: #ddd; /* Lighter border */
+    background-color: #f0f0f0;
+    color: #999;
+    border-color: #ddd;
     cursor: not-allowed;
-    opacity: 1; /* Keep full opacity, just change color */
+    opacity: 1; /* Ensure disabled buttons are visible but faded */
 }
 
 .pagination-controls button:hover:not(:disabled) {
-    background-color: #d0d0d0; /* Slightly darker grey on hover */
-    border-color: #bbb; /* Darker border on hover */
+    background-color: #d0d0d0;
+    border-color: #bbb;
 }
 
 .pagination-controls button:active:not(:disabled) {
-    background-color: #c0c0c0; /* Even darker grey on active */
+    background-color: #c0c0c0;
     border-color: #aaa;
 }
 
-/* Page Numbers in Pagination */
 .pagination-controls .page-number {
-    display: inline-block; /* To allow padding/margin */
+    display: inline-block;
     padding: 5px 8px;
     margin: 0 3px;
     text-decoration: none;
@@ -290,10 +435,10 @@ main {
 
 .pagination-controls .page-number.current-page {
     text-decoration: underline;
-    text-decoration-color: rgb(208, 2, 27); /* Red underline for current page */
-    text-decoration-thickness: 2px;
-    font-weight: bold; /* Make current page bold */
-    color: rgb(208, 2, 27); /* Current page number also red */
+    text-decoration-color: rgb(208, 2, 27); /* Red underline */
+    text-decoration-thickness: 2px; /* Thicker underline */
+    font-weight: bold;
+    color: rgb(208, 2, 27); /* Red text for current page */
 }
 
 .pagination-controls .page-number:hover:not(.current-page) {
@@ -301,198 +446,244 @@ main {
     color: #333;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
+/* Blog List specific styling */
+.blog-list {
+    list-style: none;
+    padding: 0;
+}
+
+.blog-list li {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.blog-list li span {
+    font-weight: 500;
+    color: #333;
+    flex-grow: 1; /* Allows blog name to take space */
+}
+
+.blog-list li .actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Dashboard specific buttons */
+.dashboard-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.dashboard-buttons .button {
+    flex: 1; /* Distribute space among buttons */
+    min-width: 180px; /* Ensure buttons don't get too small */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    header h1 {
+        text-align: center;
+        width: 100%;
+    }
+
+    header nav {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    main {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    .submit-button, .button {
+        width: 100%;
+        padding: 10px 15px;
+    }
+
+    .embed-code-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .embed-code-container .input-field {
+        width: 100%;
+    }
+
+    .post-card {
+        padding: 10px;
+    }
+
+    .post-media {
+        border-radius: 4px;
+    }
+
+    .post-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .post-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
     .pagination-controls {
         padding: 10px 12px;
         gap: 10px;
-        border-radius: 0;
     }
     .pagination-controls button {
         padding: 6px 12px;
         font-size: 14px;
-        border-radius: 3px;
     }
     .pagination-controls .page-number {
-        font-size: 15px;
+        font-size: 14px;
     }
 }
 
-
-/* --- Admin/Archive Page Specific Styles --- */
-/* These assume you have elements like header, h1, new-post-form, archived-blogs-list etc. */
-
-header {
-    background-color: #2c3e50; /* Dark blue/grey */
-    color: #fff;
-    padding: 15px 20px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Tablet and smaller desktop */
+@media (max-width: 900px) {
+    main {
+        max-width: 95%; /* Adjust for slightly wider view on tablets */
+    }
 }
 
-header h1 {
-    margin: 0;
-    font-size: 28px;
-}
-
-h2 {
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-}
-
-/* Create Post Form Styles */
-.new-post-form {
-    padding: 20px 0;
-}
-
-.form-group {
+/* New: Tab Navigation for Admin */
+.tab-selection-group {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fcfcfc;
+    max-height: 150px; /* Limit height */
+    overflow-y: auto; /* Enable scrolling */
+    margin-top: 5px;
     margin-bottom: 15px;
 }
 
-.form-group label {
+.tab-selection-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    font-weight: normal;
+    color: #555;
+    font-size: 0.9em;
 }
 
-.input-field,
-.textarea-field {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    box-sizing: border-box;
-    font-family: inherit;
+.tab-selection-group input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: rgb(208, 2, 27); /* Red checkbox */
 }
 
-.textarea-field {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.submit-button {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-}
-
-.submit-button:hover {
-    background-color: #2980b9;
-}
-
-/* Embed Code Section */
-.embed-code-section {
-    background-color: #e9f0f4; /* Light blue/grey background */
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px; /* Space below the section */
-    border: 1px solid #d4e0e8;
-}
-
-.embed-code-section h2 {
-    font-size: 20px;
-    margin-top: 0;
-    border-bottom: 1px solid #c2d4e3;
-    padding-bottom: 10px;
-    color: #2c3e50;
-}
-
-.embed-code-container {
+/* Tab Management Section (create-blog.html) */
+.tab-management-controls {
     display: flex;
     gap: 10px;
-    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-.embed-code-container .input-field {
+.tab-management-controls .input-field {
     flex-grow: 1;
-    cursor: text;
-    background-color: #fff;
 }
 
-.embed-code-container .submit-button {
-    flex-shrink: 0;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-
-/* Archive Posts Styles */
-.archived-blogs-list {
+.tab-list {
     list-style: none;
     padding: 0;
-    margin: 0;
 }
 
-.archived-blog-item {
+.tab-list li {
     background-color: #f9f9f9;
     border: 1px solid #eee;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    padding: 10px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.tab-list li .tab-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.tab-list li .delete-tab-button {
+    background-color: #f44336; /* Red for delete */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.85em;
     transition: background-color 0.2s ease;
 }
 
-.archived-blog-item:hover {
-    background-color: #f0f0f0;
+.tab-list li .delete-tab-button:hover {
+    background-color: #d32f2f;
 }
 
-.blog-title {
-    font-size: 18px;
+.tab-list li .delete-tab-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* --- Tab Navigation (Embed Page Specific) --- */
+.tab-navigation {
+    position: sticky;
+    top: 0; /* Makes it stick to the top */
+    background-color: #fff;
+    border-bottom: 1px solid #ebeef0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 1000; /* Ensure it stays on top of other content */
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling for many tabs */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    white-space: nowrap; /* Prevent tabs from wrapping */
+    padding: 0 10px; /* Some padding on the sides */
+    justify-content: flex-start; /* Align tabs to the start */
+}
+
+.tab-navigation button {
+    background: none;
+    border: none;
+    padding: 12px 15px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease, border-bottom 0.2s ease;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.tab-navigation button.active-tab {
+    color: rgb(208, 2, 27); /* Red for active tab */
+    border-bottom: 2px solid rgb(208, 2, 27);
     font-weight: bold;
-    color: #3498db;
-    text-decoration: none;
 }
 
-.blog-title:hover {
-    text-decoration: underline;
-}
-
-.blog-meta {
-    font-size: 14px;
-    color: #666;
-    text-align: right;
-}
-
-/* Responsive for admin/archive pages */
-@media (max-width: 768px) {
-    .input-field,
-    .textarea-field {
-        width: 100%;
-    }
-    .submit-button {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-    }
-    .archived-blog-item {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
-    }
-    .blog-meta {
-        text-align: left;
-        margin-top: 5px;
-    }
-    .embed-code-container {
-        flex-direction: column;
-    }
-    .embed-code-container .input-field {
-        width: 100%;
-    }
-    .embed-code-container .submit-button {
-        width: 100%;
-    }
+.tab-navigation button:hover:not(.active-tab) {
+    color: #333;
+    background-color: #f9f9f9;
 }
