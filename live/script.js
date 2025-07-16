@@ -1,8 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Ensure Firebase is initialized and its modules are exposed to window
-    // This script (script.js) assumes the Firebase initialization script
-    // in the HTML has completed and set window.db, window.collection etc.
-
     const postForm = document.getElementById('postForm');
     const authorNameInput = document.getElementById('authorNameInput');
     const reportingFromInput = document.getElementById('reportingFromInput');
@@ -11,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const postsContainer = document.getElementById('postsContainer');
     const blogPageTitle = document.getElementById('blogPageTitle');
     const blogHeaderTitle = document.getElementById('blogHeaderTitle');
+    const mainContent = document.getElementById('mainContent'); // The main content area
+    const loadingContainer = document.getElementById('loadingContainer'); // The loading message area
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentBlogId = urlParams.get('blogId');
@@ -37,11 +35,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.warn("User profile not found in Firestore for UID:", user.uid);
                     authorNameInput.value = user.email || "Unknown User"; // Use email if profile missing
                 }
+
+                // --- THIS IS THE KEY PART ---
+                // Only now that auth and profile are (potentially) loaded, display content and load posts
+                if (loadingContainer) loadingContainer.style.display = 'none';
+                if (mainContent) mainContent.style.display = 'block';
+
                 loadPosts(); // Load posts only after user is authenticated and profile potentially loaded
+
             } catch (error) {
                 console.error("Error fetching user profile:", error);
                 authorNameInput.value = user.email || "Error Loading User"; // Fallback on error
-                loadPosts(); // Still try to load posts even if profile fetch fails
+
+                // Still attempt to display content and load posts even if profile fetch fails
+                if (loadingContainer) loadingContainer.style.display = 'none';
+                if (mainContent) mainContent.style.display = 'block';
+                loadPosts();
             }
         }
     });
@@ -89,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const postTime = postData.timestamp ? postData.timestamp.toDate() : new Date();
         const timeSince = formatTimeAgo(postTime);
 
-        // Use postData.authorPic if available, fallback to a default avatar or no image
         const authorPicSrc = postData.authorPic || 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=AV'; // Default grey avatar
         const authorPicHtml = `<img src="${authorPicSrc}" alt="${postData.authorName || 'Anonymous'}'s avatar" class="author-avatar-img">`;
 
@@ -206,8 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // `loadPosts()` is now called inside `onAuthStateChanged` to ensure user is logged in first.
-    // The setInterval is also now conditionally set after auth check to ensure `loadPosts` has context.
+    // The setInterval is now conditionally set after auth check to ensure `loadPosts` has context.
+    // It's still good to call loadPosts() once inside onAuthStateChanged to ensure initial load.
     setInterval(() => {
         if (window.auth.currentUser && currentBlogId) {
             loadPosts(); // Only refresh if user is logged in and a blog is selected
