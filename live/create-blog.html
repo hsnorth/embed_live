@@ -90,7 +90,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js"; // Changed uploadBytes to uploadBytesResumable
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
         // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
@@ -114,7 +114,7 @@
         let currentBlogId = null;
         let currentBlogName = ''; // Store blog name for embed link
         let customTabs = []; // Array to store custom tab names for the current blog
-        const defaultTab = "Live Updates"; // Always present
+        const defaultTab = "Live Reporting"; // Always present
         let adminAllPostsCached = []; // Cache for admin posts
         let adminCurrentPage = 0;
         const adminPostsPerPage = 5;
@@ -166,7 +166,7 @@
                     }
                 } else {
                     blogTitleHeader.textContent = 'No Blog Selected';
-                    postsContainer.innerHTML = '<p class="error-message">No blog selected. Please go to your <a href="dashboard.html">dashboard">dashboard</a> to create or select a blog.</p>';
+                    postsContainer.innerHTML = '<p class="error-message">No blog selected. Please go to your <a href="dashboard.html">dashboard</a> to create or select a blog.</p>';
                 }
             }
         });
@@ -313,9 +313,9 @@
             try {
                 if (mediaFile) {
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, mediaFile); // Changed to uploadBytesResumable
-                    await uploadTask; // Await the task completion
-                    mediaUrl = await getDownloadURL(uploadTask.snapshot.ref); // Get URL from snapshot.ref
+                    const uploadTask = uploadBytesResumable(storageRef, mediaFile);
+                    await uploadTask;
+                    mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
                     mediaType = mediaFile.type;
                 }
 
@@ -330,18 +330,13 @@
                         subtitle: subtitle,
                         content: content,
                         reportingFrom: reportingFrom,
-                        assignedTabs: assignedTabs, // Save assigned tabs
-                        // timestamp: serverTimestamp() // Do NOT update timestamp on edit
+                        assignedTabs: assignedTabs,
                     };
 
                     if (mediaFile) {
                         const oldPostSnap = await getDoc(postDocRef);
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
                             try {
-                                // Construct ref using the full URL, then extract path or use full URL directly if possible
-                                // For robust deletion, it's safer to store the storage path in Firestore along with the URL
-                                // For now, we'll try to get the ref from the URL, which might not always work perfectly if the structure changes.
-                                // A more robust solution would be to save the storagePath in Firestore too.
                                 const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
                                 await deleteObject(oldMediaRef);
                             } catch (error) {
@@ -351,17 +346,11 @@
                         updateData.mediaUrl = mediaUrl;
                         updateData.mediaType = mediaType;
                     } else if (editingPostId && !mediaFile) {
-                         // If we are editing and no new file is selected, but there was an old file, keep it
-                         // Or, if you want to allow clearing media, you'd add a checkbox for that.
-                         // For now, if mediaFile is null, we assume no change to media.
-                         // If you wanted to *remove* existing media without uploading new, you'd need
-                         // a separate UI element (e.g., a "Clear Media" checkbox).
-                         // For this example, we'll leave existing media if no new file is chosen.
-                         // If media was previously present and no new file is uploaded, mediaUrl and mediaType remain unchanged.
-                         // To explicitly remove media when editing, you'd set mediaUrl and mediaType to empty strings
-                         // IF a "clear media" option was selected.
+                        // If no new file, but there was an old file, clear it if user wants to remove media
+                        // For this example, we'll leave existing media if no new file is chosen.
+                        // If you wanted to *remove* existing media without uploading new, you'd need
+                        // a separate UI element (e.g., a "clear media" checkbox).
                     }
-
 
                     await updateDoc(postDocRef, updateData);
                     alert("Post updated successfully!");
@@ -378,7 +367,7 @@
                         reportingFrom: reportingFrom,
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
-                        assignedTabs: assignedTabs, // Save assigned tabs
+                        assignedTabs: assignedTabs,
                         timestamp: serverTimestamp()
                     });
                     alert("Post added successfully!");
@@ -389,12 +378,13 @@
                 postMediaInput.value = '';
                 authorNameInput.value = authorName;
                 localStorage.setItem('authorName', authorName);
-                renderPostTabAssignmentCheckboxes([]); // Reset checkboxes for new post
+                renderPostTabAssignmentCheckboxes([]);
                 
                 adminAllPostsCached = [];
                 adminCurrentPage = 0;
                 await loadPostsForAdmin();
 
+                // Send message to embed to refresh when a post is added/updated/deleted
                 if (window.parent && window.parent.postMessage) {
                     window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
                 }
@@ -529,7 +519,7 @@
                         postSubtitleInput.value = postToEdit.subtitle || '';
                         reportingFromInput.value = postToEdit.reportingFrom || '';
                         authorNameInput.value = postToEdit.authorName || '';
-                        renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []); // Populate checkboxes
+                        renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
                         submitButton.textContent = "Save Changes";
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
@@ -552,15 +542,8 @@
                             await deleteDoc(doc(db, 'posts', postIdToDelete));
 
                             if (mediaUrlToDelete) {
-                                // IMPORTANT: To reliably delete media from storage, the stored 'mediaUrl'
-                                // needs to be convertible back to a storage reference path.
-                                // Firebase Storage URLs are like: https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{path}?alt=media&token={token}
-                                // You need the '{path}' part.
-                                // A more robust solution is to store the actual storagePath (e.g., 'blog_media/{blogId}/{timestamp}_{filename}')
-                                // in your Firestore document alongside the mediaUrl.
-                                // For now, we'll try to get the ref directly from the URL.
                                 try {
-                                    const mediaRef = ref(storage, mediaUrlToDelete); // This might fail if the URL isn't directly a path
+                                    const mediaRef = ref(storage, mediaUrlToDelete);
                                     await deleteObject(mediaRef);
                                 } catch (error) {
                                     console.warn("Could not delete associated media from storage (might be invalid URL, permissions, or already deleted):", error);
@@ -571,6 +554,7 @@
                             adminAllPostsCached = [];
                             adminCurrentPage = 0;
                             await loadPostsForAdmin();
+                            // Send message to embed to refresh when a post is deleted
                             if (window.parent && window.parent.postMessage) {
                                 window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
                             }
