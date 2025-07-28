@@ -150,12 +150,72 @@
             word-break: break-word; /* Ensure long words break */
         }
 
+        /* Media styles */
         .post-media {
             max-width: 100%;
             height: auto;
             display: block;
             border-radius: 8px;
             margin-top: 8px;
+            transition: all 0.3s ease-in-out; /* For smooth expansion */
+        }
+
+        /* New: Container for square video aspect ratio */
+        .post-video-container {
+            width: 100%; /* Take full available width */
+            padding-top: 100%; /* This creates the 1:1 aspect ratio (height = width) */
+            position: relative; /* Needed for absolute positioning of the video inside */
+            overflow: hidden; /* Hide anything outside the square */
+            border-radius: 8px; /* Match the post-media border-radius */
+            margin-top: 8px; /* Match the post-media margin */
+            background-color: #000; /* Black background for video areas */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        .post-video-container video {
+            position: absolute; /* Position the video absolutely within its square container */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* This is key! It crops the video to fit the square, maintaining aspect ratio */
+            display: block;
+            border-radius: 8px; /* Apply border-radius here as well */
+        }
+
+        /* Style for expanded video */
+        .post-media.expanded-video {
+            position: fixed; /* Fix it in the viewport */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center it */
+            width: 90%; /* Adjust as needed, e.g., 90% of viewport width */
+            max-width: 90vw; /* Maximum width relative to viewport */
+            max-height: 90vh; /* Maximum height relative to viewport */
+            object-fit: contain; /* Now, contain the video within the expanded box, showing full video */
+            z-index: 9999; /* Ensure it's on top of everything */
+            background-color: #000; /* Black background for letterboxing */
+            border: 2px solid rgba(255, 255, 255, 0.8); /* Optional: border for expanded view */
+            cursor: zoom-out; /* Indicate it's clickable to close */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Overlay for expanded video */
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent overlay */
+            z-index: 9998; /* Behind the video */
+            display: none; /* Hidden by default */
+            cursor: zoom-out;
+        }
+
+        /* Adjust scroll for body when video is expanded */
+        body.video-expanded {
+            overflow: hidden; /* Prevent scrolling of the underlying content */
         }
 
         .no-posts-message, .error-message {
@@ -441,7 +501,12 @@
                     if (post.mediaType && post.mediaType.startsWith('image')) {
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        mediaHtml = `<video controls src="${post.mediaUrl}" class="post-media"></video>`;
+                        // Wrap video in a container for square aspect ratio
+                        mediaHtml = `
+                            <div class="post-video-container">
+                                <video class="post-media" src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                            </div>
+                        `;
                     }
                 }
 
@@ -503,6 +568,59 @@
                     alert('Share functionality coming soon!');
                     // In a real application, you'd implement Web Share API or custom share links here.
                 });
+
+                // --- Video Expansion Logic (NEW) ---
+                const videoElement = postCard.querySelector('.post-media video');
+                if (videoElement) {
+                    videoElement.controls = false; // Hide native controls in the small view
+                    videoElement.onclick = (e) => {
+                        e.stopPropagation(); // Prevent click from bubbling up if postCard had a click listener
+
+                        if (!document.body.classList.contains('video-expanded')) {
+                            // Create overlay
+                            const overlay = document.createElement('div');
+                            overlay.className = 'video-overlay';
+                            document.body.appendChild(overlay);
+                            overlay.style.display = 'block';
+
+                            // Create full-size video element (clone to keep original intact)
+                            const fullVideo = videoElement.cloneNode(true);
+                            fullVideo.classList.add('expanded-video');
+                            fullVideo.controls = true; // Show controls in full view
+                            fullVideo.autoplay = true; // Ensure autoplay in full view
+                            fullVideo.muted = false; // Unmute in full view
+                            fullVideo.loop = false; // No loop in full view
+                            document.body.appendChild(fullVideo);
+
+                            // Stop the small video playback and reset time
+                            videoElement.pause();
+                            videoElement.currentTime = 0;
+
+                            // Add click listeners to close
+                            const closeVideo = () => {
+                                document.body.removeChild(fullVideo);
+                                document.body.removeChild(overlay);
+                                document.body.classList.remove('video-expanded');
+                                // Notify parent iframe to readjust height after closing
+                                if (window.parent) {
+                                    const height = document.body.scrollHeight;
+                                    window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                                }
+                            };
+
+                            overlay.onclick = closeVideo;
+                            fullVideo.onclick = closeVideo; // Click video itself to close
+
+                            document.body.classList.add('video-expanded');
+
+                            // Notify parent iframe to adjust height (might not be needed for fixed overlay, but good practice)
+                            if (window.parent) {
+                                const height = document.body.scrollHeight;
+                                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                            }
+                        }
+                    };
+                }
             });
 
             // Notify parent iframe (if any) to adjust height
@@ -582,23 +700,6 @@
                     renderCurrentPage();
                 });
                 paginationControls.appendChild(prevButton);
-
-                // --- REMOVED: Loop for creating page numbers ---
-                // for (let i = 0; i < totalPages; i++) {
-                //     const pageNumSpan = document.createElement('span');
-                //     pageNumSpan.textContent = i + 1;
-                //     pageNumSpan.className = 'page-number';
-                //     if (i === currentPage) {
-                //         pageNumSpan.classList.add('current-page');
-                //     }
-                //     pageNumSpan.addEventListener('click', () => {
-                //         if (currentPage !== i) {
-                //             currentPage = i;
-                //             renderCurrentPage();
-                //         }
-                //     });
-                //     paginationControls.appendChild(pageNumSpan);
-                // }
 
                 const nextButton = document.createElement('button');
                 nextButton.textContent = 'Next';
