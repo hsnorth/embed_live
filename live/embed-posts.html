@@ -3,474 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Blog Embed</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Live Blog Posts Embed</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Embed-specific overrides to ensure transparency and clean integration */
+        /* Base styles for the embed */
         body {
-            background-color: transparent !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            color: #000;
+            background-color: transparent !important; /* Essential for iframe transparency, added !important */
             margin: 0;
             padding: 0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            min-height: 100vh; /* Ensure body takes full height for proper scrollHeight calculation */
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            min-height: 100vh; /* Ensure body takes full viewport height */
         }
-
-        /* Basic container styling to ensure no extra padding/margin */
-        main, .live-blog-posts {
-            background-color: transparent !important;
-            margin: 0;
+        main {
             padding: 0;
-            box-sizing: border-box;
-            width: 100%;
+            margin: 0 auto;
+            box-shadow: none;
+            border-radius: 0;
+            background-color: transparent;
+            max-width: none;
+        }
+        .live-blog-posts {
+            margin-bottom: 0;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+            max-width: 600px; /* Constrain max width for posts */
+            margin: 0 auto; /* Center the posts content */
         }
 
-        /* Variables for easy theme customization */
-        :root {
-            --primary-color: #007bff; /* A nice blue for active elements */
-            --primary-darker-color: #0056b3; /* Darker blue for hover states */
-            --accent-color: #28a745; /* Green for current page/new updates */
-            --danger-color: #dc3545; /* Red for errors */
-            --text-color: #343a40;
-            --light-grey: #f8f9fa;
-            --medium-grey: #e9ecef;
-            --border-color: #dee2e6;
-            --highlight-yellow: #fffbe6; /* Light yellow for post highlight */
-        }
-
-        /* Hide elements not relevant for the embed */
-        h2, .new-post-form, footer, header {
+        /* Hide elements not needed in the embed */
+        .live-blog-posts h2,
+        .new-post-form,
+        footer,
+        header {
             display: none !important;
         }
 
-        /* Live Blog Posts Container */
-        .live-blog-posts {
-            padding: 15px; /* Add some padding around the posts */
-            box-sizing: border-box;
-            background-color: transparent;
-        }
-
-        .error-message {
-            color: var(--danger-color);
-            text-align: center;
-            padding: 20px;
-            font-weight: 500;
-        }
-
-        .no-posts-message {
-            text-align: center;
-            color: var(--text-color);
-            padding: 20px;
-        }
-
-        /* Post Card Styling */
+        /* --- Individual Post Card Styling --- */
         .post-card {
+            display: block;
+            padding: 12px 16px;
+            border-bottom: 1px solid #ebeef0;
             background-color: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: box-shadow 0.3s ease;
+            word-wrap: break-word;
+            position: relative;
         }
 
-        .post-card:hover {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .post-header {
+        .post-header-line {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            align-items: flex-start;
+            margin-bottom: 4px;
         }
 
         .author-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
             flex-shrink: 0;
-            position: relative; /* For the live dot positioning */
+            margin-right: 12px;
         }
 
         .author-avatar-img {
-            width: 100%;
-            height: 100%;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
             object-fit: cover;
             display: block;
-            border-radius: 50%;
-            position: relative; /* Added for correct positioning of the ::before pseudo-element */
+            position: relative;
         }
 
-        /* Live indicator dot */
-        .author-avatar-img.live::before {
+        /* Live dot on avatar */
+        .author-avatar-img::before {
             content: '';
             position: absolute;
-            top: 0px; /* Adjust as needed */
-            left: 0px; /* Adjust as needed */
+            top: 0;
+            left: 0;
             width: 10px;
             height: 10px;
-            background-color: #34D399; /* Bright green */
+            background-color: rgb(208, 2, 27);
             border-radius: 50%;
-            border: 2px solid white; /* White border to make it stand out */
-            z-index: 10;
+            border: 2px solid white;
+            transform: translate(-20%, -20%);
+            z-index: 1;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
 
         .post-meta {
             flex-grow: 1;
-        }
-
-        .post-author {
-            font-weight: 600;
-            color: var(--primary-darker-color);
             font-size: 15px;
-            margin-bottom: 2px;
+            line-height: 1.4;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .post-timestamp {
-            font-size: 12px;
-            color: #6c757d;
+        .meta-line-one {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+
+        .post-meta strong {
+            font-weight: bold;
+            color: #0f1419;
+            margin-right: 4px;
+        }
+
+        .post-meta span.time-ago {
+            color: rgb(208, 2, 27);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .post-meta .bullet {
+            color: #536471;
+            font-size: 14px;
+            margin: 0 4px;
+            display: inline;
+        }
+
+        .post-meta .reporting-from {
+            display: block;
+            color: #536471;
+            font-size: 14px;
+            margin-left: 0;
+            margin-top: 0px;
+            margin-bottom: 12px;
         }
 
         .post-subtitle {
-            font-weight: 500;
-            color: var(--text-color);
-            margin-top: 8px;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .post-content p {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            color: var(--text-color);
-            word-wrap: break-word; /* Ensure long words break */
-        }
-
-        .post-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        .show-more-button {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.5em;
+            color: #333;
             margin-top: 5px;
-            display: inline-block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
-        .show-more-button:hover {
-            text-decoration: underline;
+        .post-text {
+            font-family: "Noto Serif", Georgia, serif;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: #0f1419;
+            line-height: 20px;
+            word-break: break-word;
         }
 
+        /* Media styles (images and video containers) */
         .post-media {
-            margin-top: 10px;
-            border-radius: 6px;
-            overflow: hidden;
             max-width: 100%;
             height: auto;
-            display: block; /* Ensures no extra space below images */
+            display: block;
+            border-radius: 8px;
+            margin-top: 8px;
+            transition: all 0.3s ease-in-out;
         }
 
         .post-video-container {
-            position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            margin-top: 10px;
-            border-radius: 6px;
+            padding-top: 100%;
+            position: relative;
             overflow: hidden;
-            background-color: black; /* Placeholder background */
+            border-radius: 8px;
+            margin-top: 8px;
+            background-color: #000;
             cursor: pointer;
         }
 
-        .post-video {
+        .post-video-container video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Ensures video fits within container without cropping */
+            object-fit: cover;
             display: block;
+            border-radius: 8px;
         }
 
-        .post-tags {
-            margin-top: 10px;
-        }
-
-        .post-tags span {
-            display: inline-block;
-            background-color: var(--light-grey);
-            color: var(--text-color);
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-
-        /* Copy link button */
-        .copy-link-button {
-            background-color: var(--medium-grey);
-            color: var(--text-color);
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .copy-link-button:hover {
-            background-color: var(--border-color);
-        }
-
-        .copy-link-button.copied {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        
-        /* Expanded video overlay */
+        /* Style for expanded video overlay */
         .expanded-video-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.9);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 9998;
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px); /* Optional: blur background content */
+            justify-content: center;
+            cursor: zoom-out;
         }
 
         .expanded-video-overlay video {
             max-width: 90%;
             max-height: 90%;
+            object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
         }
 
-        /* Prevent scrolling on body when video is expanded */
         body.video-expanded {
             overflow: hidden;
         }
 
-        /* New Updates Button */
-        #newUpdatesButton {
-            position: sticky;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--accent-color);
-            color: white;
+        .no-posts-message, .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #536471;
+            font-style: italic;
+            font-size: 16px;
+        }
+
+        /* --- Copy Link Button --- */
+        .copy-link-button {
+            background: none;
             border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
+            color: #657786;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-            display: none; /* Hidden by default */
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            white-space: nowrap; /* Prevent text wrapping */
-        }
-
-        #newUpdatesButton:hover {
-            background-color: #218838; /* Darker green on hover */
-            transform: translateX(-50%) translateY(-2px);
-        }
-
-        #newUpdatesButton .new-updates-count {
-            background-color: white;
-            color: var(--accent-color);
-            border-radius: 50%;
-            padding: 2px 7px;
-            margin-left: 8px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Tab Navigation */
-        #tabNavigation {
+            font-size: 1em;
+            padding: 5px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease, color 0.2s ease;
             display: flex;
-            justify-content: flex-start; /* Align tabs to the start */
             align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            background-color: #fff;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; /* Make it sticky */
-            top: 0; /* Stick to the top of its container */
-            z-index: 100; /* Ensure it stays above posts */
-            overflow-x: auto; /* Allow horizontal scrolling for many tabs */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            white-space: nowrap; /* Prevent tabs from wrapping */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            gap: 5px;
+            white-space: nowrap;
         }
 
-        #tabNavigation::-webkit-scrollbar {
-            height: 5px;
+        .post-card .copy-link-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.9em;
         }
 
-        #tabNavigation::-webkit-scrollbar-thumb {
-            background: var(--medium-grey);
-            border-radius: 5px;
+        .copy-link-button:hover {
+            background-color: rgba(208, 2, 27, 0.1);
+            color: rgb(208, 2, 27);
         }
 
-        #tabNavigation::-webkit-scrollbar-track {
-            background: var(--light-grey);
+        .copy-link-button.copied {
+            color: rgb(208, 2, 27);
+            pointer-events: none;
+        }
+        .copy-link-button.copied i {
+            color: rgb(208, 2, 27);
         }
 
-        .tab-button {
-            background-color: var(--light-grey);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+        /* Show more button for truncated text */
+        .show-more-button {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
             padding: 8px 15px;
-            border-radius: 20px; /* Pill shape */
+            border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            flex-shrink: 0; /* Prevent tabs from shrinking */
+            margin-top: 10px;
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
-        .tab-button:hover {
-            background-color: var(--medium-grey);
+        .show-more-button:hover {
+            background-color: #e0e0e0;
+            border-color: #ccc;
         }
 
-        .tab-button.active-tab {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            pointer-events: none; /* Disable click on active tab */
-        }
-
-        /* Pagination Controls */
+        /* --- Pagination Controls --- */
         .pagination-controls {
             display: flex;
-            justify-content: center; /* Ensures horizontal centering */
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px; /* Add margin at the bottom as well */
+            padding: 15px 16px;
+            background-color: #fff;
+            border-top: 1px solid #ebeef0;
+            gap: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
             flex-wrap: wrap;
-            padding: 10px;
-            background-color: transparent;
         }
 
-        .pagination-controls .pagination-button, /* Targeting the Previous/Next buttons specifically */
-        .pagination-controls .page-number {      /* Targeting the numerical page spans */
-            background-color: var(--primary-color); /* Light blue */
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
+        .pagination-controls button {
+            background-color: transparent !important;
+            color: #0f1419 !important;
+            border: none !important;
+            padding: 8px 12px !important;
+            border-radius: 4px !important;
             cursor: pointer;
-            font-size: 16px; /* Adjusted for better visibility of text characters */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
+            font-size: 15px !important;
+            font-weight: normal !important;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            box-shadow: none !important;
+            transform: none !important;
+            text-decoration: none !important;
+            display: flex !important;
             align-items: center;
             justify-content: center;
-            min-width: 35px; /* Ensures consistent button size */
+            gap: 5px;
         }
 
-        .pagination-controls .pagination-button:hover:not(:disabled),
-        .pagination-controls .page-number:hover:not(.current-page) {
-            background-color: var(--primary-darker-color); /* Darker blue */
-            transform: translateY(-2px);
-        }
-
-        .pagination-controls .pagination-button:disabled {
-            background-color: #cccccc;
+        .pagination-controls button:disabled {
+            color: #999 !important;
             cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
+            opacity: 0.7;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            color: rgb(208, 2, 27) !important;
+            background-color: rgba(208, 2, 27, 0.05) !important;
+        }
+
+        .pagination-controls button:active:not(:disabled) {
+            background-color: rgba(208, 2, 27, 0.1) !important;
+        }
+
+        /* Page numbers (text only, no button outline) */
+        .pagination-controls .page-number {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px !important;
+            height: 32px !important;
+            padding: 0 8px !important;
+            margin: 0 3px !important;
+            text-decoration: none !important;
+            color: #0f1419 !important;
+            font-weight: normal !important;
+            border-radius: 4px !important;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-size: 15px !important;
+            box-sizing: border-box !important;
         }
 
         .pagination-controls .page-number.current-page {
-            background-color: var(--accent-color); /* Green for current page */
-            color: white;
-            cursor: default;
-            transform: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            color: rgb(208, 2, 27) !important;
+            font-weight: bold !important;
+            background-color: rgba(208, 2, 27, 0.1) !important;
+            border-bottom: none !important; /* Ensure no unwanted underlines */
+            padding-bottom: 0 !important; /* Remove padding from bottom if any */
+        }
+
+        .pagination-controls .page-number:hover:not(.current-page) {
+            background-color: #f0f0f0 !important;
+            color: #333 !important;
         }
 
         .pagination-controls .ellipsis {
-            color: var(--text-color);
-            padding: 8px 0px; /* Adjust padding to align vertically with buttons */
-            font-size: 16px; /* Ensure consistency with button text size */
+            padding: 0 5px !important;
+            color: #536471 !important;
+            font-size: 15px !important;
+            cursor: default;
         }
 
-        /* Responsive adjustments */
+        /* Responsive adjustments for pagination */
         @media (max-width: 600px) {
-            .post-card {
-                padding: 12px;
-            }
-            .post-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            .post-meta {
-                text-align: left;
-            }
             .pagination-controls {
+                padding: 10px 12px;
                 gap: 8px;
-                padding: 5px;
+                border-radius: 0;
             }
             .pagination-controls button,
             .pagination-controls .page-number {
                 padding: 6px 10px;
-                font-size: 13px;
-                min-width: 30px;
-            }
-            .tab-button {
-                padding: 7px 12px;
-                font-size: 13px;
-            }
-            #newUpdatesButton {
-                padding: 8px 16px;
-                font-size: 13px;
+                font-size: 14px;
+                min-width: 28px;
+                height: 28px;
             }
         }
+
+        /* --- Tab Navigation (Embed Page Specific) --- */
+        .tab-navigation {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            border-bottom: 1px solid #ebeef0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            padding: 0 10px;
+            justify-content: flex-start;
+        }
+
+        .tab-navigation button {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s ease, border-bottom 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .tab-navigation button.active-tab {
+            color: rgb(208, 2, 27);
+            border-bottom: 2px solid rgb(208, 2, 27);
+            font-weight: bold;
+        }
+
+        .tab-navigation button:hover:not(.active-tab) {
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        /* New Update Notification Button */
+        #newUpdatesButton {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgb(208, 2, 27);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+            transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+        }
+
+        #newUpdatesButton:hover {
+            background-color: rgb(170, 0, 20);
+            transform: translateX(-50%) translateY(-2px);
+        }
+        /* --- END OF CUSTOM CSS MARKER --- */
     </style>
 </head>
 <body>
     <main>
         <section class="live-blog-posts">
-            <div id="tabNavigation">
-                </div>
+            <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
-                </div>
-            <div id="paginationControls">
-                </div>
-            <button id="newUpdatesButton" style="display: none;">
-                New Updates <span class="new-updates-count"></span>
-            </button>
+            </div>
+            <div id="paginationControls"></div>
         </section>
     </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <button id="newUpdatesButton">
+        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
+    </button>
 
-        // Your Firebase configuration - REPLACE THESE WITH YOUR ACTUAL VALUES
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // REPLACE THIS
             authDomain: "myliveblogapp-cf9df.firebaseapp.com", // REPLACE THIS
@@ -480,129 +477,142 @@
             appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS
             measurementId: "G-EZN90844XF" // REPLACE THIS (optional)
         };
-
-        // Initialize Firebase
+        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Global Variables ---
-        let currentBlogId = null;
-        let allPostsCached = []; // Stores all fetched posts
-        let filteredPosts = []; // Posts after applying tab filter
+        // --- Global Variables for Embed ---
         let currentPage = 0;
-        const postsPerPage = 5; // Number of posts to show per page
-        let unsubscribeFromPosts = null; // To manage the real-time listener
-        const defaultTab = "Live Reporting";
-        let customTabs = [];
-        let currentActiveTab = defaultTab;
-        let initialLoadComplete = false; // Flag to handle initial deep link vs. new updates
-        let newUpdatesCount = 0;
+        const postsPerPage = 8; // Number of posts to show per page
+        let currentBlogId = null; // ID of the blog being displayed
+        let allPostsCached = []; // Stores all posts for the current blog
+        let filteredPosts = []; // Posts filtered by the currently active tab
+        let currentActiveTab = "Live Reporting"; // Default active tab name
+        const defaultTab = "Live Reporting"; // Constant for the default tab name
+        let customTabs = []; // To store custom tabs defined in the blog document
+        let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
+        let newUpdatesCount = 0; // Count of new updates for the button
 
-        // --- DOM Elements ---
+        // DOM element references
         const postsContainer = document.getElementById('postsContainer');
         const paginationControls = document.getElementById('paginationControls');
         const tabNavigationDiv = document.getElementById('tabNavigation');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
+        const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
-        // --- Helper Function: timeAgo (Calculates time elapsed) ---
-        const timeAgo = (timestamp) => {
-            if (!timestamp) return 'N/A';
-            const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
+        // --- Helper Function: timeAgo (for displaying how long ago a post was made) ---
+        function timeAgo(timestamp) {
+            const now = new Date();
+            // Convert Firestore Timestamp to Date object if applicable
+            const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
+            const seconds = Math.floor((now - postDate) / 1000);
 
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + "y ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + "mo ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + "d ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + "h ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + "m ago";
-            return Math.floor(seconds) + "s ago";
-        };
+            let interval = seconds / 31536000; // Years
+            if (interval > 1) {
+                return Math.floor(interval) + " years ago";
+            }
+            interval = seconds / 2592000; // Months
+            if (interval > 1) {
+                return Math.floor(interval) + " months ago";
+            }
+            interval = seconds / 86400; // Days
+            if (interval > 1) {
+                return Math.floor(interval) + " days ago";
+            }
+            interval = seconds / 3600; // Hours
+            if (interval > 1) {
+                return Math.floor(interval) + " hours ago";
+            }
+            interval = seconds / 60; // Minutes
+            if (interval > 1) {
+                return Math.floor(interval) + " minutes ago";
+            }
+            return Math.floor(seconds) + " seconds ago";
+        }
 
-        // --- Helper Function: renderPosts (Renders posts to a given container) ---
-        const renderPosts = (posts, containerId) => {
+        // --- Function: renderPosts (Renders a given array of posts into a container) ---
+        const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
-            if (!container) return;
-
+            if (!container) {
+                console.error(`Container with ID "${containerId}" not found.`);
+                return;
+            }
             container.innerHTML = ''; // Clear existing posts
 
-            if (posts.length === 0) {
-                container.innerHTML = '<p class="no-posts-message">No posts found for this selection.</p>';
+            if (postsToRender.length === 0) {
+                container.innerHTML = '<p class="no-posts-message">No posts yet for this tab. Be the first to add an update!</p>';
                 return;
             }
 
-            posts.forEach(post => {
-                const MAX_CHARS_PREVIEW = 300; // Max characters for content preview
+            const MAX_CHARS_PREVIEW = 450; // Max characters before truncating post content
 
+            postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
-                postCard.id = `post-${post.id}`; // Add ID for deep linking
+                postCard.dataset.postId = post.id;
+                postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
 
-                let postContentHTML = post.content;
-                let showMoreButtonHTML = '';
-
-                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
-                    postContentHTML = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
-                    showMoreButtonHTML = '<button class="show-more-button">Show more</button>';
-                }
-
-                const subtitleHTML = post.subtitle ? `<h3 class="post-subtitle">${post.subtitle}</h3>` : '';
-
-                let mediaHTML = '';
+                let mediaHtml = '';
                 if (post.mediaUrl) {
-                    if (post.mediaType === 'image') {
-                        mediaHTML = `<img src="${post.mediaUrl}" alt="Post Media" class="post-media">`;
-                    } else if (post.mediaType === 'video') {
-                        // Use preload="metadata" to load enough info for poster frame without full video
-                        mediaHTML = `
+                    if (post.mediaType && post.mediaType.startsWith('image')) {
+                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
+                        mediaHtml = `
                             <div class="post-video-container">
-                                <video class="post-video" src="${post.mediaUrl}" preload="metadata" playsinline muted></video>
+                                <video src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
                             </div>
                         `;
                     }
                 }
 
-                const tagsHTML = post.tags && post.tags.length > 0
-                    ? `<div class="post-tags">${post.tags.map(tag => `<span>${tag}</span>`).join('')}</div>`
-                    : '';
-                
-                // Get a default avatar if none is provided
-                const avatarUrl = post.authorAvatar || 'https://via.placeholder.com/40?text=A';
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default avatar
+
+                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+
+                let displayContentHtml = post.content;
+                let showMoreButtonHtml = '';
+                let isTruncated = false;
+
+                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
+                    displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    isTruncated = true;
+                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
+                }
 
                 postCard.innerHTML = `
-                    <div class="post-header">
+                    <div class="post-header-line">
                         <div class="author-avatar">
-                            <img src="${avatarUrl}" alt="${post.authorName}'s avatar" class="author-avatar-img ${post.isLive ? 'live' : ''}">
+                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
                         </div>
                         <div class="post-meta">
-                            <div class="post-author">${post.authorName || 'Anonymous'}</div>
-                            <div class="post-timestamp">${timeAgo(post.timestamp)}</div>
+                            <div class="meta-line-one">
+                                <strong>${post.authorName || 'Anonymous'}</strong>
+                                <span class="bullet">•</span>
+                                <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                            </div>
+                            ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
+                        <button class="copy-link-button" data-post-id="${post.id}" title="Copy Link to Post">
+                            <i class="fas fa-link"></i>
+                        </button>
                     </div>
-                    ${subtitleHTML}
-                    <div class="post-content">
-                        <p>${postContentHTML}</p>
-                        ${showMoreButtonHTML}
-                    </div>
-                    ${mediaHTML}
-                    ${tagsHTML}
-                    <button class="copy-link-button">
-                        Copy Link
-                    </button>
+                    ${subtitleHtml}
+                    <p class="post-text">${displayContentHtml}</p>
+                    ${mediaHtml}
+                    ${showMoreButtonHtml}
                 `;
                 container.appendChild(postCard);
 
-                // Add event listener for "Show more" button
-                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
+                // Add event listener for "Show more" button if content was truncated
+                if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentParagraph = postCard.querySelector('.post-content p');
+                    const contentParagraph = postCard.querySelector('.post-text');
+
                     showMoreButton.addEventListener('click', () => {
-                        contentParagraph.innerHTML = post.content;
-                        showMoreButton.style.display = 'none';
-                        // Notify parent iframe to adjust height after content expands
+                        contentParagraph.innerHTML = post.content; // Set full content
+                        showMoreButton.style.display = 'none'; // Hide the button
+                        
+                        // Notify parent iframe to adjust height after expansion
                         if (window.parent) {
                             const height = document.body.scrollHeight;
                             window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
@@ -610,161 +620,195 @@
                     });
                 }
 
-                // Add event listener for Copy Link button
+                // --- Copy Link Button Logic ---
                 const copyLinkButton = postCard.querySelector('.copy-link-button');
-                if (copyLinkButton) {
-                    copyLinkButton.addEventListener('click', async () => {
-                        const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${currentBlogId}#post-${post.id}`;
-                        try {
-                            await navigator.clipboard.writeText(deepLink);
-                            copyLinkButton.textContent = 'Copied!';
-                            copyLinkButton.classList.add('copied');
-                            setTimeout(() => {
-                                copyLinkButton.textContent = 'Copy Link';
-                                copyLinkButton.classList.remove('copied');
-                            }, 2000);
-                        } catch (err) {
-                            console.error('Failed to copy link:', err);
-                            alert('Failed to copy link. Please copy it manually.');
-                        }
-                    });
-                }
+                copyLinkButton.addEventListener('click', async () => {
+                    const postId = copyLinkButton.dataset.postId;
+                    const blogId = currentBlogId;
 
-                // Add event listener for video playback/expansion
+                    if (!blogId || !postId) {
+                        alert("Could not generate link for this post.");
+                        return;
+                    }
+
+                    // Construct the deep link URL (adjust path if your embed is elsewhere)
+                    const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
+                    
+                    try {
+                        await navigator.clipboard.writeText(deepLink);
+                        const originalContent = copyLinkButton.innerHTML;
+                        copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!'; // Change to checkmark and text
+                        copyLinkButton.classList.add('copied');
+
+                        setTimeout(() => {
+                            copyLinkButton.innerHTML = originalContent; // Revert to original icon/text
+                            copyLinkButton.classList.remove('copied');
+                        }, 2000); // Show "Link Copied!" for 2 seconds
+                    } catch (err) {
+                        console.error('Failed to copy link: ', err);
+                        alert('Failed to copy link. Please copy manually: ' + deepLink);
+                    }
+                });
+
+                // --- Video Playback and Expansion Logic ---
                 const videoContainer = postCard.querySelector('.post-video-container');
                 if (videoContainer) {
-                    const videoElement = videoContainer.querySelector('.post-video');
+                    const videoElement = videoContainer.querySelector('video');
+                    
                     videoContainer.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent post card click if it had one
+                        e.stopPropagation(); // Prevent click from bubbling to postCard
 
-                        // Create overlay for full-screen video
-                        const overlay = document.createElement('div');
-                        overlay.className = 'expanded-video-overlay';
+                        // If not currently expanded, expand it
+                        if (!document.body.classList.contains('video-expanded')) {
+                            const overlay = document.createElement('div');
+                            overlay.className = 'expanded-video-overlay';
+                            document.body.appendChild(overlay);
 
-                        const fullVideo = videoElement.cloneNode(true);
-                        fullVideo.controls = true;
-                        fullVideo.autoplay = true;
-                        fullVideo.muted = false; // Unmute by default in expanded view
-                        fullVideo.loop = false;
-                        fullVideo.playsinline = false; // Allow fullscreen on iOS
+                            const fullVideo = videoElement.cloneNode(true);
+                            fullVideo.controls = true;     // Show controls in full view
+                            fullVideo.autoplay = true;     // Auto-play when expanded
+                            fullVideo.muted = false;       // Unmute in full view
+                            fullVideo.loop = false;        // No loop in full view
+                            fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
+                            
+                            overlay.appendChild(fullVideo);
 
-                        overlay.appendChild(fullVideo);
-                        document.body.appendChild(overlay);
-                        document.body.classList.add('video-expanded'); // Add class to prevent body scroll
+                            // Stop the small video and reset its time
+                            videoElement.pause();
+                            videoElement.currentTime = 0;
 
-                        // Pause the small video and reset its time
-                        videoElement.pause();
-                        videoElement.currentTime = 0;
+                            // Add event listeners to close the full-size video
+                            const closeVideo = () => {
+                                document.body.removeChild(overlay);
+                                document.body.classList.remove('video-expanded');
+                                // Notify parent iframe to readjust height after closing
+                                if (window.parent) {
+                                    const height = document.body.scrollHeight;
+                                    window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                                }
+                            };
+                            overlay.addEventListener('click', closeVideo);
+                            fullVideo.addEventListener('click', (ev) => ev.stopPropagation()); // Prevent clicks on video itself from closing
 
-                        const closeVideo = () => {
-                            overlay.remove();
-                            document.body.classList.remove('video-expanded');
-                            // Notify parent iframe to readjust height (in case body overflow hidden affected it)
+                            document.body.classList.add('video-expanded');
+
+                            // Notify parent iframe to adjust height (if necessary for fixed overlay scenario)
                             if (window.parent) {
                                 const height = document.body.scrollHeight;
                                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
                             }
-                        };
-
-                        overlay.addEventListener('click', closeVideo); // Close when clicking overlay
-                        fullVideo.addEventListener('click', (ev) => ev.stopPropagation()); // Prevent closing when clicking video
-                        fullVideo.addEventListener('ended', closeVideo); // Close when video ends
+                        } else {
+                            // If video is already expanded, this click would be on the small video
+                            // In this case, we might want to toggle play/pause for the small video
+                            if (videoElement.paused) {
+                                videoElement.play().catch(e => console.error("Play failed:", e));
+                            } else {
+                                videoElement.pause();
+                            }
+                        }
                     });
                 }
             });
 
-            // Notify parent iframe (if any) to adjust height after posts render
+            // Notify parent iframe (if any) to adjust height after rendering posts
             if (window.parent) {
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
             }
         };
 
-        // --- Function: setupRealtimeListener (Fetches and listens for real-time post updates) ---
+        // --- Live Updates Listener (onSnapshot) ---
+        let unsubscribeFromPosts = null; // To store the unsubscribe function for real-time listener
+
         const setupRealtimeListener = (blogId) => {
             if (unsubscribeFromPosts) {
-                unsubscribeFromPosts(); // Unsubscribe from previous listener if exists
+                unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
             }
 
             const postsCollectionRef = collection(db, 'posts');
-            const q = query(postsCollectionRef,
-                // Add filter for current blogId
-                // where('blogId', '==', blogId), // Uncomment this line if you have a blogId field in posts
+            const q = query(
+                postsCollectionRef,
+                where('blogId', '==', blogId),
                 orderBy('timestamp', 'desc')
             );
 
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
                 const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
+                
+                // Compare with current cached posts to detect new ones
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
-                const newPostIds = new Set(updatedPosts.map(p => p.id));
-
                 let newPostsDetected = false;
-                if (initialLoadComplete) { // Only count new posts after initial load
-                    for (const id of newPostIds) {
-                        if (!oldPostIds.has(id)) {
+                if (initialLoadComplete) { // Only show "New Update" after initial load
+                    for (const post of updatedPosts) {
+                        if (!oldPostIds.has(post.id)) {
                             newPostsDetected = true;
-                            newUpdatesCount++;
+                            break;
                         }
                     }
                 }
 
-                allPostsCached = updatedPosts; // Update the cache with latest data
+                allPostsCached = updatedPosts; // Update the cache with the latest data
                 
-                // If there are new posts and user is scrolled down, show "New Updates" button
+                // If a new post is detected and we are not at the top of the page, show the "New Update" button
                 if (newPostsDetected && window.scrollY > 0) {
-                    newUpdatesButton.style.display = 'flex'; // Use flex to center icon/text
-                    const countSpan = newUpdatesButton.querySelector('.new-updates-count');
-                    if (countSpan) countSpan.textContent = newUpdatesCount;
+                    newUpdatesCount++;
+                    newUpdatesCountSpan.textContent = newUpdatesCount;
+                    newUpdatesButton.style.display = 'block';
                 } else {
-                    // If no new posts, or user is at the top, just re-render immediately
-                    newUpdatesCount = 0;
+                    newUpdatesCount = 0; // Reset count
                     newUpdatesButton.style.display = 'none';
-                    filterAndRenderPosts(); // Re-filter and render with latest data
+                    filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
                 }
 
-                // Handle deep linking on initial load
+                // Handle deep linking and scrolling AFTER posts are rendered or updated
+                // This block should only run on the initial load or after a full refresh
+                // not on every snapshot update unless it's a new page load
                 if (!initialLoadComplete && window.location.hash) {
-                    const postId = window.location.hash.substring(1).replace('post-', '');
-                    if (postId) {
-                        scrollToPost(postId);
-                    }
+                    const postIdFromHash = window.location.hash.substring(1); // Remove '#'
+                    scrollToPost(postIdFromHash);
                 }
 
-                initialLoadComplete = true; // Set flag after the first snapshot
+                initialLoadComplete = true; // Mark initial load as complete
             }, (error) => {
-                console.error("Error fetching posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading posts. Please try again later.</p>';
+                console.error("Error listening to posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
             });
         };
 
-        // --- Function: scrollToPost (Scrolls to a specific post and highlights it) ---
+        // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
         const scrollToPost = (postId) => {
-            const postIndex = filteredPosts.findIndex(post => post.id === postId);
-            if (postIndex === -1) {
-                console.warn(`Post with ID ${postId} not found in filtered posts.`);
-                return;
-            }
-
-            const targetPage = Math.floor(postIndex / postsPerPage);
-
-            if (currentPage !== targetPage) {
-                currentPage = targetPage;
-                renderCurrentPage(); // Render the correct page first
-            }
-
-            // Small delay to allow rendering
-            setTimeout(() => {
-                const targetElement = document.getElementById(postId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                    targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+            // Find the index of the post in the *filtered* list to determine its page
+            const postIndex = filteredPosts.findIndex(p => `post-${p.id}` === postId);
+            if (postIndex !== -1) {
+                const targetPage = Math.floor(postIndex / postsPerPage);
+                if (currentPage !== targetPage) {
+                    currentPage = targetPage; // Set current page to the post's page
+                    renderCurrentPage(); // Render the new page
+                    // Wait a moment for rendering, then scroll
                     setTimeout(() => {
-                        targetElement.style.backgroundColor = ''; // Remove highlight
-                    }, 3000);
+                        const targetElement = document.getElementById(postId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                            targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                            setTimeout(() => {
+                                targetElement.style.backgroundColor = ''; // Remove highlight
+                            }, 3000); // Highlight for 3 seconds
+                        }
+                    }, 100); // Small delay to allow rendering
+                } else {
+                    // Already on the correct page, just scroll
+                    const targetElement = document.getElementById(postId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                        targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                        setTimeout(() => {
+                            targetElement.style.backgroundColor = ''; // Remove highlight
+                        }, 3000);
+                    }
                 }
-            }, 100);
+            }
         };
 
         // --- Function: loadPosts (Initial loading of blog ID and setting up listeners) ---
@@ -827,10 +871,9 @@
             if (totalPages > 1) { // Only show pagination if more than one page
                 // Previous button
                 const prevButton = document.createElement('button');
-                prevButton.innerHTML = '&laquo;'; // Left double angle quote character
+                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>'; // Left arrow icon
                 prevButton.disabled = currentPage === 0; // Disable if on first page
                 prevButton.title = 'Previous Page';
-                prevButton.classList.add('pagination-button'); // Added class
                 prevButton.addEventListener('click', () => {
                     currentPage--;
                     renderCurrentPage();
@@ -919,10 +962,9 @@
 
                 // Next button
                 const nextButton = document.createElement('button');
-                nextButton.innerHTML = '&raquo;'; // Right double angle quote character
+                nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>'; // Right arrow icon
                 nextButton.disabled = currentPage >= totalPages - 1; // Disable if on last page
                 nextButton.title = 'Next Page';
-                nextButton.classList.add('pagination-button'); // Added class
                 nextButton.addEventListener('click', () => {
                     currentPage++;
                     renderCurrentPage();
