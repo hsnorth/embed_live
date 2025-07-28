@@ -151,7 +151,6 @@
         }
 
         /* Media styles */
-        /* .post-media remains as a general class for images, but videos will be handled by their container */
         .post-media {
             max-width: 100%;
             height: auto;
@@ -397,6 +396,31 @@
             color: #333;
             background-color: #f9f9f9;
         }
+
+        /* New Update Notification Button */
+        #newUpdatesButton {
+            position: fixed;
+            bottom: 20px; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgb(208, 2, 27); /* Red, matching your theme */
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px; /* Pill shape */
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: none; /* Hidden by default */
+            z-index: 1001; /* Above other content */
+            transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+        }
+
+        #newUpdatesButton:hover {
+            background-color: rgb(170, 0, 20); /* Slightly darker red on hover */
+            transform: translateX(-50%) translateY(-2px); /* Subtle lift */
+        }
     </style>
 </head>
 <body>
@@ -409,9 +433,14 @@
         </section>
     </main>
 
+    <!-- New Update Notification Button -->
+    <button id="newUpdatesButton">
+        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
+    </button>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"; // Added onSnapshot
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -432,13 +461,17 @@
         let currentBlogId = null;
         let allPostsCached = []; // All posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Updates"; // Default active tab
-        const defaultTab = "Live Updates";
+        let currentActiveTab = "Live Reporting"; // Default active tab
+        const defaultTab = "Live Reporting";
         let customTabs = []; // To store custom tabs from the blog document
+        let initialLoadComplete = false; // Flag to prevent "New Update" on first load
+        let newUpdatesCount = 0; // Count of new updates
 
         const postsContainer = document.getElementById('postsContainer');
         const paginationControls = document.getElementById('paginationControls');
         const tabNavigationDiv = document.getElementById('tabNavigation');
+        const newUpdatesButton = document.getElementById('newUpdatesButton');
+        const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
         // --- Functions for time, rendering, and pagination ---
 
@@ -611,7 +644,7 @@
 
                             document.body.classList.add('video-expanded');
 
-                            // Notify parent iframe (if necessary for fixed overlay scenario)
+                            // Notify parent iframe to adjust height (if necessary for fixed overlay scenario)
                             if (window.parent) {
                                 const height = document.body.scrollHeight;
                                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
@@ -640,6 +673,58 @@
             }
         };
 
+        // --- Live Updates Listener (onSnapshot) ---
+        let unsubscribeFromPosts = null; // To store the unsubscribe function
+
+        const setupRealtimeListener = (blogId) => {
+            if (unsubscribeFromPosts) {
+                unsubscribeFromPosts(); // Unsubscribe from previous listener if exists
+            }
+
+            const postsCollectionRef = collection(db, 'posts');
+            const q = query(
+                postsCollectionRef,
+                where('blogId', '==', blogId),
+                orderBy('timestamp', 'desc')
+            );
+
+            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
+                const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Compare with current cached posts to detect new ones
+                const oldPostIds = new Set(allPostsCached.map(p => p.id));
+                let newPostsDetected = false;
+                if (initialLoadComplete) { // Only show updates after initial load
+                    for (const post of updatedPosts) {
+                        if (!oldPostIds.has(post.id)) {
+                            newPostsDetected = true;
+                            break;
+                        }
+                    }
+                }
+
+                allPostsCached = updatedPosts; // Update the cache with the latest data
+
+                if (newPostsDetected && window.scrollY > 0) { // Only show button if not at top
+                    newUpdatesCount++;
+                    newUpdatesCountSpan.textContent = newUpdatesCount;
+                    newUpdatesButton.style.display = 'block';
+                    // If multiple updates come in quickly, you might want to debounce this
+                } else {
+                    // If new posts detected but user is at the top, or if no new posts, just refresh
+                    newUpdatesCount = 0; // Reset count
+                    newUpdatesButton.style.display = 'none';
+                    filterAndRenderPosts(); // Re-render to show latest posts
+                }
+
+                initialLoadComplete = true; // Mark initial load as complete
+            }, (error) => {
+                console.error("Error listening to posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
+            });
+        };
+
+
         const loadPosts = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
@@ -659,31 +744,20 @@
                 if (blogDocSnap.exists()) {
                     customTabs = blogDocSnap.data().customTabs || [];
                 }
-
-                // Always re-fetch all posts associated with the current blogId when loadPosts is called
-                const postsCollectionRef = collection(db, 'posts');
-                const q = query(
-                    postsCollectionRef,
-                    where('blogId', '==', currentBlogId),
-                    orderBy('timestamp', 'desc')
-                );
-                const querySnapshot = await getDocs(q);
-                allPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 renderTabs(); // Render/update tabs
-                filterAndRenderPosts(); // Filter and render based on current tab
+                // Initial load of posts will be handled by onSnapshot
+                setupRealtimeListener(currentBlogId); // Start listening for real-time updates
             } catch (error) {
-                console.error("Error loading posts or blog for embed:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading posts. Please try again later.</p>';
+                console.error("Error loading blog details for embed:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
             }
         };
 
         const filterAndRenderPosts = () => {
             if (currentActiveTab === defaultTab) {
-                // "Live Reporting" tab shows all posts
                 filteredPosts = allPostsCached;
             } else {
-                // Filter posts based on the active custom tab
                 filteredPosts = allPostsCached.filter(post => 
                     post.assignedTabs && post.assignedTabs.includes(currentActiveTab)
                 );
@@ -720,29 +794,24 @@
                 });
                 paginationControls.appendChild(nextButton);
             }
-            // Notify parent iframe to adjust height after pagination update
             if (window.parent) {
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
             }
         };
 
-        // New function to render the posts for the current page
         const renderCurrentPage = () => {
             const startIndex = currentPage * postsPerPage;
             const endIndex = startIndex + postsPerPage;
             const postsToShow = filteredPosts.slice(startIndex, endIndex);
 
             renderPosts(postsToShow, 'postsContainer');
-            updatePaginationControls(filteredPosts.length); // Update pagination controls to reflect current page
+            updatePaginationControls(filteredPosts.length);
         };
 
-
-        // --- Tab Rendering and Interaction ---
         const renderTabs = () => {
-            tabNavigationDiv.innerHTML = ''; // Clear existing tabs
+            tabNavigationDiv.innerHTML = '';
 
-            // Always add "Live Reporting" tab first
             const liveReportingButton = document.createElement('button');
             liveReportingButton.textContent = defaultTab;
             liveReportingButton.classList.add('tab-button');
@@ -751,12 +820,11 @@
             }
             liveReportingButton.addEventListener('click', () => {
                 currentActiveTab = defaultTab;
-                renderTabs(); // Re-render to update active state
+                renderTabs();
                 filterAndRenderPosts();
             });
             tabNavigationDiv.appendChild(liveReportingButton);
 
-            // Add custom tabs
             customTabs.forEach(tabName => {
                 const tabButton = document.createElement('button');
                 tabButton.textContent = tabName;
@@ -766,7 +834,7 @@
                 }
                 tabButton.addEventListener('click', () => {
                     currentActiveTab = tabName;
-                    renderTabs(); // Re-render to update active state
+                    renderTabs();
                     filterAndRenderPosts();
                 });
                 tabNavigationDiv.appendChild(tabButton);
@@ -775,6 +843,14 @@
 
         document.addEventListener('DOMContentLoaded', loadPosts);
 
+        // --- New Update Button Click Listener ---
+        newUpdatesButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+            newUpdatesCount = 0; // Reset count
+            newUpdatesButton.style.display = 'none'; // Hide button
+            filterAndRenderPosts(); // Re-render to show latest posts
+        });
+
         // Listen for messages from parent window (e.g., admin page) to refresh
         window.addEventListener('message', (event) => {
             // Validate origin in production environments
@@ -782,9 +858,11 @@
             
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update.');
-                // We no longer need window.reFetchPosts flag explicitly.
-                // Calling loadPosts directly will re-fetch allPostsCached.
-                loadPosts();
+                // Instead of calling loadPosts directly, we rely on the onSnapshot listener
+                // to detect changes and trigger updates.
+                // If you want to force a refetch even if onSnapshot hasn't fired yet,
+                // you could add a flag here to force loadPosts to refetch.
+                // For now, onSnapshot will handle it.
             }
         });
     </script>
