@@ -9,14 +9,14 @@
     <style>
         /* Base styles for the embed */
         body {
-            /* Using a system font stack for general UI elements, including pagination */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
             color: #000;
-            background-color: transparent; /* Essential for iframe transparency */
+            background-color: transparent !important; /* Essential for iframe transparency, added !important */
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            min-height: 100vh; /* Ensure body takes full viewport height */
         }
         main {
             padding: 0;
@@ -35,7 +35,7 @@
             margin: 0 auto; /* Center the posts content */
         }
 
-        /* Hide elements not needed in the embed (if they were present from a full blog page) */
+        /* Hide elements not needed in the embed */
         .live-blog-posts h2,
         .new-post-form,
         footer,
@@ -50,13 +50,13 @@
             border-bottom: 1px solid #ebeef0;
             background-color: #fff;
             word-wrap: break-word;
-            position: relative; /* For positioning the copy link button */
+            position: relative;
         }
 
         .post-header-line {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 4px; /* Reduced to make header elements tighter */
+            margin-bottom: 4px;
         }
 
         .author-avatar {
@@ -81,10 +81,10 @@
             left: 0;
             width: 10px;
             height: 10px;
-            background-color: rgb(208, 2, 27); /* Red color */
+            background-color: rgb(208, 2, 27);
             border-radius: 50%;
-            border: 2px solid white; /* White border around the dot */
-            transform: translate(-20%, -20%); /* Adjust position to be top-left of the image */
+            border: 2px solid white;
+            transform: translate(-20%, -20%);
             z-index: 1;
             box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
@@ -102,7 +102,7 @@
         .meta-line-one {
             display: flex;
             align-items: center;
-            margin-bottom: 0px; /* Reduced to make name/time tighter */
+            margin-bottom: 0px;
         }
 
         .post-meta strong {
@@ -112,7 +112,7 @@
         }
 
         .post-meta span.time-ago {
-            color: rgb(208, 2, 27); /* Red for time */
+            color: rgb(208, 2, 27);
             font-size: 14px;
             font-weight: bold;
         }
@@ -125,17 +125,17 @@
         }
 
         .post-meta .reporting-from {
-            display: block; /* Make it stack below the first line */
+            display: block;
             color: #536471;
             font-size: 14px;
             margin-left: 0;
-            margin-top: 0px; /* Ensure no extra top margin */
-            margin-bottom: 12px; /* Increased margin-bottom for a slightly bigger gap before content */
+            margin-top: 0px;
+            margin-bottom: 12px;
         }
 
         .post-subtitle {
-            font-family: 'Roboto', sans-serif; /* Specific font for subtitle */
-            font-size: 1.5em; /* Larger size */
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.5em;
             color: #333;
             margin-top: 5px;
             margin-bottom: 5px;
@@ -143,13 +143,13 @@
         }
 
         .post-text {
-            font-family: "Noto Serif", Georgia, serif; /* Specific font for main content */
+            font-family: "Noto Serif", Georgia, serif;
             font-size: 16px;
-            margin-top: 0; /* Remove top margin here to let .reporting-from's margin control the gap */
+            margin-top: 0;
             margin-bottom: 8px;
             color: #0f1419;
             line-height: 20px;
-            word-break: break-word; /* Ensure long words break */
+            word-break: break-word;
         }
 
         /* Media styles (images and video containers) */
@@ -159,61 +159,58 @@
             display: block;
             border-radius: 8px;
             margin-top: 8px;
-            transition: all 0.3s ease-in-out; /* For smooth expansion */
+            transition: all 0.3s ease-in-out;
         }
 
-        /* Container for square video aspect ratio */
         .post-video-container {
-            width: 100%; /* Take full available width */
-            padding-top: 100%; /* This creates the 1:1 aspect ratio (height = width) */
-            position: relative; /* Needed for absolute positioning of the video inside */
-            overflow: hidden; /* Hide anything outside the square */
-            border-radius: 8px; /* Match the post-media border-radius */
-            margin-top: 8px; /* Match the post-media margin */
-            background-color: #000; /* Black background for video areas */
-            cursor: pointer; /* Indicate it's clickable */
+            width: 100%;
+            padding-top: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 8px;
+            background-color: #000;
+            cursor: pointer;
         }
 
         .post-video-container video {
-            position: absolute; /* Position the video absolutely within its square container */
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* This is key! It crops the video to fit the square, maintaining aspect ratio */
+            object-fit: cover;
             display: block;
-            border-radius: 8px; /* Apply border-radius here as well */
+            border-radius: 8px;
         }
 
         /* Style for expanded video overlay */
         .expanded-video-overlay {
-            position: fixed; /* Fixed to viewport */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); /* Darker semi-transparent overlay */
-            z-index: 9998; /* Behind the video */
-            display: flex; /* Use flexbox to center the video */
-            align-items: center; /* Center vertically */
-            justify-content: center; /* Center horizontally */
-            cursor: zoom-out; /* Indicate it's clickable to close */
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
         }
 
         .expanded-video-overlay video {
-            max-width: 90%; /* Max width relative to overlay */
-            max-height: 90%; /* Max height relative to overlay */
-            object-fit: contain; /* Now, contain the video within the expanded box, showing full video */
-            border-radius: 8px; /* Match post-media border-radius */
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
         }
 
-        /* Adjust scroll for body when video is expanded */
         body.video-expanded {
-            overflow: hidden; /* Prevent scrolling of the underlying content */
+            overflow: hidden;
         }
 
-        /* Message for no posts or errors */
         .no-posts-message, .error-message {
             text-align: center;
             padding: 20px;
@@ -229,34 +226,33 @@
             color: #657786;
             cursor: pointer;
             font-size: 1em;
-            padding: 5px 8px; /* Adjusted padding for better click area */
+            padding: 5px 8px;
             border-radius: 4px;
             transition: background-color 0.2s ease, color 0.2s ease;
             display: flex;
             align-items: center;
             gap: 5px;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
 
         .post-card .copy-link-button {
-            position: absolute; /* Position relative to .post-card */
+            position: absolute;
             top: 10px;
             right: 10px;
-            font-size: 0.9em; /* Slightly smaller text for button */
+            font-size: 0.9em;
         }
 
         .copy-link-button:hover {
-            background-color: rgba(208, 2, 27, 0.1); /* Light red tint on hover */
-            color: rgb(208, 2, 27); /* Red for icon/text on hover */
+            background-color: rgba(208, 2, 27, 0.1);
+            color: rgb(208, 2, 27);
         }
 
-        /* Confirmation text for Copy Link */
         .copy-link-button.copied {
-            color: rgb(208, 2, 27); /* Red when copied */
-            pointer-events: none; /* Disable clicks while showing confirmation */
+            color: rgb(208, 2, 27);
+            pointer-events: none;
         }
         .copy-link-button.copied i {
-            color: rgb(208, 2, 27); /* Ensure icon also changes color */
+            color: rgb(208, 2, 27);
         }
 
         /* Show more button for truncated text */
@@ -270,10 +266,10 @@
             font-size: 14px;
             font-weight: 500;
             margin-top: 10px;
-            display: block; /* Make it a block element */
-            width: fit-content; /* Fit content width */
-            margin-left: auto; /* Center horizontally */
-            margin-right: auto; /* Center horizontally */
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
@@ -285,77 +281,78 @@
         /* --- Pagination Controls --- */
         .pagination-controls {
             display: flex;
-            justify-content: center; /* CENTERED ALIGNMENT */
+            justify-content: center;
             align-items: center;
             padding: 15px 16px;
             background-color: #fff;
             border-top: 1px solid #ebeef0;
-            gap: 15px; /* Space between elements */
-            /* Inherit font from body or explicitly set if needed, but body should apply */
+            gap: 15px;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03); /* Subtle shadow above */
-            border-bottom-left-radius: 8px; /* Match container border-radius */
-            border-bottom-right-radius: 8px; /* Match container border-radius */
-            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            flex-wrap: wrap;
         }
 
         .pagination-controls button {
-            background-color: transparent !important; /* No background */
-            color: #0f1419; /* Dark text color */
-            border: none !important; /* No button outline */
+            background-color: transparent !important;
+            color: #0f1419 !important;
+            border: none !important;
             padding: 8px 12px !important;
             border-radius: 4px !important;
             cursor: pointer;
-            font-size: 15px !important; /* Force font size */
+            font-size: 15px !important;
             font-weight: normal !important;
             transition: color 0.2s ease, background-color 0.2s ease;
             box-shadow: none !important;
             transform: none !important;
             text-decoration: none !important;
-            display: flex !important; /* For centering text/icon within the button */
+            display: flex !important;
             align-items: center;
             justify-content: center;
-            gap: 5px; /* Space between icon and text if used */
+            gap: 5px;
         }
 
         .pagination-controls button:disabled {
-            color: #999 !important; /* Lighter color when disabled */
+            color: #999 !important;
             cursor: not-allowed;
             opacity: 0.7;
         }
 
         .pagination-controls button:hover:not(:disabled) {
-            color: rgb(208, 2, 27) !important; /* Red on hover */
-            background-color: rgba(208, 2, 27, 0.05) !important; /* Light red background on hover */
+            color: rgb(208, 2, 27) !important;
+            background-color: rgba(208, 2, 27, 0.05) !important;
         }
 
         .pagination-controls button:active:not(:disabled) {
-            background-color: rgba(208, 2, 27, 0.1) !important; /* Slightly darker red on active */
+            background-color: rgba(208, 2, 27, 0.1) !important;
         }
 
         /* Page numbers (text only, no button outline) */
         .pagination-controls .page-number {
-            display: inline-flex !important; /* Use inline-flex for centering content */
+            display: inline-flex !important;
             align-items: center;
             justify-content: center;
-            min-width: 32px !important; /* Give a consistent width for circular/square look */
-            height: 32px !important; /* Consistent height */
-            padding: 0 8px !important; /* Adjust horizontal padding */
+            min-width: 32px !important;
+            height: 32px !important;
+            padding: 0 8px !important;
             margin: 0 3px !important;
             text-decoration: none !important;
             color: #0f1419 !important;
             font-weight: normal !important;
-            border-radius: 4px !important; /* Slightly rounded corners */
+            border-radius: 4px !important;
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
-            font-size: 15px !important; /* Force font size */
-            box-sizing: border-box !important; /* Include padding/border in element's total width/height */
+            font-size: 15px !important;
+            box-sizing: border-box !important;
         }
 
         .pagination-controls .page-number.current-page {
-            color: rgb(208, 2, 27) !important; /* Red for current page text */
+            color: rgb(208, 2, 27) !important;
             font-weight: bold !important;
-            background-color: rgba(208, 2, 27, 0.1) !important; /* Light red background for active page */
+            background-color: rgba(208, 2, 27, 0.1) !important;
+            border-bottom: none !important; /* Ensure no unwanted underlines */
+            padding-bottom: 0 !important; /* Remove padding from bottom if any */
         }
 
         .pagination-controls .page-number:hover:not(.current-page) {
@@ -364,18 +361,18 @@
         }
 
         .pagination-controls .ellipsis {
-            padding: 0 5px !important; /* Smaller padding for dots */
+            padding: 0 5px !important;
             color: #536471 !important;
             font-size: 15px !important;
-            cursor: default; /* Not clickable */
+            cursor: default;
         }
 
         /* Responsive adjustments for pagination */
         @media (max-width: 600px) {
             .pagination-controls {
                 padding: 10px 12px;
-                gap: 8px; /* Slightly smaller gap on mobile */
-                border-radius: 0; /* Remove border-radius on small screens if desired */
+                gap: 8px;
+                border-radius: 0;
             }
             .pagination-controls button,
             .pagination-controls .page-number {
@@ -388,18 +385,18 @@
 
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
-            position: sticky; /* Keeps tabs at the top */
+            position: sticky;
             top: 0;
             background-color: #fff;
             border-bottom: 1px solid #ebeef0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow below tabs */
-            z-index: 1000; /* Ensure tabs are above posts */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
             display: flex;
-            overflow-x: auto; /* Enable horizontal scrolling if many tabs */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            white-space: nowrap; /* Prevent tabs from wrapping */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
             padding: 0 10px;
-            justify-content: flex-start; /* Align tabs to the left */
+            justify-content: flex-start;
         }
 
         .tab-navigation button {
@@ -411,12 +408,12 @@
             color: #555;
             cursor: pointer;
             transition: color 0.2s ease, border-bottom 0.2s ease;
-            flex-shrink: 0; /* Prevent tabs from shrinking */
+            flex-shrink: 0;
         }
 
         .tab-navigation button.active-tab {
-            color: rgb(208, 2, 27); /* Red for active tab */
-            border-bottom: 2px solid rgb(208, 2, 27); /* Red underline for active tab */
+            color: rgb(208, 2, 27);
+            border-bottom: 2px solid rgb(208, 2, 27);
             font-weight: bold;
         }
 
@@ -427,27 +424,27 @@
 
         /* New Update Notification Button */
         #newUpdatesButton {
-            position: fixed; /* Fixed position in the viewport */
-            bottom: 20px; /* 20px from bottom */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust for true centering */
-            background-color: rgb(208, 2, 27); /* Red, matching your theme */
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgb(208, 2, 27);
             color: white;
             padding: 12px 20px;
-            border-radius: 25px; /* Pill shape */
+            border-radius: 25px;
             border: none;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            display: none; /* Hidden by default, shown by JS */
-            z-index: 1001; /* Above other content */
+            display: none;
+            z-index: 1001;
             transition: transform 0.2s ease-in-out, background-color 0.2s ease;
         }
 
         #newUpdatesButton:hover {
-            background-color: rgb(170, 0, 20); /* Slightly darker red on hover */
-            transform: translateX(-50%) translateY(-2px); /* Subtle lift effect */
+            background-color: rgb(170, 0, 20);
+            transform: translateX(-50%) translateY(-2px);
         }
     </style>
 </head>
