@@ -219,31 +219,43 @@
             font-size: 16px;
         }
 
-        .share-button {
+        /* --- Copy Link Button --- */
+        .copy-link-button {
             background: none;
             border: none;
             color: #657786;
             cursor: pointer;
             font-size: 1em;
-            padding: 5px;
+            padding: 5px 8px; /* Adjusted padding for better click area */
             border-radius: 4px;
             transition: background-color 0.2s ease, color 0.2s ease;
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
-        .post-card .share-button {
+        .post-card .copy-link-button {
             position: absolute;
             top: 10px;
             right: 10px;
-            font-size: 1.2em;
+            font-size: 0.9em; /* Slightly smaller text for button */
         }
 
-        .share-button:hover {
+        .copy-link-button:hover {
             background-color: rgba(208, 2, 27, 0.1);
             color: rgb(208, 2, 27);
         }
+
+        /* Confirmation text for Copy Link */
+        .copy-link-button.copied {
+            color: rgb(208, 2, 27); /* Green or matching theme color */
+            pointer-events: none; /* Disable clicks while showing confirmation */
+        }
+        .copy-link-button.copied i {
+            color: rgb(208, 2, 27); /* Ensure icon also changes color */
+        }
+
 
         .show-more-button {
             background-color: #f0f0f0;
@@ -433,14 +445,13 @@
         </section>
     </main>
 
-    <!-- New Update Notification Button -->
     <button id="newUpdatesButton">
         <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
     </button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"; // Added onSnapshot
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -461,8 +472,8 @@
         let currentBlogId = null;
         let allPostsCached = []; // All posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Updates"; // Default active tab
-        const defaultTab = "Live Updates";
+        let currentActiveTab = "Live Reporting"; // Default active tab
+        const defaultTab = "Live Reporting";
         let customTabs = []; // To store custom tabs from the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" on first load
         let newUpdatesCount = 0; // Count of new updates
@@ -522,14 +533,13 @@
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
+                postCard.id = `post-${post.id}`; // Add an ID for deep linking
 
                 let mediaHtml = '';
                 if (post.mediaUrl) {
                     if (post.mediaType && post.mediaType.startsWith('image')) {
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        // Wrap video in a container for square aspect ratio
-                        // Added 'muted' and 'playsinline' for better autoplay compliance
                         mediaHtml = `
                             <div class="post-video-container">
                                 <video src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
@@ -552,7 +562,6 @@
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
-
                 postCard.innerHTML = `
                     <div class="post-header-line">
                         <div class="author-avatar">
@@ -566,7 +575,9 @@
                             </div>
                             ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
-                        <button class="share-button" title="Share Post"><i class="fas fa-share-alt"></i></button>
+                        <button class="copy-link-button" data-post-id="${post.id}" title="Copy Link to Post">
+                            <i class="fas fa-link"></i>
+                        </button>
                     </div>
                     ${subtitleHtml}
                     <p class="post-text">${displayContentHtml}</p>
@@ -592,10 +603,36 @@
                     });
                 }
 
-                postCard.querySelector('.share-button').addEventListener('click', () => {
-                    alert('Share functionality coming soon!');
-                    // In a real application, you'd implement Web Share API or custom share links here.
+                // --- Copy Link Button Logic ---
+                const copyLinkButton = postCard.querySelector('.copy-link-button');
+                copyLinkButton.addEventListener('click', async () => {
+                    const postId = copyLinkButton.dataset.postId;
+                    const blogId = currentBlogId; // Make sure currentBlogId is accessible
+
+                    if (!blogId || !postId) {
+                        alert("Could not generate link for this post.");
+                        return;
+                    }
+
+                    // Construct the deep link URL
+                    const deepLink = `${window.location.origin}/embed-posts.html?blogId=${blogId}#post-${postId}`;
+                    
+                    try {
+                        await navigator.clipboard.writeText(deepLink);
+                        const originalContent = copyLinkButton.innerHTML;
+                        copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!';
+                        copyLinkButton.classList.add('copied');
+
+                        setTimeout(() => {
+                            copyLinkButton.innerHTML = originalContent;
+                            copyLinkButton.classList.remove('copied');
+                        }, 2000); // Show "Link Copied!" for 2 seconds
+                    } catch (err) {
+                        console.error('Failed to copy link: ', err);
+                        alert('Failed to copy link. Please copy manually: ' + deepLink);
+                    }
                 });
+
 
                 // --- Video Playback and Expansion Logic ---
                 const videoContainer = postCard.querySelector('.post-video-container');
@@ -659,10 +696,6 @@
                             }
                         }
                     });
-
-                    // Optional: Add a subtle play/pause icon overlay for the small video
-                    // This is more complex CSS/JS and might be overkill for this stage,
-                    // but it provides better UX for muted autoplay videos.
                 }
             });
 
@@ -709,12 +742,24 @@
                     newUpdatesCount++;
                     newUpdatesCountSpan.textContent = newUpdatesCount;
                     newUpdatesButton.style.display = 'block';
-                    // If multiple updates come in quickly, you might want to debounce this
                 } else {
-                    // If new posts detected but user is at the top, or if no new posts, just refresh
                     newUpdatesCount = 0; // Reset count
                     newUpdatesButton.style.display = 'none';
                     filterAndRenderPosts(); // Re-render to show latest posts
+                    // Check if there's a specific post to scroll to after initial load/update
+                    if (window.location.hash) {
+                        const postId = window.location.hash.substring(1); // Remove '#'
+                        const targetElement = document.getElementById(postId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            // Optionally highlight the post for a brief moment
+                            targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                            targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                            setTimeout(() => {
+                                targetElement.style.backgroundColor = ''; // Remove highlight
+                            }, 3000);
+                        }
+                    }
                 }
 
                 initialLoadComplete = true; // Mark initial load as complete
@@ -746,7 +791,6 @@
                 }
                 
                 renderTabs(); // Render/update tabs
-                // Initial load of posts will be handled by onSnapshot
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
             } catch (error) {
                 console.error("Error loading blog details for embed:", error);
@@ -858,11 +902,8 @@
             
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update.');
-                // Instead of calling loadPosts directly, we rely on the onSnapshot listener
-                // to detect changes and trigger updates.
-                // If you want to force a refetch even if onSnapshot hasn't fired yet,
-                // you could add a flag here to force loadPosts to refetch.
-                // For now, onSnapshot will handle it.
+                // onSnapshot listener will handle the actual data refresh,
+                // but this message can be used for debugging or other triggers if needed.
             }
         });
     </script>
