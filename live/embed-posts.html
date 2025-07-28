@@ -282,48 +282,46 @@
         /* --- Pagination Controls --- */
         .pagination-controls {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Center buttons horizontally */
             align-items: center;
             padding: 15px 16px;
             background-color: #fff;
             border-top: 1px solid #ebeef0;
             gap: 15px;
-            font-family: -apple-system, BlinkMacMacFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
             border-bottom-left-radius: 8px;
             border-bottom-right-radius: 8px;
         }
 
         .pagination-controls button {
-            background-color: #e0e0e0;
-            color: #333;
-            border: 1px solid #ccc;
+            background-color: transparent; /* No background */
+            color: #0f1419; /* Default text color */
+            border: none; /* No button outline */
             padding: 8px 18px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 15px;
             font-weight: normal;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transition for text/bg change */
             box-shadow: none;
             transform: none;
+            text-decoration: none; /* Ensure no underline */
         }
 
         .pagination-controls button:disabled {
-            background-color: #f0f0f0;
-            color: #999;
-            border-color: #ddd;
+            color: #999; /* Grey out disabled buttons */
             cursor: not-allowed;
-            opacity: 1;
+            opacity: 0.7; /* Slightly faded */
         }
 
         .pagination-controls button:hover:not(:disabled) {
-            background-color: #d0d0d0;
-            border-color: #bbb;
+            color: rgb(208, 2, 27); /* Red on hover */
+            background-color: rgba(208, 2, 27, 0.05); /* Very light red background on hover */
         }
 
         .pagination-controls button:active:not(:disabled) {
-            background-color: #c0c0c0;
-            border-color: #aaa;
+            background-color: rgba(208, 2, 27, 0.1); /* Slightly darker background on active */
         }
 
         /* These rules for .page-number are still here but won't be applied if JS doesn't create the spans */
@@ -468,7 +466,7 @@
 
         // --- Global Variables for Embed ---
         let currentPage = 0;
-        const postsPerPage = 5;
+        const postsPerPage = 8; // Increased from 5 to 8 for ~30% more content
         let currentBlogId = null;
         let allPostsCached = []; // All posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
@@ -614,7 +612,7 @@
                         return;
                     }
 
-                    // Construct the deep link URL
+                    // Construct the deep link URL (assuming embed path is /embed_live/live/embed-posts.html)
                     const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
                     
                     try {
@@ -737,29 +735,24 @@
                 }
 
                 allPostsCached = updatedPosts; // Update the cache with the latest data
-
-                if (newPostsDetected && window.scrollY > 0) { // Only show button if not at top
+                
+                // If a new post is detected and we are not at the top, show the "New Update" button
+                if (newPostsDetected && window.scrollY > 0) {
                     newUpdatesCount++;
                     newUpdatesCountSpan.textContent = newUpdatesCount;
                     newUpdatesButton.style.display = 'block';
                 } else {
                     newUpdatesCount = 0; // Reset count
                     newUpdatesButton.style.display = 'none';
-                    filterAndRenderPosts(); // Re-render to show latest posts
-                    // Check if there's a specific post to scroll to after initial load/update
-                    if (window.location.hash) {
-                        const postId = window.location.hash.substring(1); // Remove '#'
-                        const targetElement = document.getElementById(postId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            // Optionally highlight the post for a brief moment
-                            targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                            targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
-                            setTimeout(() => {
-                                targetElement.style.backgroundColor = ''; // Remove highlight
-                            }, 3000);
-                        }
-                    }
+                    filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
+                }
+
+                // Handle deep linking and scrolling AFTER posts are rendered or updated
+                // This block should only run on the initial load or after a full refresh
+                // not on every snapshot update unless it's a new page load
+                if (!initialLoadComplete && window.location.hash) {
+                    const postIdFromHash = window.location.hash.substring(1); // Remove '#'
+                    scrollToPost(postIdFromHash);
                 }
 
                 initialLoadComplete = true; // Mark initial load as complete
@@ -767,6 +760,41 @@
                 console.error("Error listening to posts:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
             });
+        };
+
+        const scrollToPost = (postId) => {
+            // Find the index of the post in the *filtered* list to determine its page
+            const postIndex = filteredPosts.findIndex(p => `post-${p.id}` === postId);
+            if (postIndex !== -1) {
+                const targetPage = Math.floor(postIndex / postsPerPage);
+                if (currentPage !== targetPage) {
+                    currentPage = targetPage; // Set current page to the post's page
+                    renderCurrentPage(); // Render the new page
+                    // Wait a moment for rendering, then scroll
+                    setTimeout(() => {
+                        const targetElement = document.getElementById(postId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                            targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                            setTimeout(() => {
+                                targetElement.style.backgroundColor = ''; // Remove highlight
+                            }, 3000);
+                        }
+                    }, 100); // Small delay to allow rendering
+                } else {
+                    // Already on the correct page, just scroll
+                    const targetElement = document.getElementById(postId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                        targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                        setTimeout(() => {
+                            targetElement.style.backgroundColor = ''; // Remove highlight
+                        }, 3000);
+                    }
+                }
+            }
         };
 
 
@@ -792,6 +820,7 @@
                 
                 renderTabs(); // Render/update tabs
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
+                
             } catch (error) {
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
@@ -807,7 +836,11 @@
                 );
             }
 
-            currentPage = 0; // Reset to the first page when tab changes or initially loads
+            // If we're coming from a deep link, currentPage might have been set by scrollToPost
+            // Otherwise, reset to the first page when tab changes or initially loads
+            if (!window.location.hash || initialLoadComplete) { // Only reset if not an initial deep link load
+                currentPage = 0; 
+            }
             renderCurrentPage(); // Call the new function to render and update pagination
         };
 
@@ -826,6 +859,7 @@
                 prevButton.addEventListener('click', () => {
                     currentPage--;
                     renderCurrentPage();
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
                 });
                 paginationControls.appendChild(prevButton);
 
@@ -835,6 +869,7 @@
                 nextButton.addEventListener('click', () => {
                     currentPage++;
                     renderCurrentPage();
+                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
                 });
                 paginationControls.appendChild(nextButton);
             }
