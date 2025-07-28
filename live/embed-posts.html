@@ -31,7 +31,7 @@
             padding: 0;
             border: none;
             background-color: transparent;
-            max-width: 600px; /* Constrain max width for posts */
+            max-width: 700px; /* INCREASED MAX WIDTH */
             margin: 0 auto; /* Center the posts content */
         }
 
@@ -151,6 +151,14 @@
             line-height: 20px;
             word-break: break-word;
         }
+        /* Style for paragraphs within post-text */
+        .post-text p {
+            margin-bottom: 1em; /* Add space between paragraphs */
+        }
+        .post-text p:last-child {
+            margin-bottom: 0; /* No margin after the last paragraph */
+        }
+
 
         /* Media styles (images and video containers) */
         .post-media {
@@ -530,6 +538,13 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
+        // --- Function: formatContentWithParagraphs (New function to handle paragraphs) ---
+        function formatContentWithParagraphs(content) {
+            if (!content) return '';
+            // Replace newlines with <p> tags, ensuring proper paragraph breaks
+            return content.split(/\r?\n/).map(paragraph => `<p>${paragraph}</p>`).join('');
+        }
+
         // --- Function: renderPosts (Renders a given array of posts into a container) ---
         const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
@@ -569,15 +584,20 @@
 
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
-                let displayContentHtml = post.content;
+                let displayContent = post.content;
                 let showMoreButtonHtml = '';
                 let isTruncated = false;
 
                 if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
-                    displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    displayContent = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
                     isTruncated = true;
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
+
+                // Format the content with paragraphs
+                const formattedContentHtml = formatContentWithParagraphs(displayContent);
+                const fullFormattedContentHtml = formatContentWithParagraphs(post.content);
+
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -597,7 +617,7 @@
                         </button>
                     </div>
                     ${subtitleHtml}
-                    <p class="post-text">${displayContentHtml}</p>
+                    <div class="post-text">${formattedContentHtml}</div>
                     ${mediaHtml}
                     ${showMoreButtonHtml}
                 `;
@@ -606,10 +626,10 @@
                 // Add event listener for "Show more" button if content was truncated
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentParagraph = postCard.querySelector('.post-text');
+                    const contentDiv = postCard.querySelector('.post-text'); // Changed to div
 
                     showMoreButton.addEventListener('click', () => {
-                        contentParagraph.innerHTML = post.content; // Set full content
+                        contentDiv.innerHTML = fullFormattedContentHtml; // Set full formatted content
                         showMoreButton.style.display = 'none'; // Hide the button
                         
                         // Notify parent iframe to adjust height after expansion
@@ -665,10 +685,10 @@
                             document.body.appendChild(overlay);
 
                             const fullVideo = videoElement.cloneNode(true);
-                            fullVideo.controls = true;     // Show controls in full view
-                            fullVideo.autoplay = true;     // Auto-play when expanded
-                            fullVideo.muted = false;       // Unmute in full view
-                            fullVideo.loop = false;        // No loop in full view
+                            fullVideo.controls = true;      // Show controls in full view
+                            fullVideo.autoplay = true;      // Auto-play when expanded
+                            fullVideo.muted = false;        // Unmute in full view
+                            fullVideo.loop = false;         // No loop in full view
                             fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
                             
                             overlay.appendChild(fullVideo);
@@ -893,12 +913,12 @@
                     // More than maxPagesToShow, implement ellipsis logic
                     if (currentPage < maxPagesToShow - 2) { // Near the beginning (e.g., 1, 2, 3, ..., N)
                         startPage = 0;
-                        endPage = maxPagesToShow - 2; 
+                        endPage = maxPagesToShow - 2;  
                     } else if (currentPage > totalPages - (maxPagesToShow - 1)) { // Near the end (e.g., 1, ..., N-2, N-1, N)
-                        startPage = totalPages - (maxPagesToShow - 1); 
+                        startPage = totalPages - (maxPagesToShow - 1);  
                         endPage = totalPages - 1;
                     } else { // In the middle (e.g., 1, ..., C-1, C, C+1, ..., N)
-                        startPage = currentPage - 1; 
+                        startPage = currentPage - 1;  
                         endPage = currentPage + 1;
                     }
                 }
