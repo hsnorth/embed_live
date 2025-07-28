@@ -6,7 +6,81 @@
     <title>Create/Manage Live Blog</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght[email protected];700&family=Noto+Sans:wght[email protected];700&display=swap" rel="stylesheet">
+    <style>
+        /* Existing style.css content should be here or linked */
+        /* Adding pagination CSS directly for demonstration, ideally this is in style.css */
+        .pagination-controls {
+            display: flex;
+            justify-content: center; /* Center buttons horizontally */
+            align-items: center;
+            padding: 15px 16px;
+            background-color: #fff;
+            border-top: 1px solid #ebeef0;
+            gap: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            margin-top: 15px; /* Add some top margin to separate from posts */
+        }
+
+        .pagination-controls button {
+            background-color: transparent; /* No background */
+            color: #0f1419; /* Default text color */
+            border: none; /* No button outline */
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: normal;
+            transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transition for text/bg change */
+            box-shadow: none;
+            transform: none;
+            text-decoration: none; /* Ensure no underline */
+        }
+
+        .pagination-controls button:disabled {
+            color: #999; /* Grey out disabled buttons */
+            cursor: not-allowed;
+            opacity: 0.7; /* Slightly faded */
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            color: rgb(208, 2, 27); /* Red on hover */
+            background-color: rgba(208, 2, 27, 0.05); /* Very light red background on hover */
+        }
+
+        .pagination-controls button:active:not(:disabled) {
+            background-color: rgba(208, 2, 27, 0.1); /* Slightly darker background on active */
+        }
+
+        .pagination-controls .page-number {
+            display: inline-block;
+            padding: 5px 8px;
+            margin: 0 3px;
+            text-decoration: none;
+            color: #000;
+            font-weight: normal;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-size: 15px;
+        }
+
+        .pagination-controls .page-number.current-page {
+            text-decoration: none;
+            border-bottom: 2px solid rgb(208, 2, 27);
+            padding-bottom: 3px;
+            font-weight: bold;
+            color: rgb(208, 2, 27);
+        }
+
+        .pagination-controls .page-number:hover:not(.current-page) {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -117,7 +191,7 @@
         const defaultTab = "Live Reporting"; // Always present
         let adminAllPostsCached = []; // Cache for admin posts
         let adminCurrentPage = 0;
-        const adminPostsPerPage = 5;
+        const adminPostsPerPage = 8; // Match the embed page for consistency in admin view
         let editingPostId = null; // To track which post is being edited
 
         const blogTitleHeader = document.getElementById('blogTitleHeader');
@@ -255,7 +329,8 @@
         // --- Generate Embed Code ---
         const generateEmbedCode = () => {
             if (currentBlogId) {
-                const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
+                // Ensure the correct path for the embed page
+                const embedUrl = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${currentBlogId}`;
                 const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:800px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
                 embedCodeInput.value = embedCode;
             } else {
@@ -538,8 +613,8 @@
                         return;
                     }
 
-                    // Construct the deep link URL
-                    const deepLink = `${window.location.origin}/embed-posts.html?blogId=${blogId}#post-${postId}`;
+                    // Construct the deep link URL (assuming embed path is /embed_live/live/embed-posts.html)
+                    const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
                     
                     try {
                         await navigator.clipboard.writeText(deepLink);
