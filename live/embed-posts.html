@@ -151,6 +151,7 @@
         }
 
         /* Media styles */
+        /* .post-media remains as a general class for images, but videos will be handled by their container */
         .post-media {
             max-width: 100%;
             height: auto;
@@ -160,7 +161,7 @@
             transition: all 0.3s ease-in-out; /* For smooth expansion */
         }
 
-        /* New: Container for square video aspect ratio */
+        /* Container for square video aspect ratio */
         .post-video-container {
             width: 100%; /* Take full available width */
             padding-top: 100%; /* This creates the 1:1 aspect ratio (height = width) */
@@ -184,33 +185,26 @@
         }
 
         /* Style for expanded video */
-        .post-media.expanded-video {
-            position: fixed; /* Fix it in the viewport */
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Center it */
-            width: 90%; /* Adjust as needed, e.g., 90% of viewport width */
-            max-width: 90vw; /* Maximum width relative to viewport */
-            max-height: 90vh; /* Maximum height relative to viewport */
-            object-fit: contain; /* Now, contain the video within the expanded box, showing full video */
-            z-index: 9999; /* Ensure it's on top of everything */
-            background-color: #000; /* Black background for letterboxing */
-            border: 2px solid rgba(255, 255, 255, 0.8); /* Optional: border for expanded view */
-            cursor: zoom-out; /* Indicate it's clickable to close */
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-        }
-
-        /* Overlay for expanded video */
-        .video-overlay {
+        .expanded-video-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent overlay */
+            background-color: rgba(0, 0, 0, 0.85); /* Darker semi-transparent overlay */
             z-index: 9998; /* Behind the video */
-            display: none; /* Hidden by default */
-            cursor: zoom-out;
+            display: flex; /* Use flexbox to center the video */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            cursor: zoom-out; /* Indicate it's clickable to close */
+        }
+
+        .expanded-video-overlay video {
+            max-width: 90%; /* Max width relative to overlay */
+            max-height: 90%; /* Max height relative to overlay */
+            object-fit: contain; /* Now, contain the video within the expanded box, showing full video */
+            border-radius: 8px; /* Match post-media border-radius */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
         }
 
         /* Adjust scroll for body when video is expanded */
@@ -502,9 +496,10 @@
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
                         // Wrap video in a container for square aspect ratio
+                        // Added 'muted' and 'playsinline' for better autoplay compliance
                         mediaHtml = `
                             <div class="post-video-container">
-                                <video class="post-media" src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
+                                <video src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata"></video>
                             </div>
                         `;
                     }
@@ -569,57 +564,72 @@
                     // In a real application, you'd implement Web Share API or custom share links here.
                 });
 
-                // --- Video Expansion Logic (NEW) ---
-                const videoElement = postCard.querySelector('.post-media video');
-                if (videoElement) {
-                    videoElement.controls = false; // Hide native controls in the small view
-                    videoElement.onclick = (e) => {
-                        e.stopPropagation(); // Prevent click from bubbling up if postCard had a click listener
+                // --- Video Playback and Expansion Logic ---
+                const videoContainer = postCard.querySelector('.post-video-container');
+                if (videoContainer) {
+                    const videoElement = videoContainer.querySelector('video');
+                    
+                    // Click on the container to expand (and play/pause in small view)
+                    videoContainer.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent click from bubbling to postCard
 
+                        // If not currently expanded, expand it
                         if (!document.body.classList.contains('video-expanded')) {
                             // Create overlay
                             const overlay = document.createElement('div');
-                            overlay.className = 'video-overlay';
+                            overlay.className = 'expanded-video-overlay';
                             document.body.appendChild(overlay);
-                            overlay.style.display = 'block';
 
-                            // Create full-size video element (clone to keep original intact)
+                            // Clone the video element for full-size view
                             const fullVideo = videoElement.cloneNode(true);
-                            fullVideo.classList.add('expanded-video');
-                            fullVideo.controls = true; // Show controls in full view
-                            fullVideo.autoplay = true; // Ensure autoplay in full view
-                            fullVideo.muted = false; // Unmute in full view
-                            fullVideo.loop = false; // No loop in full view
-                            document.body.appendChild(fullVideo);
+                            fullVideo.controls = true;     // Show controls in full view
+                            fullVideo.autoplay = true;     // Auto-play when expanded
+                            fullVideo.muted = false;       // Unmute in full view
+                            fullVideo.loop = false;        // No loop in full view
+                            fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
+                            
+                            // Append to overlay
+                            overlay.appendChild(fullVideo);
 
-                            // Stop the small video playback and reset time
+                            // Stop the small video and reset its time
                             videoElement.pause();
                             videoElement.currentTime = 0;
 
-                            // Add click listeners to close
+                            // Add event listeners to close the full-size video
                             const closeVideo = () => {
-                                document.body.removeChild(fullVideo);
-                                document.body.removeChild(overlay);
+                                document.body.removeChild(overlay); // Remove the overlay (which contains fullVideo)
                                 document.body.classList.remove('video-expanded');
-                                // Notify parent iframe to readjust height after closing
+                                // Notify parent iframe to readjust height after closing (if applicable)
                                 if (window.parent) {
                                     const height = document.body.scrollHeight;
                                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
                                 }
                             };
-
-                            overlay.onclick = closeVideo;
-                            fullVideo.onclick = closeVideo; // Click video itself to close
+                            overlay.addEventListener('click', closeVideo);
+                            // Prevent clicks on the video itself from closing the overlay immediately
+                            fullVideo.addEventListener('click', (ev) => ev.stopPropagation());
 
                             document.body.classList.add('video-expanded');
 
-                            // Notify parent iframe to adjust height (might not be needed for fixed overlay, but good practice)
+                            // Notify parent iframe (if necessary for fixed overlay scenario)
                             if (window.parent) {
                                 const height = document.body.scrollHeight;
                                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
                             }
+                        } else {
+                            // If video is already expanded, this click would be on the small video
+                            // In this case, we might want to toggle play/pause for the small video
+                            if (videoElement.paused) {
+                                videoElement.play().catch(e => console.error("Play failed:", e));
+                            } else {
+                                videoElement.pause();
+                            }
                         }
-                    };
+                    });
+
+                    // Optional: Add a subtle play/pause icon overlay for the small video
+                    // This is more complex CSS/JS and might be overkill for this stage,
+                    // but it provides better UX for muted autoplay videos.
                 }
             });
 
