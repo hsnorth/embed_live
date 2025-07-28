@@ -114,7 +114,7 @@
         let currentBlogId = null;
         let currentBlogName = ''; // Store blog name for embed link
         let customTabs = []; // Array to store custom tab names for the current blog
-        const defaultTab = "Live Reporting"; // Always present
+        const defaultTab = "Live Updates"; // Always present
         let adminAllPostsCached = []; // Cache for admin posts
         let adminCurrentPage = 0;
         const adminPostsPerPage = 5;
@@ -255,7 +255,7 @@
         // --- Generate Embed Code ---
         const generateEmbedCode = () => {
             if (currentBlogId) {
-                const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
+                const embedUrl = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${currentBlogId}`;
                 const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:800px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
                 embedCodeInput.value = embedCode;
             } else {
@@ -283,7 +283,7 @@
 
             // Get selected tabs
             const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
-            const assignedTabs = [defaultTab]; // "Live Reporting" is always included
+            const assignedTabs = [defaultTab]; // "Live Updates" is always included
             selectedTabCheckboxes.forEach(checkbox => {
                 if (checkbox.value !== defaultTab) { // Ensure default is not added twice
                     assignedTabs.push(checkbox.value);
@@ -295,7 +295,7 @@
                 return;
             }
             if (assignedTabs.length === 0) {
-                alert("Please assign the post to at least one tab (Live Reporting is always included).");
+                alert("Please assign the post to at least one tab (Live Updates is always included).");
                 return;
             }
 
