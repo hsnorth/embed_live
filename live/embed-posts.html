@@ -9,6 +9,7 @@
     <style>
         /* Base styles for the embed */
         body {
+            /* Using a system font stack for general UI elements, including pagination */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
             color: #000;
@@ -34,7 +35,7 @@
             margin: 0 auto; /* Center the posts content */
         }
 
-        /* Hide elements not needed in the embed */
+        /* Hide elements not needed in the embed (if they were present from a full blog page) */
         .live-blog-posts h2,
         .new-post-form,
         footer,
@@ -49,7 +50,7 @@
             border-bottom: 1px solid #ebeef0;
             background-color: #fff;
             word-wrap: break-word;
-            position: relative;
+            position: relative; /* For positioning the copy link button */
         }
 
         .post-header-line {
@@ -72,6 +73,7 @@
             position: relative;
         }
 
+        /* Live dot on avatar */
         .author-avatar-img::before {
             content: '';
             position: absolute;
@@ -82,7 +84,7 @@
             background-color: rgb(208, 2, 27); /* Red color */
             border-radius: 50%;
             border: 2px solid white; /* White border around the dot */
-            transform: translate(-20%, -20%); /* Adjust position */
+            transform: translate(-20%, -20%); /* Adjust position to be top-left of the image */
             z-index: 1;
             box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
@@ -110,7 +112,7 @@
         }
 
         .post-meta span.time-ago {
-            color: rgb(208, 2, 27);
+            color: rgb(208, 2, 27); /* Red for time */
             font-size: 14px;
             font-weight: bold;
         }
@@ -123,7 +125,7 @@
         }
 
         .post-meta .reporting-from {
-            display: block;
+            display: block; /* Make it stack below the first line */
             color: #536471;
             font-size: 14px;
             margin-left: 0;
@@ -132,16 +134,16 @@
         }
 
         .post-subtitle {
-            font-family: 'Roboto', sans-serif;
-            font-size: 1.5em;
+            font-family: 'Roboto', sans-serif; /* Specific font for subtitle */
+            font-size: 1.5em; /* Larger size */
             color: #333;
-            margin-top: 5px; /* Ensure some top margin if subtitle exists */
+            margin-top: 5px;
             margin-bottom: 5px;
             font-weight: bold;
         }
 
         .post-text {
-            font-family: "Noto Serif", Georgia, serif;
+            font-family: "Noto Serif", Georgia, serif; /* Specific font for main content */
             font-size: 16px;
             margin-top: 0; /* Remove top margin here to let .reporting-from's margin control the gap */
             margin-bottom: 8px;
@@ -150,7 +152,7 @@
             word-break: break-word; /* Ensure long words break */
         }
 
-        /* Media styles */
+        /* Media styles (images and video containers) */
         .post-media {
             max-width: 100%;
             height: auto;
@@ -183,9 +185,9 @@
             border-radius: 8px; /* Apply border-radius here as well */
         }
 
-        /* Style for expanded video */
+        /* Style for expanded video overlay */
         .expanded-video-overlay {
-            position: fixed;
+            position: fixed; /* Fixed to viewport */
             top: 0;
             left: 0;
             width: 100%;
@@ -211,6 +213,7 @@
             overflow: hidden; /* Prevent scrolling of the underlying content */
         }
 
+        /* Message for no posts or errors */
         .no-posts-message, .error-message {
             text-align: center;
             padding: 20px;
@@ -236,27 +239,27 @@
         }
 
         .post-card .copy-link-button {
-            position: absolute;
+            position: absolute; /* Position relative to .post-card */
             top: 10px;
             right: 10px;
             font-size: 0.9em; /* Slightly smaller text for button */
         }
 
         .copy-link-button:hover {
-            background-color: rgba(208, 2, 27, 0.1);
-            color: rgb(208, 2, 27);
+            background-color: rgba(208, 2, 27, 0.1); /* Light red tint on hover */
+            color: rgb(208, 2, 27); /* Red for icon/text on hover */
         }
 
         /* Confirmation text for Copy Link */
         .copy-link-button.copied {
-            color: rgb(208, 2, 27); /* Green or matching theme color */
+            color: rgb(208, 2, 27); /* Red when copied */
             pointer-events: none; /* Disable clicks while showing confirmation */
         }
         .copy-link-button.copied i {
             color: rgb(208, 2, 27); /* Ensure icon also changes color */
         }
 
-
+        /* Show more button for truncated text */
         .show-more-button {
             background-color: #f0f0f0;
             color: #333;
@@ -267,10 +270,10 @@
             font-size: 14px;
             font-weight: 500;
             margin-top: 10px;
-            display: block;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            display: block; /* Make it a block element */
+            width: fit-content; /* Fit content width */
+            margin-left: auto; /* Center horizontally */
+            margin-right: auto; /* Center horizontally */
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
@@ -282,68 +285,77 @@
         /* --- Pagination Controls --- */
         .pagination-controls {
             display: flex;
-            justify-content: center; /* Center buttons horizontally */
+            justify-content: center; /* CENTERED ALIGNMENT */
             align-items: center;
             padding: 15px 16px;
             background-color: #fff;
             border-top: 1px solid #ebeef0;
-            gap: 15px;
+            gap: 15px; /* Space between elements */
+            /* Inherit font from body or explicitly set if needed, but body should apply */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03); /* Subtle shadow above */
+            border-bottom-left-radius: 8px; /* Match container border-radius */
+            border-bottom-right-radius: 8px; /* Match container border-radius */
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
         }
 
         .pagination-controls button {
             background-color: transparent; /* No background */
-            color: #0f1419; /* Default text color */
+            color: #0f1419; /* Dark text color */
             border: none; /* No button outline */
-            padding: 8px 18px;
+            padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 15px;
             font-weight: normal;
-            transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transition for text/bg change */
+            transition: color 0.2s ease, background-color 0.2s ease;
             box-shadow: none;
             transform: none;
-            text-decoration: none; /* Ensure no underline */
+            text-decoration: none;
+            display: flex; /* For centering text/icon within the button */
+            align-items: center;
+            justify-content: center;
+            gap: 5px; /* Space between icon and text if used */
         }
 
         .pagination-controls button:disabled {
-            color: #999; /* Grey out disabled buttons */
+            color: #999; /* Lighter color when disabled */
             cursor: not-allowed;
-            opacity: 0.7; /* Slightly faded */
+            opacity: 0.7;
         }
 
         .pagination-controls button:hover:not(:disabled) {
             color: rgb(208, 2, 27); /* Red on hover */
-            background-color: rgba(208, 2, 27, 0.05); /* Very light red background on hover */
+            background-color: rgba(208, 2, 27, 0.05); /* Light red background on hover */
         }
 
         .pagination-controls button:active:not(:disabled) {
-            background-color: rgba(208, 2, 27, 0.1); /* Slightly darker background on active */
+            background-color: rgba(208, 2, 27, 0.1); /* Slightly darker red on active */
         }
 
-        /* These rules for .page-number are still here but won't be applied if JS doesn't create the spans */
+        /* Page numbers (text only, no button outline) */
         .pagination-controls .page-number {
-            display: inline-block;
-            padding: 5px 8px;
+            display: inline-flex; /* Use inline-flex for centering content */
+            align-items: center;
+            justify-content: center;
+            min-width: 32px; /* Give a consistent width for circular/square look */
+            height: 32px; /* Consistent height */
+            padding: 0 8px; /* Adjust horizontal padding */
             margin: 0 3px;
             text-decoration: none;
-            color: #000;
+            color: #0f1419;
             font-weight: normal;
-            border-radius: 3px;
+            border-radius: 4px; /* Slightly rounded corners */
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
             font-size: 15px;
+            box-sizing: border-box; /* Include padding/border in element's total width/height */
         }
 
         .pagination-controls .page-number.current-page {
-            text-decoration: none;
-            border-bottom: 2px solid rgb(208, 2, 27);
-            padding-bottom: 3px;
+            color: rgb(208, 2, 27); /* Red for current page text */
             font-weight: bold;
-            color: rgb(208, 2, 27);
+            background-color: rgba(208, 2, 27, 0.1); /* Light red background for active page */
         }
 
         .pagination-controls .page-number:hover:not(.current-page) {
@@ -351,37 +363,43 @@
             color: #333;
         }
 
+        .pagination-controls .ellipsis {
+            padding: 0 5px; /* Smaller padding for dots */
+            color: #536471;
+            font-size: 15px;
+            cursor: default; /* Not clickable */
+        }
+
+        /* Responsive adjustments for pagination */
         @media (max-width: 600px) {
             .pagination-controls {
                 padding: 10px 12px;
-                gap: 10px;
-                border-radius: 0;
+                gap: 8px; /* Slightly smaller gap on mobile */
+                border-radius: 0; /* Remove border-radius on small screens if desired */
             }
-            .pagination-controls button {
-                padding: 6px 12px;
-                font-size: 14px;
-                border-radius: 3px;
-            }
+            .pagination-controls button,
             .pagination-controls .page-number {
+                padding: 6px 10px;
                 font-size: 14px;
-                padding: 4px 6px;
+                min-width: 28px;
+                height: 28px;
             }
         }
 
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
-            position: sticky;
+            position: sticky; /* Keeps tabs at the top */
             top: 0;
             background-color: #fff;
             border-bottom: 1px solid #ebeef0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow below tabs */
+            z-index: 1000; /* Ensure tabs are above posts */
             display: flex;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            white-space: nowrap;
+            overflow-x: auto; /* Enable horizontal scrolling if many tabs */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            white-space: nowrap; /* Prevent tabs from wrapping */
             padding: 0 10px;
-            justify-content: flex-start;
+            justify-content: flex-start; /* Align tabs to the left */
         }
 
         .tab-navigation button {
@@ -393,12 +411,12 @@
             color: #555;
             cursor: pointer;
             transition: color 0.2s ease, border-bottom 0.2s ease;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Prevent tabs from shrinking */
         }
 
         .tab-navigation button.active-tab {
-            color: rgb(208, 2, 27);
-            border-bottom: 2px solid rgb(208, 2, 27);
+            color: rgb(208, 2, 27); /* Red for active tab */
+            border-bottom: 2px solid rgb(208, 2, 27); /* Red underline for active tab */
             font-weight: bold;
         }
 
@@ -409,10 +427,10 @@
 
         /* New Update Notification Button */
         #newUpdatesButton {
-            position: fixed;
-            bottom: 20px; /* Adjust as needed */
-            left: 50%;
-            transform: translateX(-50%);
+            position: fixed; /* Fixed position in the viewport */
+            bottom: 20px; /* 20px from bottom */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for true centering */
             background-color: rgb(208, 2, 27); /* Red, matching your theme */
             color: white;
             padding: 12px 20px;
@@ -422,14 +440,14 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            display: none; /* Hidden by default */
+            display: none; /* Hidden by default, shown by JS */
             z-index: 1001; /* Above other content */
             transition: transform 0.2s ease-in-out, background-color 0.2s ease;
         }
 
         #newUpdatesButton:hover {
             background-color: rgb(170, 0, 20); /* Slightly darker red on hover */
-            transform: translateX(-50%) translateY(-2px); /* Subtle lift */
+            transform: translateX(-50%) translateY(-2px); /* Subtle lift effect */
         }
     </style>
 </head>
@@ -451,14 +469,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+        // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebase-storage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // REPLACE THIS
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // REPLACE THIS
+            projectId: "myliveblogapp-cf9df", // REPLACE THIS
+            storageBucket: "myliveblogapp-cf9df.firebase-storage.app", // REPLACE THIS
+            messagingSenderId: "324824649312", // REPLACE THIS
+            appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS
+            measurementId: "G-EZN90844XF" // REPLACE THIS (optional)
         };
         
         const app = initializeApp(firebaseConfig);
@@ -466,72 +485,74 @@
 
         // --- Global Variables for Embed ---
         let currentPage = 0;
-        const postsPerPage = 8; // Increased from 5 to 8 for ~30% more content
-        let currentBlogId = null;
-        let allPostsCached = []; // All posts for the current blog
+        const postsPerPage = 8; // Number of posts to show per page
+        let currentBlogId = null; // ID of the blog being displayed
+        let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Reporting"; // Default active tab
-        const defaultTab = "Live Reporting";
-        let customTabs = []; // To store custom tabs from the blog document
-        let initialLoadComplete = false; // Flag to prevent "New Update" on first load
-        let newUpdatesCount = 0; // Count of new updates
+        let currentActiveTab = "Live Reporting"; // Default active tab name
+        const defaultTab = "Live Reporting"; // Constant for the default tab name
+        let customTabs = []; // To store custom tabs defined in the blog document
+        let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
+        let newUpdatesCount = 0; // Count of new updates for the button
 
+        // DOM element references
         const postsContainer = document.getElementById('postsContainer');
         const paginationControls = document.getElementById('paginationControls');
         const tabNavigationDiv = document.getElementById('tabNavigation');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
-        // --- Functions for time, rendering, and pagination ---
-
+        // --- Helper Function: timeAgo (for displaying how long ago a post was made) ---
         function timeAgo(timestamp) {
             const now = new Date();
+            // Convert Firestore Timestamp to Date object if applicable
             const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
             const seconds = Math.floor((now - postDate) / 1000);
 
-            let interval = seconds / 31536000;
+            let interval = seconds / 31536000; // Years
             if (interval > 1) {
                 return Math.floor(interval) + " years ago";
             }
-            interval = seconds / 2592000;
+            interval = seconds / 2592000; // Months
             if (interval > 1) {
                 return Math.floor(interval) + " months ago";
             }
-            interval = seconds / 86400;
+            interval = seconds / 86400; // Days
             if (interval > 1) {
                 return Math.floor(interval) + " days ago";
             }
-            interval = seconds / 3600;
+            interval = seconds / 3600; // Hours
             if (interval > 1) {
                 return Math.floor(interval) + " hours ago";
             }
-            interval = seconds / 60;
+            interval = seconds / 60; // Minutes
             if (interval > 1) {
                 return Math.floor(interval) + " minutes ago";
             }
             return Math.floor(seconds) + " seconds ago";
         }
 
+        // --- Function: renderPosts (Renders a given array of posts into a container) ---
         const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error(`Container with ID "${containerId}" not found.`);
                 return;
             }
-            container.innerHTML = '';
+            container.innerHTML = ''; // Clear existing posts
 
             if (postsToRender.length === 0) {
                 container.innerHTML = '<p class="no-posts-message">No posts yet for this tab. Be the first to add an update!</p>';
                 return;
             }
 
-            const MAX_CHARS_PREVIEW = 450;
+            const MAX_CHARS_PREVIEW = 450; // Max characters before truncating post content
 
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
-                postCard.id = `post-${post.id}`; // Add an ID for deep linking
+                postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
 
                 let mediaHtml = '';
                 if (post.mediaUrl) {
@@ -546,8 +567,8 @@
                     }
                 }
 
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
-                
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default avatar
+
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
                 let displayContentHtml = post.content;
@@ -584,7 +605,7 @@
                 `;
                 container.appendChild(postCard);
 
-                // Add event listener for show more button if content was truncated
+                // Add event listener for "Show more" button if content was truncated
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
                     const contentParagraph = postCard.querySelector('.post-text');
@@ -605,24 +626,24 @@
                 const copyLinkButton = postCard.querySelector('.copy-link-button');
                 copyLinkButton.addEventListener('click', async () => {
                     const postId = copyLinkButton.dataset.postId;
-                    const blogId = currentBlogId; // Make sure currentBlogId is accessible
+                    const blogId = currentBlogId;
 
                     if (!blogId || !postId) {
                         alert("Could not generate link for this post.");
                         return;
                     }
 
-                    // Construct the deep link URL (assuming embed path is /embed_live/live/embed-posts.html)
+                    // Construct the deep link URL (adjust path if your embed is elsewhere)
                     const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
                     
                     try {
                         await navigator.clipboard.writeText(deepLink);
                         const originalContent = copyLinkButton.innerHTML;
-                        copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!';
+                        copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!'; // Change to checkmark and text
                         copyLinkButton.classList.add('copied');
 
                         setTimeout(() => {
-                            copyLinkButton.innerHTML = originalContent;
+                            copyLinkButton.innerHTML = originalContent; // Revert to original icon/text
                             copyLinkButton.classList.remove('copied');
                         }, 2000); // Show "Link Copied!" for 2 seconds
                     } catch (err) {
@@ -631,24 +652,20 @@
                     }
                 });
 
-
                 // --- Video Playback and Expansion Logic ---
                 const videoContainer = postCard.querySelector('.post-video-container');
                 if (videoContainer) {
                     const videoElement = videoContainer.querySelector('video');
                     
-                    // Click on the container to expand (and play/pause in small view)
                     videoContainer.addEventListener('click', (e) => {
                         e.stopPropagation(); // Prevent click from bubbling to postCard
 
                         // If not currently expanded, expand it
                         if (!document.body.classList.contains('video-expanded')) {
-                            // Create overlay
                             const overlay = document.createElement('div');
                             overlay.className = 'expanded-video-overlay';
                             document.body.appendChild(overlay);
 
-                            // Clone the video element for full-size view
                             const fullVideo = videoElement.cloneNode(true);
                             fullVideo.controls = true;     // Show controls in full view
                             fullVideo.autoplay = true;     // Auto-play when expanded
@@ -656,7 +673,6 @@
                             fullVideo.loop = false;        // No loop in full view
                             fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
                             
-                            // Append to overlay
                             overlay.appendChild(fullVideo);
 
                             // Stop the small video and reset its time
@@ -665,17 +681,16 @@
 
                             // Add event listeners to close the full-size video
                             const closeVideo = () => {
-                                document.body.removeChild(overlay); // Remove the overlay (which contains fullVideo)
+                                document.body.removeChild(overlay);
                                 document.body.classList.remove('video-expanded');
-                                // Notify parent iframe to readjust height after closing (if applicable)
+                                // Notify parent iframe to readjust height after closing
                                 if (window.parent) {
                                     const height = document.body.scrollHeight;
                                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
                                 }
                             };
                             overlay.addEventListener('click', closeVideo);
-                            // Prevent clicks on the video itself from closing the overlay immediately
-                            fullVideo.addEventListener('click', (ev) => ev.stopPropagation());
+                            fullVideo.addEventListener('click', (ev) => ev.stopPropagation()); // Prevent clicks on video itself from closing
 
                             document.body.classList.add('video-expanded');
 
@@ -697,7 +712,7 @@
                 }
             });
 
-            // Notify parent iframe (if any) to adjust height
+            // Notify parent iframe (if any) to adjust height after rendering posts
             if (window.parent) {
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
@@ -705,11 +720,11 @@
         };
 
         // --- Live Updates Listener (onSnapshot) ---
-        let unsubscribeFromPosts = null; // To store the unsubscribe function
+        let unsubscribeFromPosts = null; // To store the unsubscribe function for real-time listener
 
         const setupRealtimeListener = (blogId) => {
             if (unsubscribeFromPosts) {
-                unsubscribeFromPosts(); // Unsubscribe from previous listener if exists
+                unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
             }
 
             const postsCollectionRef = collection(db, 'posts');
@@ -725,7 +740,7 @@
                 // Compare with current cached posts to detect new ones
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
                 let newPostsDetected = false;
-                if (initialLoadComplete) { // Only show updates after initial load
+                if (initialLoadComplete) { // Only show "New Update" after initial load
                     for (const post of updatedPosts) {
                         if (!oldPostIds.has(post.id)) {
                             newPostsDetected = true;
@@ -736,7 +751,7 @@
 
                 allPostsCached = updatedPosts; // Update the cache with the latest data
                 
-                // If a new post is detected and we are not at the top, show the "New Update" button
+                // If a new post is detected and we are not at the top of the page, show the "New Update" button
                 if (newPostsDetected && window.scrollY > 0) {
                     newUpdatesCount++;
                     newUpdatesCountSpan.textContent = newUpdatesCount;
@@ -762,6 +777,7 @@
             });
         };
 
+        // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
         const scrollToPost = (postId) => {
             // Find the index of the post in the *filtered* list to determine its page
             const postIndex = filteredPosts.findIndex(p => `post-${p.id}` === postId);
@@ -779,7 +795,7 @@
                             targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
                             setTimeout(() => {
                                 targetElement.style.backgroundColor = ''; // Remove highlight
-                            }, 3000);
+                            }, 3000); // Highlight for 3 seconds
                         }
                     }, 100); // Small delay to allow rendering
                 } else {
@@ -797,7 +813,7 @@
             }
         };
 
-
+        // --- Function: loadPosts (Initial loading of blog ID and setting up listeners) ---
         const loadPosts = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
@@ -818,7 +834,7 @@
                     customTabs = blogDocSnap.data().customTabs || [];
                 }
                 
-                renderTabs(); // Render/update tabs
+                renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
                 
             } catch (error) {
@@ -827,12 +843,13 @@
             }
         };
 
+        // --- Function: filterAndRenderPosts (Filters posts by active tab and re-renders) ---
         const filterAndRenderPosts = () => {
             if (currentActiveTab === defaultTab) {
-                filteredPosts = allPostsCached;
+                filteredPosts = allPostsCached; // Show all if default tab is active
             } else {
                 filteredPosts = allPostsCached.filter(post => 
-                    post.assignedTabs && post.assignedTabs.includes(currentActiveTab)
+                    post.assignedTabs && post.assignedTabs.includes(currentActiveTab) // Filter by assigned tabs
                 );
             }
 
@@ -841,21 +858,24 @@
             if (!window.location.hash || initialLoadComplete) { // Only reset if not an initial deep link load
                 currentPage = 0; 
             }
-            renderCurrentPage(); // Call the new function to render and update pagination
+            renderCurrentPage(); // Render the current page and update pagination controls
         };
 
+        // --- Function: updatePaginationControls (Generates and updates the pagination links) ---
         const updatePaginationControls = (totalPosts) => {
             const paginationControls = document.getElementById('paginationControls');
             if (!paginationControls) return;
 
-            paginationControls.innerHTML = '';
+            paginationControls.innerHTML = ''; // Clear existing controls
 
             const totalPages = Math.ceil(totalPosts / postsPerPage);
 
-            if (totalPages > 1) {
+            if (totalPages > 1) { // Only show pagination if more than one page
+                // Previous button
                 const prevButton = document.createElement('button');
-                prevButton.textContent = 'Previous';
-                prevButton.disabled = currentPage === 0;
+                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>'; // Left arrow icon
+                prevButton.disabled = currentPage === 0; // Disable if on first page
+                prevButton.title = 'Previous Page';
                 prevButton.addEventListener('click', () => {
                     currentPage--;
                     renderCurrentPage();
@@ -863,9 +883,90 @@
                 });
                 paginationControls.appendChild(prevButton);
 
+                // Page numbers and ellipsis logic
+                const maxPagesToShow = 5; // Max number of page numbers (e.g., < 1, 2, ..., 5 >)
+                let startPage, endPage;
+
+                if (totalPages <= maxPagesToShow) {
+                    // Less than or equal to maxPagesToShow, show all pages
+                    startPage = 0;
+                    endPage = totalPages - 1;
+                } else {
+                    // More than maxPagesToShow, implement ellipsis logic
+                    if (currentPage < maxPagesToShow - 2) { // Near the beginning (e.g., 1, 2, 3, ..., N)
+                        startPage = 0;
+                        endPage = maxPagesToShow - 2; 
+                    } else if (currentPage > totalPages - (maxPagesToShow - 1)) { // Near the end (e.g., 1, ..., N-2, N-1, N)
+                        startPage = totalPages - (maxPagesToShow - 1); 
+                        endPage = totalPages - 1;
+                    } else { // In the middle (e.g., 1, ..., C-1, C, C+1, ..., N)
+                        startPage = currentPage - 1; 
+                        endPage = currentPage + 1;
+                    }
+                }
+
+                // Add first page number and leading ellipsis if needed
+                if (startPage > 0) {
+                    const firstPageSpan = document.createElement('span');
+                    firstPageSpan.textContent = '1';
+                    firstPageSpan.className = 'page-number';
+                    firstPageSpan.addEventListener('click', () => {
+                        currentPage = 0;
+                        renderCurrentPage();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    paginationControls.appendChild(firstPageSpan);
+
+                    if (startPage > 1) { // Only show ellipsis if there's a gap
+                        const ellipsisSpan = document.createElement('span');
+                        ellipsisSpan.textContent = '...';
+                        ellipsisSpan.className = 'ellipsis';
+                        paginationControls.appendChild(ellipsisSpan);
+                    }
+                }
+
+                // Add dynamic page numbers
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageNumSpan = document.createElement('span');
+                    pageNumSpan.textContent = i + 1; // Display 1-based index
+                    pageNumSpan.className = 'page-number';
+                    if (i === currentPage) {
+                        pageNumSpan.classList.add('current-page'); // Highlight current page
+                    }
+                    pageNumSpan.addEventListener('click', () => {
+                        if (currentPage !== i) { // Only update if changing page
+                            currentPage = i;
+                            renderCurrentPage();
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    });
+                    paginationControls.appendChild(pageNumSpan);
+                }
+
+                // Add trailing ellipsis and last page number if needed
+                if (endPage < totalPages - 1) {
+                    if (endPage < totalPages - 2) { // Only show ellipsis if there's a gap
+                        const ellipsisSpan = document.createElement('span');
+                        ellipsisSpan.textContent = '...';
+                        ellipsisSpan.className = 'ellipsis';
+                        paginationControls.appendChild(ellipsisSpan);
+                    }
+                    const lastPageSpan = document.createElement('span');
+                    lastPageSpan.textContent = totalPages;
+                    lastPageSpan.className = 'page-number';
+                    lastPageSpan.addEventListener('click', () => {
+                        currentPage = totalPages - 1;
+                        renderCurrentPage();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    paginationControls.appendChild(lastPageSpan);
+                }
+
+                // Next button
                 const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
-                nextButton.disabled = currentPage >= totalPages - 1;
+                nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>'; // Right arrow icon
+                nextButton.disabled = currentPage >= totalPages - 1; // Disable if on last page
+                nextButton.title = 'Next Page';
                 nextButton.addEventListener('click', () => {
                     currentPage++;
                     renderCurrentPage();
@@ -873,12 +974,14 @@
                 });
                 paginationControls.appendChild(nextButton);
             }
+            // Notify parent iframe (if any) to adjust height after pagination renders/updates
             if (window.parent) {
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
             }
         };
 
+        // --- Function: renderCurrentPage (Calculates posts for current page and renders them) ---
         const renderCurrentPage = () => {
             const startIndex = currentPage * postsPerPage;
             const endIndex = startIndex + postsPerPage;
@@ -888,57 +991,61 @@
             updatePaginationControls(filteredPosts.length);
         };
 
+        // --- Function: renderTabs (Renders the tab navigation buttons) ---
         const renderTabs = () => {
-            tabNavigationDiv.innerHTML = '';
+            tabNavigationDiv.innerHTML = ''; // Clear existing tabs
 
+            // Always add the default "Live Reporting" tab
             const liveReportingButton = document.createElement('button');
             liveReportingButton.textContent = defaultTab;
             liveReportingButton.classList.add('tab-button');
             if (currentActiveTab === defaultTab) {
-                liveReportingButton.classList.add('active-tab');
+                liveReportingButton.classList.add('active-tab'); // Set active class
             }
             liveReportingButton.addEventListener('click', () => {
                 currentActiveTab = defaultTab;
-                renderTabs();
-                filterAndRenderPosts();
+                renderTabs(); // Re-render tabs to update active state
+                filterAndRenderPosts(); // Filter and render posts for the new tab
             });
             tabNavigationDiv.appendChild(liveReportingButton);
 
+            // Add custom tabs from Firestore
             customTabs.forEach(tabName => {
                 const tabButton = document.createElement('button');
                 tabButton.textContent = tabName;
                 tabButton.classList.add('tab-button');
                 if (currentActiveTab === tabName) {
-                    tabButton.classList.add('active-tab');
+                    tabButton.classList.add('active-tab'); // Set active class
                 }
                 tabButton.addEventListener('click', () => {
                     currentActiveTab = tabName;
-                    renderTabs();
-                    filterAndRenderPosts();
+                    renderTabs(); // Re-render tabs to update active state
+                    filterAndRenderPosts(); // Filter and render posts for the new tab
                 });
                 tabNavigationDiv.appendChild(tabButton);
             });
         };
 
+        // --- Event Listener: DOMContentLoaded (Initializes the embed when the page loads) ---
         document.addEventListener('DOMContentLoaded', loadPosts);
 
         // --- New Update Button Click Listener ---
         newUpdatesButton.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-            newUpdatesCount = 0; // Reset count
-            newUpdatesButton.style.display = 'none'; // Hide button
-            filterAndRenderPosts(); // Re-render to show latest posts
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the embed
+            newUpdatesCount = 0; // Reset new updates count
+            newUpdatesButton.style.display = 'none'; // Hide the button
+            filterAndRenderPosts(); // Re-render to ensure latest posts are visible
         });
 
-        // Listen for messages from parent window (e.g., admin page) to refresh
+        // --- Message Listener (for communication with parent window/admin page) ---
         window.addEventListener('message', (event) => {
-            // Validate origin in production environments
-            // if (event.origin !== "http://your-admin-domain.com") return;
+            // IMPORTANT: In a production environment, validate event.origin for security!
+            // Example: if (event.origin !== "http://your-admin-domain.com") return;
             
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
-                console.log('Refreshing embed posts due to admin update.');
-                // onSnapshot listener will handle the actual data refresh,
-                // but this message can be used for debugging or other triggers if needed.
+                console.log('Refreshing embed posts due to admin update message.');
+                // The onSnapshot listener will typically handle the actual data refresh,
+                // but this message can trigger specific actions or debugging.
             }
         });
     </script>
