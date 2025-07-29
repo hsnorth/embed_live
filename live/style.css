@@ -34,7 +34,7 @@ main {
 h1, h2, h3 {
     font-family: 'Noto Sans', sans-serif;
     color: #2c3e50;
-    margin-bottom: 10px; /* Reduced margin */
+    margin-bottom: 5px; /* **REDUCED: Smaller gap below headings** */
     font-weight: 700;
 }
 
@@ -46,8 +46,8 @@ h1 {
 h2 {
     font-size: 1.6em;
     color: #e74c3c; /* Accent red for section titles */
-    margin-top: 20px; /* Reduced space between sections */
-    margin-bottom: 8px; /* Reduced margin below heading */
+    margin-top: 15px; /* **REDUCED: Less space between sections** */
+    margin-bottom: 5px; /* **REDUCED: Less space below section heading** */
 }
 
 p {
@@ -87,14 +87,14 @@ nav a:hover {
 
 /* --- Form & Input Elements (General - Admin Page Specific) --- */
 .form-group {
-    margin-bottom: 10px; /* Reduced vertical spacing between form groups */
+    margin-bottom: 8px; /* **REDUCED: Smaller vertical spacing between form groups** */
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
     font-weight: 600;
-    margin-bottom: 3px; /* Minimal space between label and input */
+    margin-bottom: 2px; /* **REDUCED: Very minimal space between label and input** */
     color: #555;
     font-size: 0.95em;
 }
@@ -120,7 +120,7 @@ nav a:hover {
 }
 
 .textarea-field {
-    min-height: 100px; /* Reduced min-height for compactness */
+    min-height: 80px; /* **REDUCED: More compact textarea** */
     resize: vertical;
 }
 
@@ -130,11 +130,13 @@ nav a:hover {
     border-radius: 8px;
     padding: 15px 25px; /* Adjusted padding for horizontal spacing */
     color: #f0f2f5;
+    /* Consider reducing overall top margin if this section itself feels too far from previous content */
+    margin-top: 20px; /* **Adjust if this section needs to be closer to "Manage Custom Tabs"** */
 }
 
 .post-update-section h2 {
     color: #fff;
-    margin-bottom: 10px; /* Reduced margin */
+    margin-bottom: 8px; /* **REDUCED: Less space below dark mode section heading** */
 }
 
 .post-update-section label {
@@ -164,7 +166,7 @@ nav a:hover {
     background-color: #e74c3c;
     padding: 8px 15px; /* Reduced padding */
     font-size: 0.95em;
-    margin-top: 15px; /* Reduced space above submit button */
+    margin-top: 10px; /* **REDUCED: Less space above submit button** */
 }
 
 .post-update-section .submit-button:hover {
@@ -183,7 +185,7 @@ nav a:hover {
     font-size: 0.95em;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 10px; /* Small default margin-top for general buttons */
+    margin-top: 8px; /* **REDUCED: Smaller default margin-top for general buttons** */
 }
 
 .submit-button:hover {
@@ -200,8 +202,8 @@ nav a:hover {
 /* --- Tab Management Controls (Admin Page Specific) --- */
 .tab-management-controls {
     display: flex;
-    gap: 8px; /* Reduced gap */
-    margin-bottom: 10px; /* Reduced margin */
+    gap: 6px; /* **REDUCED: Even smaller gap for elements side-by-side** */
+    margin-bottom: 8px; /* **REDUCED: Less space below these controls** */
     align-items: center;
 }
 
@@ -212,14 +214,14 @@ nav a:hover {
 .tab-list {
     list-style: none;
     padding: 0;
-    margin-top: 8px; /* Reduced margin */
+    margin-top: 5px; /* **REDUCED: Less margin above tab list** */
 }
 
 .tab-list li {
     background-color: #f8f9fa;
-    padding: 8px 15px; /* Reduced padding for compactness, added horizontal */
+    padding: 6px 12px; /* **REDUCED: Smaller padding for list items** */
     border-radius: 5px;
-    margin-bottom: 6px; /* Reduced vertical space between items */
+    margin-bottom: 4px; /* **REDUCED: Smaller vertical space between items** */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -233,10 +235,10 @@ nav a:hover {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 5px 10px; /* Reduced padding */
+    padding: 4px 8px; /* **REDUCED: Smaller padding for delete button** */
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.75em;
+    font-size: 0.7em; /* Slightly smaller font */
     transition: background-color 0.3s ease;
     font-weight: 500;
 }
@@ -249,12 +251,12 @@ nav a:hover {
 .tab-selection-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px; /* Reduced gap */
-    padding: 8px 15px; /* Added horizontal padding */
+    gap: 8px; /* **REDUCED: Smaller gap** */
+    padding: 6px 12px; /* **REDUCED: Smaller padding** */
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #fdfdfd;
-    margin-top: 10px; /* Reduced margin */
+    margin-top: 8px; /* **REDUCED: Less margin** */
 }
 
 .tab-selection-group label {
@@ -267,19 +269,19 @@ nav a:hover {
 }
 
 .tab-selection-group input[type="checkbox"] {
-    margin-right: 5px;
-    transform: scale(1.1);
+    margin-right: 4px; /* **REDUCED: Smaller margin** */
+    transform: scale(1.05); /* Slightly smaller scale */
     accent-color: #e74c3c;
 }
 
 /* --- Embed Code Section (Admin Page Specific) --- */
 .embed-code-section {
-    margin-top: 25px; /* Reduced margin */
+    margin-top: 20px; /* **REDUCED: Less margin** */
 }
 
 .embed-code-container {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* **REDUCED: Smaller gap** */
     align-items: center;
 }
 
@@ -645,7 +647,7 @@ body.video-expanded {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 15px; /* **REDUCED: Less space above pagination** */
     gap: 8px;
 }
 
