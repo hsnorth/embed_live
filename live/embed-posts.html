@@ -191,7 +191,6 @@
         /* Crucial for fixing Twitter embed width issues: Target the iframe itself */
         .tweet-embed-wrapper iframe,
         blockquote.twitter-tweet iframe {
-            width: 100% !important; /* Force Twitter iframe to fit parent */
             max-width: 100% !important; /* Ensure it never exceeds its parent */
             min-width: 0 !important; /* Allow it to shrink below Twitter's default if needed */
             height: auto !important; /* Let height adjust naturally */
