@@ -23,193 +23,185 @@ body {
 
 main {
     flex-grow: 1; /* Allow main content to take available space */
-    padding: 25px; /* Slightly more padding for main container */
-    max-width: 950px; /* Wider content area */
-    margin: 25px auto; /* Center the main content */
+    padding: 20px; /* Slightly reduced padding for main container */
+    max-width: 900px; /* Constrain content width for readability and less stretched layout */
+    margin: 20px auto; /* Center the main content, reduced top/bottom margin */
     background-color: #fff;
-    border-radius: 12px; /* More rounded corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Stronger but softer shadow */
+    border-radius: 8px; /* Slightly less rounded corners for a cleaner look */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Softer shadow */
 }
 
 h1, h2, h3 {
-    font-family: 'Noto Sans', sans-serif; /* Keep sans-serif for all headings for uniformity */
-    color: #2c3e50; /* Darker blue-grey */
+    font-family: 'Noto Sans', sans-serif;
+    color: #2c3e50;
     margin-bottom: 15px;
-    font-weight: 700; /* Bolder headings */
+    font-weight: 700;
 }
 
 h1 {
-    font-size: 2.4em;
-    color: #34495e; /* Even darker for main title */
+    font-size: 2.2em;
+    color: #34495e;
 }
 
 h2 {
     font-size: 1.6em;
-    color: #e74c3c; /* Accent red for section titles like Twitter (X) */
-    border-bottom: none; /* Remove border for cleaner look */
-    padding-bottom: 0;
-    margin-top: 35px; /* More space between sections */
-    margin-bottom: 20px;
+    color: #e74c3c; /* Accent red for section titles */
+    margin-top: 30px; /* Space between sections */
+    margin-bottom: 15px; /* Reduced margin below heading */
 }
 
 p {
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* Default paragraph spacing */
 }
 
 /* --- Header & Navigation --- */
 header {
-    background-color: #e74c3c; /* Accent red like the "Managing" text */
+    background-color: #e74c3c;
     color: #fff;
-    padding: 18px 30px; /* More padding for a bolder header */
+    padding: 15px 25px; /* Reduced padding slightly */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
     color: #fff;
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: 700;
 }
 
 nav a {
     color: #fff;
     text-decoration: none;
-    margin-left: 25px; /* More space between nav items */
+    margin-left: 20px;
     font-weight: 500;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
-    font-size: 1.05em;
+    transition: color 0.3s ease;
+    font-size: 1em;
 }
 
 nav a:hover {
-    color: #f9f9f9; /* Subtle lighten on hover */
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    color: #f9f9f9;
 }
 
-/* --- Form & Input Elements --- */
+/* --- Form & Input Elements (General) --- */
 .form-group {
-    margin-bottom: 20px; /* Increase vertical spacing for readability */
+    margin-bottom: 15px; /* Reduced vertical spacing between form groups */
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
-    font-weight: 600; /* Slightly bolder labels */
-    margin-bottom: 8px; /* More space between label and input */
+    font-weight: 600;
+    margin-bottom: 5px; /* Small space between label and input */
     color: #555;
-    font-size: 1em;
+    font-size: 0.95em;
 }
 
 .input-field,
 .textarea-field {
     width: 100%;
-    padding: 12px 15px; /* More padding inside inputs */
-    border: 1px solid #ddd; /* Lighter border */
-    border-radius: 8px; /* More rounded input fields */
-    font-size: 1.05em;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Standard rounding for inputs */
+    font-size: 1em;
     font-family: 'Roboto', sans-serif;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-    background-color: #fdfdff; /* Very light background for inputs */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
     color: #333;
 }
 
 .input-field:focus,
 .textarea-field:focus {
-    border-color: #e74c3c; /* Focus color matches header accent */
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2); /* Soft glow on focus */
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
     outline: none;
-    background-color: #fff; /* White background on focus */
 }
 
 .textarea-field {
-    min-height: 150px; /* Taller textarea */
+    min-height: 120px;
     resize: vertical;
 }
 
-/* Special styling for the 'Post an Update' form section */
+/* --- Post an Update Section (Dark Mode Input) --- */
 .post-update-section {
-    background-color: #333; /* Dark background for this section, like Twitter (X) input area */
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 30px; /* Space below this section */
-    color: #f0f2f5; /* Light text for dark background */
+    background-color: #333; /* Dark background */
+    border-radius: 8px; /* Consistent rounding */
+    padding: 20px; /* Reduced padding for more compactness */
+    margin-bottom: 25px; /* Reduced space below this section */
+    color: #f0f2f5;
 }
 
 .post-update-section h2 {
-    color: #fff; /* White title for this section */
-    margin-bottom: 25px;
+    color: #fff;
+    margin-bottom: 20px; /* Reduced margin below heading */
 }
 
 .post-update-section label {
-    color: #ddd; /* Lighter labels on dark background */
+    color: #ddd;
 }
 
 .post-update-section .input-field,
 .post-update-section .textarea-field {
-    background-color: #222; /* Darker input fields within the dark section */
-    border-color: #555; /* Subtle border */
-    color: #eee; /* Light text in dark inputs */
+    background-color: #222;
+    border-color: #555;
+    color: #eee;
 }
 
 .post-update-section .input-field::placeholder,
 .post-update-section .textarea-field::placeholder {
-    color: #bbb; /* Lighter placeholder text */
+    color: #bbb;
 }
 
 .post-update-section .input-field:focus,
 .post-update-section .textarea-field:focus {
     border-color: #e74c3c;
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
-    background-color: #2a2a2a; /* Slightly lighter on focus */
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.3);
+    background-color: #2a2a2a;
 }
 
 .post-update-section .submit-button {
-    background-color: #e74c3c; /* Accent red for the post button */
-    padding: 12px 25px;
-    font-size: 1.1em;
-    margin-top: 25px; /* More space above submit button */
+    background-color: #e74c3c;
+    padding: 10px 20px;
+    font-size: 1em;
+    margin-top: 20px; /* Reduced space above submit button */
 }
 
 .post-update-section .submit-button:hover {
     background-color: #c0392b;
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
-
-/* General Buttons */
+/* --- General Buttons --- */
 .submit-button {
     background-color: #e74c3c;
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 8px; /* More rounded buttons */
+    border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    font-weight: 600; /* Bolder button text */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    margin-top: 15px; /* Space above submit button */
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .submit-button:hover {
     background-color: #c0392b;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .submit-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
 }
 
 /* --- Tab Management Controls --- */
 .tab-management-controls {
     display: flex;
-    gap: 15px; /* More space between input and button */
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 15px; /* Reduced margin */
     align-items: center;
 }
 
@@ -220,33 +212,33 @@ nav a:hover {
 .tab-list {
     list-style: none;
     padding: 0;
-    margin-top: 15px;
+    margin-top: 10px; /* Reduced margin */
 }
 
 .tab-list li {
-    background-color: #f8f9fa; /* Lighter background for tab items */
-    padding: 12px 18px; /* More padding */
-    border-radius: 8px;
-    margin-bottom: 10px; /* More space between tabs */
+    background-color: #f8f9fa;
+    padding: 10px 15px; /* Reduced padding */
+    border-radius: 5px;
+    margin-bottom: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.95em;
+    font-size: 0.9em;
     color: #495057;
-    border: 1px solid #eee; /* Subtle border */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* Lighter shadow */
 }
 
 .tab-list li .delete-tab-button {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 8px 15px; /* More padding for delete button */
-    border-radius: 5px;
+    padding: 6px 12px; /* Reduced padding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.8em;
     transition: background-color 0.3s ease;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .tab-list li .delete-tab-button:hover {
@@ -257,12 +249,12 @@ nav a:hover {
 .tab-selection-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 25px; /* Larger gap between checkboxes */
-    padding: 15px;
-    border: 1px solid #e0e0e0; /* Solid, lighter border */
-    border-radius: 8px;
-    background-color: #fdfdfd; /* Very light background */
-    margin-top: 15px;
+    gap: 15px; /* Reduced gap */
+    padding: 10px; /* Reduced padding */
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+    margin-top: 10px; /* Reduced margin */
 }
 
 .tab-selection-group label {
@@ -271,18 +263,18 @@ nav a:hover {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: #333; /* Darker text for labels */
+    color: #333;
 }
 
 .tab-selection-group input[type="checkbox"] {
-    margin-right: 8px; /* More space between checkbox and label text */
-    transform: scale(1.2); /* Slightly larger checkbox */
-    accent-color: #e74c3c; /* Accent color for checked state */
+    margin-right: 5px;
+    transform: scale(1.1);
+    accent-color: #e74c3c;
 }
 
 /* --- Embed Code Section --- */
 .embed-code-section {
-    margin-top: 40px; /* More space above this section */
+    margin-top: 30px; /* Reduced margin */
 }
 
 .embed-code-container {
@@ -293,21 +285,21 @@ nav a:hover {
 
 .embed-code-container .input-field {
     flex-grow: 1;
-    font-family: 'JetBrains Mono', monospace; /* More distinct monospace font for code */
+    font-family: 'JetBrains Mono', monospace;
     background-color: #f0f0f0;
     color: #555;
-    padding: 12px 15px; /* Consistent padding */
-    border-radius: 8px;
-    font-size: 0.95em;
-    white-space: pre-wrap; /* Ensure code formatting is preserved */
-    word-break: break-all; /* Break long lines of code */
+    padding: 10px 12px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 .embed-code-container .copy-button {
-    background-color: #34495e; /* Dark blue-grey for copy button */
+    background-color: #34495e;
     color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 10px 18px;
+    border-radius: 5px;
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
@@ -316,57 +308,57 @@ nav a:hover {
     background-color: #2c3e50;
 }
 
-
 /* --- Live Blog Posts Section (Post Cards) --- */
+/* This section is heavily modified to look like embed-posts.html */
 .live-blog-posts {
-    margin-top: 40px; /* More space above this section */
+    margin-top: 30px; /* Reduced margin */
 }
 
 #postsContainer {
     display: grid;
-    grid-template-columns: 1fr; /* Single column on smaller screens */
-    gap: 30px; /* More space between post cards */
-    padding-top: 20px;
-}
-
-@media (min-width: 850px) { /* Adjust breakpoint for a wider layout */
-    #postsContainer {
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Two columns on larger screens, wider min */
-    }
+    grid-template-columns: 1fr; /* Single column on all screen sizes for the embed look */
+    gap: 0; /* No gap between posts, they will have their own internal spacing/borders */
+    padding-top: 0; /* No padding at the top */
+    border-top: 1px solid #eee; /* A subtle top border for the entire list */
 }
 
 .post-card {
     background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px; /* More rounded corners */
-    padding: 25px; /* More padding inside card */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Stronger shadow */
+    border-bottom: 1px solid #eee; /* Border only at the bottom of each card */
+    border-radius: 0; /* No rounded corners, as it's a continuous list */
+    padding: 15px 20px; /* Reduced padding for a more compact feel */
+    box-shadow: none; /* No individual card shadows for the embed look */
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease;
+}
+
+.post-card:last-child {
+    border-bottom: none; /* No border for the very last post */
 }
 
 .post-card:hover {
-    transform: translateY(-5px); /* More pronounced lift on hover */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    background-color: #f9f9f9; /* Subtle highlight on hover */
+    transform: none; /* No lift effect on hover for embed style */
+    box-shadow: none;
 }
 
 .post-header-line {
     display: flex;
     align-items: center;
-    margin-bottom: 12px; /* More space below header line */
-    gap: 12px; /* More space between avatar and text */
+    margin-bottom: 8px; /* Reduced space below header line */
+    gap: 8px; /* Reduced space between avatar and text */
 }
 
 .author-avatar {
-    width: 48px; /* Slightly larger avatar */
-    height: 48px;
+    width: 36px; /* Smaller avatar */
+    height: 36px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2px solid #eee; /* Subtle border around avatar */
+    border: none; /* No border around avatar for embed look */
 }
 
 .author-avatar-img {
@@ -384,49 +376,49 @@ nav a:hover {
 
 .meta-line-one {
     display: flex;
-    align-items: center;
+    align-items: baseline; /* Align text at baseline */
     flex-wrap: wrap;
-    font-size: 1.05em; /* Slightly larger text */
+    font-size: 0.95em; /* Slightly smaller text */
 }
 
 .meta-line-one strong {
-    font-size: 1.1em;
+    font-size: 1em; /* No extra sizing */
     color: #2c3e50;
-    margin-right: 8px;
-    font-weight: 700; /* Bolder author name */
+    margin-right: 5px; /* Reduced margin */
+    font-weight: 600;
 }
 
 .bullet {
-    margin: 0 8px; /* More space for bullet */
-    color: #aaa; /* Lighter grey */
-    font-size: 1.2em; /* Larger bullet */
+    margin: 0 4px; /* Reduced space for bullet */
+    color: #aaa;
+    font-size: 1em; /* Standard bullet size */
 }
 
 .time-ago {
-    font-size: 0.95em;
+    font-size: 0.85em; /* Slightly smaller time text */
     color: #888;
-    white-space: nowrap; /* Prevent time from wrapping */
+    white-space: nowrap;
 }
 
 .reporting-from {
-    font-size: 0.9em;
+    font-size: 0.8em; /* Smaller reporting text */
     color: #666;
-    margin-top: 4px;
+    margin-top: 2px; /* Reduced margin */
 }
 
 .post-subtitle {
-    font-size: 1.15em;
+    font-size: 1.05em; /* Reduced font size */
     color: #333;
-    font-style: normal; /* Remove italic for cleaner look */
-    margin-bottom: 10px;
-    margin-top: 8px;
-    font-weight: 600; /* Bolder subtitle */
+    font-style: normal;
+    margin-bottom: 5px; /* Reduced margin below subtitle */
+    margin-top: 5px; /* Reduced margin above subtitle */
+    font-weight: 600;
 }
 
 .post-text {
-    margin-bottom: 18px; /* More space below text */
+    margin-bottom: 12px; /* Reduced space below text */
     color: #333;
-    line-height: 1.75; /* Improved readability */
+    line-height: 1.6; /* Slightly tighter line height */
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -434,24 +426,24 @@ nav a:hover {
 .post-media {
     max-width: 100%;
     height: auto;
-    border-radius: 8px; /* Rounded corners for media */
-    margin-bottom: 18px;
+    border-radius: 5px; /* Slightly less rounded media */
+    margin-bottom: 12px;
     display: block;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for media */
+    box-shadow: none; /* No shadow for embed look */
 }
 
 .show-more-button {
     background: none;
     border: none;
-    color: #e74c3c; /* Accent red for show more */
+    color: #e74c3c;
     cursor: pointer;
-    font-weight: 700; /* Bolder */
+    font-weight: 600; /* Slightly less bold */
     padding: 0;
-    margin-top: -10px;
+    margin-top: -5px; /* Reduced negative margin */
     text-align: left;
     display: block;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .show-more-button:hover {
@@ -460,80 +452,78 @@ nav a:hover {
 }
 
 .assigned-tabs {
-    margin-top: 12px;
-    font-size: 0.85em;
+    margin-top: 10px; /* Reduced margin */
+    font-size: 0.8em;
     color: #7f8c8d;
-    border-top: 1px solid #f0f0f0; /* Very light separator */
-    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px; /* Reduced padding */
     font-style: italic;
 }
 
 .post-actions {
     display: flex;
-    gap: 12px; /* More space between buttons */
+    gap: 8px; /* Reduced space between buttons */
     margin-top: auto;
-    padding-top: 20px; /* More padding above actions */
+    padding-top: 10px; /* Reduced padding above actions */
     border-top: 1px solid #eee;
 }
 
 .post-actions button {
-    background-color: #95a5a6; /* Softer grey for general buttons */
+    background-color: #95a5a6;
     color: white;
-    padding: 10px 18px; /* More padding */
+    padding: 6px 12px; /* Reduced padding for buttons */
     border: none;
-    border-radius: 6px;
+    border-radius: 4px; /* Smaller rounding */
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 0.85em; /* Smaller font size */
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 8px; /* More space between icon and text */
-    font-weight: 600;
+    gap: 5px;
+    font-weight: 500;
 }
 
 .post-actions button i {
-    font-size: 1em; /* Slightly larger icon */
+    font-size: 0.9em;
 }
 
 .edit-post-button {
-    background-color: #2ecc71; /* Brighter green for edit */
+    background-color: #2ecc71;
 }
 .edit-post-button:hover {
     background-color: #27ae60;
-    transform: translateY(-1px);
 }
 
 .delete-post-button {
-    background-color: #e74c3c; /* Accent red for delete */
+    background-color: #e74c3c;
 }
 .delete-post-button:hover {
     background-color: #c0392b;
-    transform: translateY(-1px);
 }
 
 .copy-link-button {
-    background: #f8f8f8; /* Light background for copy link */
+    background: #f8f8f8;
     border: 1px solid #ddd;
     color: #666;
-    padding: 8px 15px; /* Consistent padding */
-    border-radius: 6px;
+    padding: 6px 12px; /* Reduced padding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.85em;
     margin-left: auto;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .copy-link-button:hover {
     background-color: #f0f0f0;
-    color: #e74c3c; /* Accent red on hover */
+    color: #e74c3c;
     border-color: #e74c3c;
 }
 
 .copy-link-button.copied {
-    background-color: #28a745; /* Bootstrap success green when copied */
+    background-color: #28a745;
     color: white;
     border-color: #28a745;
 }
@@ -541,9 +531,9 @@ nav a:hover {
 .no-posts-message, .error-message {
     text-align: center;
     color: #666;
-    padding: 40px 0; /* More vertical padding */
+    padding: 20px 0; /* Reduced padding */
     font-style: italic;
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
 /* --- Pagination Controls --- */
@@ -551,36 +541,34 @@ nav a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 40px; /* More space above pagination */
-    gap: 15px; /* Larger gap between controls */
+    margin-top: 30px; /* Reduced margin */
+    gap: 10px;
 }
 
 .pagination-controls button {
-    background-color: #34495e; /* Dark blue-grey for buttons */
+    background-color: #34495e;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px; /* Reduced padding */
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 0.9em;
     font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .pagination-controls button:hover:not(:disabled) {
     background-color: #2c3e50;
-    transform: translateY(-1px);
 }
 
 .pagination-controls button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
-    transform: none;
 }
 
 .pagination-controls .page-number {
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 5px;
     cursor: pointer;
     background-color: #eee;
     color: #555;
@@ -593,18 +581,18 @@ nav a:hover {
 }
 
 .pagination-controls .page-number.current-page {
-    background-color: #e74c3c; /* Accent red for current page */
+    background-color: #e74c3c;
     color: white;
     font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Footer --- */
 footer {
-    background-color: #34495e; /* Darker blue-grey for footer */
+    background-color: #34495e;
     color: #f0f2f5;
     text-align: center;
-    padding: 20px 30px;
-    margin-top: 50px; /* More space above footer */
+    padding: 15px 25px; /* Reduced padding */
+    margin-top: 30px; /* Reduced margin */
     font-size: 0.9em;
 }
