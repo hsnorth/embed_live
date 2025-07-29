@@ -4,341 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create/Manage Live Blog</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Existing style.css content should be here or linked */
-        /* Adding pagination CSS directly for demonstration, ideally this is in style.css */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f2f5; }
-        .container { max-width: 800px; margin: 20px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; margin-bottom: 30px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="url"], textarea, select {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        textarea { resize: vertical; min-height: 100px; }
-        button {
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
-        button:hover { background-color: #0056b3; }
-        .loading-spinner {
-            border: 4px solid rgba(0,0,0,.1);
-            border-left-color: #09f;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .message { margin-top: 20px; padding: 10px; border-radius: 4px; text-align: center; }
-        .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .media-preview { margin-top: 15px; text-align: center; }
-        .media-preview img, .media-preview video { max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px; }
-        .auth-status {
-            text-align: right;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #555;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .auth-status button {
-            background: none;
-            border: none;
-            color: #007bff;
-            cursor: pointer;
-            padding: 0;
-            font-size: 0.9em;
-            text-decoration: underline;
-            margin-top: 0; /* Override default button margin-top */
-        }
-        .auth-status button:hover {
-            color: #0056b3;
-        }
-        .auth-avatar-small {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            vertical-align: middle;
-        }
-        .form-tip {
-            font-size: 0.85em;
-            color: #777;
-            margin-top: -10px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        /* Pagination CSS (from your provided code) */
-        .pagination-controls {
-            display: flex;
-            justify-content: center; /* Center buttons horizontally */
-            align-items: center;
-            padding: 15px 16px;
-            background-color: #fff;
-            border-top: 1px solid #ebeef0;
-            gap: 15px;
-            font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-            margin-top: 15px; /* Add some top margin to separate from posts */
-        }
-
-        .pagination-controls button {
-            background-color: transparent; /* No background */
-            color: #0f1419; /* Default text color */
-            border: none; /* No button outline */
-            padding: 8px 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: normal;
-            transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transition for text/bg change */
-            box-shadow: none;
-            transform: none;
-            text-decoration: none; /* Ensure no underline */
-        }
-
-        .pagination-controls button:disabled {
-            color: #999; /* Grey out disabled buttons */
-            cursor: not-allowed;
-            opacity: 0.7; /* Slightly faded */
-        }
-
-        .pagination-controls button:hover:not(:disabled) {
-            color: rgb(208, 2, 27); /* Red on hover */
-            background-color: rgba(208, 2, 27, 0.05); /* Very light red background on hover */
-        }
-
-        .pagination-controls button:active:not(:disabled) {
-            background-color: rgba(208, 2, 27, 0.1); /* Slightly darker background on active */
-        }
-
-        .pagination-controls .page-number {
-            display: inline-block;
-            padding: 5px 8px;
-            margin: 0 3px;
-            text-decoration: none;
-            color: #000;
-            font-weight: normal;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-size: 15px;
-        }
-
-        .pagination-controls .page-number.current-page {
-            text-decoration: none;
-            border-bottom: 2px solid rgb(208, 2, 27);
-            padding-bottom: 3px;
-            font-weight: bold;
-            color: rgb(208, 2, 27);
-        }
-
-        .pagination-controls .page-number:hover:not(.current-page) {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        /* End Pagination CSS */
-
-        /* Post Card Styling for Admin View (similar to embed, but with edit/delete buttons) */
-        .post-card {
-            display: block;
-            padding: 12px 16px;
-            border-bottom: 1px solid #ebeef0;
-            background-color: #fff;
-            word-wrap: break-word;
-            position: relative;
-        }
-
-        .post-header-line {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 4px;
-        }
-
-        .author-avatar {
-            flex-shrink: 0;
-            margin-right: 12px;
-        }
-
-        .author-avatar-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .post-meta {
-            flex-grow: 1;
-            font-size: 15px;
-            line-height: 1.4;
-            margin-bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .meta-line-one {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0px;
-        }
-
-        .post-meta strong {
-            font-weight: bold;
-            color: #0f1419;
-            margin-right: 4px;
-        }
-
-        .post-meta span.time-ago {
-            color: rgb(208, 2, 27);
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .post-meta .bullet {
-            color: #536471;
-            font-size: 14px;
-            margin: 0 4px;
-            display: inline;
-        }
-
-        .post-meta .reporting-from {
-            display: block;
-            color: #536471;
-            font-size: 14px;
-            margin-left: 0;
-            margin-top: 0px;
-            margin-bottom: 12px;
-        }
-
-        .post-subtitle {
-            font-family: 'Roboto', sans-serif;
-            font-size: 1.5em;
-            color: #333;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .post-text {
-            font-family: "Noto Serif", Georgia, serif;
-            font-size: 16px;
-            margin-top: 0;
-            margin-bottom: 8px;
-            color: #0f1419;
-            line-height: 20px;
-            word-break: break-word;
-        }
-        .post-text p {
-            margin-bottom: 1em; /* Add space between paragraphs */
-        }
-        .post-text p:last-child {
-            margin-bottom: 0; /* No margin after the last paragraph */
-        }
-
-        .post-media {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-            margin-top: 8px;
-        }
-
-        .post-actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end; /* Align buttons to the right */
-        }
-        .post-actions button {
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 0; /* Override default button margin-top */
-        }
-        .edit-post-button {
-            background-color: #007bff;
-            color: white;
-            border: 1px solid #007bff;
-        }
-        .edit-post-button:hover {
-            background-color: #0056b3;
-        }
-        .delete-post-button {
-            background-color: #dc3545;
-            color: white;
-            border: 1px solid #dc3545;
-        }
-        .delete-post-button:hover {
-            background-color: #c82333;
-        }
-        .copy-link-button {
-            background: none;
-            border: none;
-            color: #657786;
-            cursor: pointer;
-            font-size: 1em;
-            padding: 5px 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            position: absolute; /* Position relative to post-card */
-            top: 10px;
-            right: 10px;
-            font-size: 0.9em;
-        }
-        .copy-link-button:hover {
-            background-color: rgba(208, 2, 27, 0.1);
-            color: rgb(208, 2, 27);
-        }
-        .copy-link-button.copied {
-            color: rgb(208, 2, 27);
-            pointer-events: none;
-        }
-        .copy-link-button.copied i {
-            color: rgb(208, 2, 27);
-        }
-        .no-posts-message, .error-message {
-            text-align: center;
-            padding: 20px;
-            color: #536471;
-            font-style: italic;
-            font-size: 16px;
-        }
-    </style>
-</head>
+    </head>
 <body>
     <header>
         <h1 id="blogTitleHeader">Loading Blog...</h1>
@@ -362,19 +30,12 @@
 
         <section class="new-post-form">
             <h2>Post an Update</h2>
-            <div class="auth-status">
-                <img id="user-avatar-small" class="auth-avatar-small" src="https://hsnorth.github.io/embed_live/live/harry.png" alt="User Avatar">
-                Logged in as: <span id="user-display-name">Loading...</span> (<span id="user-email"></span>)
-                <button id="logout-button">Logout</button>
-            </div>
             <form id="postForm">
                 <div class="form-group">
-                    <label for="blogId">Blog ID:</label>
-                    <select id="blogId" required>
-                        <!-- Options will be loaded dynamically -->
-                    </select>
+                    <label for="authorNameInput">Author Name:</label>
+                    <input type="text" id="authorNameInput" class="input-field" placeholder="Your Name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="postSubtitleInput">Subtitle (Optional):</label>
                     <input type="text" id="postSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
@@ -384,7 +45,6 @@
                     <label for="postContentInput">Post Content:</label>
                     <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
                 </div>
-                
                 <div class="form-group">
                     <label for="reportingFromInput">Reporting From:</label>
                     <input type="text" id="reportingFromInput" class="input-field" value="Montreal, Quebec, Canada">
@@ -397,15 +57,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="postMediaInput">Upload Image or Video:</label>
+                    <label for="postMediaInput">Image or Video:</label>
                     <input type="file" id="postMediaInput" accept="image/*,video/*">
-                    <p class="form-tip">OR</p>
-                    <label for="postMediaUrlInput">Enter Media URL (Optional):</label>
-                    <input type="url" id="postMediaUrlInput" class="input-field" placeholder="https://example.com/image.jpg">
-                    <div class="media-preview" id="media-preview"></div>
                 </div>
-                <button type="submit" class="submit-button">Post Update <span id="loading-spinner" class="loading-spinner" style="display: none;"></span></button>
-                <div id="message" class="message" style="display: none;"></div>
+                <button type="submit" class="submit-button">Post Update</button>
             </form>
         </section>
 
@@ -456,21 +111,21 @@
 
         let currentUser = null;
         let currentBlogId = null;
-        let currentBlogName = ''; // Store blog name for embed link
-        let customTabs = []; // Array to store custom tab names for the current blog
-        const defaultTab = "Live Reporting"; // Always present
-        let adminAllPostsCached = []; // Cache for admin posts
+        let currentBlogName = '';
+        let customTabs = [];
+        const defaultTab = "Live Reporting";
+        let adminAllPostsCached = [];
         let adminCurrentPage = 0;
-        const adminPostsPerPage = 8; // Match the embed page for consistency in admin view
-        let editingPostId = null; // To track which post is being edited
+        const adminPostsPerPage = 8;
+        let editingPostId = null;
+        let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // New variable to store the current user's avatar URL
 
         const blogTitleHeader = document.getElementById('blogTitleHeader');
-        // const authorNameInput = document.getElementById('authorNameInput'); // REMOVED: Author name is now automatic
+        const authorNameInput = document.getElementById('authorNameInput');
         const postSubtitleInput = document.getElementById('postSubtitleInput');
         const postContentInput = document.getElementById('postContentInput');
         const reportingFromInput = document.getElementById('reportingFromInput');
         const postMediaInput = document.getElementById('postMediaInput');
-        const postMediaUrlInput = document.getElementById('postMediaUrlInput'); // NEW: Manual URL input
         const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
         const submitButton = document.querySelector('.submit-button');
@@ -480,41 +135,35 @@
         const addTabButton = document.getElementById('addTabButton');
         const customTabList = document.getElementById('customTabList');
         const postTabAssignmentDiv = document.getElementById('postTabAssignment');
-        const userDisplayNameSpan = document.getElementById('user-display-name');
-        const userEmailSpan = document.getElementById('user-email');
-        const userAvatarSmall = document.getElementById('user-avatar-small'); // NEW: Small avatar in auth status
-        const logoutButton = document.getElementById('logout-button');
 
 
         // --- Authentication Guard ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 // No user is signed in, redirect to login
-                window.location.href = 'login.html'; // Changed from index.html to login.html
+                window.location.href = 'index.html';
             } else {
                 currentUser = user;
-                // Fetch user's profile from Firestore to get custom name and avatarUrl
-                const userDocRef = doc(db, 'users', currentUser.uid);
-                const userDocSnap = await getDoc(userDocRef);
-                let userDisplayName = currentUser.displayName || currentUser.email.split('@')[0];
-                let userAvatar = 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default fallback
+                authorNameInput.value = localStorage.getItem('authorName') || '';
 
-                if (userDocSnap.exists()) {
-                    const userData = userDocSnap.data();
-                    if (userData.name) { // Use 'name' field from Firestore if it exists
-                        userDisplayName = userData.name;
+                // --- FETCH USER AVATAR HERE ---
+                try {
+                    const userDocRef = doc(db, 'users', currentUser.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    if (userDocSnap.exists() && userDocSnap.data().avatarUrl) {
+                        currentUserAvatarUrl = userDocSnap.data().avatarUrl;
+                        // Optional: You might want to update an avatar display somewhere on the page
+                        // For example: document.getElementById('yourProfileAvatar').src = currentUserAvatarUrl;
+                    } else {
+                        console.log("User document not found or avatarUrl missing, using default.");
+                        // currentUserAvatarUrl already defaults to harry.png
                     }
-                    if (userData.avatarUrl) { // Use 'avatarUrl' field from Firestore if it exists
-                        userAvatar = userData.avatarUrl;
-                    }
-                } else {
-                    console.warn("User profile not found in Firestore for UID:", currentUser.uid, "Using Firebase Auth name and default avatar.");
+                } catch (error) {
+                    console.error("Error fetching user avatar:", error);
+                    // Fallback to default if there's an error fetching
+                    currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
                 }
-
-                userDisplayNameSpan.textContent = userDisplayName;
-                userEmailSpan.textContent = user.email;
-                userAvatarSmall.src = userAvatar; // Set the user's avatar
-                console.log("Logged in user:", currentUser.uid, userDisplayName, currentUser.email);
+                // --- END FETCH USER AVATAR ---
 
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBlogId = urlParams.get('blogId');
@@ -524,11 +173,11 @@
                     const blogDocSnap = await getDoc(blogDocRef);
                     if (blogDocSnap.exists()) {
                         currentBlogName = blogDocSnap.data().name;
-                        customTabs = blogDocSnap.data().customTabs || []; // Load custom tabs
+                        customTabs = blogDocSnap.data().customTabs || [];
                         blogTitleHeader.textContent = `Managing: ${currentBlogName}`;
                         generateEmbedCode();
-                        renderCustomTabs(); // Render tab management UI
-                        renderPostTabAssignmentCheckboxes([]); // Render initial tab checkboxes for new post
+                        renderCustomTabs();
+                        renderPostTabAssignmentCheckboxes([]);
                         await loadPostsForAdmin();
                     } else {
                         blogTitleHeader.textContent = 'Blog Not Found';
@@ -538,17 +187,6 @@
                     blogTitleHeader.textContent = 'No Blog Selected';
                     postsContainer.innerHTML = '<p class="error-message">No blog selected. Please go to your <a href="dashboard.html">dashboard</a> to create or select a blog.</p>';
                 }
-            }
-        });
-
-        logoutButton.addEventListener('click', async (e) => {
-            e.preventDefault();
-            try {
-                await signOut(auth);
-                window.location.href = 'login.html'; // Redirect to login page after logout
-            } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Could not sign out. Please try again.");
             }
         });
 
@@ -657,53 +295,29 @@
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!currentUser) {
-                alert('You must be logged in to create a post.');
-                return;
-            }
-
-            // Get author name and avatar from Firestore user profile
-            let authorName = currentUser.displayName || currentUser.email.split('@')[0]; // Default to Firebase Auth displayName/email
-            let authorAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default fallback avatar
-
-            const userDocRef = doc(db, 'users', currentUser.uid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                if (userData.name) { // Use 'name' field from Firestore if it exists
-                    authorName = userData.name;
-                }
-                if (userData.avatarUrl) { // Use 'avatarUrl' field from Firestore if it exists
-                    authorAvatarUrl = userData.avatarUrl;
-                }
-            } else {
-                console.warn("User profile not found in Firestore for UID:", currentUser.uid, "Using Firebase Auth name and default avatar.");
-            }
-
+            const authorName = authorNameInput.value.trim();
             const content = postContentInput.value.trim();
             const subtitle = postSubtitleInput.value.trim();
             const reportingFrom = reportingFromInput.value.trim();
             const mediaFile = postMediaInput.files[0];
-            const manualMediaUrl = postMediaUrlInput.value.trim(); // Get value from the new URL input
 
-            // Get selected tabs
             const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
-            const assignedTabs = [defaultTab]; // "Live Reporting" is always included
+            const assignedTabs = [defaultTab];
             selectedTabCheckboxes.forEach(checkbox => {
-                if (checkbox.value !== defaultTab) { // Ensure default is not added twice
+                if (checkbox.value !== defaultTab) {
                     assignedTabs.push(checkbox.value);
                 }
             });
 
-            if (!content) {
-                alert("Post Content is required!");
+            if (!authorName || !content) {
+                alert("Author Name and Post Content are required!");
                 return;
             }
             if (assignedTabs.length === 0) {
                 alert("Please assign the post to at least one tab (Live Reporting is always included).");
                 return;
             }
+
             if (!currentBlogId) {
                 alert("No blog selected. Please go to Dashboard to select a blog.");
                 return;
@@ -711,23 +325,12 @@
 
             submitButton.disabled = true;
             submitButton.textContent = "Posting...";
-            loadingSpinner.style.display = 'inline-block'; // Show spinner
 
             let mediaUrl = '';
             let mediaType = '';
 
             try {
-                if (manualMediaUrl) {
-                    mediaUrl = manualMediaUrl;
-                    const extension = manualMediaUrl.split('.').pop().toLowerCase();
-                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-                        mediaType = 'image/' + extension.replace('jpg', 'jpeg');
-                    } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
-                        mediaType = 'video/' + extension;
-                    } else {
-                        mediaType = 'application/octet-stream'; // Generic fallback
-                    }
-                } else if (mediaFile) {
+                if (mediaFile) {
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, mediaFile);
                     await uploadTask;
@@ -735,37 +338,46 @@
                     mediaType = mediaFile.type;
                 }
 
+                const postsCollectionRef = collection(db, 'posts');
+
+                // Re-fetch the current user's avatar right before saving the post
+                // This ensures the most up-to-date avatar is saved with the post.
+                let postAuthorAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default fallback
+                if (currentUser && currentUser.uid) {
+                    const userDocRef = doc(db, 'users', currentUser.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    if (userDocSnap.exists() && userDocSnap.data().avatarUrl) {
+                        postAuthorAvatarUrl = userDocSnap.data().avatarUrl;
+                    }
+                }
+
                 if (editingPostId) {
                     const postDocRef = doc(db, 'posts', editingPostId);
-                    const oldPostSnap = await getDoc(postDocRef);
-                    const oldMediaUrl = oldPostSnap.exists() ? oldPostSnap.data().mediaUrl : '';
-                    const oldMediaType = oldPostSnap.exists() ? oldPostSnap.data().mediaType : '';
-
                     const updateData = {
+                        authorName: authorName,
+                        authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
                         reportingFrom: reportingFrom,
                         assignedTabs: assignedTabs,
-                        lastUpdated: serverTimestamp()
                     };
 
-                    // Handle media updates/removals
-                    if (mediaUrl !== oldMediaUrl || mediaType !== oldMediaType) {
-                        // If media has changed or is being cleared, update fields
-                        updateData.mediaUrl = mediaUrl;
-                        updateData.mediaType = mediaType;
-
-                        // Delete old media from storage if it was a Firebase Storage URL
-                        if (oldMediaUrl && oldMediaUrl.includes('firebasestorage.googleapis.com')) {
+                    if (mediaFile) {
+                        const oldPostSnap = await getDoc(postDocRef);
+                        if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
                             try {
-                                const oldMediaStorageRef = ref(storage, oldMediaUrl);
-                                await deleteObject(oldMediaStorageRef);
-                                console.log("Old media deleted from storage:", oldMediaUrl);
+                                const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
+                                await deleteObject(oldMediaRef);
                             } catch (error) {
-                                console.warn("Could not delete old media from storage (might not exist or permission issue):", error);
+                                console.warn("Could not delete old media file (might not exist or permission issue):", error);
                             }
                         }
+                        updateData.mediaUrl = mediaUrl;
+                        updateData.mediaType = mediaType;
                     }
+                    // If you wanted to *remove* existing media without uploading new, you'd need
+                    // a separate UI element (e.g., a "clear media" checkbox) and logic here.
+                    // For now, if no new media is selected, existing media will be kept.
 
                     await updateDoc(postDocRef, updateData);
                     alert("Post updated successfully!");
@@ -776,7 +388,7 @@
                         blogId: currentBlogId,
                         authorId: currentUser.uid,
                         authorName: authorName,
-                        authorAvatar: authorAvatarUrl,
+                        authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
                         reportingFrom: reportingFrom,
@@ -790,15 +402,14 @@
 
                 postContentInput.value = '';
                 postSubtitleInput.value = '';
-                reportingFromInput.value = 'Montreal, Quebec, Canada'; // Reset to default
                 postMediaInput.value = '';
-                postMediaUrlInput.value = ''; // Clear manual URL input
-                mediaPreviewDiv.innerHTML = ''; // Clear media preview
+                authorNameInput.value = authorName;
+                localStorage.setItem('authorName', authorName);
                 renderPostTabAssignmentCheckboxes([]);
-                
-                adminAllPostsCached = [];
+
+                adminAllPostsCached = []; // Clear cache to force reload
                 adminCurrentPage = 0;
-                await loadPostsForAdmin();
+                await loadPostsForAdmin(); // Reload posts to show updates
 
                 // Send message to embed to refresh when a post is added/updated/deleted
                 if (window.parent && window.parent.postMessage) {
@@ -810,7 +421,6 @@
                 alert("Failed to save post. Please try again. " + error.message);
             } finally {
                 submitButton.disabled = false;
-                loadingSpinner.style.display = 'none'; // Hide spinner
             }
         });
 
@@ -843,6 +453,33 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
+        // --- Load Posts for Admin View ---
+        const loadPostsForAdmin = async () => {
+            try {
+                if (adminAllPostsCached.length === 0) {
+                    const postsCollectionRef = collection(db, 'posts');
+                    const q = query(
+                        postsCollectionRef,
+                        where('blogId', '==', currentBlogId),
+                        orderBy('timestamp', 'desc')
+                    );
+                    const querySnapshot = await getDocs(q);
+                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                }
+
+                const startIndex = adminCurrentPage * adminPostsPerPage;
+                const endIndex = startIndex + adminPostsPerPage;
+                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
+
+                renderAdminPosts(postsToShow, 'postsContainer');
+                updateAdminPaginationControls(adminAllPostsCached.length);
+
+            } catch (error) {
+                console.error("Error loading admin posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading posts for this blog. Please try again later.</p>';
+            }
+        };
+
         // --- Render Posts for Admin View ---
         const renderAdminPosts = (posts, containerId) => {
             const container = document.getElementById(containerId);
@@ -866,14 +503,11 @@
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
                         mediaHtml = `<video controls src="${post.mediaUrl}" class="post-media"></video>`;
-                    } else {
-                        // Fallback for unknown media types, assume image if URL exists
-                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Media" class="post-media">`;
                     }
                 }
 
-                // Use post.authorAvatar which is stored in Firestore
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Fallback if not set
+                // This line is correct, it uses post.authorAvatar, which should now be dynamic
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
 
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
 
@@ -887,7 +521,6 @@
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
-                // Display assigned tabs
                 const assignedTabsHtml = (post.assignedTabs && post.assignedTabs.length > 0)
                     ? `<p class="assigned-tabs"><small>Tabs: ${post.assignedTabs.join(', ')}</small></p>`
                     : '';
@@ -941,19 +574,7 @@
                         postContentInput.value = postToEdit.content || '';
                         postSubtitleInput.value = postToEdit.subtitle || '';
                         reportingFromInput.value = postToEdit.reportingFrom || '';
-                        // authorNameInput.value = postToEdit.authorName || ''; // REMOVED: No longer an input field
-                        postMediaInput.value = ''; // Clear file input
-                        postMediaUrlInput.value = postToEdit.mediaUrl || ''; // Populate manual URL input
-                        mediaPreviewDiv.innerHTML = ''; // Clear media preview
-                        if (postToEdit.mediaUrl) {
-                            const previewElement = postToEdit.mediaType && postToEdit.mediaType.startsWith('video')
-                                ? document.createElement('video') : document.createElement('img');
-                            previewElement.src = postToEdit.mediaUrl;
-                            previewElement.controls = postToEdit.mediaType && postToEdit.mediaType.startsWith('video');
-                            previewElement.classList.add('post-media'); // Use existing class for styling
-                            mediaPreviewDiv.appendChild(previewElement);
-                        }
-
+                        authorNameInput.value = postToEdit.authorName || '';
                         renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
                         submitButton.textContent = "Save Changes";
                         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -971,9 +592,8 @@
                         return;
                     }
 
-                    // Construct the canonical deep link URL for sharing (via Cloud Function)
-                    const deepLink = `${window.location.origin}/post/${blogId}/${postId}`;
-                    
+                    const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
+
                     try {
                         await navigator.clipboard.writeText(deepLink);
                         const originalContent = button.innerHTML;
@@ -991,7 +611,6 @@
                 });
             });
 
-
             container.querySelectorAll('.delete-post-button').forEach(button => {
                 button.addEventListener('click', async (e) => {
                     const postIdToDelete = e.currentTarget.dataset.postId;
@@ -1001,59 +620,31 @@
                         try {
                             await deleteDoc(doc(db, 'posts', postIdToDelete));
 
-                            if (mediaUrlToDelete && mediaUrlToDelete.includes('firebasestorage.googleapis.com')) {
+                            if (mediaUrlToDelete) {
                                 try {
                                     const mediaRef = ref(storage, mediaUrlToDelete);
                                     await deleteObject(mediaRef);
                                 } catch (error) {
-                                    console.warn("Could not delete associated media from storage (might be invalid URL, permissions, or already deleted):", error);
+                                    console.warn("Could not delete associated media from storage (might not exist or permission issue):", error);
                                 }
                             }
-
-                            alert("Post deleted successfully!");
+                            // Refresh posts after delete
                             adminAllPostsCached = [];
                             adminCurrentPage = 0;
                             await loadPostsForAdmin();
-                            // Send message to embed to refresh when a post is deleted
+
+                            // Send message to embed to refresh
                             if (window.parent && window.parent.postMessage) {
                                 window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
                             }
+
                         } catch (error) {
                             console.error("Error deleting post:", error);
-                            alert("Failed to delete post. Please try again.");
+                            alert("Failed to delete post. Please try again: " + error.message);
                         }
                     }
                 });
             });
-        };
-
-        // --- Load Posts for Admin ---
-        const loadPostsForAdmin = async () => {
-            if (!currentBlogId) return;
-
-            try {
-                if (adminAllPostsCached.length === 0) {
-                    const postsCollectionRef = collection(db, 'posts');
-                    const q = query(
-                        postsCollectionRef,
-                        where('blogId', '==', currentBlogId),
-                        orderBy('timestamp', 'desc')
-                    );
-                    const querySnapshot = await getDocs(q);
-                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                }
-
-                const startIndex = adminCurrentPage * adminPostsPerPage;
-                const endIndex = startIndex + adminPostsPerPage;
-                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
-
-                renderAdminPosts(postsToShow, 'postsContainer');
-                updateAdminPaginationControls(adminAllPostsCached.length);
-
-            } catch (error) {
-                console.error("Error loading admin posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading posts for this blog. Please try again later.</p>';
-            }
         };
 
         // --- Update Admin Pagination Controls ---
@@ -1107,7 +698,7 @@
             e.preventDefault();
             try {
                 await signOut(auth);
-                window.location.href = 'login.html'; // Redirect to login page after logout
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
