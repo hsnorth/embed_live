@@ -1,7 +1,7 @@
 /* General Body and Main Layout */
 body {
-    font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.5; /* Standard line height */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.4; /* Tighter line height for more compactness */
     color: #333;
     margin: 0;
     padding: 0;
@@ -15,9 +15,9 @@ body {
 header {
     background-color: rgb(208, 2, 27); /* Main brand red */
     color: white;
-    padding: 10px 20px; /* Reduced header padding */
+    padding: 8px 15px; /* Very compact header padding */
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -29,151 +29,144 @@ header {
 
 header h1 {
     margin: 0;
-    font-size: 1.8em; /* Standard title size */
+    font-size: 1.6em; /* Slightly smaller title */
     flex-grow: 1;
     text-align: left;
-    letter-spacing: normal; /* No letter spacing adjustment */
 }
 
 header nav {
     margin-top: 0;
     display: flex;
-    gap: 15px; /* Reduced space between nav links */
+    gap: 10px; /* Very compact space between nav links */
 }
 
 header nav a {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    padding: 5px 10px; /* Compact padding for nav links */
-    border-radius: 4px; /* Standard rounded corners */
-    transition: background-color 0.2s ease;
-    text-transform: none; /* No uppercase */
-    font-size: 1em; /* Standard font size */
+    padding: 4px 8px; /* Very compact padding for nav links */
+    border-radius: 3px; /* Slightly less rounded */
+    transition: background-color 0.1s ease;
+    font-size: 0.9em; /* Smaller font size */
 }
 
 header nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: none; /* No lift effect */
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 main {
     flex-grow: 1;
-    padding: 15px; /* Significantly reduced main padding */
-    max-width: 760px; /* More standard width */
-    margin: 15px auto; /* Reduced margin around the main container */
+    padding: 12px; /* Very compact main padding */
+    max-width: 700px; /* Slightly narrower for a more focused layout */
+    margin: 12px auto; /* Very compact margin around the main container */
     background-color: #ffffff;
-    border-radius: 8px; /* Standard rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Standard shadow */
+    border-radius: 6px; /* Slightly less rounded overall card */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04); /* Subtle shadow */
 }
 
 footer {
-    background-color: #333; /* Dark grey footer background */
+    background-color: #333;
     color: white;
     text-align: center;
-    padding: 15px 20px; /* Reduced padding */
+    padding: 10px 15px; /* Very compact footer padding */
     margin-top: auto;
-    font-size: 0.9em;
+    font-size: 0.85em; /* Smaller footer font */
 }
 
 /* --- Section Containers for Forms and Lists --- */
 .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
     background-color: #fff;
-    padding: 18px 20px; /* Reduced internal padding for sections */
-    border-radius: 6px; /* Slightly less rounded */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Lighter shadow */
-    margin-bottom: 15px; /* Reduced space between sections */
-    border: 1px solid #e0e0e0; /* Standard light border */
+    padding: 15px; /* Very compact internal padding for sections */
+    border-radius: 5px; /* Slightly less rounded */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); /* Very subtle shadow */
+    margin-bottom: 12px; /* Reduced space between sections */
+    border: 1px solid #e5e5e5; /* Very light border */
 }
 
 h2 {
     color: rgb(208, 2, 27);
-    border-bottom: 1px solid #eee; /* Thinner, lighter border */
-    padding-bottom: 8px; /* Reduced padding below title border */
+    border-bottom: 1px solid #f0f0f0; /* Very light, thin border */
+    padding-bottom: 6px; /* Very compact padding below title border */
     margin-top: 0;
-    margin-bottom: 15px; /* Reduced space after section title */
-    font-size: 1.6em; /* Slightly smaller, more standard title size */
-    font-weight: 600; /* Standard bold */
-    letter-spacing: normal; /* No letter spacing */
+    margin-bottom: 12px; /* Reduced space after section title */
+    font-size: 1.4em; /* More compact title size */
+    font-weight: 600;
 }
 
 /* --- Form Group Styling (Labels and Inputs) --- */
 .form-group {
-    margin-bottom: 12px; /* Significantly reduced space between form groups */
+    margin-bottom: 10px; /* Significantly reduced space between form groups */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px; /* Reduced space between label and input */
-    font-weight: 500; /* Standard label weight */
+    margin-bottom: 4px; /* Very compact space between label and input */
+    font-weight: 500;
     color: #444;
-    font-size: 0.95em; /* Slightly smaller label font */
+    font-size: 0.9em; /* Smaller label font */
 }
 
 .input-field, .textarea-field {
-    width: calc(100% - 18px); /* Account for padding and border */
-    padding: 8px; /* Significantly reduced padding inside inputs */
-    border: 1px solid #ccc; /* Standard border color */
-    border-radius: 4px; /* Standard rounded input fields */
-    font-size: 1em; /* Standard input text size */
+    width: calc(100% - 16px); /* Account for padding and border */
+    padding: 7px; /* Very compact padding inside inputs */
+    border: 1px solid #ccc;
+    border-radius: 3px; /* Slightly less rounded */
+    font-size: 0.95em; /* Standard input text size */
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background-color: #fff; /* White background for inputs */
+    transition: border-color 0.1s ease, box-shadow 0.1s ease;
+    background-color: #fff;
     color: #333;
 }
 
 .input-field::placeholder, .textarea-field::placeholder {
-    color: #999; /* Standard placeholder text color */
-    font-style: normal; /* No italic */
+    color: #aaa; /* Lighter placeholder text */
 }
 
 .input-field:focus, .textarea-field:focus {
     border-color: rgb(208, 2, 27);
-    box-shadow: 0 0 0 2px rgba(208, 2, 27, 0.2); /* Lighter focus glow */
+    box-shadow: 0 0 0 1.5px rgba(208, 2, 27, 0.15); /* Even subtler focus glow */
     outline: none;
 }
 
 .textarea-field {
     resize: vertical;
-    min-height: 80px; /* Standard default for text areas */
-    line-height: 1.4; /* Standard line height for text content */
+    min-height: 70px; /* Slightly shorter default for text areas */
+    line-height: 1.3; /* Tighter line height for content */
 }
 
 /* --- Button Styling (Primary Action) --- */
 .submit-button, .button {
     background-color: rgb(208, 2, 27);
     color: white;
-    padding: 10px 20px; /* Significantly reduced button padding */
+    padding: 8px 15px; /* Very compact button padding */
     border: none;
-    border-radius: 4px; /* Standard rounded corners */
+    border-radius: 3px; /* Slightly less rounded */
     cursor: pointer;
-    font-size: 1em; /* Standard font size for buttons */
-    font-weight: 500; /* Standard bold text */
-    transition: background-color 0.2s ease;
+    font-size: 0.95em; /* Slightly smaller button font */
+    font-weight: 500;
+    transition: background-color 0.1s ease;
     display: inline-block;
     text-align: center;
     text-decoration: none;
-    margin-top: 15px; /* Reduced space above the button */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    margin-top: 12px; /* Reduced space above the button */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Very subtle shadow */
 }
 
 .submit-button:hover, .button:hover {
     background-color: rgb(170, 0, 20);
-    transform: none; /* No lift effect */
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Slightly more prominent shadow on hover */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); /* Slightly more prominent shadow on hover */
 }
 
 .submit-button:disabled, .button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
-    transform: none;
     box-shadow: none;
 }
 
 /* --- Embed Code Section Specific --- */
 .embed-code-container {
     display: flex;
-    gap: 10px; /* Reduced space between embed field and button */
+    gap: 8px; /* Very compact space */
     align-items: center;
     flex-wrap: wrap;
 }
@@ -182,26 +175,30 @@ h2 {
     flex-grow: 1;
     width: auto;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    font-size: 0.9em; /* Slightly smaller font for code */
-    padding: 6px 8px; /* Tighter padding for code input */
+    font-size: 0.85em; /* Even smaller font for code */
+    padding: 5px 7px; /* Even tighter padding for code input */
 }
 
 .embed-code-container .button {
     margin-top: 0;
     flex-shrink: 0;
-    padding: 8px 15px; /* Compact button size */
-    font-size: 0.9em;
+    padding: 6px 12px; /* Very compact button size */
+    font-size: 0.85em;
 }
 
 /* --- Post Card Styling (for "Live Blog Posts" section) --- */
+.live-blog-posts {
+    padding: 10px; /* Reduced padding for the whole live blog posts container */
+}
+
 .post-card {
     display: block;
-    padding: 12px 15px; /* Reduced padding inside post cards */
-    border-bottom: 1px solid #eee; /* Lighter separator */
+    padding: 10px 12px; /* Very compact padding inside post cards */
+    border-bottom: 1px solid #f0f0f0; /* Very light separator */
     background-color: #fff;
     word-wrap: break-word;
     position: relative;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.05s ease; /* Faster transition */
 }
 
 .post-card:last-child {
@@ -209,28 +206,28 @@ h2 {
 }
 
 .post-card:hover {
-    background-color: #f9f9f9; /* Subtle highlight on hover */
+    background-color: #fcfcfc; /* Very subtle highlight on hover */
 }
 
 .post-header-line {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 8px; /* Reduced space */
+    margin-bottom: 6px; /* Very compact space */
 }
 
 .author-avatar {
     flex-shrink: 0;
-    margin-right: 10px; /* Reduced space between avatar and text */
+    margin-right: 8px; /* Very compact space between avatar and text */
 }
 
 .author-avatar-img {
-    width: 38px; /* Standard avatar size */
-    height: 38px;
+    width: 34px; /* Smaller avatar size */
+    height: 34px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
     position: relative;
-    border: 1px solid #f0f0f0; /* Lighter border for avatar */
+    border: 1px solid #f5f5f5; /* Very light border */
 }
 
 .author-avatar-img::before {
@@ -238,20 +235,20 @@ h2 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 10px; /* Standard dot size */
-    height: 10px;
+    width: 8px; /* Smaller dot size */
+    height: 8px;
     background-color: rgb(208, 2, 27);
     border-radius: 50%;
-    border: 2px solid white; /* Standard white border around the dot */
-    transform: translate(-20%, -20%);
+    border: 1.5px solid white; /* Thinner white border */
+    transform: translate(-15%, -15%); /* Adjusted position */
     z-index: 1;
-    box-shadow: 0 0 3px rgba(0,0,0,0.2); /* Standard shadow for the dot */
+    box-shadow: 0 0 2px rgba(0,0,0,0.15); /* Subtler shadow for the dot */
 }
 
 .post-meta {
     flex-grow: 1;
-    font-size: 14px; /* Standard font size for meta info */
-    line-height: 1.2; /* Tighter line height */
+    font-size: 13px; /* Smaller font size for meta info */
+    line-height: 1.1; /* Very tight line height */
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -265,108 +262,106 @@ h2 {
 }
 
 .post-meta strong {
-    font-weight: 600; /* Standard bold author name */
+    font-weight: 600;
     color: #222;
-    margin-right: 4px;
+    margin-right: 3px; /* Very compact space */
 }
 
 .post-meta span.time-ago {
     color: rgb(208, 2, 27);
-    font-size: 13px; /* Slightly smaller time ago */
+    font-size: 12px; /* Even smaller time ago */
     font-weight: 600;
 }
 
 .post-meta .bullet {
-    color: #999;
-    font-size: 13px;
-    margin: 0 4px;
+    color: #bbb; /* Lighter bullet color */
+    font-size: 12px;
+    margin: 0 3px;
 }
 
 .post-meta .reporting-from {
     display: block;
     color: #666;
-    font-size: 13px;
+    font-size: 12px;
     margin-left: 0;
-    margin-top: 0;
+    margin-top: 0px; /* No top margin */
 }
 
 .post-subtitle {
     font-family: 'Roboto', sans-serif;
-    font-size: 1.4em; /* Standard subtitle size */
+    font-size: 1.3em; /* More compact subtitle size */
     color: #222;
-    margin-top: 6px; /* Reduced space above subtitle */
-    margin-bottom: 4px; /* Reduced space below subtitle */
+    margin-top: 4px; /* Very compact space above subtitle */
+    margin-bottom: 3px; /* Very compact space below subtitle */
     font-weight: 700;
     line-height: 1.2;
 }
 
 .post-text {
     font-family: "Noto Serif", Georgia, serif;
-    font-size: 15px; /* Standard main text size */
-    margin-top: 6px; /* Reduced space above text */
-    margin-bottom: 6px; /* Reduced space below text */
+    font-size: 14px; /* More compact main text size */
+    margin-top: 4px; /* Very compact space above text */
+    margin-bottom: 4px; /* Very compact space below text */
     color: #333;
-    line-height: 1.5; /* Standard line spacing */
-    word-break: break-word;
+    line-height: 1.4; /* Tighter line spacing */
 }
 
 .post-media {
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 6px;
-    margin-top: 10px; /* Reduced space above media */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Lighter shadow for media */
+    border-radius: 5px;
+    margin-top: 8px; /* Reduced space above media */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); /* Very subtle shadow for media */
 }
 
 .no-posts-message, .error-message {
     text-align: center;
-    padding: 15px; /* Reduced padding */
+    padding: 10px; /* Very compact padding */
     color: #777;
     font-style: italic;
-    font-size: 1em;
+    font-size: 0.9em;
     background-color: #fcfcfc;
-    border-radius: 6px;
-    border: 1px solid #eee;
+    border-radius: 5px;
+    border: 1px solid #f0f0f0;
 }
 
 /* --- Post Actions (Edit/Delete) --- */
 .post-actions {
-    margin-top: 10px; /* Reduced space above action buttons */
+    margin-top: 8px; /* Very compact space above action buttons */
     display: flex;
-    gap: 8px; /* Reduced space between buttons */
+    gap: 6px; /* Very compact space between buttons */
     justify-content: flex-end;
 }
 
 .post-actions button {
-    background-color: #f8f8f8; /* Lighter background for secondary actions */
+    background-color: #f5f5f5; /* Lighter background for secondary actions */
     color: #555;
-    border: 1px solid #ddd; /* Standard border */
-    padding: 6px 12px; /* Reduced padding */
-    border-radius: 4px;
+    border: 1px solid #e0e0e0; /* Very light border */
+    padding: 5px 10px; /* Very compact padding */
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 0.85em; /* Smaller font */
+    font-size: 0.8em; /* Smaller font */
     font-weight: 500;
     transition: background-color 0.1s ease;
     display: flex;
     align-items: center;
-    gap: 5px; /* Reduced space between icon and text */
+    gap: 4px; /* Very compact space between icon and text */
 }
 
 .post-actions button:hover {
     background-color: #eee;
-    border-color: #ccc;
-    transform: none;
+    border-color: #ddd;
 }
 
 .post-actions button.delete-post-button {
     color: #d32f2f;
-    border-color: #f0a0a0; /* Lighter red border */
+    border-color: #f5caca; /* Lighter red border */
 }
 
 .post-actions button.delete-post-button:hover {
-    background-color: #ffebeb;
-    border-color: #e09090;
+    background-color: #ffe8e8;
+    border-color: #f0c0c0;
 }
 
 /* Share Button */
@@ -375,39 +370,39 @@ h2 {
     border: none;
     color: #657786;
     cursor: pointer;
-    font-size: 1em;
-    padding: 4px;
-    border-radius: 4px;
+    font-size: 0.9em;
+    padding: 3px; /* Very compact padding */
+    border-radius: 3px;
     transition: background-color 0.1s ease;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 }
 
 .post-card .share-button {
     position: absolute;
-    top: 8px; /* Reduced position */
-    right: 8px; /* Reduced position */
-    font-size: 1.1em; /* Standard icon size */
-    color: #8899a6;
+    top: 6px; /* Very compact position */
+    right: 6px; /* Very compact position */
+    font-size: 1em;
+    color: #99aab5; /* Softer default color */
 }
 
 .share-button:hover {
-    background-color: rgba(208, 2, 27, 0.1);
+    background-color: rgba(208, 2, 27, 0.08); /* Very subtle hover */
     color: rgb(208, 2, 27);
 }
 
 /* Show More Button */
 .show-more-button {
-    background-color: #f8f8f8;
+    background-color: #f5f5f5;
     color: #555;
     border: 1px solid #ddd;
-    padding: 8px 15px; /* Reduced padding */
-    border-radius: 4px;
+    padding: 6px 12px; /* Very compact padding */
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    margin-top: 15px; /* Reduced space above */
+    margin-top: 10px; /* Reduced space above */
     display: block;
     width: fit-content;
     margin-left: auto;
@@ -418,7 +413,6 @@ h2 {
 .show-more-button:hover {
     background-color: #eee;
     border-color: #ccc;
-    transform: none;
 }
 
 /* Blog List specific styling (for blog management) */
@@ -430,19 +424,19 @@ h2 {
 .blog-list li {
     background-color: #f9f9f9;
     border: 1px solid #eee;
-    border-radius: 4px;
-    margin-bottom: 8px; /* Reduced margin */
-    padding: 10px 15px; /* Reduced padding */
+    border-radius: 3px;
+    margin-bottom: 5px; /* Very compact margin */
+    padding: 8px 12px; /* Very compact padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: background-color 0.1s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02); /* Very subtle shadow */
+    transition: background-color 0.05s ease;
 }
 
 .blog-list li:hover {
     background-color: #f5f5f5;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .blog-list li span {
@@ -453,42 +447,36 @@ h2 {
 
 .blog-list li .actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 /* Dashboard specific buttons */
 .dashboard-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px; /* Reduced space between dashboard buttons */
-    margin-bottom: 20px;
+    gap: 10px; /* Reduced space between dashboard buttons */
+    margin-bottom: 15px;
 }
 
 .dashboard-buttons .button {
     flex: 1;
-    min-width: 150px; /* Smaller min-width */
-    padding: 10px 15px; /* Reduced padding */
-    font-size: 1em;
+    min-width: 120px; /* Smaller min-width */
+    padding: 8px 12px; /* Reduced padding */
+    font-size: 0.95em;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
+        padding: 8px 10px;
     }
 
     header h1 {
-        text-align: center;
-        width: 100%;
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
 
     header nav {
-        width: 100%;
-        justify-content: center;
-        gap: 10px;
+        gap: 8px;
     }
 
     main {
@@ -498,39 +486,39 @@ h2 {
     }
 
     .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-
-    h2 {
-        font-size: 1.4em;
-        padding-bottom: 6px;
-        margin-bottom: 15px;
-    }
-
-    .form-group {
+        padding: 12px;
         margin-bottom: 10px;
     }
 
+    h2 {
+        font-size: 1.3em;
+        padding-bottom: 5px;
+        margin-bottom: 12px;
+    }
+
+    .form-group {
+        margin-bottom: 8px;
+    }
+
     .form-group label {
-        margin-bottom: 4px;
+        margin-bottom: 3px;
     }
 
     .input-field, .textarea-field {
-        padding: 8px;
-        width: calc(100% - 16px);
+        padding: 6px;
+        width: calc(100% - 14px);
     }
 
     .submit-button, .button {
         width: 100%;
-        padding: 10px 15px;
-        font-size: 0.95em;
-        margin-top: 15px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        margin-top: 10px;
     }
 
     .embed-code-container {
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         align-items: stretch;
     }
 
@@ -542,17 +530,17 @@ h2 {
     }
 
     .post-card {
-        padding: 10px;
+        padding: 8px;
     }
 
     .post-media {
-        border-radius: 4px;
-        margin-top: 8px;
+        border-radius: 3px;
+        margin-top: 6px;
     }
 
     .post-actions {
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
     }
 
     .post-actions button {
@@ -561,14 +549,14 @@ h2 {
     }
 
     .show-more-button {
-        padding: 6px 12px;
-        font-size: 13px;
-        margin-top: 15px;
+        padding: 5px 10px;
+        font-size: 12px;
+        margin-top: 10px;
     }
 
     .dashboard-buttons {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
     .dashboard-buttons .button {
         min-width: unset;
@@ -586,64 +574,56 @@ h2 {
 /* Tab Selection Group for Admin (Assign to Tabs) */
 .tab-selection-group {
     border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 12px; /* Reduced padding inside */
-    background-color: #fdfdfd;
-    max-height: 150px; /* Standard height */
+    border-radius: 5px;
+    padding: 10px; /* Reduced padding inside */
+    background-color: #fcfcfc;
+    max-height: 120px; /* More compact height */
     overflow-y: auto;
-    margin-top: 10px; /* Reduced space above */
-    margin-bottom: 15px; /* Reduced space below */
+    margin-top: 8px; /* Reduced space above */
+    margin-bottom: 12px; /* Reduced space below */
 }
 
 .tab-selection-group label {
     display: flex;
     align-items: center;
-    margin-bottom: 8px; /* Reduced space between checkboxes */
+    margin-bottom: 6px; /* Reduced space between checkboxes */
     font-weight: normal;
     color: #555;
-    font-size: 0.9em;
-    cursor: pointer;
-}
-
-.tab-selection-group label:hover {
-    color: #000;
+    font-size: 0.88em; /* Smaller font */
 }
 
 .tab-selection-group input[type="checkbox"] {
-    margin-right: 8px; /* Reduced space between checkbox and text */
-    transform: none; /* No scaling */
-    accent-color: rgb(208, 2, 27);
+    margin-right: 6px; /* Reduced space between checkbox and text */
 }
 
 /* User Avatar */
 .user-avatar-small {
-    width: 24px; /* Standard size */
-    height: 24px;
+    width: 20px; /* Even smaller avatar */
+    height: 20px;
     border-radius: 50%;
     object-fit: cover;
     vertical-align: middle;
-    margin-right: 5px;
-    border: none; /* No border */
+    margin-right: 4px;
 }
 
 /* Tab Management Section (create-blog.html) */
 .tab-management-controls {
     display: flex;
-    gap: 10px; /* Reduced space between input and button */
-    margin-bottom: 15px; /* Reduced space below controls */
+    gap: 8px; /* Reduced space */
+    margin-bottom: 12px; /* Reduced space below controls */
     align-items: flex-end;
 }
 
 .tab-management-controls .input-field {
     flex-grow: 1;
-    padding: 8px 10px; /* Reduced padding for this input */
-    font-size: 0.95em;
+    padding: 7px 9px; /* Reduced padding for this input */
+    font-size: 0.9em;
 }
 
 .tab-management-controls .button {
     margin-top: 0;
-    padding: 8px 15px; /* Reduced button size for this section */
-    font-size: 0.95em;
+    padding: 7px 12px; /* Reduced button size for this section */
+    font-size: 0.9em;
     font-weight: 500;
 }
 
@@ -655,48 +635,46 @@ h2 {
 .tab-list li {
     background-color: #f9f9f9;
     border: 1px solid #eee;
-    border-radius: 4px;
-    margin-bottom: 6px; /* Reduced margin */
-    padding: 10px 15px; /* Reduced padding */
+    border-radius: 3px;
+    margin-bottom: 4px; /* Very compact margin */
+    padding: 8px 12px; /* Very compact padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: background-color 0.1s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: background-color 0.05s ease;
 }
 
 .tab-list li:hover {
     background-color: #f5f5f5;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .tab-list li .tab-name {
     font-weight: 500;
     color: #333;
-    font-size: 1em;
+    font-size: 0.95em;
 }
 
 .tab-list li .delete-tab-button {
     background-color: #d32f2f;
     color: white;
     border: none;
-    border-radius: 4px;
-    padding: 6px 12px; /* Reduced padding */
+    border-radius: 3px;
+    padding: 5px 10px; /* Reduced padding */
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.75em; /* Smaller font */
     font-weight: 500;
     transition: background-color 0.1s ease;
 }
 
 .tab-list li .delete-tab-button:hover {
     background-color: #b71c1c;
-    transform: none;
 }
 
 .tab-list li .delete-tab-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
-    transform: none;
 }
 
 /* --- Tab Navigation (Embed Page Specific) --- */
@@ -705,21 +683,21 @@ h2 {
     top: 0;
     background-color: #fff;
     border-bottom: 1px solid #ebeef0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     z-index: 1000;
     display: flex;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
-    padding: 0 10px;
+    padding: 0 8px; /* Reduced padding */
     justify-content: flex-start;
 }
 
 .tab-navigation button {
     background: none;
     border: none;
-    padding: 10px 12px; /* Reduced padding */
-    font-size: 14px; /* Slightly smaller font */
+    padding: 8px 10px; /* Reduced padding */
+    font-size: 13px; /* Smaller font */
     font-weight: 500;
     color: #555;
     cursor: pointer;
@@ -735,5 +713,14 @@ h2 {
 
 .tab-navigation button:hover:not(.active-tab) {
     color: #333;
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
+}
+
+/* Specific fix for "Please fill out this field" */
+/* This is often a browser default or tied to input validation.
+   If it's an overlay from the browser, direct CSS control is limited.
+   However, we can style custom validation messages if you add them to HTML/JS.
+   For now, we'll try to ensure it doesn't push elements around too much. */
+input:invalid, textarea:invalid {
+    box-shadow: 0 0 0 1.5px rgba(255, 0, 0, 0.4); /* Subtle red glow on invalid */
 }
