@@ -13,7 +13,7 @@ html {
 
 body {
     font-family: 'Roboto', 'Noto Sans', sans-serif; /* Prioritize Sans-serif for UI */
-    line-height: 1.6;
+
     color: #333;
     background-color: #f0f2f5; /* Lighter background, slightly grey */
     display: flex; /* Make body a flex container to push footer to bottom */
