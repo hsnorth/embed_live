@@ -6,11 +6,15 @@
     <title>Live Blog Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Specific styles for dashboard.html */
+        /* Specific styles for dashboard.html that might override or supplement main style.css
+           It's generally better to put these in style.css, but if they are truly page-specific
+           and you want to keep them here for clarity, that's fine.
+           I've made slight adjustments here to better fit with the responsive header.
+        */
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* Remove this on small screens if header is fixed */
+            align-items: center; /* Remove this on small screens if header is fixed */
             min-height: 100vh;
             background-color: #f0f2f5;
             margin: 0;
@@ -22,6 +26,9 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             text-align: center;
+            /* Ensure it respects max-width set in main if applicable */
+            max-width: 900px;
+            width: 100%;
         }
         .main-menu h1 {
             color: #333;
@@ -60,6 +67,8 @@
             border-radius: 4px;
             margin-right: 10px;
             width: 200px;
+            max-width: calc(100% - 100px); /* Adjust for responsive input */
+            box-sizing: border-box; /* Crucial for input width */
         }
         .new-blog-section button {
             background-color: #28a745;
@@ -83,18 +92,40 @@
     </style>
 </head>
 <body>
-    <div class="main-menu">
-        <h1>The Gazette Live</h1>
-        <ul>
-            <li><a href="view-blogs.html">Access Previous Live Blogs</a></li>
-        </ul>
+    <header>
+        <h1><a href="dashboard.html">The Gazette Live Admin</a></h1>
+        <button class="hamburger-menu" id="hamburgerMenu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <nav class="main-nav" id="mainNav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="create-blog.html">Create Blog</a> <a href="view-blogs.html">View Blogs</a>
+            <a href="#" id="signOutNavButton">Sign Out</a>
+        </nav>
+    </header>
 
-        <div class="new-blog-section">
-            <input type="text" id="newBlogName" placeholder="Enter blog title">
-            <button id="startNewBlogBtn">Start Blog</button>
+    <main>
+        <div class="main-menu">
+            <h1>Welcome to the Dashboard</h1>
+            <ul>
+                <li><a href="view-blogs.html">Access Previous Live Blogs</a></li>
+                <li><a href="#" id="createNewBlogLink">Start a New Blog</a></li>
+            </ul>
+
+            <div class="new-blog-section">
+                <h3>Start a New Blog (enter title below)</h3>
+                <input type="text" id="newBlogName" placeholder="Enter blog title">
+                <button id="startNewBlogBtn">Start Blog</button>
+            </div>
+            <button id="signOutButton">Sign Out</button>
         </div>
-        <button id="signOutButton">Sign Out</button>
-    </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -103,13 +134,13 @@
 
         // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // Your API Key
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // Your Auth Domain
+            projectId: "myliveblogapp-cf9df", // Your Project ID
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // Your Storage Bucket
+            messagingSenderId: "324824649312", // Your Messaging Sender ID
+            appId: "1:324824649312:web:c0750693346091d853bd05", // Your App ID
+            measurementId: "G-EZN90844XF" // Your Measurement ID (if using Analytics)
         };
         // !!! END IMPORTANT !!!
 
@@ -123,7 +154,6 @@
                 // No user is signed in, redirect to login
                 window.location.href = 'index.html';
             }
-            // Else, user is signed in, stay on dashboard
         });
 
         document.getElementById('startNewBlogBtn').addEventListener('click', async () => {
@@ -133,12 +163,10 @@
                     const docRef = await addDoc(collection(db, "blogs"), {
                         name: blogName,
                         created: serverTimestamp(),
-                        createdBy: auth.currentUser.uid // Store who created the blog
+                        createdBy: auth.currentUser.uid
                     });
                     const blogId = docRef.id;
-
                     window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
-
                 } catch (e) {
                     console.error("Error adding document: ", e);
                     alert("Error creating blog. Please try again. Check console for details.");
@@ -148,25 +176,51 @@
             }
         });
 
-        // The target for this event listener was missing in the HTML
         document.getElementById('createNewBlogLink').addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the default link behavior (e.g., jumping to top)
-            // Scroll to the new blog section
+            e.preventDefault();
             document.querySelector('.new-blog-section').scrollIntoView({ behavior: 'smooth' });
-            // Optionally, focus on the input field
             document.getElementById('newBlogName').focus();
         });
 
+        // Sign Out from main dashboard button
         document.getElementById('signOutButton').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                // The onAuthStateChanged listener above will detect the sign-out
-                // and automatically redirect to index.html.
-                // No need for an explicit window.location.href here.
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
             }
+        });
+
+        // Sign Out from navigation dropdown (if applicable)
+        document.getElementById('signOutNavButton').addEventListener('click', async (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Error signing out from nav:", error);
+                alert("Could not sign out. Please try again.");
+            }
+        });
+
+        // JavaScript for Hamburger Menu Toggle
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const mainNav = document.getElementById('mainNav');
+
+        hamburgerMenu.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            hamburgerMenu.classList.toggle('active'); // Optional: for hamburger icon animation
+        });
+
+        // Close menu if a nav link is clicked (optional, but good for UX)
+        mainNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                // Check if the menu is currently active (open)
+                if (mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    hamburgerMenu.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
