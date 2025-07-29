@@ -479,7 +479,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
@@ -501,8 +501,8 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Updates"; // Default active tab name
-        const defaultTab = "Live Updates"; // Constant for the default tab name
+        let currentActiveTab = "Live Reporting"; // Default active tab name
+        const defaultTab = "Live Reporting"; // Constant for the default tab name
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
@@ -557,6 +557,10 @@
             if (!content) return '';
 
             // Regex to find X/Twitter status URLs
+            // It should handle both twitter.com and x.com
+            // Added console.log for debugging purposes
+            console.log('Processing content for embeds. Original content:', content); // Debugging
+
             const twitterUrlRegex = /(https?:\/\/(?:www\.)?(?:twitter|x)\.com\/[a-zA-Z0-9_]+\/status\/\d+)/g;
             let parts = [];
             let lastIndex = 0;
@@ -564,9 +568,11 @@
 
             while ((match = twitterUrlRegex.exec(content)) !== null) {
                 const tweetUrl = match[0];
+                console.log('Found tweet URL:', tweetUrl); // Debugging
                 const textBefore = content.substring(lastIndex, match.index);
 
                 if (textBefore.length > 0) {
+                    // Apply paragraph formatting to text segments
                     parts.push(formatContentWithParagraphs(textBefore));
                 }
 
@@ -584,9 +590,11 @@
 
             const textAfter = content.substring(lastIndex);
             if (textAfter.length > 0) {
+                // Apply paragraph formatting to trailing text
                 parts.push(formatContentWithParagraphs(textAfter));
             }
-
+            
+            console.log('Processed content parts:', parts); // Debugging
             return parts.join(''); // Join all parts into a single HTML string
         }
 
@@ -657,7 +665,7 @@
                             </div>
                             ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
-                        </div>
+                    </div>
                     ${subtitleHtml}
                     <div class="post-text">${displayContentHtml}</div>
                     ${mediaHtml}
@@ -681,45 +689,13 @@
                         }
                         // IMPORTANT: Load Twitter widgets for the newly revealed content
                         if (typeof twttr !== 'undefined' && twttr.widgets) {
+                            console.log('Loading Twitter widgets for expanded contentDiv.'); // Debugging
                             twttr.widgets.load(contentDiv);
+                        } else {
+                            console.warn('twttr.widgets not available for expanded content.'); // Debugging
                         }
                     });
                 }
-
-                // --- Copy Link Button Logic ---
-                // COMMENTED OUT:
-                /*
-                const copyLinkButton = postCard.querySelector('.copy-link-button');
-                if (copyLinkButton) { // Ensure the button exists before adding listener
-                    copyLinkButton.addEventListener('click', async () => {
-                        const postId = copyLinkButton.dataset.postId;
-                        const blogId = currentBlogId;
-
-                        if (!blogId || !postId) {
-                            alert("Could not generate link for this post.");
-                            return;
-                        }
-
-                        // Construct the deep link URL (adjust path if your embed is elsewhere)
-                        const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
-                       
-                        try {
-                            await navigator.clipboard.writeText(deepLink);
-                            const originalContent = copyLinkButton.innerHTML;
-                            copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!'; // Change to checkmark and text
-                            copyLinkButton.classList.add('copied');
-
-                            setTimeout(() => {
-                                copyLinkButton.innerHTML = originalContent; // Revert to original icon/text
-                                copyLinkButton.classList.remove('copied');
-                            }, 2000); // Show "Link Copied!" for 2 seconds
-                        } catch (err) {
-                            console.error('Failed to copy link: ', err);
-                            alert('Failed to copy link. Please copy manually: ' + deepLink);
-                        }
-                    });
-                }
-                */
 
                 // --- Video Playback and Expansion Logic ---
                 const videoContainer = postCard.querySelector('.post-video-container');
@@ -787,11 +763,8 @@
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
             }
 
-            // IMPORTANT: After new posts are rendered, load Twitter widgets
-            // Check if twttr.widgets is available (it's loaded asynchronously)
-            if (typeof twttr !== 'undefined' && twttr.widgets) {
-                twttr.widgets.load(container); // Load widgets for the entire container
-            }
+            // Moved twttr.widgets.load() call to renderCurrentPage for better timing.
+            // It should not be called within the renderPosts loop.
         };
 
         // --- Live Updates Listener (onSnapshot) ---
@@ -1064,6 +1037,15 @@
 
             renderPosts(postsToShow, 'postsContainer');
             updatePaginationControls(filteredPosts.length);
+
+            // IMPORTANT: Call twttr.widgets.load() AFTER all posts for the current page are rendered
+            // This ensures the tweet <blockquote> elements are in the DOM before the widget script tries to find them.
+            if (typeof twttr !== 'undefined' && twttr.widgets) {
+                console.log('Calling twttr.widgets.load() for postsContainer.'); // Debugging
+                twttr.widgets.load(postsContainer);
+            } else {
+                console.warn('twttr.widgets not available yet. It might load later.'); // Debugging
+            }
         };
 
         // --- Function: renderTabs (Renders the tab navigation buttons) ---
@@ -1118,7 +1100,7 @@
             // Example: if (event.origin !== "http://your-admin-domain.com") return;
            
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
-                console.log('Refreshing embed posts due to admin update message.');
+                console.log('Refreshing embed posts due to admin update message.'); // Debugging
                 // The onSnapshot listener will typically handle the actual data refresh,
                 // but this message can trigger specific actions or debugging.
             }
