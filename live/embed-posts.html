@@ -9,38 +9,43 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* Base styles for the embed */
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%; /* Ensure both HTML and Body take full width of the iframe */
+            min-width: 0; /* Allow shrinking if parent iframe gets very small */
+            height: 100%; /* Occupy full height of iframe */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            background-color: transparent !important; /* Essential for iframe transparency */
+            overflow-x: hidden; /* Prevent horizontal scrollbars from this embed itself */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
             color: #000;
-            background-color: transparent !important; /* Essential for iframe transparency, added !important */
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            min-height: 100vh; /* Ensure body takes full viewport height */
-            /* Add this to prevent content from pushing body wider */
-            width: 100%;
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
         main {
             padding: 0;
-            margin: 0 auto;
+            margin: 0 auto; /* Center main content */
             box-shadow: none;
             border-radius: 0;
             background-color: transparent;
-            max-width: none; /* Let .live-blog-posts control max-width */
+            max-width: 700px; /* Set max width for main content area */
+            width: 100%; /* Ensure it always tries to take 100% of parent up to max-width */
+            min-width: 0; /* Allow main to shrink if needed by small screens */
+            box-sizing: border-box;
         }
         .live-blog-posts {
             margin-bottom: 0;
             padding: 0;
             border: none;
             background-color: transparent;
-            max-width: 700px; /* INCREASED MAX WIDTH - This is your target width */
-            margin: 0 auto; /* Center the posts content */
-            box-sizing: border-box; /* Crucial for consistent sizing with padding */
-            overflow: hidden; /* Prevent internal content from overflowing and affecting parent width */
+            max-width: 100%; /* This should be 100% of its parent (main) */
+            width: 100%; /* Ensure it always takes 100% of parent */
+            min-width: 0; /* Allow posts container to shrink */
+            margin: 0 auto; /* Center the posts content within its parent */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent internal content from causing scroll outside */
         }
-
+    
         /* Hide elements not needed in the embed */
         .live-blog-posts h2,
         .new-post-form,
@@ -48,29 +53,31 @@
         header {
             display: none !important;
         }
-
+    
         /* --- Individual Post Card Styling --- */
         .post-card {
-            display: block;
+            display: block; /* Ensure it's a block-level element */
+            width: 100%; /* Occupy full width of its parent */
+            min-width: 0; /* Allow post card to shrink */
             padding: 12px 16px;
             border-bottom: 1px solid #ebeef0;
             background-color: #fff;
             word-wrap: break-word;
             position: relative;
-            box-sizing: border-box; /* Ensures padding is included in the card's width */
+            box-sizing: border-box;
         }
-
+    
         .post-header-line {
             display: flex;
             align-items: flex-start;
             margin-bottom: 4px;
         }
-
+    
         .author-avatar {
             flex-shrink: 0;
             margin-right: 12px;
         }
-
+    
         .author-avatar-img {
             width: 38px;
             height: 38px;
@@ -79,7 +86,7 @@
             display: block;
             position: relative;
         }
-
+    
         /* Live dot on avatar */
         .author-avatar-img::before {
             content: '';
@@ -95,7 +102,7 @@
             z-index: 1;
             box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
-
+    
         .post-meta {
             flex-grow: 1;
             font-size: 15px;
@@ -105,32 +112,32 @@
             flex-direction: column;
             align-items: flex-start;
         }
-
+    
         .meta-line-one {
             display: flex;
             align-items: center;
             margin-bottom: 0px;
         }
-
+    
         .post-meta strong {
             font-weight: bold;
             color: #0f1419;
             margin-right: 4px;
         }
-
+    
         .post-meta span.time-ago {
             color: rgb(208, 2, 27);
             font-size: 14px;
             font-weight: bold;
         }
-
+    
         .post-meta .bullet {
             color: #536471;
             font-size: 14px;
             margin: 0 4px;
             display: inline;
         }
-
+    
         .post-meta .reporting-from {
             display: block;
             color: #536471;
@@ -139,7 +146,7 @@
             margin-top: 0px;
             margin-bottom: 12px;
         }
-
+    
         .post-subtitle {
             font-family: 'Roboto', sans-serif;
             font-size: 1.5em;
@@ -148,7 +155,7 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-
+    
         .post-text {
             font-family: "Noto Serif", Georgia, serif;
             font-size: 16px;
@@ -157,6 +164,9 @@
             color: #0f1419;
             line-height: 20px;
             word-break: break-word;
+            width: 100%; /* Ensure it fills its parent */
+            box-sizing: border-box;
+            min-width: 0; /* Allow the text container to shrink */
         }
         /* Style for paragraphs within post-text */
         .post-text p {
@@ -165,25 +175,32 @@
         .post-text p:last-child {
             margin-bottom: 0; /* No margin after the last paragraph */
         }
-
+    
         /* Wrapper for Twitter embeds to provide consistent spacing */
-        /* This wrapper is still useful for consistent styling even with direct embeds */
         .tweet-embed-wrapper {
             margin: 15px 0; /* Add some vertical space around embeds */
             max-width: 100%; /* Ensure it doesn't overflow its parent */
-            overflow: hidden; /* Hide any overflow */
-            /* Add these to help contain the iframe */
-            display: block;
-        }
-
-        /* Crucial for fixing Twitter embed width issues */
-        .tweet-embed-wrapper iframe {
-            max-width: 100% !important; /* Force Twitter iframe to fit */
-            width: 100% !important; /* Ensure it takes full available width */
+            width: 100%; /* Ensure it takes 100% of parent's width */
+            min-width: 0; /* Allow the wrapper to shrink */
+            overflow: hidden; /* Hide any overflow within this wrapper */
+            display: block; /* Ensure it behaves as a block element */
             box-sizing: border-box;
+            flex-shrink: 0; /* Prevents this wrapper from shrinking itself when inside a flex container */
         }
-
-
+    
+        /* Crucial for fixing Twitter embed width issues: Target the iframe itself */
+        .tweet-embed-wrapper iframe,
+        blockquote.twitter-tweet iframe {
+            width: 100% !important; /* Force Twitter iframe to fit parent */
+            max-width: 100% !important; /* Ensure it never exceeds its parent */
+            min-width: 0 !important; /* Allow it to shrink below Twitter's default if needed */
+            height: auto !important; /* Let height adjust naturally */
+            display: block; /* Ensure block behavior */
+            box-sizing: border-box; /* Include padding in calculations */
+            flex-shrink: 0; /* Prevents a flex parent from shrinking this iframe */
+        }
+    
+    
         /* Media styles (images and video containers) */
         .post-media {
             max-width: 100%;
@@ -193,7 +210,7 @@
             margin-top: 8px;
             transition: all 0.3s ease-in-out;
         }
-
+    
         .post-video-container {
             width: 100%;
             padding-top: 56.25%; /* 16:9 Aspect Ratio (height / width * 100%) */
@@ -204,7 +221,7 @@
             background-color: #000;
             cursor: pointer;
         }
-
+    
         .post-video-container video {
             position: absolute;
             top: 0;
@@ -215,7 +232,7 @@
             display: block;
             border-radius: 8px;
         }
-
+    
         /* Style for expanded video overlay */
         .expanded-video-overlay {
             position: fixed;
@@ -230,7 +247,7 @@
             justify-content: center;
             cursor: zoom-out;
         }
-
+    
         .expanded-video-overlay video {
             max-width: 90%;
             max-height: 90%;
@@ -238,11 +255,11 @@
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
         }
-
+    
         body.video-expanded {
             overflow: hidden;
         }
-
+    
         .no-posts-message, .error-message {
             text-align: center;
             padding: 20px;
@@ -250,7 +267,7 @@
             font-style: italic;
             font-size: 16px;
         }
-
+    
         /* Show more button for truncated text */
         .show-more-button {
             background-color: #f0f0f0;
@@ -268,117 +285,12 @@
             margin-right: auto;
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
-
+    
         .show-more-button:hover {
             background-color: #e0e0e0;
             border-color: #ccc;
         }
-
-        /* Pagination controls (uncommented for visibility if needed) */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 16px;
-            background-color: #fff;
-            border-top: 1px solid #ebeef0;
-            gap: 15px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.03);
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-            flex-wrap: wrap;
-        }
-
-        .pagination-controls button {
-            background-color: transparent !important;
-            color: #0f1419 !important;
-            border: none !important;
-            padding: 8px 12px !important;
-            border-radius: 4px !important;
-            cursor: pointer;
-            font-size: 15px !important;
-            font-weight: normal !important;
-            transition: color 0.2s ease, background-color 0.2s ease;
-            box-shadow: none !important;
-            transform: none !important;
-            text-decoration: none !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .pagination-controls button:disabled {
-            color: #999 !important;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .pagination-controls button:hover:not(:disabled) {
-            color: rgb(208, 2, 27) !important;
-            background-color: rgba(208, 2, 27, 0.05) !important;
-        }
-
-        .pagination-controls button:active:not(:disabled) {
-            background-color: rgba(208, 2, 27, 0.1) !important;
-        }
-
-        /* Page numbers (text only, no button outline) */
-        .pagination-controls .page-number {
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
-            min-width: 32px !important;
-            height: 32px !important;
-            padding: 0 8px !important;
-            margin: 0 3px !important;
-            text-decoration: none !important;
-            color: #0f1419 !important;
-            font-weight: normal !important;
-            border-radius: 4px !important;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-size: 15px !important;
-            box-sizing: border-box !important;
-        }
-
-        .pagination-controls .page-number.current-page {
-            color: rgb(208, 2, 27) !important;
-            font-weight: bold !important;
-            background-color: rgba(208, 2, 27, 0.1) !important;
-            border-bottom: none !important; /* Ensure no unwanted underlines */
-            padding-bottom: 0 !important; /* Remove padding from bottom if any */
-        }
-
-        .pagination-controls .page-number:hover:not(.current-page) {
-            background-color: #f0f0f0 !important;
-            color: #333 !important;
-        }
-
-        .pagination-controls .ellipsis {
-            padding: 0 5px !important;
-            color: #536471 !important;
-            font-size: 15px !important;
-            cursor: default;
-        }
-
-        /* Responsive adjustments for pagination */
-        @media (max-width: 600px) {
-            .pagination-controls {
-                padding: 10px 12px;
-                gap: 8px;
-                border-radius: 0;
-            }
-            .pagination-controls button,
-            .pagination-controls .page-number {
-                padding: 6px 10px;
-                font-size: 14px;
-                min-width: 28px;
-                height: 28px;
-            }
-        }
-
+    
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
             position: sticky;
@@ -394,10 +306,12 @@
             padding: 0 10px;
             justify-content: flex-start;
             box-sizing: border-box; /* Important for width calculation with padding */
-            max-width: 700px; /* Match the max-width of .live-blog-posts */
+            max-width: 700px; /* Match the max-width of .live-blog-posts's parent (main) */
+            width: 100%; /* Ensure it takes 100% of available space */
+            min-width: 0; /* Allow it to shrink */
             margin: 0 auto; /* Center it like the posts */
         }
-
+    
         .tab-navigation button {
             background: none;
             border: none;
@@ -407,20 +321,20 @@
             color: #555;
             cursor: pointer;
             transition: color 0.2s ease, border-bottom 0.2s ease;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Prevents buttons from shrinking */
         }
-
+    
         .tab-navigation button.active-tab {
             color: rgb(208, 2, 27);
             border-bottom: 2px solid rgb(208, 2, 27);
             font-weight: bold;
         }
-
+    
         .tab-navigation button:hover:not(.active-tab) {
             color: #333;
             background-color: #f9f9f9;
         }
-
+    
         /* New Update Notification Button */
         #newUpdatesButton {
             position: fixed;
@@ -440,12 +354,11 @@
             z-index: 1001;
             transition: transform 0.2s ease-in-out, background-color 0.2s ease;
         }
-
+    
         #newUpdatesButton:hover {
             background-color: rgb(170, 0, 20);
             transform: translateX(-50%) translateY(-2px);
         }
-        /* --- END OF CUSTOM CSS MARKER --- */
     </style>
 </head>
 <body>
