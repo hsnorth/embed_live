@@ -6,6 +6,7 @@
     <title>Live Blog Posts Embed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
     <style>
         /* Base styles for the embed */
         body {
@@ -255,7 +256,7 @@
             border-color: #ccc;
         }
 
-        /* --- Pagination Controls --- */
+        /* 
         .pagination-controls {
             display: flex;
             justify-content: center;
@@ -305,7 +306,7 @@
             background-color: rgba(208, 2, 27, 0.1) !important;
         }
 
-        /* Page numbers (text only, no button outline) */
+        /* Page numbers (text only, no button outline) 
         .pagination-controls .page-number {
             display: inline-flex !important;
             align-items: center;
@@ -328,8 +329,8 @@
             color: rgb(208, 2, 27) !important;
             font-weight: bold !important;
             background-color: rgba(208, 2, 27, 0.1) !important;
-            border-bottom: none !important; /* Ensure no unwanted underlines */
-            padding-bottom: 0 !important; /* Remove padding from bottom if any */
+            border-bottom: none !important; /* Ensure no unwanted underlines /
+            padding-bottom: 0 !important;  Remove padding from bottom if any 
         }
 
         .pagination-controls .page-number:hover:not(.current-page) {
@@ -344,7 +345,7 @@
             cursor: default;
         }
 
-        /* Responsive adjustments for pagination */
+        /* Responsive adjustments for pagination 
         @media (max-width: 600px) {
             .pagination-controls {
                 padding: 10px 12px;
@@ -358,7 +359,7 @@
                 min-width: 28px;
                 height: 28px;
             }
-        }
+        } */
 
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
@@ -432,7 +433,11 @@
             <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
             </div>
-            <div id="paginationControls"></div>
+            <div class="pagination-controls" id="paginationControls">
+                <button id="prevPage" disabled>&lt; Previous</button>
+                <span id="pageNumbers"></span>
+                <button id="nextPage">Next &gt;</button>
+            </div>
         </section>
     </main>
 
