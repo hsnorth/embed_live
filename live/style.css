@@ -1,244 +1,238 @@
 /* General Body and Main Layout */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    color: #000;
+    line-height: 1.6; /* Slightly increase line height for better readability */
+    color: #333; /* Darker grey for primary text for better contrast */
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5; /* Light grey background */
+    background-color: #f5f7fa; /* Softer, slightly darker light grey background */
     overflow-x: hidden;
-    min-height: 100vh; /* Ensure body takes full viewport height */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 header {
-    background-color: rgb(208, 2, 27); /* Dark red */
+    background-color: rgb(208, 2, 27); /* Main brand red */
     color: white;
-    padding: 15px 20px;
+    padding: 15px 25px; /* Slightly more padding */
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Stronger, more refined shadow */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
+    position: sticky; /* Make header sticky */
+    top: 0;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.8em;
-    flex-grow: 1; /* Allows title to take available space */
+    font-size: 2em; /* Slightly larger title */
+    flex-grow: 1;
     text-align: left;
+    letter-spacing: -0.5px; /* Slight letter spacing adjustment */
 }
 
 header nav {
     margin-top: 0;
     display: flex;
-    gap: 20px;
+    gap: 25px; /* Slightly more space between nav links */
 }
 
 header nav a {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 4px; /* Changed from 44px to 4px as 44px seemed like a typo */
-    transition: background-color 0.2s ease;
+    padding: 8px 15px; /* More substantial padding for links */
+    border-radius: 5px; /* Slightly more rounded corners */
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Add transform transition */
+    text-transform: uppercase; /* Uppercase navigation links */
+    font-size: 0.95em;
 }
 
 header nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.25); /* More visible hover */
+    transform: translateY(-2px); /* Subtle lift on hover */
 }
 
 main {
-    flex-grow: 1; /* Allows main content to fill available space */
-    padding: 20px;
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    flex-grow: 1;
+    padding: 30px; /* More generous main padding */
+    max-width: 850px; /* Slightly wider main content area */
+    margin: 30px auto; /* More margin around the main container */
+    background-color: #ffffff; /* Pure white background for content blocks */
+    border-radius: 10px; /* More pronounced rounded corners */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Stronger, softer shadow */
 }
 
 footer {
-    background-color: #333;
+    background-color: #2c3e50; /* Darker, professional footer background */
     color: white;
     text-align: center;
-    padding: 15px 20px;
-    margin-top: auto; /* Pushes footer to the bottom */
+    padding: 20px 25px; /* More padding */
+    margin-top: auto;
+    font-size: 0.9em;
 }
 
-/* Form Section Containers (Apply to both "Manage Custom Tabs" and "Post an Update") */
+/* --- Section Containers for Forms and Lists (e.g., .new-post-form, .live-blog-posts) --- */
 .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-    border: 1px solid #e0e0e0;
+    padding: 25px 30px; /* More internal padding for sections */
+    border-radius: 8px; /* Consistent rounded corners */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07); /* Clearer section separation */
+    margin-bottom: 25px; /* More space between sections */
+    border: 1px solid #e9eef3; /* Very subtle light border */
 }
 
-/* General H2 Styling (for section titles) */
 h2 {
-    color: rgb(208, 2, 27);
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+    color: rgb(208, 2, 27); /* Consistent brand red for titles */
+    border-bottom: 2px solid #e0e0e0; /* Softer border color */
+    padding-bottom: 12px; /* Slightly more padding below title border */
     margin-top: 0;
-    margin-bottom: 20px; /* Default margin-bottom for H2 */
-    font-size: 1.8em;
+    margin-bottom: 25px; /* More space after section title */
+    font-size: 2em; /* Larger, bolder section titles */
+    font-weight: 700; /* Bolder titles */
+    letter-spacing: -0.2px;
 }
 
-/* --- Specific Adjustments for "Post an Update" form (.new-post-form) --- */
-
-/* Reduce space below "Post an Update" title */
-.new-post-form h2 {
-    margin-bottom: 15px;
-    padding-bottom: 8px; /* Slightly tighter border padding */
+/* --- Form Group Styling (Labels and Inputs) --- */
+.form-group {
+    margin-bottom: 20px; /* Increased space between form groups for clarity */
 }
 
-/* Reduce vertical space between form input/textarea groups */
-.new-post-form .form-group {
-    margin-bottom: 12px;
+.form-group label {
+    display: block;
+    margin-bottom: 8px; /* Space between label and input */
+    font-weight: 600; /* Bolder labels */
+    color: #444; /* Slightly darker label text */
+    font-size: 1em; /* Standard font size */
 }
 
-/* Reduce space between label text and its corresponding input/textarea field */
-.new-post-form .form-group label {
-    margin-bottom: 5px;
-}
-
-/* Adjust padding for input and textarea fields for a more compact look */
-.new-post-form .input-field,
-.new-post-form .textarea-field {
-    padding: 8px 10px; /* Reduced vertical padding */
-    width: calc(100% - 20px); /* Adjust width for new padding (10px left + 10px right) */
-}
-
-/* Adjust the submit button size and margin */
-.new-post-form .submit-button {
-    padding: 10px 20px; /* Slightly reduced vertical padding for a compact button */
-    font-size: 16px; /* Slightly smaller font */
-    margin-top: 15px; /* Adjust top margin to fit better with reduced spacing */
-}
-
-/* Adjustments for the "Assign to Tabs" checkbox group */
-.new-post-form .tab-selection-group {
-    margin-top: 8px; /* Reduce the top margin for the entire tab checkbox group */
-    display: flex; /* Use flexbox for horizontal alignment */
-    flex-wrap: wrap; /* Allow checkboxes to wrap if needed */
-    gap: 10px; /* Reduce space between individual checkboxes */
-    padding: 8px; /* Slightly reduce padding inside the group box */
-}
-
-/* --- Specific Adjustments for "Manage Custom Tabs" section (.tab-management-section) --- */
-
-/* Reduce space below "Manage Custom Tabs" title */
-.tab-management-section h2 {
-    margin-bottom: 15px;
-    padding-bottom: 8px;
-}
-
-/* Adjust input field and button alignment */
-.tab-management-controls {
-    display: flex;
-    gap: 10px; /* Space between input and button */
-    margin-bottom: 10px; /* Reduce space below the input/add button group */
-    align-items: flex-end; /* Align input and button bottoms */
-}
-
-.tab-management-controls .input-field {
-    flex-grow: 1;
-    width: auto; /* Allow flex-grow to manage width */
-    padding: 8px 10px; /* Consistent with new-post-form inputs */
-}
-
-.tab-management-controls .button {
-    margin-top: 0; /* Remove default button top margin */
-    padding: 8px 15px; /* Adjust button padding for smaller size */
-    font-size: 0.9em; /* Slightly smaller font */
-}
-
-/* Adjust spacing for individual tab list items */
-.tab-list li {
-    margin-bottom: 6px; /* Reduce space between tab entries */
-    padding: 8px 12px; /* Reduce padding inside each tab entry */
-}
-
-
-/* General Input and Button Styles (existing rules, adjusted if necessary by specific rules above) */
 .input-field, .textarea-field {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
+    width: calc(100% - 24px); /* Account for new padding and border (12px * 2 + 1px * 2) */
+    padding: 12px; /* More generous padding inside inputs */
+    border: 1px solid #cdd5df; /* Softer border color */
+    border-radius: 6px; /* Nicely rounded input fields */
+    font-size: 1.05em; /* Slightly larger input text */
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fcfdfe; /* Very light background for inputs */
+    color: #333;
+}
+
+.input-field::placeholder, .textarea-field::placeholder {
+    color: #8899a6; /* Softer placeholder text color */
+    font-style: italic;
 }
 
 .input-field:focus, .textarea-field:focus {
-    border-color: rgb(208, 2, 27);
-    box-shadow: 0 0 5px rgba(208, 2, 27, 0.3);
+    border-color: rgb(208, 2, 27); /* Focus highlight in brand red */
+    box-shadow: 0 0 0 3px rgba(208, 2, 27, 0.2); /* Subtle focus glow */
     outline: none;
+    background-color: #fff; /* White background on focus */
 }
 
 .textarea-field {
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px; /* Slightly taller default for text areas */
+    line-height: 1.5; /* Good line height for text content */
+}
+
+/* --- Button Styling (Primary Action) --- */
+.submit-button, .button {
+    background-color: rgb(208, 2, 27); /* Primary action button in brand red */
+    color: white;
+    padding: 14px 28px; /* Larger, more prominent buttons */
+    border: none;
+    border-radius: 6px; /* Consistent rounded corners */
+    cursor: pointer;
+    font-size: 1.15em; /* Larger font for call to action */
+    font-weight: 600; /* Bolder text */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 25px; /* More space above the button */
+    box-shadow: 0 4px 10px rgba(208, 2, 27, 0.2); /* Subtle shadow for depth */
 }
 
 .submit-button:hover, .button:hover {
-    background-color: rgb(170, 0, 20);
-    transform: translateY(-1px);
+    background-color: rgb(170, 0, 20); /* Darker red on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+    box-shadow: 0 6px 15px rgba(208, 2, 27, 0.3); /* Enhanced shadow on hover */
 }
 
-.submit-button:disabled, .button:disabled { /* Apply disabled styles to both */
+.submit-button:disabled, .button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
-/* Embed Code Section */
+/* --- Embed Code Section Specific --- */
 .embed-code-container {
     display: flex;
-    gap: 10px;
+    gap: 15px; /* More space between embed field and button */
     align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .embed-code-container .input-field {
     flex-grow: 1;
     width: auto;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Monospace font for code */
+    font-size: 0.95em;
+    white-space: pre-wrap; /* Preserve formatting for code */
+    overflow-x: auto; /* Allow horizontal scrolling for long code */
 }
 
-/* Post Card Styling (No changes needed here based on screenshots) */
+.embed-code-container .button {
+    margin-top: 0; /* Remove top margin for inline button */
+    flex-shrink: 0; /* Prevent button from shrinking */
+    padding: 10px 20px; /* Adjust button size for this section */
+    font-size: 1em;
+}
+
+/* --- Post Card Styling (for "Live Blog Posts" section) --- */
 .post-card {
     display: block;
-    padding: 12px 16px;
-    border-bottom: 1px solid #ebeef0;
+    padding: 18px 22px; /* More generous padding inside post cards */
+    border-bottom: 1px solid #e9eef3; /* Lighter, subtle separator */
     background-color: #fff;
     word-wrap: break-word;
     position: relative;
+    transition: background-color 0.2s ease; /* Smooth hover effect */
 }
 
 .post-card:last-child {
     border-bottom: none;
 }
 
+.post-card:hover {
+    background-color: #fdfdfd; /* Subtle highlight on hover */
+}
+
 .post-header-line {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 10px;
+    margin-bottom: 12px; /* Consistent space */
 }
 
 .author-avatar {
     flex-shrink: 0;
-    margin-right: 12px;
+    margin-right: 15px; /* More space between avatar and text */
 }
 
 .author-avatar-img {
-    width: 38px;
-    height: 38px;
+    width: 42px; /* Slightly larger avatar */
+    height: 42px; /* Slightly larger avatar */
     border-radius: 50%;
     object-fit: cover;
     display: block;
     position: relative;
+    border: 2px solid #f0f2f5; /* Subtle border for avatar */
 }
 
 .author-avatar-img::before {
@@ -246,20 +240,20 @@ h2 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 10px;
-    height: 10px;
+    width: 12px; /* Slightly larger dot */
+    height: 12px; /* Slightly larger dot */
     background-color: rgb(208, 2, 27);
     border-radius: 50%;
-    border: 2px solid white;
-    transform: translate(-20%, -20%);
+    border: 3px solid white; /* Thicker white border around the dot */
+    transform: translate(-25%, -25%); /* Adjust position */
     z-index: 1;
-    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+    box-shadow: 0 0 4px rgba(0,0,0,0.3); /* Stronger shadow for the dot */
 }
 
 .post-meta {
     flex-grow: 1;
-    font-size: 15px;
-    line-height: 1.2;
+    font-size: 16px; /* Slightly larger font for meta info */
+    line-height: 1.3; /* Better readability */
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -269,52 +263,52 @@ h2 {
 .meta-line-one {
     display: flex;
     align-items: center;
-    margin-bottom: 0px;
+    margin-bottom: 2px; /* Small gap to reporting-from */
 }
 
 .post-meta strong {
-    font-weight: bold;
-    color: #0f1419;
-    margin-right: 4px;
+    font-weight: 700; /* Bolder author name */
+    color: #222; /* Darker author name */
+    margin-right: 6px; /* More space */
 }
 
 .post-meta span.time-ago {
-    color: rgb(208, 2, 27);
-    font-size: 14px;
-    font-weight: bold;
+    color: rgb(208, 2, 27); /* Red for time ago */
+    font-size: 15px; /* Consistent size */
+    font-weight: 600; /* Bolder */
 }
 
 .post-meta .bullet {
-    color: #536471;
-    font-size: 14px;
-    margin: 0 4px;
-    display: inline;
+    color: #999; /* Softer grey */
+    font-size: 15px;
+    margin: 0 6px;
 }
 
 .post-meta .reporting-from {
     display: block;
-    color: #536471;
-    font-size: 14px;
+    color: #666; /* Softer grey */
+    font-size: 15px;
     margin-left: 0;
-    margin-top: 2px;
+    margin-top: 0; /* Align perfectly */
 }
 
 .post-subtitle {
     font-family: 'Roboto', sans-serif;
-    font-size: 1.5em;
-    color: #333;
-    margin-top: 8px;
-    margin-bottom: 5px;
-    font-weight: bold;
+    font-size: 1.6em; /* More prominent subtitle */
+    color: #222;
+    margin-top: 10px; /* More space above subtitle */
+    margin-bottom: 8px; /* More space below subtitle */
+    font-weight: 700; /* Very bold */
+    line-height: 1.3;
 }
 
 .post-text {
     font-family: "Noto Serif", Georgia, serif;
-    font-size: 16px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    color: #0f1419;
-    line-height: 20px;
+    font-size: 17px; /* Slightly larger main text */
+    margin-top: 10px; /* More space above text */
+    margin-bottom: 10px; /* More space below text */
+    color: #333;
+    line-height: 1.6; /* Improved line spacing */
     word-break: break-word;
 }
 
@@ -322,63 +316,70 @@ h2 {
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px;
-    margin-top: 8px;
+    border-radius: 8px; /* Consistent rounded corners */
+    margin-top: 15px; /* More space above media */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for media */
 }
 
 .no-posts-message, .error-message {
     text-align: center;
-    padding: 20px;
-    color: #536471;
+    padding: 30px; /* More padding */
+    color: #777; /* Softer color */
     font-style: italic;
-    font-size: 16px;
+    font-size: 1.1em;
+    background-color: #fbfbfc; /* Light background */
+    border-radius: 8px;
+    border: 1px solid #eef1f4;
 }
 
-/* Post Actions (Edit/Delete) */
+/* --- Post Actions (Edit/Delete) --- */
 .post-actions {
-    margin-top: 10px;
+    margin-top: 15px; /* More space above action buttons */
     display: flex;
-    gap: 10px;
+    gap: 12px; /* More space between buttons */
     justify-content: flex-end;
 }
 
 .post-actions button {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-    padding: 6px 12px;
+    background-color: #f0f4f7; /* Lighter background for secondary actions */
+    color: #555;
+    border: 1px solid #dce1e6; /* Softer border */
+    padding: 8px 15px; /* More generous padding */
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-size: 0.95em; /* Slightly larger font */
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px; /* More space between icon and text */
 }
 
 .post-actions button:hover {
-    background-color: #e0e0e0;
-    border-color: #ccc;
+    background-color: #e5e9ed;
+    border-color: #c9d0d6;
+    transform: translateY(-1px);
 }
 
 .post-actions button.delete-post-button {
-    color: #d32f2f;
+    color: #d32f2f; /* Consistent red for delete */
+    border-color: #f4baba; /* Lighter red border */
 }
 
 .post-actions button.delete-post-button:hover {
-    background-color: #ffebee;
-    border-color: #ef9a9a;
+    background-color: #ffe0e0; /* Very light red background on hover */
+    border-color: #e6a0a0;
 }
 
-/* Share Button */
+/* Share Button (moved slightly for better integration) */
 .share-button {
     background: none;
     border: none;
     color: #657786;
     cursor: pointer;
-    font-size: 1em;
-    padding: 5px;
-    border-radius: 4px;
+    font-size: 1.1em; /* Slightly larger */
+    padding: 6px; /* Slightly more padding */
+    border-radius: 5px;
     transition: background-color 0.2s ease, color 0.2s ease;
     display: flex;
     align-items: center;
@@ -387,143 +388,184 @@ h2 {
 
 .post-card .share-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.2em;
+    top: 15px; /* Adjusted position */
+    right: 15px; /* Adjusted position */
+    font-size: 1.3em; /* Slightly larger icon */
+    color: #8899a6; /* Softer default color */
 }
 
 .share-button:hover {
-    background-color: rgba(208, 2, 27, 0.1);
+    background-color: rgba(208, 2, 27, 0.15); /* More visible hover */
     color: rgb(208, 2, 27);
 }
 
 /* Show More Button */
 .show-more-button {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-    padding: 8px 15px;
-    border-radius: 5px;
+    background-color: #f0f4f7;
+    color: #555;
+    border: 1px solid #dce1e6;
+    padding: 10px 20px; /* More padding */
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    margin-top: 10px;
+    font-size: 15px; /* Consistent font size */
+    font-weight: 600; /* Bolder */
+    margin-top: 25px; /* More space above */
     display: block;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
 }
 
 .show-more-button:hover {
-    background-color: #e0e0e0;
-    border-color: #ccc;
+    background-color: #e5e9ed;
+    border-color: #c9d0d6;
+    transform: translateY(-1px);
 }
 
-/* Blog List specific styling */
+/* Blog List specific styling (for blog management) */
 .blog-list {
     list-style: none;
     padding: 0;
 }
 
 .blog-list li {
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
+    background-color: #f9fbfd; /* Lighter background */
+    border: 1px solid #eef1f4; /* Softer border */
     border-radius: 6px;
     margin-bottom: 10px;
-    padding: 15px;
+    padding: 15px 20px; /* More padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blog-list li:hover {
+    background-color: #f5f8fb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .blog-list li span {
-    font-weight: 500;
+    font-weight: 600; /* Bolder */
     color: #333;
     flex-grow: 1;
 }
 
 .blog-list li .actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 /* Dashboard specific buttons */
 .dashboard-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px; /* More space between dashboard buttons */
     margin-bottom: 30px;
 }
 
 .dashboard-buttons .button {
     flex: 1;
-    min-width: 180px;
+    min-width: 200px; /* Slightly wider buttons */
+    padding: 15px 25px; /* More generous padding */
+    font-size: 1.1em;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
-        gap: 10px;
-        padding: 10px;
+        gap: 15px; /* More gap */
+        padding: 15px;
     }
 
     header h1 {
         text-align: center;
         width: 100%;
+        font-size: 1.6em;
     }
 
     header nav {
         width: 100%;
         justify-content: center;
-        gap: 10px;
+        gap: 15px;
     }
 
     main {
-        padding: 15px;
-        margin: 15px auto;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 98%; /* Allow more width on small screens */
     }
 
     .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
-        padding: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
     }
 
     h2 {
-        font-size: 1.5em;
+        font-size: 1.8em;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        margin-bottom: 6px;
+    }
+
+    .input-field, .textarea-field {
+        padding: 10px;
+        width: calc(100% - 20px);
     }
 
     .submit-button, .button {
         width: 100%;
-        padding: 10px 15px;
+        padding: 12px 20px;
+        font-size: 1em;
+        margin-top: 20px;
     }
 
     .embed-code-container {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
+        align-items: stretch; /* Stretch items to full width */
     }
 
     .embed-code-container .input-field {
         width: 100%;
     }
+    .embed-code-container .button {
+        width: 100%;
+    }
 
     .post-card {
-        padding: 10px;
+        padding: 15px;
     }
 
     .post-media {
-        border-radius: 4px;
+        border-radius: 6px;
+        margin-top: 10px;
     }
 
     .post-actions {
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
     }
 
     .post-actions button {
         width: 100%;
         justify-content: center;
+    }
+
+    .show-more-button {
+        padding: 8px 15px;
+        font-size: 14px;
+        margin-top: 20px;
     }
 
     .pagination-controls {
@@ -537,6 +579,15 @@ h2 {
     .pagination-controls .page-number {
         font-size: 14px;
     }
+
+    .dashboard-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .dashboard-buttons .button {
+        min-width: unset; /* Remove min-width on small screens */
+        width: 100%;
+    }
 }
 
 /* Tablet and smaller desktop */
@@ -546,72 +597,124 @@ h2 {
     }
 }
 
-/* Tab Navigation for Admin */
+/* Tab Selection Group for Admin (Assign to Tabs) */
 .tab-selection-group {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #fcfcfc;
-    max-height: 150px;
+    border: 1px solid #e0e0e0; /* Softer border */
+    border-radius: 8px; /* Consistent rounded corners */
+    padding: 15px; /* More padding inside */
+    background-color: #fdfdfd; /* Very light background */
+    max-height: 180px; /* Allow more height before scrolling */
     overflow-y: auto;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    margin-top: 15px; /* More space above */
+    margin-bottom: 20px; /* More space below */
 }
 
-/* Ensure user avatar is styled correctly if it's introduced later in JS */
+.tab-selection-group label {
+    display: flex; /* Use flexbox to align checkbox and text */
+    align-items: center;
+    margin-bottom: 10px; /* More space between checkboxes */
+    font-weight: normal;
+    color: #555;
+    font-size: 0.95em;
+    cursor: pointer; /* Indicate clickable */
+    transition: color 0.2s ease;
+}
+
+.tab-selection-group label:hover {
+    color: #000; /* Darker text on hover */
+}
+
+.tab-selection-group input[type="checkbox"] {
+    margin-right: 10px; /* More space between checkbox and text */
+    transform: scale(1.1); /* Slightly larger checkbox */
+    accent-color: rgb(208, 2, 27); /* Brand red checkbox */
+}
+
+/* User Avatar (ensure consistent sizing if used elsewhere) */
 .user-avatar-small {
-    width: 24px;
-    height: 24px;
+    width: 28px; /* Slightly larger small avatar */
+    height: 28px;
     border-radius: 50%;
     object-fit: cover;
     vertical-align: middle;
-    margin-right: 5px;
+    margin-right: 8px; /* More space */
+    border: 1px solid #eee; /* Subtle border */
 }
 
-/* Tab Management Section (create-blog.html) */
-/* These rules are already pretty good for the list items shown in your screenshot */
+/* Tab Management Section (create-blog.html) - Enhanced for professionalism */
+.tab-management-controls {
+    display: flex;
+    gap: 15px; /* More space between input and button */
+    margin-bottom: 20px; /* More space below controls */
+    align-items: flex-end; /* Align elements to the bottom */
+}
+
+.tab-management-controls .input-field {
+    flex-grow: 1;
+    padding: 10px 12px; /* Slightly adjusted padding for this input */
+    font-size: 1em;
+}
+
+.tab-management-controls .button {
+    margin-top: 0; /* Override default button margin-top */
+    padding: 10px 20px; /* Adjust button size for this section */
+    font-size: 1em;
+    font-weight: 500;
+}
+
 .tab-list {
     list-style: none;
     padding: 0;
 }
 
 .tab-list li {
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
+    background-color: #f9fbfd; /* Lighter background for list items */
+    border: 1px solid #eef1f4;
     border-radius: 6px;
-    /* margin-bottom: 8px; Already good, but could be 6px for tighter spacing */
-    /* padding: 10px 15px; Already good, but could be 8px 12px for tighter spacing */
+    margin-bottom: 8px;
+    padding: 12px 18px; /* More padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); /* Softer shadow */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tab-list li:hover {
+    background-color: #f5f8fb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .tab-list li .tab-name {
-    font-weight: 500;
+    font-weight: 600; /* Bolder tab name */
     color: #333;
+    font-size: 1.05em;
 }
 
 .tab-list li .delete-tab-button {
-    background-color: #f44336;
+    background-color: #d32f2f; /* Darker red for delete */
     color: white;
     border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
+    border-radius: 5px; /* Slightly more rounded */
+    padding: 8px 15px; /* More generous padding */
     cursor: pointer;
-    font-size: 0.85em;
-    transition: background-color 0.2s ease;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .tab-list li .delete-tab-button:hover {
-    background-color: #d32f2f;
+    background-color: #b71c1c; /* Even darker red on hover */
+    transform: translateY(-1px);
 }
 
 .tab-list li .delete-tab-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+    transform: none;
 }
 
-/* --- Tab Navigation (Embed Page Specific) --- */
+/* --- Tab Navigation (Embed Page Specific - no changes to functionality) --- */
 .tab-navigation {
     position: sticky;
     top: 0;
