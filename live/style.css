@@ -82,7 +82,7 @@ header {
 }
 
 .back-arrow {
-    color: white;
+    color: red;
     font-size: 1.5em; /* Adjust size as needed */
     text-decoration: none;
     transition: transform 0.2s ease, color 0.2s ease;
@@ -92,10 +92,6 @@ header {
     padding: 5px; /* Add some padding for easier clicking */
 }
 
-.back-arrow:hover {
-    color: #f0f0f0; /* Slightly lighter white on hover */
-    transform: translateX(-3px); /* Small subtle slide effect */
-}
 
 /* Ensure the h1 inside header-left still looks good */
 .header-left h1 {
