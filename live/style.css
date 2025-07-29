@@ -1,11 +1,11 @@
 /* General Body and Main Layout */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6; /* Slightly increase line height for better readability */
-    color: #333; /* Darker grey for primary text for better contrast */
+    font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5; /* Standard line height */
+    color: #333;
     margin: 0;
     padding: 0;
-    background-color: #f5f7fa; /* Softer, slightly darker light grey background */
+    background-color: #f0f2f5; /* Light grey background */
     overflow-x: hidden;
     min-height: 100vh;
     display: flex;
@@ -15,153 +15,152 @@ body {
 header {
     background-color: rgb(208, 2, 27); /* Main brand red */
     color: white;
-    padding: 15px 25px; /* Slightly more padding */
+    padding: 10px 20px; /* Reduced header padding */
     text-align: center;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Stronger, more refined shadow */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    position: sticky; /* Make header sticky */
+    position: sticky;
     top: 0;
-    z-index: 1000; /* Ensure it stays on top */
+    z-index: 1000;
 }
 
 header h1 {
     margin: 0;
-    font-size: 2em; /* Slightly larger title */
+    font-size: 1.8em; /* Standard title size */
     flex-grow: 1;
     text-align: left;
-    letter-spacing: -0.5px; /* Slight letter spacing adjustment */
+    letter-spacing: normal; /* No letter spacing adjustment */
 }
 
 header nav {
     margin-top: 0;
     display: flex;
-    gap: 25px; /* Slightly more space between nav links */
+    gap: 15px; /* Reduced space between nav links */
 }
 
 header nav a {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    padding: 8px 15px; /* More substantial padding for links */
-    border-radius: 5px; /* Slightly more rounded corners */
-    transition: background-color 0.3s ease, transform 0.1s ease; /* Add transform transition */
-    text-transform: uppercase; /* Uppercase navigation links */
-    font-size: 0.95em;
+    padding: 5px 10px; /* Compact padding for nav links */
+    border-radius: 4px; /* Standard rounded corners */
+    transition: background-color 0.2s ease;
+    text-transform: none; /* No uppercase */
+    font-size: 1em; /* Standard font size */
 }
 
 header nav a:hover {
-    background-color: rgba(255, 255, 255, 0.25); /* More visible hover */
-    transform: translateY(-2px); /* Subtle lift on hover */
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: none; /* No lift effect */
 }
 
 main {
     flex-grow: 1;
-    padding: 30px; /* More generous main padding */
-    max-width: 850px; /* Slightly wider main content area */
-    margin: 30px auto; /* More margin around the main container */
-    background-color: #ffffff; /* Pure white background for content blocks */
-    border-radius: 10px; /* More pronounced rounded corners */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Stronger, softer shadow */
+    padding: 15px; /* Significantly reduced main padding */
+    max-width: 760px; /* More standard width */
+    margin: 15px auto; /* Reduced margin around the main container */
+    background-color: #ffffff;
+    border-radius: 8px; /* Standard rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Standard shadow */
 }
 
 footer {
-    background-color: #2c3e50; /* Darker, professional footer background */
+    background-color: #333; /* Dark grey footer background */
     color: white;
     text-align: center;
-    padding: 20px 25px; /* More padding */
+    padding: 15px 20px; /* Reduced padding */
     margin-top: auto;
     font-size: 0.9em;
 }
 
-/* --- Section Containers for Forms and Lists (e.g., .new-post-form, .live-blog-posts) --- */
+/* --- Section Containers for Forms and Lists --- */
 .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
     background-color: #fff;
-    padding: 25px 30px; /* More internal padding for sections */
-    border-radius: 8px; /* Consistent rounded corners */
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07); /* Clearer section separation */
-    margin-bottom: 25px; /* More space between sections */
-    border: 1px solid #e9eef3; /* Very subtle light border */
+    padding: 18px 20px; /* Reduced internal padding for sections */
+    border-radius: 6px; /* Slightly less rounded */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+    margin-bottom: 15px; /* Reduced space between sections */
+    border: 1px solid #e0e0e0; /* Standard light border */
 }
 
 h2 {
-    color: rgb(208, 2, 27); /* Consistent brand red for titles */
-    border-bottom: 2px solid #e0e0e0; /* Softer border color */
-    padding-bottom: 12px; /* Slightly more padding below title border */
+    color: rgb(208, 2, 27);
+    border-bottom: 1px solid #eee; /* Thinner, lighter border */
+    padding-bottom: 8px; /* Reduced padding below title border */
     margin-top: 0;
-    margin-bottom: 25px; /* More space after section title */
-    font-size: 2em; /* Larger, bolder section titles */
-    font-weight: 700; /* Bolder titles */
-    letter-spacing: -0.2px;
+    margin-bottom: 15px; /* Reduced space after section title */
+    font-size: 1.6em; /* Slightly smaller, more standard title size */
+    font-weight: 600; /* Standard bold */
+    letter-spacing: normal; /* No letter spacing */
 }
 
 /* --- Form Group Styling (Labels and Inputs) --- */
 .form-group {
-    margin-bottom: 20px; /* Increased space between form groups for clarity */
+    margin-bottom: 12px; /* Significantly reduced space between form groups */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px; /* Space between label and input */
-    font-weight: 600; /* Bolder labels */
-    color: #444; /* Slightly darker label text */
-    font-size: 1em; /* Standard font size */
+    margin-bottom: 5px; /* Reduced space between label and input */
+    font-weight: 500; /* Standard label weight */
+    color: #444;
+    font-size: 0.95em; /* Slightly smaller label font */
 }
 
 .input-field, .textarea-field {
-    width: calc(100% - 24px); /* Account for new padding and border (12px * 2 + 1px * 2) */
-    padding: 12px; /* More generous padding inside inputs */
-    border: 1px solid #cdd5df; /* Softer border color */
-    border-radius: 6px; /* Nicely rounded input fields */
-    font-size: 1.05em; /* Slightly larger input text */
+    width: calc(100% - 18px); /* Account for padding and border */
+    padding: 8px; /* Significantly reduced padding inside inputs */
+    border: 1px solid #ccc; /* Standard border color */
+    border-radius: 4px; /* Standard rounded input fields */
+    font-size: 1em; /* Standard input text size */
     box-sizing: border-box;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fcfdfe; /* Very light background for inputs */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff; /* White background for inputs */
     color: #333;
 }
 
 .input-field::placeholder, .textarea-field::placeholder {
-    color: #8899a6; /* Softer placeholder text color */
-    font-style: italic;
+    color: #999; /* Standard placeholder text color */
+    font-style: normal; /* No italic */
 }
 
 .input-field:focus, .textarea-field:focus {
-    border-color: rgb(208, 2, 27); /* Focus highlight in brand red */
-    box-shadow: 0 0 0 3px rgba(208, 2, 27, 0.2); /* Subtle focus glow */
+    border-color: rgb(208, 2, 27);
+    box-shadow: 0 0 0 2px rgba(208, 2, 27, 0.2); /* Lighter focus glow */
     outline: none;
-    background-color: #fff; /* White background on focus */
 }
 
 .textarea-field {
     resize: vertical;
-    min-height: 100px; /* Slightly taller default for text areas */
-    line-height: 1.5; /* Good line height for text content */
+    min-height: 80px; /* Standard default for text areas */
+    line-height: 1.4; /* Standard line height for text content */
 }
 
 /* --- Button Styling (Primary Action) --- */
 .submit-button, .button {
-    background-color: rgb(208, 2, 27); /* Primary action button in brand red */
+    background-color: rgb(208, 2, 27);
     color: white;
-    padding: 14px 28px; /* Larger, more prominent buttons */
+    padding: 10px 20px; /* Significantly reduced button padding */
     border: none;
-    border-radius: 6px; /* Consistent rounded corners */
+    border-radius: 4px; /* Standard rounded corners */
     cursor: pointer;
-    font-size: 1.15em; /* Larger font for call to action */
-    font-weight: 600; /* Bolder text */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    font-size: 1em; /* Standard font size for buttons */
+    font-weight: 500; /* Standard bold text */
+    transition: background-color 0.2s ease;
     display: inline-block;
     text-align: center;
     text-decoration: none;
-    margin-top: 25px; /* More space above the button */
-    box-shadow: 0 4px 10px rgba(208, 2, 27, 0.2); /* Subtle shadow for depth */
+    margin-top: 15px; /* Reduced space above the button */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lighter shadow */
 }
 
 .submit-button:hover, .button:hover {
-    background-color: rgb(170, 0, 20); /* Darker red on hover */
-    transform: translateY(-2px); /* Lift effect on hover */
-    box-shadow: 0 6px 15px rgba(208, 2, 27, 0.3); /* Enhanced shadow on hover */
+    background-color: rgb(170, 0, 20);
+    transform: none; /* No lift effect */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Slightly more prominent shadow on hover */
 }
 
 .submit-button:disabled, .button:disabled {
@@ -174,36 +173,35 @@ h2 {
 /* --- Embed Code Section Specific --- */
 .embed-code-container {
     display: flex;
-    gap: 15px; /* More space between embed field and button */
+    gap: 10px; /* Reduced space between embed field and button */
     align-items: center;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
 }
 
 .embed-code-container .input-field {
     flex-grow: 1;
     width: auto;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Monospace font for code */
-    font-size: 0.95em;
-    white-space: pre-wrap; /* Preserve formatting for code */
-    overflow-x: auto; /* Allow horizontal scrolling for long code */
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9em; /* Slightly smaller font for code */
+    padding: 6px 8px; /* Tighter padding for code input */
 }
 
 .embed-code-container .button {
-    margin-top: 0; /* Remove top margin for inline button */
-    flex-shrink: 0; /* Prevent button from shrinking */
-    padding: 10px 20px; /* Adjust button size for this section */
-    font-size: 1em;
+    margin-top: 0;
+    flex-shrink: 0;
+    padding: 8px 15px; /* Compact button size */
+    font-size: 0.9em;
 }
 
 /* --- Post Card Styling (for "Live Blog Posts" section) --- */
 .post-card {
     display: block;
-    padding: 18px 22px; /* More generous padding inside post cards */
-    border-bottom: 1px solid #e9eef3; /* Lighter, subtle separator */
+    padding: 12px 15px; /* Reduced padding inside post cards */
+    border-bottom: 1px solid #eee; /* Lighter separator */
     background-color: #fff;
     word-wrap: break-word;
     position: relative;
-    transition: background-color 0.2s ease; /* Smooth hover effect */
+    transition: background-color 0.1s ease;
 }
 
 .post-card:last-child {
@@ -211,28 +209,28 @@ h2 {
 }
 
 .post-card:hover {
-    background-color: #fdfdfd; /* Subtle highlight on hover */
+    background-color: #f9f9f9; /* Subtle highlight on hover */
 }
 
 .post-header-line {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 12px; /* Consistent space */
+    margin-bottom: 8px; /* Reduced space */
 }
 
 .author-avatar {
     flex-shrink: 0;
-    margin-right: 15px; /* More space between avatar and text */
+    margin-right: 10px; /* Reduced space between avatar and text */
 }
 
 .author-avatar-img {
-    width: 42px; /* Slightly larger avatar */
-    height: 42px; /* Slightly larger avatar */
+    width: 38px; /* Standard avatar size */
+    height: 38px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
     position: relative;
-    border: 2px solid #f0f2f5; /* Subtle border for avatar */
+    border: 1px solid #f0f0f0; /* Lighter border for avatar */
 }
 
 .author-avatar-img::before {
@@ -240,20 +238,20 @@ h2 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 12px; /* Slightly larger dot */
-    height: 12px; /* Slightly larger dot */
+    width: 10px; /* Standard dot size */
+    height: 10px;
     background-color: rgb(208, 2, 27);
     border-radius: 50%;
-    border: 3px solid white; /* Thicker white border around the dot */
-    transform: translate(-25%, -25%); /* Adjust position */
+    border: 2px solid white; /* Standard white border around the dot */
+    transform: translate(-20%, -20%);
     z-index: 1;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3); /* Stronger shadow for the dot */
+    box-shadow: 0 0 3px rgba(0,0,0,0.2); /* Standard shadow for the dot */
 }
 
 .post-meta {
     flex-grow: 1;
-    font-size: 16px; /* Slightly larger font for meta info */
-    line-height: 1.3; /* Better readability */
+    font-size: 14px; /* Standard font size for meta info */
+    line-height: 1.2; /* Tighter line height */
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -263,52 +261,52 @@ h2 {
 .meta-line-one {
     display: flex;
     align-items: center;
-    margin-bottom: 2px; /* Small gap to reporting-from */
+    margin-bottom: 0px;
 }
 
 .post-meta strong {
-    font-weight: 700; /* Bolder author name */
-    color: #222; /* Darker author name */
-    margin-right: 6px; /* More space */
+    font-weight: 600; /* Standard bold author name */
+    color: #222;
+    margin-right: 4px;
 }
 
 .post-meta span.time-ago {
-    color: rgb(208, 2, 27); /* Red for time ago */
-    font-size: 15px; /* Consistent size */
-    font-weight: 600; /* Bolder */
+    color: rgb(208, 2, 27);
+    font-size: 13px; /* Slightly smaller time ago */
+    font-weight: 600;
 }
 
 .post-meta .bullet {
-    color: #999; /* Softer grey */
-    font-size: 15px;
-    margin: 0 6px;
+    color: #999;
+    font-size: 13px;
+    margin: 0 4px;
 }
 
 .post-meta .reporting-from {
     display: block;
-    color: #666; /* Softer grey */
-    font-size: 15px;
+    color: #666;
+    font-size: 13px;
     margin-left: 0;
-    margin-top: 0; /* Align perfectly */
+    margin-top: 0;
 }
 
 .post-subtitle {
     font-family: 'Roboto', sans-serif;
-    font-size: 1.6em; /* More prominent subtitle */
+    font-size: 1.4em; /* Standard subtitle size */
     color: #222;
-    margin-top: 10px; /* More space above subtitle */
-    margin-bottom: 8px; /* More space below subtitle */
-    font-weight: 700; /* Very bold */
-    line-height: 1.3;
+    margin-top: 6px; /* Reduced space above subtitle */
+    margin-bottom: 4px; /* Reduced space below subtitle */
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .post-text {
     font-family: "Noto Serif", Georgia, serif;
-    font-size: 17px; /* Slightly larger main text */
-    margin-top: 10px; /* More space above text */
-    margin-bottom: 10px; /* More space below text */
+    font-size: 15px; /* Standard main text size */
+    margin-top: 6px; /* Reduced space above text */
+    margin-bottom: 6px; /* Reduced space below text */
     color: #333;
-    line-height: 1.6; /* Improved line spacing */
+    line-height: 1.5; /* Standard line spacing */
     word-break: break-word;
 }
 
@@ -316,111 +314,111 @@ h2 {
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px; /* Consistent rounded corners */
-    margin-top: 15px; /* More space above media */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for media */
+    border-radius: 6px;
+    margin-top: 10px; /* Reduced space above media */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Lighter shadow for media */
 }
 
 .no-posts-message, .error-message {
     text-align: center;
-    padding: 30px; /* More padding */
-    color: #777; /* Softer color */
+    padding: 15px; /* Reduced padding */
+    color: #777;
     font-style: italic;
-    font-size: 1.1em;
-    background-color: #fbfbfc; /* Light background */
-    border-radius: 8px;
-    border: 1px solid #eef1f4;
+    font-size: 1em;
+    background-color: #fcfcfc;
+    border-radius: 6px;
+    border: 1px solid #eee;
 }
 
 /* --- Post Actions (Edit/Delete) --- */
 .post-actions {
-    margin-top: 15px; /* More space above action buttons */
+    margin-top: 10px; /* Reduced space above action buttons */
     display: flex;
-    gap: 12px; /* More space between buttons */
+    gap: 8px; /* Reduced space between buttons */
     justify-content: flex-end;
 }
 
 .post-actions button {
-    background-color: #f0f4f7; /* Lighter background for secondary actions */
+    background-color: #f8f8f8; /* Lighter background for secondary actions */
     color: #555;
-    border: 1px solid #dce1e6; /* Softer border */
-    padding: 8px 15px; /* More generous padding */
-    border-radius: 5px;
+    border: 1px solid #ddd; /* Standard border */
+    padding: 6px 12px; /* Reduced padding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.95em; /* Slightly larger font */
+    font-size: 0.85em; /* Smaller font */
     font-weight: 500;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.1s ease;
     display: flex;
     align-items: center;
-    gap: 8px; /* More space between icon and text */
+    gap: 5px; /* Reduced space between icon and text */
 }
 
 .post-actions button:hover {
-    background-color: #e5e9ed;
-    border-color: #c9d0d6;
-    transform: translateY(-1px);
+    background-color: #eee;
+    border-color: #ccc;
+    transform: none;
 }
 
 .post-actions button.delete-post-button {
-    color: #d32f2f; /* Consistent red for delete */
-    border-color: #f4baba; /* Lighter red border */
+    color: #d32f2f;
+    border-color: #f0a0a0; /* Lighter red border */
 }
 
 .post-actions button.delete-post-button:hover {
-    background-color: #ffe0e0; /* Very light red background on hover */
-    border-color: #e6a0a0;
+    background-color: #ffebeb;
+    border-color: #e09090;
 }
 
-/* Share Button (moved slightly for better integration) */
+/* Share Button */
 .share-button {
     background: none;
     border: none;
     color: #657786;
     cursor: pointer;
-    font-size: 1.1em; /* Slightly larger */
-    padding: 6px; /* Slightly more padding */
-    border-radius: 5px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 1em;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.1s ease;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .post-card .share-button {
     position: absolute;
-    top: 15px; /* Adjusted position */
-    right: 15px; /* Adjusted position */
-    font-size: 1.3em; /* Slightly larger icon */
-    color: #8899a6; /* Softer default color */
+    top: 8px; /* Reduced position */
+    right: 8px; /* Reduced position */
+    font-size: 1.1em; /* Standard icon size */
+    color: #8899a6;
 }
 
 .share-button:hover {
-    background-color: rgba(208, 2, 27, 0.15); /* More visible hover */
+    background-color: rgba(208, 2, 27, 0.1);
     color: rgb(208, 2, 27);
 }
 
 /* Show More Button */
 .show-more-button {
-    background-color: #f0f4f7;
+    background-color: #f8f8f8;
     color: #555;
-    border: 1px solid #dce1e6;
-    padding: 10px 20px; /* More padding */
-    border-radius: 6px;
+    border: 1px solid #ddd;
+    padding: 8px 15px; /* Reduced padding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 15px; /* Consistent font size */
-    font-weight: 600; /* Bolder */
-    margin-top: 25px; /* More space above */
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 15px; /* Reduced space above */
     display: block;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.1s ease;
 }
 
 .show-more-button:hover {
-    background-color: #e5e9ed;
-    border-color: #c9d0d6;
-    transform: translateY(-1px);
+    background-color: #eee;
+    border-color: #ccc;
+    transform: none;
 }
 
 /* Blog List specific styling (for blog management) */
@@ -430,110 +428,110 @@ h2 {
 }
 
 .blog-list li {
-    background-color: #f9fbfd; /* Lighter background */
-    border: 1px solid #eef1f4; /* Softer border */
-    border-radius: 6px;
-    margin-bottom: 10px;
-    padding: 15px 20px; /* More padding */
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 8px; /* Reduced margin */
+    padding: 10px 15px; /* Reduced padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Softer shadow */
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: background-color 0.1s ease;
 }
 
 .blog-list li:hover {
-    background-color: #f5f8fb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-color: #f5f5f5;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
 }
 
 .blog-list li span {
-    font-weight: 600; /* Bolder */
+    font-weight: 500;
     color: #333;
     flex-grow: 1;
 }
 
 .blog-list li .actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
 }
 
 /* Dashboard specific buttons */
 .dashboard-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* More space between dashboard buttons */
-    margin-bottom: 30px;
+    gap: 12px; /* Reduced space between dashboard buttons */
+    margin-bottom: 20px;
 }
 
 .dashboard-buttons .button {
     flex: 1;
-    min-width: 200px; /* Slightly wider buttons */
-    padding: 15px 25px; /* More generous padding */
-    font-size: 1.1em;
+    min-width: 150px; /* Smaller min-width */
+    padding: 10px 15px; /* Reduced padding */
+    font-size: 1em;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
-        gap: 15px; /* More gap */
-        padding: 15px;
+        gap: 10px;
+        padding: 10px;
     }
 
     header h1 {
         text-align: center;
         width: 100%;
-        font-size: 1.6em;
+        font-size: 1.5em;
     }
 
     header nav {
         width: 100%;
         justify-content: center;
-        gap: 15px;
+        gap: 10px;
     }
 
     main {
-        padding: 20px;
-        margin: 20px auto;
-        max-width: 98%; /* Allow more width on small screens */
+        padding: 10px;
+        margin: 10px auto;
+        max-width: 98%;
     }
 
     .new-post-form, .embed-code-section, .live-blog-posts, .tab-management-section {
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
     }
 
     h2 {
-        font-size: 1.8em;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        font-size: 1.4em;
+        padding-bottom: 6px;
+        margin-bottom: 15px;
     }
 
     .form-group {
-        margin-bottom: 18px;
+        margin-bottom: 10px;
     }
 
     .form-group label {
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
 
     .input-field, .textarea-field {
-        padding: 10px;
-        width: calc(100% - 20px);
+        padding: 8px;
+        width: calc(100% - 16px);
     }
 
     .submit-button, .button {
         width: 100%;
-        padding: 12px 20px;
-        font-size: 1em;
-        margin-top: 20px;
+        padding: 10px 15px;
+        font-size: 0.95em;
+        margin-top: 15px;
     }
 
     .embed-code-container {
         flex-direction: column;
-        gap: 12px;
-        align-items: stretch; /* Stretch items to full width */
+        gap: 8px;
+        align-items: stretch;
     }
 
     .embed-code-container .input-field {
@@ -544,17 +542,17 @@ h2 {
     }
 
     .post-card {
-        padding: 15px;
+        padding: 10px;
     }
 
     .post-media {
-        border-radius: 6px;
-        margin-top: 10px;
+        border-radius: 4px;
+        margin-top: 8px;
     }
 
     .post-actions {
         flex-direction: column;
-        gap: 10px;
+        gap: 6px;
     }
 
     .post-actions button {
@@ -563,29 +561,17 @@ h2 {
     }
 
     .show-more-button {
-        padding: 8px 15px;
-        font-size: 14px;
-        margin-top: 20px;
-    }
-
-    .pagination-controls {
-        padding: 10px 12px;
-        gap: 10px;
-    }
-    .pagination-controls button {
         padding: 6px 12px;
-        font-size: 14px;
-    }
-    .pagination-controls .page-number {
-        font-size: 14px;
+        font-size: 13px;
+        margin-top: 15px;
     }
 
     .dashboard-buttons {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
     }
     .dashboard-buttons .button {
-        min-width: unset; /* Remove min-width on small screens */
+        min-width: unset;
         width: 100%;
     }
 }
@@ -599,66 +585,65 @@ h2 {
 
 /* Tab Selection Group for Admin (Assign to Tabs) */
 .tab-selection-group {
-    border: 1px solid #e0e0e0; /* Softer border */
-    border-radius: 8px; /* Consistent rounded corners */
-    padding: 15px; /* More padding inside */
-    background-color: #fdfdfd; /* Very light background */
-    max-height: 180px; /* Allow more height before scrolling */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px; /* Reduced padding inside */
+    background-color: #fdfdfd;
+    max-height: 150px; /* Standard height */
     overflow-y: auto;
-    margin-top: 15px; /* More space above */
-    margin-bottom: 20px; /* More space below */
+    margin-top: 10px; /* Reduced space above */
+    margin-bottom: 15px; /* Reduced space below */
 }
 
 .tab-selection-group label {
-    display: flex; /* Use flexbox to align checkbox and text */
+    display: flex;
     align-items: center;
-    margin-bottom: 10px; /* More space between checkboxes */
+    margin-bottom: 8px; /* Reduced space between checkboxes */
     font-weight: normal;
     color: #555;
-    font-size: 0.95em;
-    cursor: pointer; /* Indicate clickable */
-    transition: color 0.2s ease;
+    font-size: 0.9em;
+    cursor: pointer;
 }
 
 .tab-selection-group label:hover {
-    color: #000; /* Darker text on hover */
+    color: #000;
 }
 
 .tab-selection-group input[type="checkbox"] {
-    margin-right: 10px; /* More space between checkbox and text */
-    transform: scale(1.1); /* Slightly larger checkbox */
-    accent-color: rgb(208, 2, 27); /* Brand red checkbox */
+    margin-right: 8px; /* Reduced space between checkbox and text */
+    transform: none; /* No scaling */
+    accent-color: rgb(208, 2, 27);
 }
 
-/* User Avatar (ensure consistent sizing if used elsewhere) */
+/* User Avatar */
 .user-avatar-small {
-    width: 28px; /* Slightly larger small avatar */
-    height: 28px;
+    width: 24px; /* Standard size */
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
     vertical-align: middle;
-    margin-right: 8px; /* More space */
-    border: 1px solid #eee; /* Subtle border */
+    margin-right: 5px;
+    border: none; /* No border */
 }
 
-/* Tab Management Section (create-blog.html) - Enhanced for professionalism */
+/* Tab Management Section (create-blog.html) */
 .tab-management-controls {
     display: flex;
-    gap: 15px; /* More space between input and button */
-    margin-bottom: 20px; /* More space below controls */
-    align-items: flex-end; /* Align elements to the bottom */
+    gap: 10px; /* Reduced space between input and button */
+    margin-bottom: 15px; /* Reduced space below controls */
+    align-items: flex-end;
 }
 
 .tab-management-controls .input-field {
     flex-grow: 1;
-    padding: 10px 12px; /* Slightly adjusted padding for this input */
-    font-size: 1em;
+    padding: 8px 10px; /* Reduced padding for this input */
+    font-size: 0.95em;
 }
 
 .tab-management-controls .button {
-    margin-top: 0; /* Override default button margin-top */
-    padding: 10px 20px; /* Adjust button size for this section */
-    font-size: 1em;
+    margin-top: 0;
+    padding: 8px 15px; /* Reduced button size for this section */
+    font-size: 0.95em;
     font-weight: 500;
 }
 
@@ -668,44 +653,44 @@ h2 {
 }
 
 .tab-list li {
-    background-color: #f9fbfd; /* Lighter background for list items */
-    border: 1px solid #eef1f4;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    padding: 12px 18px; /* More padding */
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 6px; /* Reduced margin */
+    padding: 10px 15px; /* Reduced padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); /* Softer shadow */
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: background-color 0.1s ease;
 }
 
 .tab-list li:hover {
-    background-color: #f5f8fb;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    background-color: #f5f5f5;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .tab-list li .tab-name {
-    font-weight: 600; /* Bolder tab name */
+    font-weight: 500;
     color: #333;
-    font-size: 1.05em;
+    font-size: 1em;
 }
 
 .tab-list li .delete-tab-button {
-    background-color: #d32f2f; /* Darker red for delete */
+    background-color: #d32f2f;
     color: white;
     border: none;
-    border-radius: 5px; /* Slightly more rounded */
-    padding: 8px 15px; /* More generous padding */
+    border-radius: 4px;
+    padding: 6px 12px; /* Reduced padding */
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: 500;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.1s ease;
 }
 
 .tab-list li .delete-tab-button:hover {
-    background-color: #b71c1c; /* Even darker red on hover */
-    transform: translateY(-1px);
+    background-color: #b71c1c;
+    transform: none;
 }
 
 .tab-list li .delete-tab-button:disabled {
@@ -714,7 +699,7 @@ h2 {
     transform: none;
 }
 
-/* --- Tab Navigation (Embed Page Specific - no changes to functionality) --- */
+/* --- Tab Navigation (Embed Page Specific) --- */
 .tab-navigation {
     position: sticky;
     top: 0;
@@ -733,12 +718,12 @@ h2 {
 .tab-navigation button {
     background: none;
     border: none;
-    padding: 12px 15px;
-    font-size: 15px;
+    padding: 10px 12px; /* Reduced padding */
+    font-size: 14px; /* Slightly smaller font */
     font-weight: 500;
     color: #555;
     cursor: pointer;
-    transition: color 0.2s ease, border-bottom 0.2s ease;
+    transition: color 0.1s ease, border-bottom 0.1s ease;
     flex-shrink: 0;
 }
 
