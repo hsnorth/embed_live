@@ -42,7 +42,7 @@ header nav a {
     text-decoration: none;
     font-weight: 500;
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 44px;
     transition: background-color 0.2s ease;
 }
 
@@ -83,31 +83,54 @@ h2 {
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* General h2 margin */
     font-size: 1.8em;
 }
 
-.form-group {
-    margin-bottom: 15px;
+/* --- New and Adjusted Styles for .new-post-form for more compact spacing --- */
+
+/* Adjust title spacing for the new post form */
+.new-post-form h2 {
+    margin-bottom: 15px; /* Reduce space below "Post an Update" title */
+    padding-bottom: 8px; /* Reduce padding below the title's border */
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #333;
-    font-size: 0.95em;
+/* Reduce spacing between form groups */
+.new-post-form .form-group {
+    margin-bottom: 12px; /* Slightly less space than the general 15px */
 }
 
-.input-field, .textarea-field {
-    width: calc(100% - 22px); /* Account for padding and border */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+/* Reduce spacing between label and input field */
+.new-post-form .form-group label {
+    margin-bottom: 5px; /* Tighter spacing below label */
 }
+
+/* Adjust padding for input and textarea fields for a more compact look */
+.new-post-form .input-field,
+.new-post-form .textarea-field {
+    padding: 8px 10px; /* Slightly reduced padding */
+    width: calc(100% - 20px); /* Adjust width for new padding (10px left + 10px right) */
+}
+
+/* Adjust the submit button size and margin */
+.new-post-form .submit-button {
+    padding: 10px 20px; /* Slightly reduced vertical padding */
+    font-size: 16px; /* Slightly smaller font for a more compact button */
+    margin-top: 15px; /* Adjust top margin for the button */
+}
+
+/* Adjustments for the "Assign to Tabs" checkbox group */
+.new-post-form .tab-selection-group {
+    margin-top: 8px; /* Reduce the top margin for the entire tab checkbox group */
+    display: flex; /* Use flexbox for horizontal layout */
+    flex-wrap: wrap; /* Allow checkboxes to wrap if too many */
+    gap: 10px; /* Reduce space between individual checkboxes */
+    padding: 8px; /* Slightly reduce padding inside the group box */
+}
+
+
+/* --- End of New and Adjusted Styles for .new-post-form --- */
+
 
 .input-field:focus, .textarea-field:focus {
     border-color: rgb(208, 2, 27);
@@ -133,7 +156,7 @@ h2 {
     display: inline-block;
     text-align: center;
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 10px; /* General margin for buttons */
 }
 
 .submit-button:hover, .button:hover {
@@ -510,9 +533,19 @@ h2 {
     background-color: #fcfcfc;
     max-height: 150px; /* Limit height */
     overflow-y: auto; /* Enable scrolling */
-    margin-top: 5px;
+    margin-top: 5px; /* General margin for tab selection group */
     margin-bottom: 15px;
 }
+
+/* Specific adjustments for the "Assign to Tabs" checkbox group within .new-post-form */
+.new-post-form .tab-selection-group {
+    margin-top: 8px; /* Slightly reduce top margin to tighten the form */
+    display: flex; /* Use flexbox to align checkboxes horizontally */
+    flex-wrap: wrap; /* Allow checkboxes to wrap if there are too many */
+    gap: 10px; /* Reduce space between individual checkboxes */
+    padding: 8px; /* Slightly reduce padding inside the group box */
+}
+
 
 .tab-selection-group label {
     display: block;
@@ -525,6 +558,16 @@ h2 {
 .tab-selection-group input[type="checkbox"] {
     margin-right: 8px;
     accent-color: rgb(208, 2, 27); /* Red checkbox */
+}
+
+/* Ensure the user avatar is styled correctly if it's introduced later in JS */
+.user-avatar-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-right: 5px;
 }
 
 /* Tab Management Section (create-blog.html) */
