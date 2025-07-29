@@ -159,6 +159,10 @@
             margin-bottom: 0; /* No margin after the last paragraph */
         }
 
+        /* Wrapper for Twitter embeds to provide consistent spacing */
+        .tweet-embed-wrapper {
+            margin: 15px 0; /* Add some vertical space around embeds */
+        }
 
         /* Media styles (images and video containers) */
         .post-media {
@@ -471,6 +475,8 @@
         <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
     </button>
 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -545,6 +551,45 @@
             return content.split(/\r?\n/).map(paragraph => `<p>${paragraph}</p>`).join('');
         }
 
+        // --- NEW Helper Function: processContentForEmbeds ---
+        // This function will find tweet URLs and replace them with the necessary embed HTML.
+        function processContentForEmbeds(content) {
+            if (!content) return '';
+
+            // Regex to find X/Twitter status URLs
+            const twitterUrlRegex = /(https?:\/\/(?:www\.)?(?:twitter|x)\.com\/[a-zA-Z0-9_]+\/status\/\d+)/g;
+            let parts = [];
+            let lastIndex = 0;
+            let match;
+
+            while ((match = twitterUrlRegex.exec(content)) !== null) {
+                const tweetUrl = match[0];
+                const textBefore = content.substring(lastIndex, match.index);
+
+                if (textBefore.length > 0) {
+                    parts.push(formatContentWithParagraphs(textBefore));
+                }
+
+                // Add the Twitter embed block
+                // data-dnt="true" is "Do Not Track" - respects user privacy settings
+                parts.push(`
+                    <div class="tweet-embed-wrapper">
+                        <blockquote class="twitter-tweet" data-dnt="true">
+                            <a href="${tweetUrl}"></a>
+                        </blockquote>
+                    </div>
+                `);
+                lastIndex = twitterUrlRegex.lastIndex;
+            }
+
+            const textAfter = content.substring(lastIndex);
+            if (textAfter.length > 0) {
+                parts.push(formatContentWithParagraphs(textAfter));
+            }
+
+            return parts.join(''); // Join all parts into a single HTML string
+        }
+
         // --- Function: renderPosts (Renders a given array of posts into a container) ---
         const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
@@ -594,9 +639,9 @@
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
-                // Format the content with paragraphs
-                const formattedContentHtml = formatContentWithParagraphs(displayContent);
-                const fullFormattedContentHtml = formatContentWithParagraphs(post.content);
+                // Process content for paragraphs and embeds
+                const displayContentHtml = processContentForEmbeds(displayContent);
+                const fullContentHtml = processContentForEmbeds(post.content);
 
 
                 postCard.innerHTML = `
@@ -614,7 +659,7 @@
                         </div>
                         </div>
                     ${subtitleHtml}
-                    <div class="post-text">${formattedContentHtml}</div>
+                    <div class="post-text">${displayContentHtml}</div>
                     ${mediaHtml}
                     ${showMoreButtonHtml}
                 `;
@@ -623,16 +668,20 @@
                 // Add event listener for "Show more" button if content was truncated
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentDiv = postCard.querySelector('.post-text'); // Changed to div
+                    const contentDiv = postCard.querySelector('.post-text');
 
                     showMoreButton.addEventListener('click', () => {
-                        contentDiv.innerHTML = fullFormattedContentHtml; // Set full formatted content
+                        contentDiv.innerHTML = fullContentHtml; // Set full formatted content including embeds
                         showMoreButton.style.display = 'none'; // Hide the button
                        
                         // Notify parent iframe to adjust height after expansion
                         if (window.parent) {
                             const height = document.body.scrollHeight;
                             window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                        }
+                        // IMPORTANT: Load Twitter widgets for the newly revealed content
+                        if (typeof twttr !== 'undefined' && twttr.widgets) {
+                            twttr.widgets.load(contentDiv);
                         }
                     });
                 }
@@ -736,6 +785,12 @@
             if (window.parent) {
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+            }
+
+            // IMPORTANT: After new posts are rendered, load Twitter widgets
+            // Check if twttr.widgets is available (it's loaded asynchronously)
+            if (typeof twttr !== 'undefined' && twttr.widgets) {
+                twttr.widgets.load(container); // Load widgets for the entire container
             }
         };
 
