@@ -12,19 +12,19 @@ html {
 }
 
 body {
-    font-family: 'Roboto', 'Noto Sans', sans-serif;
+    font-family: 'Roboto', 'Noto Sans', sans-serif; /* Prioritize Sans-serif for UI */
     line-height: 1.6;
     color: #333;
     background-color: #f0f2f5; /* Lighter background, slightly grey */
-    display: flex;
+    display: flex; /* Make body a flex container to push footer to bottom */
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
 main {
-    flex-grow: 1;
+    flex-grow: 1; /* Allow main content to take available space */
     padding: 15px 25px; /* Added horizontal padding to main content */
-    max-width: 900px;
+    max-width: 900px; /* Constrain content width for readability and less stretched layout */
     margin: 10px auto; /* Reduced top/bottom margin */
     background-color: #fff;
     border-radius: 8px;
@@ -45,16 +45,16 @@ h1 {
 
 h2 {
     font-size: 1.6em;
-    color: #e74c3c;
+    color: #e74c3c; /* Accent red for section titles */
     margin-top: 20px; /* Reduced space between sections */
     margin-bottom: 8px; /* Reduced margin below heading */
 }
 
 p {
-    margin-bottom: 5px;
+    margin-bottom: 5px; /* Default paragraph spacing */
 }
 
-/* --- Header & Navigation --- */
+/* --- Header & Navigation (Admin Page Specific) --- */
 header {
     background-color: #e74c3c;
     color: #fff;
@@ -85,7 +85,7 @@ nav a:hover {
     color: #f9f9f9;
 }
 
-/* --- Form & Input Elements (General) --- */
+/* --- Form & Input Elements (General - Admin Page Specific) --- */
 .form-group {
     margin-bottom: 10px; /* Reduced vertical spacing between form groups */
     display: flex;
@@ -124,12 +124,11 @@ nav a:hover {
     resize: vertical;
 }
 
-/* --- Post an Update Section (Dark Mode Input) --- */
+/* --- Post an Update Section (Dark Mode Input - Admin Page Specific) --- */
 .post-update-section {
     background-color: #333;
     border-radius: 8px;
     padding: 15px 25px; /* Adjusted padding for horizontal spacing */
-    margin-bottom: 20px; /* Reduced space below this section */
     color: #f0f2f5;
 }
 
@@ -173,7 +172,7 @@ nav a:hover {
     transform: translateY(-1px);
 }
 
-/* --- General Buttons --- */
+/* --- General Buttons (Admin Page Specific) --- */
 .submit-button {
     background-color: #e74c3c;
     color: white;
@@ -198,7 +197,7 @@ nav a:hover {
     transform: none;
 }
 
-/* --- Tab Management Controls --- */
+/* --- Tab Management Controls (Admin Page Specific) --- */
 .tab-management-controls {
     display: flex;
     gap: 8px; /* Reduced gap */
@@ -246,7 +245,7 @@ nav a:hover {
     background-color: #c0392b;
 }
 
-/* Tab Assignment Checkboxes */
+/* Tab Assignment Checkboxes (Admin Page Specific) */
 .tab-selection-group {
     display: flex;
     flex-wrap: wrap;
@@ -273,7 +272,7 @@ nav a:hover {
     accent-color: #e74c3c;
 }
 
-/* --- Embed Code Section --- */
+/* --- Embed Code Section (Admin Page Specific) --- */
 .embed-code-section {
     margin-top: 25px; /* Reduced margin */
 }
@@ -310,55 +309,60 @@ nav a:hover {
 }
 
 /* --- Live Blog Posts Section (Post Cards) --- */
-/* This section is heavily modified to look like embed-posts.html */
+/* STYLES BELOW ARE ADAPTED *STRICTLY* FROM YOUR EMBED CSS FOR POSTS */
 .live-blog-posts {
-    margin-top: 20px; /* Reduced margin */
+    margin-bottom: 0; /* Align with embed's lack of bottom margin */
+    padding: 0; /* No padding on the container itself, controlled by post-card */
+    border: none; /* No border on the container */
+    background-color: transparent; /* Background handled by post-card */
+    max-width: none; /* Admin page should use `main`'s max-width */
 }
 
 #postsContainer {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 0; /* No gap between posts */
     padding-top: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #ebeef0; /* Subtle top border for the entire list, from embed */
+    background-color: #fff; /* Posts container background to match embed */
 }
 
 .post-card {
-    background-color: #fff;
-    border-bottom: 1px solid #eee;
-    border-radius: 0;
-    padding: 10px 20px; /* Increased horizontal padding for text margin */
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    display: block; /* Ensure it behaves like a block */
+    padding: 12px 16px; /* **CRUCIAL: Taken directly from embed CSS for horizontal and vertical spacing** */
+    border-bottom: 1px solid #ebeef0; /* From embed CSS */
+    background-color: #fff; /* From embed CSS */
+    word-wrap: break-word;
     position: relative;
-    transition: background-color 0.2s ease;
+    box-shadow: none; /* No shadow for embed look */
+    border-radius: 0; /* No rounded corners for embed look */
+    transition: background-color 0.2s ease; /* Maintain hover effect */
 }
 
 .post-card:last-child {
-    border-bottom: none;
+    border-bottom: none; /* No border for the very last post */
 }
 
 .post-card:hover {
-    background-color: #f9f9f9;
-    transform: none;
+    background-color: #f9f9f9; /* Subtle highlight on hover, similar to embed */
+    transform: none; /* No lift effect for embed style */
     box-shadow: none;
 }
 
 .post-header-line {
     display: flex;
-    align-items: center;
-    margin-bottom: 5px; /* Reduced space */
-    gap: 8px;
+    align-items: flex-start; /* From embed CSS */
+    margin-bottom: 4px; /* From embed CSS */
+    gap: 0; /* No explicit gap, controlled by author-avatar margin */
 }
 
 .author-avatar {
-    width: 28px; /* Adjusted avatar size to match embed style */
-    height: 28px; /* Adjusted avatar size to match embed style */
+    flex-shrink: 0;
+    margin-right: 12px; /* From embed CSS */
+    width: 38px; /* **CRUCIAL: Taken directly from embed CSS** */
+    height: 38px; /* **CRUCIAL: Taken directly from embed CSS** */
     border-radius: 50%;
     overflow: hidden;
-    flex-shrink: 0;
     border: none;
 }
 
@@ -367,100 +371,197 @@ nav a:hover {
     height: 100%;
     object-fit: cover;
     display: block;
+    position: relative; /* Needed for the ::before live dot */
+}
+
+/* Live dot on avatar (from embed CSS) */
+.author-avatar-img::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background-color: rgb(208, 2, 27); /* Specific embed color */
+    border-radius: 50%;
+    border: 2px solid white;
+    transform: translate(-20%, -20%);
+    z-index: 1;
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
 }
 
 .post-meta {
     flex-grow: 1;
+    font-size: 15px; /* From embed CSS */
+    line-height: 1.4; /* From embed CSS */
+    margin-bottom: 0;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 }
 
 .meta-line-one {
     display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    font-size: 0.95em;
+    align-items: center; /* From embed CSS */
+    margin-bottom: 0px; /* From embed CSS */
+    flex-wrap: wrap; /* Allow wrapping */
 }
 
-.meta-line-one strong {
-    font-size: 1em;
-    color: #2c3e50;
-    margin-right: 5px;
-    font-weight: 600;
+.post-meta strong {
+    font-weight: bold; /* From embed CSS */
+    color: #0f1419; /* From embed CSS */
+    margin-right: 4px; /* From embed CSS */
+    font-size: 1em; /* Ensure no override */
 }
 
-.bullet {
-    margin: 0 4px;
-    color: #aaa;
-    font-size: 1em;
+.post-meta span.time-ago {
+    color: rgb(208, 2, 27); /* Specific embed color */
+    font-size: 14px; /* From embed CSS */
+    font-weight: bold; /* From embed CSS */
+    white-space: nowrap; /* Prevent wrapping for time */
 }
 
-.time-ago {
-    font-size: 0.85em;
-    color: #888;
-    white-space: nowrap;
+.post-meta .bullet {
+    color: #536471; /* From embed CSS */
+    font-size: 14px; /* From embed CSS */
+    margin: 0 4px; /* From embed CSS */
+    display: inline;
 }
 
-.reporting-from {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 2px;
+.post-meta .reporting-from {
+    display: block;
+    color: #536471; /* From embed CSS */
+    font-size: 14px; /* From embed CSS */
+    margin-left: 0;
+    margin-top: 0px; /* From embed CSS */
+    margin-bottom: 12px; /* From embed CSS */
 }
 
 .post-subtitle {
-    font-size: 1.05em;
+    font-family: 'Roboto', sans-serif; /* From embed CSS */
+    font-size: 1.5em; /* From embed CSS - keep this for visual hierarchy */
     color: #333;
-    font-style: normal;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    font-weight: 600;
+    margin-top: 5px; /* From embed CSS */
+    margin-bottom: 5px; /* From embed CSS */
+    font-weight: bold; /* From embed CSS */
+    font-style: normal; /* Override previous italic */
 }
 
 .post-text {
-    margin-bottom: 8px; /* Reduced space below text */
-    color: #333;
-    line-height: 1.5; /* Slightly tighter line height */
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    font-family: "Noto Serif", Georgia, serif; /* **CRUCIAL: From embed CSS** */
+    font-size: 16px; /* **CRUCIAL: From embed CSS** */
+    margin-top: 0; /* From embed CSS */
+    margin-bottom: 8px; /* From embed CSS */
+    color: #0f1419; /* From embed CSS */
+    line-height: 20px; /* From embed CSS */
+    word-break: break-word;
+    white-space: pre-wrap; /* Maintain pre-wrap for line breaks */
+}
+/* Style for paragraphs within post-text (from embed CSS) */
+.post-text p {
+    margin-bottom: 1em; /* Add space between paragraphs */
+}
+.post-text p:last-child {
+    margin-bottom: 0; /* No margin after the last paragraph */
 }
 
+/* Wrapper for Twitter embeds to provide consistent spacing (from embed CSS) */
+.tweet-embed-wrapper {
+    margin: 15px 0; /* Add some vertical space around embeds */
+}
+
+/* Media styles (images and video containers) (from embed CSS) */
 .post-media {
     max-width: 100%;
     height: auto;
-    border-radius: 5px;
-    margin-bottom: 8px; /* Reduced margin */
     display: block;
-    object-fit: cover;
-    box-shadow: none;
+    border-radius: 8px; /* From embed CSS */
+    margin-top: 8px; /* From embed CSS */
+    transition: all 0.3s ease-in-out;
+    box-shadow: none; /* Ensure no extra shadow */
 }
 
-.show-more-button {
-    background: none;
-    border: none;
-    color: #e74c3c;
+.post-video-container {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px; /* From embed CSS */
+    margin-top: 8px; /* From embed CSS */
+    background-color: #000;
     cursor: pointer;
-    font-weight: 600;
-    padding: 0;
-    margin-top: 0px; /* Eliminated negative margin */
-    text-align: left;
+}
+
+.post-video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    transition: color 0.2s ease;
+    border-radius: 8px; /* From embed CSS */
+}
+
+/* Styles for expanded video overlay (from embed CSS) */
+.expanded-video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+.expanded-video-overlay video {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+body.video-expanded {
+    overflow: hidden;
+}
+
+.no-posts-message, .error-message {
+    text-align: center;
+    color: #536471; /* From embed CSS */
+    padding: 15px 0; /* Adjusted padding */
+    font-style: italic;
+    font-size: 16px; /* From embed CSS */
+}
+
+/* Show more button for truncated text (from embed CSS, adjusted slightly for admin page) */
+.show-more-button {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 15px; /* From embed CSS */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* From embed CSS */
+    font-weight: 500; /* From embed CSS */
+    margin-top: 10px; /* From embed CSS */
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .show-more-button:hover {
-    color: #c0392b;
-    text-decoration: underline;
+    background-color: #e0e0e0;
+    border-color: #ccc;
 }
 
-.assigned-tabs {
-    margin-top: 8px; /* Reduced margin */
-    font-size: 0.8em;
-    color: #7f8c8d;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 8px; /* Reduced padding */
-    font-style: italic;
-}
-
+/* Post Action Buttons (Admin Page Specific) - NOT from embed, maintain admin functionality */
 .post-actions {
     display: flex;
     gap: 6px; /* Reduced space between buttons */
@@ -476,7 +577,7 @@ nav a:hover {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8em; /* Smaller font size */
+    font-size: 0.8em;
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
@@ -529,27 +630,29 @@ nav a:hover {
     border-color: #28a745;
 }
 
-.no-posts-message, .error-message {
-    text-align: center;
-    color: #666;
-    padding: 15px 0; /* Reduced padding */
+.assigned-tabs { /* Admin page only, not in embed style, keep existing */
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: #7f8c8d;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
     font-style: italic;
-    font-size: 1em;
 }
 
-/* --- Pagination Controls --- */
+
+/* --- Pagination Controls (Admin Page Specific) - NOT from embed, keep admin functionality */
 .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px; /* Reduced margin */
-    gap: 8px; /* Reduced gap */
+    margin-top: 20px;
+    gap: 8px;
 }
 
 .pagination-controls button {
     background-color: #34495e;
     color: white;
-    padding: 7px 12px; /* Reduced padding */
+    padding: 7px 12px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -568,7 +671,7 @@ nav a:hover {
 }
 
 .pagination-controls .page-number {
-    padding: 7px 10px; /* Reduced padding */
+    padding: 7px 10px;
     border-radius: 5px;
     cursor: pointer;
     background-color: #eee;
@@ -588,12 +691,12 @@ nav a:hover {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Footer --- */
+/* --- Footer (Admin Page Specific) --- */
 footer {
     background-color: #34495e;
     color: #f0f2f5;
     text-align: center;
     padding: 10px 25px; /* Added horizontal padding */
-    margin-top: 20px; /* Reduced margin */
+    margin-top: 10px;
     font-size: 0.9em;
 }
