@@ -23,9 +23,9 @@ body {
 
 main {
     flex-grow: 1; /* Allow main content to take available space */
-    padding: 15px 25px; /* Added horizontal padding to main content */
-    max-width: 900px; /* Constrain content width for readability and less stretched layout */
-    margin: 10px auto; /* Reduced top/bottom margin */
+    padding: 15px 25px; /* Keep existing horizontal padding, slightly adjust vertical */
+    max-width: 900px;
+    margin: 8px auto; /* **REDUCED: Slightly less margin above/below the main content block** */
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -34,20 +34,28 @@ main {
 h1, h2, h3 {
     font-family: 'Noto Sans', sans-serif;
     color: #2c3e50;
-    margin-bottom: 5px; /* **REDUCED: Smaller gap below headings** */
+    /* We'll manage specific margins on h2/h3 as they define sections */
     font-weight: 700;
 }
 
 h1 {
     font-size: 2.2em;
     color: #34495e;
+    margin-bottom: 15px; /* Keep a decent gap below the main H1 */
 }
 
 h2 {
     font-size: 1.6em;
     color: #e74c3c; /* Accent red for section titles */
-    margin-top: 15px; /* **REDUCED: Less space between sections** */
-    margin-bottom: 5px; /* **REDUCED: Less space below section heading** */
+    margin-top: 15px; /* **REDUCED: Closer to the section above** */
+    margin-bottom: 5px; /* **REDUCED: Tighter to the content below (e.g., Author Name label)** */
+}
+
+h3 {
+    font-size: 1.2em; /* Smaller h3 for sub-sections */
+    color: #2c3e50;
+    margin-top: 10px; /* **REDUCED: Tighter to the element above** */
+    margin-bottom: 5px; /* **REDUCED: Tighter to the element below (e.g., New Tab Name input)** */
 }
 
 p {
@@ -58,7 +66,7 @@ p {
 header {
     background-color: #e74c3c;
     color: #fff;
-    padding: 10px 25px; /* Adjusted padding for consistent horizontal spacing */
+    padding: 10px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,14 +95,14 @@ nav a:hover {
 
 /* --- Form & Input Elements (General - Admin Page Specific) --- */
 .form-group {
-    margin-bottom: 8px; /* **REDUCED: Smaller vertical spacing between form groups** */
+    margin-bottom: 5px; /* **VERY REDUCED: Minimal vertical spacing between input fields/groups** */
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
     font-weight: 600;
-    margin-bottom: 2px; /* **REDUCED: Very minimal space between label and input** */
+    margin-bottom: 2px; /* **VERY REDUCED: Almost no space between label and input** */
     color: #555;
     font-size: 0.95em;
 }
@@ -102,7 +110,7 @@ nav a:hover {
 .input-field,
 .textarea-field {
     width: 100%;
-    padding: 8px 12px; /* Consistent internal padding */
+    padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1em;
@@ -120,7 +128,7 @@ nav a:hover {
 }
 
 .textarea-field {
-    min-height: 80px; /* **REDUCED: More compact textarea** */
+    min-height: 80px;
     resize: vertical;
 }
 
@@ -128,15 +136,15 @@ nav a:hover {
 .post-update-section {
     background-color: #333;
     border-radius: 8px;
-    padding: 15px 25px; /* Adjusted padding for horizontal spacing */
+    padding: 15px 25px;
     color: #f0f2f5;
-    /* Consider reducing overall top margin if this section itself feels too far from previous content */
-    margin-top: 20px; /* **Adjust if this section needs to be closer to "Manage Custom Tabs"** */
+    margin-top: 15px; /* **REDUCED: Tighter section gap** */
 }
 
 .post-update-section h2 {
     color: #fff;
-    margin-bottom: 8px; /* **REDUCED: Less space below dark mode section heading** */
+    margin-bottom: 5px; /* **REDUCED: Tighter to the content below** */
+    margin-top: 0; /* **IMPORTANT: Remove top margin when inside a distinct section block** */
 }
 
 .post-update-section label {
@@ -164,9 +172,9 @@ nav a:hover {
 
 .post-update-section .submit-button {
     background-color: #e74c3c;
-    padding: 8px 15px; /* Reduced padding */
+    padding: 8px 15px;
     font-size: 0.95em;
-    margin-top: 10px; /* **REDUCED: Less space above submit button** */
+    margin-top: 10px; /* **REDUCED: Less space above submit button within this section** */
 }
 
 .post-update-section .submit-button:hover {
@@ -178,14 +186,14 @@ nav a:hover {
 .submit-button {
     background-color: #e74c3c;
     color: white;
-    padding: 8px 15px; /* Reduced padding */
+    padding: 8px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.95em;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 8px; /* **REDUCED: Smaller default margin-top for general buttons** */
+    margin-top: 8px; /* Default margin-top for standalone buttons */
 }
 
 .submit-button:hover {
@@ -202,8 +210,8 @@ nav a:hover {
 /* --- Tab Management Controls (Admin Page Specific) --- */
 .tab-management-controls {
     display: flex;
-    gap: 6px; /* **REDUCED: Even smaller gap for elements side-by-side** */
-    margin-bottom: 8px; /* **REDUCED: Less space below these controls** */
+    gap: 6px;
+    margin-bottom: 5px; /* **REDUCED: Tighter to the tab list below** */
     align-items: center;
 }
 
@@ -214,14 +222,15 @@ nav a:hover {
 .tab-list {
     list-style: none;
     padding: 0;
-    margin-top: 5px; /* **REDUCED: Less margin above tab list** */
+    margin-top: 5px; /* **REDUCED: Tighter to the controls above** */
+    margin-bottom: 15px; /* **ADDED: Create some separation before the next major section if needed** */
 }
 
 .tab-list li {
     background-color: #f8f9fa;
-    padding: 6px 12px; /* **REDUCED: Smaller padding for list items** */
+    padding: 6px 12px;
     border-radius: 5px;
-    margin-bottom: 4px; /* **REDUCED: Smaller vertical space between items** */
+    margin-bottom: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -235,10 +244,10 @@ nav a:hover {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 4px 8px; /* **REDUCED: Smaller padding for delete button** */
+    padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.7em; /* Slightly smaller font */
+    font-size: 0.7em;
     transition: background-color 0.3s ease;
     font-weight: 500;
 }
@@ -251,12 +260,13 @@ nav a:hover {
 .tab-selection-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* **REDUCED: Smaller gap** */
-    padding: 6px 12px; /* **REDUCED: Smaller padding** */
+    gap: 8px;
+    padding: 6px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #fdfdfd;
-    margin-top: 8px; /* **REDUCED: Less margin** */
+    margin-top: 8px; /* Keep this if you want some separation from previous form elements */
+    margin-bottom: 15px; /* **ADDED: More separation before new section if needed** */
 }
 
 .tab-selection-group label {
@@ -269,19 +279,19 @@ nav a:hover {
 }
 
 .tab-selection-group input[type="checkbox"] {
-    margin-right: 4px; /* **REDUCED: Smaller margin** */
-    transform: scale(1.05); /* Slightly smaller scale */
+    margin-right: 4px;
+    transform: scale(1.05);
     accent-color: #e74c3c;
 }
 
 /* --- Embed Code Section (Admin Page Specific) --- */
 .embed-code-section {
-    margin-top: 20px; /* **REDUCED: Less margin** */
+    margin-top: 15px; /* **REDUCED: Tighter section gap** */
 }
 
 .embed-code-container {
     display: flex;
-    gap: 8px; /* **REDUCED: Smaller gap** */
+    gap: 8px;
     align-items: center;
 }
 
@@ -300,7 +310,7 @@ nav a:hover {
 .embed-code-container .copy-button {
     background-color: #34495e;
     color: white;
-    padding: 8px 15px; /* Reduced padding */
+    padding: 8px 15px;
     border-radius: 5px;
     font-weight: 600;
     transition: background-color 0.3s ease;
@@ -313,56 +323,56 @@ nav a:hover {
 /* --- Live Blog Posts Section (Post Cards) --- */
 /* STYLES BELOW ARE ADAPTED *STRICTLY* FROM YOUR EMBED CSS FOR POSTS */
 .live-blog-posts {
-    margin-bottom: 0; /* Align with embed's lack of bottom margin */
-    padding: 0; /* No padding on the container itself, controlled by post-card */
-    border: none; /* No border on the container */
-    background-color: transparent; /* Background handled by post-card */
-    max-width: none; /* Admin page should use `main`'s max-width */
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    max-width: none;
 }
 
 #postsContainer {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0; /* No gap between posts */
+    gap: 0;
     padding-top: 0;
-    border-top: 1px solid #ebeef0; /* Subtle top border for the entire list, from embed */
-    background-color: #fff; /* Posts container background to match embed */
+    border-top: 1px solid #ebeef0;
+    background-color: #fff;
 }
 
 .post-card {
-    display: block; /* Ensure it behaves like a block */
-    padding: 12px 16px; /* **CRUCIAL: Taken directly from embed CSS for horizontal and vertical spacing** */
-    border-bottom: 1px solid #ebeef0; /* From embed CSS */
-    background-color: #fff; /* From embed CSS */
+    display: block;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebeef0;
+    background-color: #fff;
     word-wrap: break-word;
     position: relative;
-    box-shadow: none; /* No shadow for embed look */
-    border-radius: 0; /* No rounded corners for embed look */
-    transition: background-color 0.2s ease; /* Maintain hover effect */
+    box-shadow: none;
+    border-radius: 0;
+    transition: background-color 0.2s ease;
 }
 
 .post-card:last-child {
-    border-bottom: none; /* No border for the very last post */
+    border-bottom: none;
 }
 
 .post-card:hover {
-    background-color: #f9f9f9; /* Subtle highlight on hover, similar to embed */
-    transform: none; /* No lift effect for embed style */
+    background-color: #f9f9f9;
+    transform: none;
     box-shadow: none;
 }
 
 .post-header-line {
     display: flex;
-    align-items: flex-start; /* From embed CSS */
-    margin-bottom: 4px; /* From embed CSS */
-    gap: 0; /* No explicit gap, controlled by author-avatar margin */
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 0;
 }
 
 .author-avatar {
     flex-shrink: 0;
-    margin-right: 12px; /* From embed CSS */
-    width: 38px; /* **CRUCIAL: Taken directly from embed CSS** */
-    height: 38px; /* **CRUCIAL: Taken directly from embed CSS** */
+    margin-right: 12px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     overflow: hidden;
     border: none;
@@ -373,10 +383,10 @@ nav a:hover {
     height: 100%;
     object-fit: cover;
     display: block;
-    position: relative; /* Needed for the ::before live dot */
+    position: relative;
 }
 
-/* Live dot on avatar (from embed CSS) */
+/* Live dot on avatar */
 .author-avatar-img::before {
     content: '';
     position: absolute;
@@ -384,7 +394,7 @@ nav a:hover {
     left: 0;
     width: 10px;
     height: 10px;
-    background-color: rgb(208, 2, 27); /* Specific embed color */
+    background-color: rgb(208, 2, 27);
     border-radius: 50%;
     border: 2px solid white;
     transform: translate(-20%, -20%);
@@ -394,8 +404,8 @@ nav a:hover {
 
 .post-meta {
     flex-grow: 1;
-    font-size: 15px; /* From embed CSS */
-    line-height: 1.4; /* From embed CSS */
+    font-size: 15px;
+    line-height: 1.4;
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
@@ -404,83 +414,83 @@ nav a:hover {
 
 .meta-line-one {
     display: flex;
-    align-items: center; /* From embed CSS */
-    margin-bottom: 0px; /* From embed CSS */
-    flex-wrap: wrap; /* Allow wrapping */
+    align-items: center;
+    margin-bottom: 0px;
+    flex-wrap: wrap;
 }
 
 .post-meta strong {
-    font-weight: bold; /* From embed CSS */
-    color: #0f1419; /* From embed CSS */
-    margin-right: 4px; /* From embed CSS */
-    font-size: 1em; /* Ensure no override */
+    font-weight: bold;
+    color: #0f1419;
+    margin-right: 4px;
+    font-size: 1em;
 }
 
 .post-meta span.time-ago {
-    color: rgb(208, 2, 27); /* Specific embed color */
-    font-size: 14px; /* From embed CSS */
-    font-weight: bold; /* From embed CSS */
-    white-space: nowrap; /* Prevent wrapping for time */
+    color: rgb(208, 2, 27);
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
 .post-meta .bullet {
-    color: #536471; /* From embed CSS */
-    font-size: 14px; /* From embed CSS */
-    margin: 0 4px; /* From embed CSS */
+    color: #536471;
+    font-size: 14px;
+    margin: 0 4px;
     display: inline;
 }
 
 .post-meta .reporting-from {
     display: block;
-    color: #536471; /* From embed CSS */
-    font-size: 14px; /* From embed CSS */
+    color: #536471;
+    font-size: 14px;
     margin-left: 0;
-    margin-top: 0px; /* From embed CSS */
-    margin-bottom: 12px; /* From embed CSS */
+    margin-top: 0px;
+    margin-bottom: 12px;
 }
 
 .post-subtitle {
-    font-family: 'Roboto', sans-serif; /* From embed CSS */
-    font-size: 1.5em; /* From embed CSS - keep this for visual hierarchy */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
     color: #333;
-    margin-top: 5px; /* From embed CSS */
-    margin-bottom: 5px; /* From embed CSS */
-    font-weight: bold; /* From embed CSS */
-    font-style: normal; /* Override previous italic */
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-style: normal;
 }
 
 .post-text {
-    font-family: "Noto Serif", Georgia, serif; /* **CRUCIAL: From embed CSS** */
-    font-size: 16px; /* **CRUCIAL: From embed CSS** */
-    margin-top: 0; /* From embed CSS */
-    margin-bottom: 8px; /* From embed CSS */
-    color: #0f1419; /* From embed CSS */
-    line-height: 20px; /* From embed CSS */
+    font-family: "Noto Serif", Georgia, serif;
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #0f1419;
+    line-height: 20px;
     word-break: break-word;
-    white-space: pre-wrap; /* Maintain pre-wrap for line breaks */
+    white-space: pre-wrap;
 }
-/* Style for paragraphs within post-text (from embed CSS) */
+/* Style for paragraphs within post-text */
 .post-text p {
-    margin-bottom: 1em; /* Add space between paragraphs */
+    margin-bottom: 1em;
 }
 .post-text p:last-child {
-    margin-bottom: 0; /* No margin after the last paragraph */
+    margin-bottom: 0;
 }
 
-/* Wrapper for Twitter embeds to provide consistent spacing (from embed CSS) */
+/* Wrapper for Twitter embeds to provide consistent spacing */
 .tweet-embed-wrapper {
-    margin: 15px 0; /* Add some vertical space around embeds */
+    margin: 15px 0;
 }
 
-/* Media styles (images and video containers) (from embed CSS) */
+/* Media styles (images and video containers) */
 .post-media {
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px; /* From embed CSS */
-    margin-top: 8px; /* From embed CSS */
+    border-radius: 8px;
+    margin-top: 8px;
     transition: all 0.3s ease-in-out;
-    box-shadow: none; /* Ensure no extra shadow */
+    box-shadow: none;
 }
 
 .post-video-container {
@@ -488,8 +498,8 @@ nav a:hover {
     padding-top: 100%;
     position: relative;
     overflow: hidden;
-    border-radius: 8px; /* From embed CSS */
-    margin-top: 8px; /* From embed CSS */
+    border-radius: 8px;
+    margin-top: 8px;
     background-color: #000;
     cursor: pointer;
 }
@@ -502,10 +512,10 @@ nav a:hover {
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 8px; /* From embed CSS */
+    border-radius: 8px;
 }
 
-/* Styles for expanded video overlay (from embed CSS) */
+/* Styles for expanded video overlay */
 .expanded-video-overlay {
     position: fixed;
     top: 0;
@@ -534,23 +544,23 @@ body.video-expanded {
 
 .no-posts-message, .error-message {
     text-align: center;
-    color: #536471; /* From embed CSS */
-    padding: 15px 0; /* Adjusted padding */
+    color: #536471;
+    padding: 15px 0;
     font-style: italic;
-    font-size: 16px; /* From embed CSS */
+    font-size: 16px;
 }
 
-/* Show more button for truncated text (from embed CSS, adjusted slightly for admin page) */
+/* Show more button for truncated text */
 .show-more-button {
     background-color: #f0f0f0;
     color: #333;
     border: 1px solid #ddd;
-    padding: 8px 15px; /* From embed CSS */
+    padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px; /* From embed CSS */
-    font-weight: 500; /* From embed CSS */
-    margin-top: 10px; /* From embed CSS */
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
     display: block;
     width: fit-content;
     margin-left: auto;
@@ -563,19 +573,19 @@ body.video-expanded {
     border-color: #ccc;
 }
 
-/* Post Action Buttons (Admin Page Specific) - NOT from embed, maintain admin functionality */
+/* Post Action Buttons */
 .post-actions {
     display: flex;
-    gap: 6px; /* Reduced space between buttons */
+    gap: 6px;
     margin-top: auto;
-    padding-top: 8px; /* Reduced padding above actions */
+    padding-top: 8px;
     border-top: 1px solid #eee;
 }
 
 .post-actions button {
     background-color: #95a5a6;
     color: white;
-    padding: 5px 10px; /* Reduced padding for buttons */
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -609,7 +619,7 @@ body.video-expanded {
     background: #f8f8f8;
     border: 1px solid #ddd;
     color: #666;
-    padding: 5px 10px; /* Reduced padding */
+    padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.8em;
@@ -632,7 +642,7 @@ body.video-expanded {
     border-color: #28a745;
 }
 
-.assigned-tabs { /* Admin page only, not in embed style, keep existing */
+.assigned-tabs {
     margin-top: 8px;
     font-size: 0.8em;
     color: #7f8c8d;
@@ -642,12 +652,12 @@ body.video-expanded {
 }
 
 
-/* --- Pagination Controls (Admin Page Specific) - NOT from embed, keep admin functionality */
+/* --- Pagination Controls --- */
 .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 15px; /* **REDUCED: Less space above pagination** */
+    margin-top: 15px;
     gap: 8px;
 }
 
@@ -693,12 +703,12 @@ body.video-expanded {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Footer (Admin Page Specific) --- */
+/* --- Footer --- */
 footer {
     background-color: #34495e;
     color: #f0f2f5;
     text-align: center;
-    padding: 10px 25px; /* Added horizontal padding */
+    padding: 10px 25px;
     margin-top: 10px;
     font-size: 0.9em;
 }
