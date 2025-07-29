@@ -87,10 +87,11 @@
         <h1>The Gazette Live</h1>
         <ul>
             <li><a href="view-blogs.html">Access Previous Live Blogs</a></li>
+            <li><a href="#" id="createNewBlogLink">Start a New Blog</a></li>
         </ul>
 
         <div class="new-blog-section">
-            <h3>Start a New Blog</h3>
+            <h3>Start a New Blog (enter title below)</h3>
             <input type="text" id="newBlogName" placeholder="Enter blog title">
             <button id="startNewBlogBtn">Start Blog</button>
         </div>
@@ -149,16 +150,21 @@
             }
         });
 
+        // The target for this event listener was missing in the HTML
         document.getElementById('createNewBlogLink').addEventListener('click', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent the default link behavior (e.g., jumping to top)
+            // Scroll to the new blog section
             document.querySelector('.new-blog-section').scrollIntoView({ behavior: 'smooth' });
+            // Optionally, focus on the input field
             document.getElementById('newBlogName').focus();
         });
 
         document.getElementById('signOutButton').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                // Redirect handled by onAuthStateChanged listener
+                // The onAuthStateChanged listener above will detect the sign-out
+                // and automatically redirect to index.html.
+                // No need for an explicit window.location.href here.
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
