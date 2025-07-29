@@ -12,29 +12,29 @@ html {
 }
 
 body {
-    font-family: 'Roboto', 'Noto Sans', sans-serif; /* Prioritize Sans-serif for UI */
+    font-family: 'Roboto', 'Noto Sans', sans-serif;
     line-height: 1.6;
     color: #333;
     background-color: #f0f2f5; /* Lighter background, slightly grey */
-    display: flex; /* Make body a flex container to push footer to bottom */
+    display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure body takes full viewport height */
+    min-height: 100vh;
 }
 
 main {
-    flex-grow: 1; /* Allow main content to take available space */
-    /*padding: 20px; Slightly reduced padding for main container */
-    max-width: 900px; /* Constrain content width for readability and less stretched layout */
-    margin: 10px auto; /* Center the main content, reduced top/bottom margin */
+    flex-grow: 1;
+    padding: 15px 25px; /* Added horizontal padding to main content */
+    max-width: 900px;
+    margin: 10px auto; /* Reduced top/bottom margin */
     background-color: #fff;
-    border-radius: 8px; /* Slightly less rounded corners for a cleaner look */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Softer shadow */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 h1, h2, h3 {
     font-family: 'Noto Sans', sans-serif;
     color: #2c3e50;
-    /*margin-bottom: 15px;*/
+    margin-bottom: 10px; /* Reduced margin */
     font-weight: 700;
 }
 
@@ -45,20 +45,20 @@ h1 {
 
 h2 {
     font-size: 1.6em;
-    color: #e74c3c; /* Accent red for section titles */
-    /*margin-top: 10px; /* Space between sections */
-    margin-bottom: 5px; /* Reduced margin below heading */
+    color: #e74c3c;
+    margin-top: 20px; /* Reduced space between sections */
+    margin-bottom: 8px; /* Reduced margin below heading */
 }
 
 p {
-    margin-bottom: 5px; /* Default paragraph spacing */
+    margin-bottom: 5px;
 }
 
 /* --- Header & Navigation --- */
 header {
     background-color: #e74c3c;
     color: #fff;
-    padding: 5px 10px; /* Reduced padding slightly */
+    padding: 10px 25px; /* Adjusted padding for consistent horizontal spacing */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,14 +87,14 @@ nav a:hover {
 
 /* --- Form & Input Elements (General) --- */
 .form-group {
-    margin-bottom: 5px; /* Reduced vertical spacing between form groups */
+    margin-bottom: 10px; /* Reduced vertical spacing between form groups */
     display: flex;
     flex-direction: column;
 }
 
 .form-group label {
     font-weight: 600;
-    margin-bottom: 5px; /* Small space between label and input */
+    margin-bottom: 3px; /* Minimal space between label and input */
     color: #555;
     font-size: 0.95em;
 }
@@ -102,9 +102,9 @@ nav a:hover {
 .input-field,
 .textarea-field {
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 12px; /* Consistent internal padding */
     border: 1px solid #ccc;
-    border-radius: 5px; /* Standard rounding for inputs */
+    border-radius: 5px;
     font-size: 1em;
     font-family: 'Roboto', sans-serif;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -120,22 +120,22 @@ nav a:hover {
 }
 
 .textarea-field {
-    min-height: 120px;
+    min-height: 100px; /* Reduced min-height for compactness */
     resize: vertical;
 }
 
 /* --- Post an Update Section (Dark Mode Input) --- */
 .post-update-section {
-    background-color: #333; /* Dark background */
-    border-radius: 8px; /* Consistent rounding */
-    padding: 10px; /* Reduced padding for more compactness */
-    margin-bottom: 25px; /* Reduced space below this section */
+    background-color: #333;
+    border-radius: 8px;
+    padding: 15px 25px; /* Adjusted padding for horizontal spacing */
+    margin-bottom: 20px; /* Reduced space below this section */
     color: #f0f2f5;
 }
 
 .post-update-section h2 {
     color: #fff;
-    margin-bottom: 10px; /* Reduced margin below heading */
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 .post-update-section label {
@@ -163,9 +163,9 @@ nav a:hover {
 
 .post-update-section .submit-button {
     background-color: #e74c3c;
-    padding: 5px 10px;
-    font-size: 1em;
-    /*margin-top: 20px; /* Reduced space above submit button */
+    padding: 8px 15px; /* Reduced padding */
+    font-size: 0.95em;
+    margin-top: 15px; /* Reduced space above submit button */
 }
 
 .post-update-section .submit-button:hover {
@@ -177,13 +177,14 @@ nav a:hover {
 .submit-button {
     background-color: #e74c3c;
     color: white;
-    padding: 5px 10px;
+    padding: 8px 15px; /* Reduced padding */
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.95em;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px; /* Small default margin-top for general buttons */
 }
 
 .submit-button:hover {
@@ -200,8 +201,8 @@ nav a:hover {
 /* --- Tab Management Controls --- */
 .tab-management-controls {
     display: flex;
-    gap: 5px;
-    margin-bottom: 5px; /* Reduced margin */
+    gap: 8px; /* Reduced gap */
+    margin-bottom: 10px; /* Reduced margin */
     align-items: center;
 }
 
@@ -212,31 +213,31 @@ nav a:hover {
 .tab-list {
     list-style: none;
     padding: 0;
-    margin-top: 10px; /* Reduced margin */
+    margin-top: 8px; /* Reduced margin */
 }
 
 .tab-list li {
     background-color: #f8f9fa;
-    padding: 10px 15px; /* Reduced padding */
+    padding: 8px 15px; /* Reduced padding for compactness, added horizontal */
     border-radius: 5px;
-    margin-bottom: 8px;
+    margin-bottom: 6px; /* Reduced vertical space between items */
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.9em;
     color: #495057;
     border: 1px solid #eee;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* Lighter shadow */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .tab-list li .delete-tab-button {
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 6px 12px; /* Reduced padding */
+    padding: 5px 10px; /* Reduced padding */
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.75em;
     transition: background-color 0.3s ease;
     font-weight: 500;
 }
@@ -249,8 +250,8 @@ nav a:hover {
 .tab-selection-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px; /* Reduced gap */
-    padding: 10px; /* Reduced padding */
+    gap: 10px; /* Reduced gap */
+    padding: 8px 15px; /* Added horizontal padding */
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     background-color: #fdfdfd;
@@ -274,7 +275,7 @@ nav a:hover {
 
 /* --- Embed Code Section --- */
 .embed-code-section {
-    margin-top: 30px; /* Reduced margin */
+    margin-top: 25px; /* Reduced margin */
 }
 
 .embed-code-container {
@@ -288,7 +289,7 @@ nav a:hover {
     font-family: 'JetBrains Mono', monospace;
     background-color: #f0f0f0;
     color: #555;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: 5px;
     font-size: 0.9em;
     white-space: pre-wrap;
@@ -298,7 +299,7 @@ nav a:hover {
 .embed-code-container .copy-button {
     background-color: #34495e;
     color: white;
-    padding: 10px 18px;
+    padding: 8px 15px; /* Reduced padding */
     border-radius: 5px;
     font-weight: 600;
     transition: background-color 0.3s ease;
@@ -311,23 +312,23 @@ nav a:hover {
 /* --- Live Blog Posts Section (Post Cards) --- */
 /* This section is heavily modified to look like embed-posts.html */
 .live-blog-posts {
-    margin-top: 10px; /* Reduced margin */
+    margin-top: 20px; /* Reduced margin */
 }
 
 #postsContainer {
     display: grid;
-    grid-template-columns: 1fr; /* Single column on all screen sizes for the embed look */
-    gap: 0; /* No gap between posts, they will have their own internal spacing/borders */
-    padding-top: 0; /* No padding at the top */
-    border-top: 1px solid #eee; /* A subtle top border for the entire list */
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 0;
+    border-top: 1px solid #eee;
 }
 
 .post-card {
     background-color: #fff;
-    border-bottom: 1px solid #eee; /* Border only at the bottom of each card */
-    border-radius: 0; /* No rounded corners, as it's a continuous list */
-    padding: 5px 10px; /* Reduced padding for a more compact feel */
-    box-shadow: none; /* No individual card shadows for the embed look */
+    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    padding: 10px 20px; /* Increased horizontal padding for text margin */
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -336,29 +337,29 @@ nav a:hover {
 }
 
 .post-card:last-child {
-    border-bottom: none; /* No border for the very last post */
+    border-bottom: none;
 }
 
 .post-card:hover {
-    background-color: #f9f9f9; /* Subtle highlight on hover */
-    transform: none; /* No lift effect on hover for embed style */
+    background-color: #f9f9f9;
+    transform: none;
     box-shadow: none;
 }
 
 .post-header-line {
     display: flex;
     align-items: center;
-    margin-bottom: 8px; /* Reduced space below header line */
-    gap: 8px; /* Reduced space between avatar and text */
+    margin-bottom: 5px; /* Reduced space */
+    gap: 8px;
 }
 
 .author-avatar {
-    width: 8px; /* Smaller avatar */
-    height: 8px;
+    width: 28px; /* Adjusted avatar size to match embed style */
+    height: 28px; /* Adjusted avatar size to match embed style */
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: none; /* No border around avatar for embed look */
+    border: none;
 }
 
 .author-avatar-img {
@@ -376,49 +377,49 @@ nav a:hover {
 
 .meta-line-one {
     display: flex;
-    align-items: baseline; /* Align text at baseline */
+    align-items: baseline;
     flex-wrap: wrap;
-    font-size: 0.95em; /* Slightly smaller text */
+    font-size: 0.95em;
 }
 
 .meta-line-one strong {
-    font-size: 1em; /* No extra sizing */
+    font-size: 1em;
     color: #2c3e50;
-    margin-right: 5px; /* Reduced margin */
+    margin-right: 5px;
     font-weight: 600;
 }
 
 .bullet {
-    margin: 0 4px; /* Reduced space for bullet */
+    margin: 0 4px;
     color: #aaa;
-    font-size: 1em; /* Standard bullet size */
+    font-size: 1em;
 }
 
 .time-ago {
-    font-size: 0.85em; /* Slightly smaller time text */
+    font-size: 0.85em;
     color: #888;
     white-space: nowrap;
 }
 
 .reporting-from {
-    font-size: 0.8em; /* Smaller reporting text */
+    font-size: 0.8em;
     color: #666;
-    margin-top: 2px; /* Reduced margin */
+    margin-top: 2px;
 }
 
 .post-subtitle {
-    font-size: 1.05em; /* Reduced font size */
+    font-size: 1.05em;
     color: #333;
     font-style: normal;
-    margin-bottom: 5px; /* Reduced margin below subtitle */
-    margin-top: 5px; /* Reduced margin above subtitle */
+    margin-bottom: 5px;
+    margin-top: 5px;
     font-weight: 600;
 }
 
 .post-text {
-    margin-bottom: 12px; /* Reduced space below text */
+    margin-bottom: 8px; /* Reduced space below text */
     color: #333;
-    line-height: 1.6; /* Slightly tighter line height */
+    line-height: 1.5; /* Slightly tighter line height */
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -426,11 +427,11 @@ nav a:hover {
 .post-media {
     max-width: 100%;
     height: auto;
-    border-radius: 5px; /* Slightly less rounded media */
-    margin-bottom: 12px;
+    border-radius: 5px;
+    margin-bottom: 8px; /* Reduced margin */
     display: block;
     object-fit: cover;
-    box-shadow: none; /* No shadow for embed look */
+    box-shadow: none;
 }
 
 .show-more-button {
@@ -438,9 +439,9 @@ nav a:hover {
     border: none;
     color: #e74c3c;
     cursor: pointer;
-    font-weight: 600; /* Slightly less bold */
+    font-weight: 600;
     padding: 0;
-    margin-top: -5px; /* Reduced negative margin */
+    margin-top: 0px; /* Eliminated negative margin */
     text-align: left;
     display: block;
     transition: color 0.2s ease;
@@ -452,39 +453,39 @@ nav a:hover {
 }
 
 .assigned-tabs {
-    margin-top: 10px; /* Reduced margin */
+    margin-top: 8px; /* Reduced margin */
     font-size: 0.8em;
     color: #7f8c8d;
     border-top: 1px solid #f0f0f0;
-    padding-top: 10px; /* Reduced padding */
+    padding-top: 8px; /* Reduced padding */
     font-style: italic;
 }
 
 .post-actions {
     display: flex;
-    gap: 8px; /* Reduced space between buttons */
+    gap: 6px; /* Reduced space between buttons */
     margin-top: auto;
-    padding-top: 10px; /* Reduced padding above actions */
+    padding-top: 8px; /* Reduced padding above actions */
     border-top: 1px solid #eee;
 }
 
 .post-actions button {
     background-color: #95a5a6;
     color: white;
-    padding: 6px 12px; /* Reduced padding for buttons */
+    padding: 5px 10px; /* Reduced padding for buttons */
     border: none;
-    border-radius: 4px; /* Smaller rounding */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.85em; /* Smaller font size */
+    font-size: 0.8em; /* Smaller font size */
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     font-weight: 500;
 }
 
 .post-actions button i {
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 .edit-post-button {
@@ -505,10 +506,10 @@ nav a:hover {
     background: #f8f8f8;
     border: 1px solid #ddd;
     color: #666;
-    padding: 6px 12px; /* Reduced padding */
+    padding: 5px 10px; /* Reduced padding */
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.8em;
     margin-left: auto;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     display: flex;
@@ -531,7 +532,7 @@ nav a:hover {
 .no-posts-message, .error-message {
     text-align: center;
     color: #666;
-    padding: 20px 0; /* Reduced padding */
+    padding: 15px 0; /* Reduced padding */
     font-style: italic;
     font-size: 1em;
 }
@@ -541,18 +542,18 @@ nav a:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 30px; /* Reduced margin */
-    gap: 10px;
+    margin-top: 20px; /* Reduced margin */
+    gap: 8px; /* Reduced gap */
 }
 
 .pagination-controls button {
     background-color: #34495e;
     color: white;
-    padding: 8px 15px; /* Reduced padding */
+    padding: 7px 12px; /* Reduced padding */
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.85em;
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
@@ -567,7 +568,7 @@ nav a:hover {
 }
 
 .pagination-controls .page-number {
-    padding: 8px 12px;
+    padding: 7px 10px; /* Reduced padding */
     border-radius: 5px;
     cursor: pointer;
     background-color: #eee;
@@ -592,7 +593,7 @@ footer {
     background-color: #34495e;
     color: #f0f2f5;
     text-align: center;
-    padding: 0px 15px; /* Reduced padding */
-    margin-top: 30px; /* Reduced margin */
+    padding: 10px 25px; /* Added horizontal padding */
+    margin-top: 20px; /* Reduced margin */
     font-size: 0.9em;
 }
