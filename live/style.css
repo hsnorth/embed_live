@@ -46,8 +46,8 @@ h1 {
 h2 {
     font-size: 1.6em;
     color: #e74c3c; /* Accent red for section titles */
-    margin-top: 10px; /* Space between sections */
-    margin-bottom: 15px; /* Reduced margin below heading */
+    /*margin-top: 10px; /* Space between sections */
+    margin-bottom: 5px; /* Reduced margin below heading */
 }
 
 p {
@@ -58,7 +58,7 @@ p {
 header {
     background-color: #e74c3c;
     color: #fff;
-    padding: 15px 25px; /* Reduced padding slightly */
+    padding: 5px 10px; /* Reduced padding slightly */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -87,7 +87,7 @@ nav a:hover {
 
 /* --- Form & Input Elements (General) --- */
 .form-group {
-    margin-bottom: 15px; /* Reduced vertical spacing between form groups */
+    margin-bottom: 5px; /* Reduced vertical spacing between form groups */
     display: flex;
     flex-direction: column;
 }
@@ -128,14 +128,14 @@ nav a:hover {
 .post-update-section {
     background-color: #333; /* Dark background */
     border-radius: 8px; /* Consistent rounding */
-    padding: 20px; /* Reduced padding for more compactness */
+    padding: 10px; /* Reduced padding for more compactness */
     margin-bottom: 25px; /* Reduced space below this section */
     color: #f0f2f5;
 }
 
 .post-update-section h2 {
     color: #fff;
-    margin-bottom: 20px; /* Reduced margin below heading */
+    margin-bottom: 10px; /* Reduced margin below heading */
 }
 
 .post-update-section label {
@@ -163,9 +163,9 @@ nav a:hover {
 
 .post-update-section .submit-button {
     background-color: #e74c3c;
-    padding: 10px 20px;
+    padding: 5px 10px;
     font-size: 1em;
-    margin-top: 20px; /* Reduced space above submit button */
+    /*margin-top: 20px; /* Reduced space above submit button */
 }
 
 .post-update-section .submit-button:hover {
@@ -177,7 +177,7 @@ nav a:hover {
 .submit-button {
     background-color: #e74c3c;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -200,8 +200,8 @@ nav a:hover {
 /* --- Tab Management Controls --- */
 .tab-management-controls {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px; /* Reduced margin */
+    gap: 5px;
+    margin-bottom: 5px; /* Reduced margin */
     align-items: center;
 }
 
@@ -311,7 +311,7 @@ nav a:hover {
 /* --- Live Blog Posts Section (Post Cards) --- */
 /* This section is heavily modified to look like embed-posts.html */
 .live-blog-posts {
-    margin-top: 30px; /* Reduced margin */
+    margin-top: 10px; /* Reduced margin */
 }
 
 #postsContainer {
@@ -326,7 +326,7 @@ nav a:hover {
     background-color: #fff;
     border-bottom: 1px solid #eee; /* Border only at the bottom of each card */
     border-radius: 0; /* No rounded corners, as it's a continuous list */
-    padding: 15px 20px; /* Reduced padding for a more compact feel */
+    padding: 5px 10px; /* Reduced padding for a more compact feel */
     box-shadow: none; /* No individual card shadows for the embed look */
     display: flex;
     flex-direction: column;
@@ -353,8 +353,8 @@ nav a:hover {
 }
 
 .author-avatar {
-    width: 36px; /* Smaller avatar */
-    height: 36px;
+    width: 8px; /* Smaller avatar */
+    height: 8px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -592,7 +592,7 @@ footer {
     background-color: #34495e;
     color: #f0f2f5;
     text-align: center;
-    padding: 15px 25px; /* Reduced padding */
+    padding: 0px 15px; /* Reduced padding */
     margin-top: 30px; /* Reduced margin */
     font-size: 0.9em;
 }
