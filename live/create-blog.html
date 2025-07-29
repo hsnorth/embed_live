@@ -35,7 +35,16 @@
                     <label for="postContentInput">Post Content:</label>
                     <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
                 </div>
+
+                <!-- New: Live Page Editor option -->
                 <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isLivePageEditorCheckbox">
+                        I am the Live Page Editor
+                    </label>
+                </div>
+
+                <div class="form-group" id="reportingFromGroup">
                     <label for="reportingFromInput">Reporting From:</label>
                     <input type="text" id="reportingFromInput" class="input-field" value="Montreal">
                 </div>
@@ -124,6 +133,8 @@
         const postSubtitleInput = document.getElementById('postSubtitleInput');
         const postContentInput = document.getElementById('postContentInput');
         const reportingFromInput = document.getElementById('reportingFromInput');
+        const reportingFromGroup = document.getElementById('reportingFromGroup'); // New: Reference to the reporting from group
+        const isLivePageEditorCheckbox = document.getElementById('isLivePageEditorCheckbox'); // New: Reference to the checkbox
         const postMediaInput = document.getElementById('postMediaInput');
         const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
@@ -197,6 +208,18 @@
                 }
             }
         });
+
+        // --- Live Page Editor Checkbox Logic ---
+        isLivePageEditorCheckbox.addEventListener('change', () => {
+            if (isLivePageEditorCheckbox.checked) {
+                reportingFromGroup.style.display = 'none';
+                reportingFromInput.value = 'Live Page Editor'; // Set the value when checked
+            } else {
+                reportingFromGroup.style.display = 'flex'; // Use flex as per your CSS
+                reportingFromInput.value = 'Montreal'; // Reset to default or clear
+            }
+        });
+
 
         // --- Tab Management Functions ---
         const renderCustomTabs = () => {
@@ -338,7 +361,14 @@
             const authorName = authorNameInput.value.trim();
             const content = postContentInput.value.trim();
             const subtitle = postSubtitleInput.value.trim();
-            const reportingFrom = reportingFromInput.value.trim();
+            
+            let reportingFrom;
+            if (isLivePageEditorCheckbox.checked) {
+                reportingFrom = 'Live Page Editor';
+            } else {
+                reportingFrom = reportingFromInput.value.trim();
+            }
+
             const mediaFile = postMediaInput.files[0];
 
             const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
@@ -398,7 +428,7 @@
                         authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
-                        reportingFrom: reportingFrom,
+                        reportingFrom: reportingFrom, // Use the determined reportingFrom value
                         assignedTabs: assignedTabs,
                     };
 
@@ -431,7 +461,7 @@
                         authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
-                        reportingFrom: reportingFrom,
+                        reportingFrom: reportingFrom, // Use the determined reportingFrom value
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
                         assignedTabs: assignedTabs,
@@ -443,8 +473,12 @@
                 postContentInput.value = '';
                 postSubtitleInput.value = '';
                 postMediaInput.value = '';
-                authorNameInput.value = authorName;
-                localStorage.setItem('authorName', authorName);
+                // Do not reset authorNameInput as it's readOnly and populated from user data
+                // localStorage.setItem('authorName', authorName); // This line is no longer needed if authorName is readOnly
+                isLivePageEditorCheckbox.checked = false; // Reset checkbox
+                reportingFromGroup.style.display = 'flex'; // Show reporting from input
+                reportingFromInput.value = 'Montreal'; // Reset reporting from input
+
                 renderPostTabAssignmentCheckboxes([]);
 
                 adminAllPostsCached = []; // Clear cache to force reload
@@ -613,7 +647,18 @@
                         editingPostId = postIdToEdit;
                         postContentInput.value = postToEdit.content || '';
                         postSubtitleInput.value = postToEdit.subtitle || '';
-                        reportingFromInput.value = postToEdit.reportingFrom || '';
+                        
+                        // Handle "Live Page Editor" for editing
+                        if (postToEdit.reportingFrom === 'Live Page Editor') {
+                            isLivePageEditorCheckbox.checked = true;
+                            reportingFromGroup.style.display = 'none';
+                            reportingFromInput.value = 'Live Page Editor'; // Ensure value is set
+                        } else {
+                            isLivePageEditorCheckbox.checked = false;
+                            reportingFromGroup.style.display = 'flex';
+                            reportingFromInput.value = postToEdit.reportingFrom || 'Montreal';
+                        }
+
                         authorNameInput.value = postToEdit.authorName || '';
                         renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
                         submitButton.textContent = "Save Changes";
