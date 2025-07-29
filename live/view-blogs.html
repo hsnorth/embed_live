@@ -5,26 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Previous Live Blogs</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Specific styles for view-blogs.html (rest of style.css handles common styles) */
-        .previous-blogs-container {
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 20px;
+        /* Specific styles for view-blogs.html that might override or supplement main style.css */
+        main { /* Main content container should align with the max-width in style.css */
+            margin: 8px auto; /* Inherit from style.css */
+            padding: 15px 25px; /* Inherit from style.css */
+            max-width: 900px; /* Inherit from style.css */
+            width: 100%; /* Inherit from style.css */
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            flex-grow: 1; /* Ensure it grows to fill space */
+        }
+
+        .previous-blogs-container {
+            /* These styles are still fine, they apply within the main content area */
+            max-width: none; /* Let the main container control width */
+            margin: 0; /* Remove specific margins, let main handle it */
+            padding: 0; /* Remove specific padding, let main handle it */
+            background-color: transparent; /* Remove background, let main handle it */
+            box-shadow: none; /* Remove shadow, let main handle it */
         }
         .previous-blogs-container h2 {
             margin-top: 0;
-            color: #555;
+            color: #e74c3c; /* Consistent heading color */
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 20px;
+            font-size: 1.6em; /* Match h2 in style.css */
         }
         .blog-list ul {
             list-style: none;
             padding: 0;
+            margin: 0; /* Ensure no default list margins */
         }
         .blog-list li {
             background-color: #f9f9f9;
@@ -33,35 +47,69 @@
             margin-bottom: 10px;
             border-radius: 5px;
             display: flex;
+            flex-wrap: wrap; /* Allow content to wrap on small screens */
             justify-content: space-between;
             align-items: center;
+            gap: 10px; /* Space between elements within the list item */
         }
         .blog-list li:hover {
             background-color: #f0f0f0;
         }
         .blog-list a {
             text-decoration: none;
-            color: #007bff;
+            color: #34495e; /* Use the primary blue/grey from your palette */
             font-weight: bold;
+            font-size: 1.1em;
+            flex-grow: 1; /* Allow link to take available space */
         }
         .blog-list span {
             font-size: 14px;
             color: #777;
+            flex-shrink: 0; /* Prevent timestamp from shrinking too much */
+            text-align: right;
+            white-space: nowrap; /* Keep time on one line */
         }
         .no-blogs-message {
             text-align: center;
             color: #888;
             padding: 20px;
         }
+
+        /* Adjust body to use flexbox for footer pushing */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        footer {
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        /* Media queries for specific list item behavior on small screens */
+        @media (max-width: 500px) {
+            .blog-list li {
+                flex-direction: column; /* Stack name and date vertically */
+                align-items: flex-start;
+            }
+            .blog-list span {
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Previous Live Blogs</h1>
-        <nav>
+        <div class="header-left">
+            <h1><a href="dashboard.html">The Gazette Live</a></h1>
+        </div>
+        <button class="hamburger-menu" id="hamburgerMenu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <nav class="main-nav" id="mainNav">
             <a href="dashboard.html">Dashboard</a>
-            <a href="dashboard.html">Create New Blog</a>
-            <a href="#" id="signOutButtonHeader">Sign Out</a>
+            <a href="#" id="signOutNavButton">Sign Out</a>
         </nav>
     </header>
 
@@ -77,7 +125,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Live Blog</p>
+        <p>&copy;The Gazette. All rights reserved.</p>
     </footer>
 
     <script type="module">
@@ -112,15 +160,6 @@
             }
         });
 
-        // Make db globally accessible (temporary workaround for module scripts)
-        window.db = db;
-        window.collection = collection;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.getDocs = getDocs;
-        window.signOut = signOut;
-        window.auth = auth; // Expose auth
-
         const loadBlogs = async () => {
             const liveBlogsList = document.getElementById('liveBlogsList');
             const noBlogsMessage = document.getElementById('noBlogsMessage');
@@ -146,6 +185,7 @@
                     });
                     noBlogsMessage.style.display = 'none';
                 } else {
+                    liveBlogsList.innerHTML = ''; // Ensure list is empty
                     noBlogsMessage.style.display = 'block';
                 }
             } catch (error) {
@@ -155,7 +195,8 @@
             }
         };
 
-        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
+        // Sign Out from navigation dropdown
+        document.getElementById('signOutNavButton').addEventListener('click', async (e) => {
             e.preventDefault();
             try {
                 await signOut(auth);
@@ -164,6 +205,24 @@
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
             }
+        });
+
+        // JavaScript for Hamburger Menu Toggle (replicated for this page)
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const mainNav = document.getElementById('mainNav');
+
+        hamburgerMenu.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            hamburgerMenu.classList.toggle('active');
+        });
+
+        mainNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    hamburgerMenu.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
