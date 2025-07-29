@@ -75,6 +75,40 @@ header {
     top: 0;
     z-index: 1000; /* Ensure it stays on top */
 }
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between arrow and title */
+}
+
+.back-arrow {
+    color: white;
+    font-size: 1.5em; /* Adjust size as needed */
+    text-decoration: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: flex; /* Ensures icon is centered if it were smaller */
+    align-items: center;
+    justify-content: center;
+    padding: 5px; /* Add some padding for easier clicking */
+}
+
+.back-arrow:hover {
+    color: #f0f0f0; /* Slightly lighter white on hover */
+    transform: translateX(-3px); /* Small subtle slide effect */
+}
+
+/* Ensure the h1 inside header-left still looks good */
+.header-left h1 {
+    margin: 0; /* Reset any default h1 margins inside this flex container */
+}
+
+/* Adjust header h1 styling if necessary after adding the arrow */
+header h1 a {
+    /* ... existing header h1 a styles ... */
+    white-space: nowrap; /* Prevent title from wrapping if space is tight */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis if title is too long */
+}
 
 header h1 {
     margin: 0;
