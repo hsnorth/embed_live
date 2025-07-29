@@ -23,9 +23,9 @@ body {
 
 main {
     flex-grow: 1; /* Allow main content to take available space */
-    padding: 20px; /* Slightly reduced padding for main container */
+    /*padding: 20px; Slightly reduced padding for main container */
     max-width: 900px; /* Constrain content width for readability and less stretched layout */
-    margin: 20px auto; /* Center the main content, reduced top/bottom margin */
+    margin: 10px auto; /* Center the main content, reduced top/bottom margin */
     background-color: #fff;
     border-radius: 8px; /* Slightly less rounded corners for a cleaner look */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Softer shadow */
@@ -34,7 +34,7 @@ main {
 h1, h2, h3 {
     font-family: 'Noto Sans', sans-serif;
     color: #2c3e50;
-    margin-bottom: 15px;
+    /*margin-bottom: 15px;*/
     font-weight: 700;
 }
 
@@ -46,12 +46,12 @@ h1 {
 h2 {
     font-size: 1.6em;
     color: #e74c3c; /* Accent red for section titles */
-    margin-top: 30px; /* Space between sections */
+    margin-top: 10px; /* Space between sections */
     margin-bottom: 15px; /* Reduced margin below heading */
 }
 
 p {
-    margin-bottom: 10px; /* Default paragraph spacing */
+    margin-bottom: 5px; /* Default paragraph spacing */
 }
 
 /* --- Header & Navigation --- */
