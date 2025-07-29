@@ -404,7 +404,7 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        const defaultTab = "Live Updates"; // CHANGED: Default active tab name is now "Live Updates"
+        const defaultTab = "Live Reporting"; // CHANGED: Default active tab name is now "Live Reporting"
         let currentActiveTab = defaultTab; // Start with the default tab
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
@@ -938,19 +938,19 @@
         const renderTabs = () => {
             tabNavigationDiv.innerHTML = ''; // Clear existing tabs
 
-            // Always add the default "Live Updates" tab
-            const liveUpdatesButton = document.createElement('button'); // Changed variable name for clarity
-            liveUpdatesButton.textContent = defaultTab;
-            liveUpdatesButton.classList.add('tab-button');
+            // Always add the default "Live Reporting" tab
+            const liveReportingButton = document.createElement('button'); // Changed variable name for clarity
+            liveReportingButton.textContent = defaultTab;
+            liveReportingButton.classList.add('tab-button');
             if (currentActiveTab === defaultTab) {
-                liveUpdatesButton.classList.add('active-tab'); // Set active class
+                liveReportingButton.classList.add('active-tab'); // Set active class
             }
-            liveUpdatesButton.addEventListener('click', () => {
+            liveReportingButton.addEventListener('click', () => {
                 currentActiveTab = defaultTab;
                 renderTabs(); // Re-render tabs to update active state
                 filterAndRenderPosts(); // Filter and render posts for the new tab
             });
-            tabNavigationDiv.appendChild(liveUpdatesButton);
+            tabNavigationDiv.appendChild(liveReportingButton);
 
             // Add custom tabs from Firestore
             customTabs.forEach(tabName => {
