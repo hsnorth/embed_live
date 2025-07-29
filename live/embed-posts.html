@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Live Blog Posts Embed</title>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -162,6 +160,7 @@
         }
 
         /* Wrapper for Twitter embeds to provide consistent spacing */
+        /* This wrapper is still useful for consistent styling even with direct embeds */
         .tweet-embed-wrapper {
             margin: 15px 0; /* Add some vertical space around embeds */
         }
@@ -232,42 +231,6 @@
             font-style: italic;
             font-size: 16px;
         }
-
-        /* --- Copy Link Button --- */
-        /* COMMENTED OUT: .copy-link-button {
-            background: none;
-            border: none;
-            color: #657786;
-            cursor: pointer;
-            font-size: 1em;
-            padding: 5px 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        } */
-
-        /* COMMENTED OUT: .post-card .copy-link-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.9em;
-        } */
-
-        /* COMMENTED OUT: .copy-link-button:hover {
-            background-color: rgba(208, 2, 27, 0.1);
-            color: rgb(208, 2, 27);
-        } */
-
-        /* COMMENTED OUT: .copy-link-button.copied {
-            color: rgb(208, 2, 27);
-            pointer-events: none;
-        } */
-        /* COMMENTED OUT: .copy-link-button.copied i {
-            color: rgb(208, 2, 27);
-        } */
 
         /* Show more button for truncated text */
         .show-more-button {
@@ -481,7 +444,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"; // Corrected www.gstatic.com
 
         // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
@@ -503,8 +466,8 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Reporting"; // Default active tab name
-        const defaultTab = "Live Reporting"; // Constant for the default tab name
+        const defaultTab = "Live Updates"; // CHANGED: Default active tab name is now "Live Updates"
+        let currentActiveTab = defaultTab; // Start with the default tab
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
@@ -546,58 +509,24 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
-        // --- Function: formatContentWithParagraphs (New function to handle paragraphs) ---
-        function formatContentWithParagraphs(content) {
-            if (!content) return '';
-            // Replace newlines with <p> tags, ensuring proper paragraph breaks
-            return content.split(/\r?\n/).map(paragraph => `<p>${paragraph}</p>`).join('');
-        }
-
-        // --- NEW Helper Function: processContentForEmbeds ---
-        // This function will find tweet URLs and replace them with the necessary embed HTML.
+        // --- Function: processContentForEmbeds (Now simply formats paragraphs, expects direct embed HTML) ---
         function processContentForEmbeds(content) {
             if (!content) return '';
 
-            // Regex to find X/Twitter status URLs
-            // It should handle both twitter.com and x.com
-            // Added console.log for debugging purposes
-            console.log('Processing content for embeds. Original content:', content); // Debugging
-
-            const twitterUrlRegex = /(https?:\/\/(?:www\.)?(?:twitter|x)\.com\/[a-zA-Z0-9_]+\/status\/\d+)/g;
-            let parts = [];
-            let lastIndex = 0;
-            let match;
-
-            while ((match = twitterUrlRegex.exec(content)) !== null) {
-                const tweetUrl = match[0];
-                console.log('Found tweet URL:', tweetUrl); // Debugging
-                const textBefore = content.substring(lastIndex, match.index);
-
-                if (textBefore.length > 0) {
-                    // Apply paragraph formatting to text segments
-                    parts.push(formatContentWithParagraphs(textBefore));
+            // Split content by newlines to handle paragraphs.
+            // Critically, it will *not* wrap lines containing <blockquote or <div (for media) in <p> tags,
+            // preserving existing HTML structure.
+            return content.split(/\r?\n/).map(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('<blockquote') ||
+                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') || // In case it's wrapped
+                    trimmedLine.startsWith('<div class="post-video-container"') ||
+                    trimmedLine.startsWith('<img') ||
+                    trimmedLine === '') { // Allow empty lines to pass through without <p>
+                    return line; // Return lines with existing HTML (like blockquote) as is
                 }
-
-                // Add the Twitter embed block
-                // data-dnt="true" is "Do Not Track" - respects user privacy settings
-                parts.push(`
-                    <div class="tweet-embed-wrapper">
-                        <blockquote class="twitter-tweet" data-dnt="true">
-                            <a href="${tweetUrl}"></a>
-                        </blockquote>
-                    </div>
-                `);
-                lastIndex = twitterUrlRegex.lastIndex;
-            }
-
-            const textAfter = content.substring(lastIndex);
-            if (textAfter.length > 0) {
-                // Apply paragraph formatting to trailing text
-                parts.push(formatContentWithParagraphs(textAfter));
-            }
-            
-            console.log('Processed content parts:', parts); // Debugging
-            return parts.join(''); // Join all parts into a single HTML string
+                return `<p>${line}</p>`; // Wrap plain text lines in <p> tags
+            }).join('');
         }
 
         // --- Function: renderPosts (Renders a given array of posts into a container) ---
@@ -643,13 +572,32 @@
                 let showMoreButtonHtml = '';
                 let isTruncated = false;
 
-                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
-                    displayContent = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                // --- Truncation Logic for Raw HTML Content ---
+                // If content is pure text, simple length check is fine.
+                // If content contains HTML (like embeds), truncating by character count can break HTML.
+                // For simplicity, we'll truncate by character count for now, assuming embeds are full blocks.
+                // A more robust solution might require a library to truncate HTML safely.
+                const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
+                if (plainTextContent.length > MAX_CHARS_PREVIEW) {
+                    // Find a safe truncation point that doesn't split an HTML tag.
+                    // This is a simplified approach, a true HTML truncation needs a robust parser.
+                    let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW);
+                    // Basic attempt to close any open tags if truncated mid-tag
+                    const openTags = (truncatedRawHtml.match(/<([a-z]+)(?![^>]*\/>)[^>]*>/ig) || [])
+                                     .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
+                                     .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
+                    openTags.reverse().forEach(tag => {
+                        if (!truncatedRawHtml.includes(`</${tag}>`)) {
+                            truncatedRawHtml += `</${tag}>`;
+                        }
+                    });
+
+                    displayContent = truncatedRawHtml + '...';
                     isTruncated = true;
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
-                // Process content for paragraphs and embeds
+                // Process content for paragraphs, expecting direct embed HTML
                 const displayContentHtml = processContentForEmbeds(displayContent);
                 const fullContentHtml = processContentForEmbeds(post.content);
 
@@ -690,11 +638,13 @@
                             window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
                         }
                         // IMPORTANT: Load Twitter widgets for the newly revealed content
-                        if (typeof twttr !== 'undefined' && twttr.widgets) {
-                            console.log('Loading Twitter widgets for expanded contentDiv.'); // Debugging
-                            twttr.widgets.load(contentDiv);
+                        if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
+                            twttr.ready(function (twttrInstance) {
+                                console.log('twttr.ready callback executed: Loading Twitter widgets for expanded contentDiv.');
+                                twttrInstance.widgets.load(contentDiv); // Load for the expanded contentDiv
+                            });
                         } else {
-                            console.warn('twttr.widgets not available for expanded content.'); // Debugging
+                            console.warn('twttr object or twttr.ready function not available for expanded content.');
                         }
                     });
                 }
@@ -764,9 +714,6 @@
                 const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
             }
-
-            // Moved twttr.widgets.load() call to renderCurrentPage for better timing.
-            // It should not be called within the renderPosts loop.
         };
 
         // --- Live Updates Listener (onSnapshot) ---
@@ -1040,13 +987,15 @@
             renderPosts(postsToShow, 'postsContainer');
             updatePaginationControls(filteredPosts.length);
 
-            // IMPORTANT: Call twttr.widgets.load() AFTER all posts for the current page are rendered
-            // This ensures the tweet <blockquote> elements are in the DOM before the widget script tries to find them.
-            if (typeof twttr !== 'undefined' && twttr.widgets) {
-                console.log('Calling twttr.widgets.load() for postsContainer.'); // Debugging
-                twttr.widgets.load(postsContainer);
+            // Ensure twttr.widgets.load() is called when the Twitter widgets script is ready
+            // This is a more robust way to ensure the script has loaded and initialized.
+            if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
+                twttr.ready(function (twttrInstance) {
+                    console.log('twttr.ready callback executed: Loading Twitter widgets for postsContainer.');
+                    twttrInstance.widgets.load(postsContainer);
+                });
             } else {
-                console.warn('twttr.widgets not available yet. It might load later.'); // Debugging
+                console.warn('twttr object or twttr.ready function not available immediately. Twitter embeds might not load.');
             }
         };
 
@@ -1054,19 +1003,19 @@
         const renderTabs = () => {
             tabNavigationDiv.innerHTML = ''; // Clear existing tabs
 
-            // Always add the default "Live Reporting" tab
-            const liveReportingButton = document.createElement('button');
-            liveReportingButton.textContent = defaultTab;
-            liveReportingButton.classList.add('tab-button');
+            // Always add the default "Live Updates" tab
+            const liveUpdatesButton = document.createElement('button'); // Changed variable name for clarity
+            liveUpdatesButton.textContent = defaultTab;
+            liveUpdatesButton.classList.add('tab-button');
             if (currentActiveTab === defaultTab) {
-                liveReportingButton.classList.add('active-tab'); // Set active class
+                liveUpdatesButton.classList.add('active-tab'); // Set active class
             }
-            liveReportingButton.addEventListener('click', () => {
+            liveUpdatesButton.addEventListener('click', () => {
                 currentActiveTab = defaultTab;
                 renderTabs(); // Re-render tabs to update active state
                 filterAndRenderPosts(); // Filter and render posts for the new tab
             });
-            tabNavigationDiv.appendChild(liveReportingButton);
+            tabNavigationDiv.appendChild(liveUpdatesButton);
 
             // Add custom tabs from Firestore
             customTabs.forEach(tabName => {
@@ -1102,9 +1051,7 @@
             // Example: if (event.origin !== "http://your-admin-domain.com") return;
            
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
-                console.log('Refreshing embed posts due to admin update message.'); // Debugging
-                // The onSnapshot listener will typically handle the actual data refresh,
-                // but this message can trigger specific actions or debugging.
+                console.log('Refreshing embed posts due to admin update message.');
             }
         });
     </script>
