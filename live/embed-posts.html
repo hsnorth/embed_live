@@ -6,7 +6,7 @@
     <title>Live Blog Posts Embed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="style.css">
     <style>
         /* Base styles for the embed */
         body {
@@ -16,8 +16,11 @@
             background-color: transparent !important; /* Essential for iframe transparency, added !important */
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
             min-height: 100vh; /* Ensure body takes full viewport height */
+            /* Add this to prevent content from pushing body wider */
+            width: 100%;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
         main {
             padding: 0;
@@ -25,15 +28,17 @@
             box-shadow: none;
             border-radius: 0;
             background-color: transparent;
-            max-width: none;
+            max-width: none; /* Let .live-blog-posts control max-width */
         }
         .live-blog-posts {
             margin-bottom: 0;
             padding: 0;
             border: none;
             background-color: transparent;
-            max-width: 700px; /* INCREASED MAX WIDTH */
+            max-width: 700px; /* INCREASED MAX WIDTH - This is your target width */
             margin: 0 auto; /* Center the posts content */
+            box-sizing: border-box; /* Crucial for consistent sizing with padding */
+            overflow: hidden; /* Prevent internal content from overflowing and affecting parent width */
         }
 
         /* Hide elements not needed in the embed */
@@ -52,6 +57,7 @@
             background-color: #fff;
             word-wrap: break-word;
             position: relative;
+            box-sizing: border-box; /* Ensures padding is included in the card's width */
         }
 
         .post-header-line {
@@ -164,7 +170,19 @@
         /* This wrapper is still useful for consistent styling even with direct embeds */
         .tweet-embed-wrapper {
             margin: 15px 0; /* Add some vertical space around embeds */
+            max-width: 100%; /* Ensure it doesn't overflow its parent */
+            overflow: hidden; /* Hide any overflow */
+            /* Add these to help contain the iframe */
+            display: block;
         }
+
+        /* Crucial for fixing Twitter embed width issues */
+        .tweet-embed-wrapper iframe {
+            max-width: 100% !important; /* Force Twitter iframe to fit */
+            width: 100% !important; /* Ensure it takes full available width */
+            box-sizing: border-box;
+        }
+
 
         /* Media styles (images and video containers) */
         .post-media {
@@ -178,7 +196,7 @@
 
         .post-video-container {
             width: 100%;
-            padding-top: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio (height / width * 100%) */
             position: relative;
             overflow: hidden;
             border-radius: 8px;
@@ -256,7 +274,7 @@
             border-color: #ccc;
         }
 
-        /* 
+        /* Pagination controls (uncommented for visibility if needed) */
         .pagination-controls {
             display: flex;
             justify-content: center;
@@ -306,7 +324,7 @@
             background-color: rgba(208, 2, 27, 0.1) !important;
         }
 
-        /* Page numbers (text only, no button outline) 
+        /* Page numbers (text only, no button outline) */
         .pagination-controls .page-number {
             display: inline-flex !important;
             align-items: center;
@@ -329,8 +347,8 @@
             color: rgb(208, 2, 27) !important;
             font-weight: bold !important;
             background-color: rgba(208, 2, 27, 0.1) !important;
-            border-bottom: none !important; /* Ensure no unwanted underlines /
-            padding-bottom: 0 !important;  Remove padding from bottom if any 
+            border-bottom: none !important; /* Ensure no unwanted underlines */
+            padding-bottom: 0 !important; /* Remove padding from bottom if any */
         }
 
         .pagination-controls .page-number:hover:not(.current-page) {
@@ -345,7 +363,7 @@
             cursor: default;
         }
 
-        /* Responsive adjustments for pagination 
+        /* Responsive adjustments for pagination */
         @media (max-width: 600px) {
             .pagination-controls {
                 padding: 10px 12px;
@@ -359,7 +377,7 @@
                 min-width: 28px;
                 height: 28px;
             }
-        } */
+        }
 
         /* --- Tab Navigation (Embed Page Specific) --- */
         .tab-navigation {
@@ -375,6 +393,9 @@
             white-space: nowrap;
             padding: 0 10px;
             justify-content: flex-start;
+            box-sizing: border-box; /* Important for width calculation with padding */
+            max-width: 700px; /* Match the max-width of .live-blog-posts */
+            margin: 0 auto; /* Center it like the posts */
         }
 
         .tab-navigation button {
@@ -461,7 +482,7 @@
             appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS
             measurementId: "G-EZN90844XF" // REPLACE THIS (optional)
         };
-       
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -523,8 +544,9 @@
             // preserving existing HTML structure.
             return content.split(/\r?\n/).map(line => {
                 const trimmedLine = line.trim();
+                // Check if the line *starts* with known embed/media tags
                 if (trimmedLine.startsWith('<blockquote') ||
-                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') || // In case it's wrapped
+                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
                     trimmedLine.startsWith('<div class="post-video-container"') ||
                     trimmedLine.startsWith('<img') ||
                     trimmedLine === '') { // Allow empty lines to pass through without <p>
@@ -578,10 +600,6 @@
                 let isTruncated = false;
 
                 // --- Truncation Logic for Raw HTML Content ---
-                // If content is pure text, simple length check is fine.
-                // If content contains HTML (like embeds), truncating by character count can break HTML.
-                // For simplicity, we'll truncate by character count for now, assuming embeds are full blocks.
-                // A more robust solution might require a library to truncate HTML safely.
                 const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
                 if (plainTextContent.length > MAX_CHARS_PREVIEW) {
                     // Find a safe truncation point that doesn't split an HTML tag.
@@ -589,8 +607,8 @@
                     let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW);
                     // Basic attempt to close any open tags if truncated mid-tag
                     const openTags = (truncatedRawHtml.match(/<([a-z]+)(?![^>]*\/>)[^>]*>/ig) || [])
-                                     .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
-                                     .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
+                                           .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
+                                           .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
                     openTags.reverse().forEach(tag => {
                         if (!truncatedRawHtml.includes(`</${tag}>`)) {
                             truncatedRawHtml += `</${tag}>`;
@@ -636,7 +654,7 @@
                     showMoreButton.addEventListener('click', () => {
                         contentDiv.innerHTML = fullContentHtml; // Set full formatted content including embeds
                         showMoreButton.style.display = 'none'; // Hide the button
-                       
+
                         // Notify parent iframe to adjust height after expansion
                         if (window.parent) {
                             const height = document.body.scrollHeight;
@@ -658,7 +676,7 @@
                 const videoContainer = postCard.querySelector('.post-video-container');
                 if (videoContainer) {
                     const videoElement = videoContainer.querySelector('video');
-                   
+
                     videoContainer.addEventListener('click', (e) => {
                         e.stopPropagation(); // Prevent click from bubbling to postCard
 
@@ -674,7 +692,7 @@
                             fullVideo.muted = false;        // Unmute in full view
                             fullVideo.loop = false;         // No loop in full view
                             fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
-                           
+
                             overlay.appendChild(fullVideo);
 
                             // Stop the small video and reset its time
@@ -738,7 +756,7 @@
 
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
                 const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-               
+
                 // Compare with current cached posts to detect new ones
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
                 let newPostsDetected = false;
@@ -752,7 +770,7 @@
                 }
 
                 allPostsCached = updatedPosts; // Update the cache with the latest data
-               
+
                 // If a new post is detected and we are not at the top of the page, show the "New Update" button
                 if (newPostsDetected && window.scrollY > 0) {
                     newUpdatesCount++;
@@ -835,10 +853,10 @@
                 if (blogDocSnap.exists()) {
                     customTabs = blogDocSnap.data().customTabs || [];
                 }
-               
+
                 renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
-               
+
             } catch (error) {
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
@@ -1054,7 +1072,7 @@
         window.addEventListener('message', (event) => {
             // IMPORTANT: In a production environment, validate event.origin for security!
             // Example: if (event.origin !== "http://your-admin-domain.com") return;
-           
+
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update message.');
             }
