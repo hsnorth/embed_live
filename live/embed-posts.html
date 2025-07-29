@@ -67,6 +67,10 @@
             box-sizing: border-box;
         }
     
+        .post-card:last-child {
+            border-bottom: none;
+        }
+    
         .post-header-line {
             display: flex;
             align-items: flex-start;
@@ -391,8 +395,7 @@
             projectId: "myliveblogapp-cf9df", // REPLACE THIS
             storageBucket: "myliveblogapp-cf9df.firebase-storage.app", // REPLACE THIS
             messagingSenderId: "324824649312", // REPLACE THIS
-            appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS
-            measurementId: "G-EZN90844XF" // REPLACE THIS (optional)
+            appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS (optional)
         };
 
         const app = initializeApp(firebaseConfig);
@@ -404,7 +407,7 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        const defaultTab = "Live Updates"; // CHANGED: Default active tab name is now "Live Reporting"
+        const defaultTab = "Live Reporting"; // Default active tab name
         let currentActiveTab = defaultTab; // Start with the default tab
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
@@ -536,6 +539,16 @@
                 const displayContentHtml = processContentForEmbeds(displayContent);
                 const fullContentHtml = processContentForEmbeds(post.content);
 
+                // Determine how to display the reportingFrom field based on its content
+                let reportingFromDisplay = '';
+                if (post.reportingFrom) {
+                    if (post.reportingFrom === 'Live Page Editor') {
+                        reportingFromDisplay = `<span>Live Page Editor</span>`; // Display only "Live Page Editor"
+                    } else {
+                        reportingFromDisplay = `<span>${post.reportingFrom}</span>`; // Display as saved (e.g., "Reporting from Montreal")
+                    }
+                }
+
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -548,7 +561,7 @@
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
                             </div>
-                            ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
+                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                         </div>
                     </div>
                     ${subtitleHtml}
