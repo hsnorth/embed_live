@@ -228,7 +228,7 @@
         }
 
         /* --- Copy Link Button --- */
-        .copy-link-button {
+        /* COMMENTED OUT: .copy-link-button {
             background: none;
             border: none;
             color: #657786;
@@ -241,27 +241,27 @@
             align-items: center;
             gap: 5px;
             white-space: nowrap;
-        }
+        } */
 
-        .post-card .copy-link-button {
+        /* COMMENTED OUT: .post-card .copy-link-button {
             position: absolute;
             top: 10px;
             right: 10px;
             font-size: 0.9em;
-        }
+        } */
 
-        .copy-link-button:hover {
+        /* COMMENTED OUT: .copy-link-button:hover {
             background-color: rgba(208, 2, 27, 0.1);
             color: rgb(208, 2, 27);
-        }
+        } */
 
-        .copy-link-button.copied {
+        /* COMMENTED OUT: .copy-link-button.copied {
             color: rgb(208, 2, 27);
             pointer-events: none;
-        }
-        .copy-link-button.copied i {
+        } */
+        /* COMMENTED OUT: .copy-link-button.copied i {
             color: rgb(208, 2, 27);
-        }
+        } */
 
         /* Show more button for truncated text */
         .show-more-button {
@@ -485,7 +485,7 @@
             appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS
             measurementId: "G-EZN90844XF" // REPLACE THIS (optional)
         };
-        
+       
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -495,8 +495,8 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        let currentActiveTab = "Live Reporting"; // Default active tab name
-        const defaultTab = "Live Reporting"; // Constant for the default tab name
+        let currentActiveTab = "Live Updates"; // Default active tab name
+        const defaultTab = "Live Updates"; // Constant for the default tab name
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
@@ -612,10 +612,7 @@
                             </div>
                             ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
                         </div>
-                        <button class="copy-link-button" data-post-id="${post.id}" title="Copy Link to Post">
-                            <i class="fas fa-link"></i>
-                        </button>
-                    </div>
+                        </div>
                     ${subtitleHtml}
                     <div class="post-text">${formattedContentHtml}</div>
                     ${mediaHtml}
@@ -631,7 +628,7 @@
                     showMoreButton.addEventListener('click', () => {
                         contentDiv.innerHTML = fullFormattedContentHtml; // Set full formatted content
                         showMoreButton.style.display = 'none'; // Hide the button
-                        
+                       
                         // Notify parent iframe to adjust height after expansion
                         if (window.parent) {
                             const height = document.body.scrollHeight;
@@ -641,40 +638,45 @@
                 }
 
                 // --- Copy Link Button Logic ---
+                // COMMENTED OUT:
+                /*
                 const copyLinkButton = postCard.querySelector('.copy-link-button');
-                copyLinkButton.addEventListener('click', async () => {
-                    const postId = copyLinkButton.dataset.postId;
-                    const blogId = currentBlogId;
+                if (copyLinkButton) { // Ensure the button exists before adding listener
+                    copyLinkButton.addEventListener('click', async () => {
+                        const postId = copyLinkButton.dataset.postId;
+                        const blogId = currentBlogId;
 
-                    if (!blogId || !postId) {
-                        alert("Could not generate link for this post.");
-                        return;
-                    }
+                        if (!blogId || !postId) {
+                            alert("Could not generate link for this post.");
+                            return;
+                        }
 
-                    // Construct the deep link URL (adjust path if your embed is elsewhere)
-                    const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
-                    
-                    try {
-                        await navigator.clipboard.writeText(deepLink);
-                        const originalContent = copyLinkButton.innerHTML;
-                        copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!'; // Change to checkmark and text
-                        copyLinkButton.classList.add('copied');
+                        // Construct the deep link URL (adjust path if your embed is elsewhere)
+                        const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
+                       
+                        try {
+                            await navigator.clipboard.writeText(deepLink);
+                            const originalContent = copyLinkButton.innerHTML;
+                            copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Link Copied!'; // Change to checkmark and text
+                            copyLinkButton.classList.add('copied');
 
-                        setTimeout(() => {
-                            copyLinkButton.innerHTML = originalContent; // Revert to original icon/text
-                            copyLinkButton.classList.remove('copied');
-                        }, 2000); // Show "Link Copied!" for 2 seconds
-                    } catch (err) {
-                        console.error('Failed to copy link: ', err);
-                        alert('Failed to copy link. Please copy manually: ' + deepLink);
-                    }
-                });
+                            setTimeout(() => {
+                                copyLinkButton.innerHTML = originalContent; // Revert to original icon/text
+                                copyLinkButton.classList.remove('copied');
+                            }, 2000); // Show "Link Copied!" for 2 seconds
+                        } catch (err) {
+                            console.error('Failed to copy link: ', err);
+                            alert('Failed to copy link. Please copy manually: ' + deepLink);
+                        }
+                    });
+                }
+                */
 
                 // --- Video Playback and Expansion Logic ---
                 const videoContainer = postCard.querySelector('.post-video-container');
                 if (videoContainer) {
                     const videoElement = videoContainer.querySelector('video');
-                    
+                   
                     videoContainer.addEventListener('click', (e) => {
                         e.stopPropagation(); // Prevent click from bubbling to postCard
 
@@ -690,7 +692,7 @@
                             fullVideo.muted = false;        // Unmute in full view
                             fullVideo.loop = false;         // No loop in full view
                             fullVideo.playsinline = false; // Allow fullscreen if desired on mobile
-                            
+                           
                             overlay.appendChild(fullVideo);
 
                             // Stop the small video and reset its time
@@ -754,7 +756,7 @@
 
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
                 const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
+               
                 // Compare with current cached posts to detect new ones
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
                 let newPostsDetected = false;
@@ -768,7 +770,7 @@
                 }
 
                 allPostsCached = updatedPosts; // Update the cache with the latest data
-                
+               
                 // If a new post is detected and we are not at the top of the page, show the "New Update" button
                 if (newPostsDetected && window.scrollY > 0) {
                     newUpdatesCount++;
@@ -851,10 +853,10 @@
                 if (blogDocSnap.exists()) {
                     customTabs = blogDocSnap.data().customTabs || [];
                 }
-                
+               
                 renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
-                
+               
             } catch (error) {
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
@@ -866,7 +868,7 @@
             if (currentActiveTab === defaultTab) {
                 filteredPosts = allPostsCached; // Show all if default tab is active
             } else {
-                filteredPosts = allPostsCached.filter(post => 
+                filteredPosts = allPostsCached.filter(post =>
                     post.assignedTabs && post.assignedTabs.includes(currentActiveTab) // Filter by assigned tabs
                 );
             }
@@ -874,7 +876,7 @@
             // If we're coming from a deep link, currentPage might have been set by scrollToPost
             // Otherwise, reset to the first page when tab changes or initially loads
             if (!window.location.hash || initialLoadComplete) { // Only reset if not an initial deep link load
-                currentPage = 0; 
+                currentPage = 0;
             }
             renderCurrentPage(); // Render the current page and update pagination controls
         };
@@ -913,12 +915,12 @@
                     // More than maxPagesToShow, implement ellipsis logic
                     if (currentPage < maxPagesToShow - 2) { // Near the beginning (e.g., 1, 2, 3, ..., N)
                         startPage = 0;
-                        endPage = maxPagesToShow - 2;  
+                        endPage = maxPagesToShow - 2;
                     } else if (currentPage > totalPages - (maxPagesToShow - 1)) { // Near the end (e.g., 1, ..., N-2, N-1, N)
-                        startPage = totalPages - (maxPagesToShow - 1);  
+                        startPage = totalPages - (maxPagesToShow - 1);
                         endPage = totalPages - 1;
                     } else { // In the middle (e.g., 1, ..., C-1, C, C+1, ..., N)
-                        startPage = currentPage - 1;  
+                        startPage = currentPage - 1;
                         endPage = currentPage + 1;
                     }
                 }
@@ -1059,7 +1061,7 @@
         window.addEventListener('message', (event) => {
             // IMPORTANT: In a production environment, validate event.origin for security!
             // Example: if (event.origin !== "http://your-admin-domain.com") return;
-            
+           
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update message.');
                 // The onSnapshot listener will typically handle the actual data refresh,
