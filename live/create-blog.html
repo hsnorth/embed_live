@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -362,11 +362,12 @@
             const content = postContentInput.value.trim();
             const subtitle = postSubtitleInput.value.trim();
             
-            let reportingFrom;
+            let reportingFromValue;
             if (isLivePageEditorCheckbox.checked) {
-                reportingFrom = 'Live Page Editor';
+                reportingFromValue = 'Live Page Editor';
             } else {
-                reportingFrom = reportingFromInput.value.trim();
+                const location = reportingFromInput.value.trim();
+                reportingFromValue = location ? `Reporting from ${location}` : ''; // Prefix "Reporting from "
             }
 
             const mediaFile = postMediaInput.files[0];
@@ -428,7 +429,7 @@
                         authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
-                        reportingFrom: reportingFrom, // Use the determined reportingFrom value
+                        reportingFrom: reportingFromValue, // Use the determined reportingFrom value
                         assignedTabs: assignedTabs,
                     };
 
@@ -461,7 +462,7 @@
                         authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
                         subtitle: subtitle,
                         content: content,
-                        reportingFrom: reportingFrom, // Use the determined reportingFrom value
+                        reportingFrom: reportingFromValue, // Use the determined reportingFrom value
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
                         assignedTabs: assignedTabs,
@@ -599,6 +600,17 @@
                     ? `<p class="assigned-tabs"><small>Tabs: ${post.assignedTabs.join(', ')}</small></p>`
                     : '';
 
+                // Determine how to display the reportingFrom field
+                let reportingFromDisplay = '';
+                if (post.reportingFrom) {
+                    if (post.reportingFrom === 'Live Page Editor') {
+                        reportingFromDisplay = `<span>Live Page Editor</span>`;
+                    } else {
+                        reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
+                    }
+                }
+
+
                 postCard.innerHTML = `
                     <div class="post-header-line">
                         <div class="author-avatar">
@@ -610,7 +622,7 @@
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
                             </div>
-                            ${post.reportingFrom ? `<span class="reporting-from">Reporting from ${post.reportingFrom}</span>` : ''}
+                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                         </div>
                         <button class="copy-link-button" data-post-id="${post.id}" title="Copy Link to Post">
                             <i class="fas fa-link"></i>
@@ -656,7 +668,10 @@
                         } else {
                             isLivePageEditorCheckbox.checked = false;
                             reportingFromGroup.style.display = 'flex';
-                            reportingFromInput.value = postToEdit.reportingFrom || 'Montreal';
+                            // Strip "Reporting from " prefix for display in the input field
+                            const displayLocation = postToEdit.reportingFrom ? 
+                                postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') : 'Montreal';
+                            reportingFromInput.value = displayLocation;
                         }
 
                         authorNameInput.value = postToEdit.authorName || '';
