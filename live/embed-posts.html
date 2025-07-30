@@ -63,7 +63,7 @@
             background-color: #fff;
             word-wrap: break-word;
             position: relative;
-            box-sizing: border-sizing;
+            box-sizing: border-box;
         }
     
         .post-card:last-child {
@@ -202,7 +202,6 @@
             flex-shrink: 0; /* Prevents a flex parent from shrinking this iframe */
         }
     
-    
         /* Media styles (images and video containers) */
         .post-media {
             max-width: 100%;
@@ -214,26 +213,19 @@
         }
         /* Styles for embedded videos in posts */
         .post-media.post-video {
-            /* Basic styling for all post videos */
-            display: block; /* Ensures it takes its own line */
-            margin-top: 10px; /* Adjust spacing */
-            margin-bottom: 10px; /* Adjust spacing */
-            background-color: #000; /* Black background for video area */
-        
-            /* Object-fit ensures the video content fits within the element's box */
-            object-fit: contain; /* Scales the video to fit entirely within the container, preserving aspect ratio */
-        
-            /* Ensure the video itself doesn't offer full screen or picture-in-picture */
+            display: block;
+            width: 100%; /* Make video take full width of its parent */
+            height: auto; /* Maintain aspect ratio */
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #000;
+            object-fit: cover; /* Scales the video to fill the container, possibly cropping edges */
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-        }
-    
-        body.video-expanded {
-            overflow: hidden;
         }
     
         .no-posts-message, .error-message {
@@ -367,7 +359,7 @@
             authDomain: "myliveblogapp-cf9df.firebaseapp.com", // REPLACE THIS
             projectId: "myliveblogapp-cf9df", // REPLACE THIS
             storageBucket: "myliveblogapp-cf9df.firebase-storage.app", // REPLACE THIS
-            messagingSenderId: "324824649312", // REPLACE THIS
+            messagingSenderId: "324824649312", // REPLACE THIS (optional)
             appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS (optional)
         };
 
@@ -435,6 +427,7 @@
                 // Check if the line *starts* with known embed/media tags
                 if (trimmedLine.startsWith('<blockquote') ||
                     trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
+                    // Removed '<div class="post-video-container"' as video is directly embedded
                     trimmedLine.startsWith('<img') ||
                     trimmedLine === '') { // Allow empty lines to pass through without <p>
                     return line; // Return lines with existing HTML (like blockquote) as is
@@ -571,31 +564,9 @@
                     });
                 }
 
-                // --- Video Dimension Adjustment for dynamically loaded videos ---
-                if (post.mediaType && post.mediaType.startsWith('video')) {
-                    const videoElement = postCard.querySelector('.post-video');
-                    if (videoElement) {
-                        videoElement.onloadedmetadata = function() {
-                            const aspectRatio = this.videoWidth / this.videoHeight;
-                            const maxContainerWidth = postCard.offsetWidth * 0.9; // Adjust as needed, e.g., 90% of postCard width
+                // Removed the entire "Video Playback and Expansion Logic" block here
+                // as per user's request to not expand and previous guidance to simplify video handling.
 
-                            if (aspectRatio > 1) { // Horizontal video
-                                this.style.width = '100%'; // Take full width up to max container width
-                                this.style.height = 'auto';
-                                this.style.maxWidth = `${maxContainerWidth}px`; // Constrain by container
-                            } else { // Vertical or square video
-                                // For vertical videos, constrain height/width to fit aesthetically
-                                // You might need to experiment with these values
-                                this.style.height = '300px'; // Example fixed height for vertical videos
-                                this.style.width = `${300 * aspectRatio}px`;
-                                this.style.maxWidth = '100%'; // Ensure it doesn't exceed container width
-                            }
-                            // Center the video if it's smaller than the container
-                            this.style.display = 'block';
-                            this.style.margin = '0 auto';
-                        };
-                    }
-                }
             });
 
             // Notify parent iframe (if any) to adjust height after rendering posts
@@ -723,7 +694,7 @@
                 renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
 
-            } catch (error) {
+            } = (error) => {
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
             }
