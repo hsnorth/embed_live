@@ -6,6 +6,119 @@
     <title>Create/Manage Live Blog</title>
     <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+        <!-- Web App Manifest for Add to Home Screen -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Apple Touch Icon for iOS -->
+    <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
+    <!-- Theme color for browser UI (e.g., Android Chrome address bar) -->
+    <meta name="theme-color" content="#e74c3c">
+
+    <style>
+        /* Ensure .reportingFromGroup is initially visible if checkbox is not checked */
+        #reportingFromGroup {
+            display: flex; /* Or block, depending on your desired layout */
+            flex-direction: column; /* Keep consistent with form-group */
+        }
+
+        /* New style for the back button container in main */
+        .main-back-button-container {
+            padding-bottom: 10px; /* Space below the back button */
+            border-bottom: 1px solid #eee; /* Separator line */
+            margin-bottom: 15px; /* Space below the separator */
+            display: flex; /* Use flex to align the arrow and text */
+            align-items: center; /* Center the arrow vertically */
+            gap: 8px; /* Space between arrow and text */
+        }
+
+        /* A2HS Collapsible Section Styles */
+        #a2hsCollapsibleContainer {
+            display: none; /* Hidden by default on large screens */
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden; /* Ensures content is clipped when collapsed */
+        }
+
+        @media (max-width: 768px) {
+            #a2hsCollapsibleContainer {
+                display: block; /* Show on small screens */
+            }
+        }
+
+        #a2hsToggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+        }
+
+        #a2hsToggle i {
+            transition: transform 0.3s ease;
+        }
+
+        #a2hsToggle.active i {
+            transform: rotate(180deg); /* Rotate arrow when active */
+        }
+
+        #a2hsContent {
+            padding: 0 15px; /* Initial padding, will be adjusted by JS */
+            max-height: 0; /* Start collapsed */
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            background-color: #fff;
+            border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+        }
+
+        #a2hsContent.show {
+            max-height: 200px; /* Adjust as needed to fit content */
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        #a2hsContent ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #a2hsContent ol li {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #a2hsContent ol li:last-child {
+            margin-bottom: 0;
+        }
+
+        #a2hsContent ol li .step-number {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            flex-shrink: 0;
+        }
+        #a2hsContent .share-icon-placeholder {
+            font-size: 1.1em;
+            color: #34495e;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -13,10 +126,26 @@
     </header>
 
     <main>
-        <div class="header-left">
+        <div class="main-back-button-container">
             <a href="view-blogs.html" class="back-arrow" aria-label="Back to View Blogs">
                 <i class="fas fa-arrow-left"></i>
             </a>
+            <span class="back-text">Return to Live Blogs</span>
+        </div>
+
+        <!-- A2HS Collapsible Section -->
+        <div id="a2hsCollapsibleContainer">
+            <div id="a2hsToggle">
+                <span>Add page as app on phone</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="a2hsContent">
+                <ol>
+                    <li><span class="step-number">1</span> Click on Share button <i class="fas fa-share-square share-icon-placeholder"></i></li>
+                    <li><span class="step-number">2</span> Scroll down and click: "Add to home screen"</li>
+                    <li><span class="step-number">3</span> Write: "Gazette Live" and press "Add".</li>
+                </ol>
+            </div>
         </div>
         <section class="new-post-form">
             <h2>Post an Update</h2>
