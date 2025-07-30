@@ -692,7 +692,7 @@
                         return;
                     }
 
-                    const deepLink = `${window.location.origin}/embed_live/live/embed-posts.html?blogId=${blogId}#post-${postId}`;
+                    const deepLink = `${window.location.origin}/embed-posts.html?blogId=${blogId}#post-${postId}`;
 
                     try {
                         await navigator.clipboard.writeText(deepLink);
