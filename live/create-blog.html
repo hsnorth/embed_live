@@ -243,7 +243,7 @@
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.appspot.com", // Corrected storageBucket
+            storageBucket: "myliveblogapp-cf9df.appspot.com",
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
             measurementId: "G-EZN90844XF"
@@ -258,12 +258,12 @@
         let currentBlogId = null;
         let currentBlogName = '';
         let customTabs = [];
-        const defaultTab = "Live Reporting"; // Consistent default tab name
+        const defaultTab = "Live Reporting";
         let adminAllPostsCached = [];
         let adminCurrentPage = 0;
         const adminPostsPerPage = 8;
         let editingPostId = null;
-        let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // New variable to store the current user's avatar URL
+        let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
 
         // --- DOM Element References ---
         const blogTitleHeader = document.getElementById('blogTitleHeader');
@@ -276,7 +276,7 @@
         const postMediaInput = document.getElementById('postMediaInput');
         const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
-        const submitButton = postForm.querySelector('.submit-button'); // Get submit button relative to form
+        const submitButton = postForm.querySelector('.submit-button');
         const embedCodeInput = document.getElementById('embedCodeInput');
         const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
         const newTabNameInput = document.getElementById('newTabNameInput');
@@ -297,14 +297,10 @@
         const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
         const uploadProgressBar = document.getElementById('uploadProgressBar');
 
-        // Image compression constants
-        const MAX_IMAGE_SIZE_MB = 0.8; // Target max size for images in MB (e.g., 800KB)
-        const MAX_IMAGE_DIMENSION = 1600; // Max width or height for images (e.g., 1600px)
-
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
             messageBox.textContent = message;
-            messageBox.className = 'message-box show'; // Reset classes and show
+            messageBox.className = 'message-box show';
             if (type === 'error') {
                 messageBox.classList.add('error');
             } else {
@@ -313,7 +309,7 @@
 
             setTimeout(() => {
                 messageBox.classList.remove('show');
-            }, 3000); // Hide after 3 seconds
+            }, 3000);
         }
 
         function customConfirm(message) {
@@ -345,59 +341,6 @@
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
             var results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
-
-        /**
-         * Compresses an image file (Blob or File) to a target size and dimension.
-         * @param {File | Blob} imageFile - The image file to compress.
-         * @param {number} quality - JPEG compression quality (0 to 1).
-         * @param {number} maxWidthHeight - Maximum width or height for the image.
-         * @returns {Promise<Blob>} A promise that resolves with the compressed image as a Blob.
-         */
-        function compressImage(imageFile, quality = 0.8, maxWidthHeight = MAX_IMAGE_DIMENSION) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        // Calculate new dimensions to fit within maxWidthHeight while maintaining aspect ratio
-                        if (width > height) {
-                            if (width > maxWidthHeight) {
-                                height *= maxWidthHeight / width;
-                                width = maxWidthHeight;
-                            }
-                        } else {
-                            if (height > maxWidthHeight) {
-                                width *= maxWidthHeight / height;
-                                height = maxWidthHeight;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        // Convert canvas content to Blob
-                        canvas.toBlob((blob) => {
-                            if (blob) {
-                                resolve(blob);
-                            } else {
-                                reject(new Error("Canvas to Blob conversion failed."));
-                            }
-                        }, imageFile.type, quality);
-                    };
-                    img.onerror = (error) => reject(error);
-                    img.src = event.target.result;
-                };
-                reader.onerror = (error) => reject(error);
-                reader.readAsDataURL(imageFile);
-            });
         }
 
         // --- Authentication Guard ---
@@ -438,7 +381,7 @@
                         generateEmbedCode();
                         renderCustomTabs();
                         renderPostTabAssignmentCheckboxes([]);
-                        await loadPostsForAdmin(); // Initial load of posts
+                        await loadPostsForAdmin();
                     } else {
                         blogTitleHeader.textContent = 'Blog Not Found';
                         postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
@@ -480,7 +423,7 @@
                 } catch (error) {
                     console.error("Error adding custom tab:", error);
                     showMessageBox("Failed to add tab. Please try again. Error: " + error.message, "error");
-                    customTabs = customTabs.filter(tab => tab !== newTabName); // Revert local changes
+                    customTabs = customTabs.filter(tab => tab !== newTabName);
                 }
             } else if (newTabName === defaultTab) {
                 showMessageBox(`"${defaultTab}" is a default tab and cannot be added as a custom tab.`, "error");
@@ -509,7 +452,7 @@
                 } catch (error) {
                     console.error("Error deleting custom tab:", error);
                     showMessageBox("Failed to delete tab. Please try again. Error: " + error.message, "error");
-                    customTabs = originalCustomTabs; // Revert local changes
+                    customTabs = originalCustomTabs;
                     renderCustomTabs();
                 }
             }
@@ -557,7 +500,6 @@
         // --- Generate Embed Code ---
         const generateEmbedCode = () => {
             if (currentBlogId) {
-                // Assuming embed-posts.html is in the same public directory as create-blog.html
                 const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
                 const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
                 embedCodeInput.value = embedCode;
@@ -582,7 +524,7 @@
                 reportingFromValue = location ? `Reporting from ${location}` : '';
             }
 
-            let mediaFile = postMediaInput.files[0]; // This is the original file input
+            let mediaFile = postMediaInput.files[0];
 
             const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
             const assignedTabs = [defaultTab];
@@ -608,39 +550,15 @@
 
             submitButton.disabled = true;
             submitButton.textContent = "Posting...";
-            showMessageBox("Starting post process...", "success"); // Initial general message
+            uploadProgressBarContainer.style.display = 'block'; // Always show progress bar
+            uploadProgressBar.style.width = '0%'; // Reset progress bar
+            uploadProgressBar.textContent = '0%'; // Start at 0%
 
             let mediaUrl = '';
             let mediaType = '';
 
             try {
                 if (mediaFile) {
-                    uploadProgressBarContainer.style.display = 'block'; // Show progress bar
-                    uploadProgressBar.style.width = '0%'; // Reset progress bar
-                    uploadProgressBar.textContent = '0%';
-
-                    // If it's an image, attempt to compress it
-                    if (mediaFile.type.startsWith('image/')) {
-                        // Only compress if file size is above a certain threshold
-                        if (mediaFile.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-                            showMessageBox("Image too large. Compressing...", "success");
-                            try {
-                                mediaFile = await compressImage(mediaFile, 0.7, MAX_IMAGE_DIMENSION); // Compress to 70% quality, max dimension
-                                showMessageBox("Compression complete. Uploading...", "success");
-                            } catch (compressionError) {
-                                console.error("Image compression failed:", compressionError);
-                                showMessageBox("Image compression failed. Uploading original file...", "error");
-                                // Continue with original file if compression fails
-                            }
-                        } else {
-                            showMessageBox("Image size OK. Uploading...", "success");
-                        }
-                    } else if (mediaFile.type.startsWith('video/')) {
-                        showMessageBox("Uploading video...", "success");
-                        // No client-side video compression implemented here.
-                        // For videos, the original file will be uploaded.
-                    }
-                    
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, mediaFile);
                     
@@ -648,25 +566,22 @@
                         (snapshot) => {
                             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                             uploadProgressBar.style.width = progress + '%';
-                            uploadProgressBar.textContent = Math.round(progress) + '%';
-                            // Optional: update message box with upload progress, but might be too frequent
-                            // showMessageBox(`Uploading: ${Math.round(progress)}%`, "success");
+                            uploadProgressBar.textContent = `${Math.round(progress)}%`;
                         },
                         (error) => {
                             console.error("Media upload failed:", error);
                             showMessageBox("Media upload failed!", "error");
-                            uploadProgressBarContainer.style.display = 'none'; // Hide progress bar on error
-                            throw error; // Re-throw to be caught by outer catch
+                            uploadProgressBarContainer.style.display = 'none';
+                            throw error;
                         },
                         async () => {
-                            // This 'complete' callback is for the uploadTask.on,
-                            // the actual mediaUrl and mediaType assignment happens after await uploadTask.
-                            // The final success message is handled in the outer try-catch.
+                            // This callback is for the uploadTask.on, not the main async flow.
+                            // The actual mediaUrl and mediaType assignment happens after await uploadTask.
                         }
                     );
-                    await uploadTask; // Wait for the upload to complete
+                    await uploadTask;
                     mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                    mediaType = mediaFile.type; // Use the type of the (potentially compressed) mediaFile
+                    mediaType = mediaFile.type;
                 }
 
                 const postsCollectionRef = collection(db, 'posts');
@@ -691,7 +606,7 @@
                         assignedTabs: assignedTabs,
                     };
 
-                    if (mediaFile) { // If a new file was selected for upload/update
+                    if (mediaFile) {
                         const oldPostSnap = await getDoc(postDocRef);
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
                             try {
@@ -703,10 +618,8 @@
                         }
                         updateData.mediaUrl = mediaUrl;
                         updateData.mediaType = mediaType;
-                    } else { // No new file selected, check if existing media should be removed
+                    } else {
                         const oldPostSnap = await getDoc(postDocRef);
-                        // This logic assumes if postMediaInput.value is empty AND there was existing media, it should be removed.
-                        // For a more explicit "remove media" feature, you'd add a checkbox or button.
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl && !postMediaInput.value) {
                             try {
                                 const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
@@ -738,6 +651,13 @@
                     showMessageBox("Post added successfully!");
                 }
 
+                // For text-only posts, or after media upload completes, animate to 100%
+                uploadProgressBar.style.width = '100%';
+                uploadProgressBar.textContent = '100%';
+                
+                // Give a brief moment to see 100% before hiding
+                await new Promise(resolve => setTimeout(resolve, 500)); 
+
                 clearPostForm();
 
                 adminAllPostsCached = [];
@@ -754,9 +674,9 @@
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = "Post Update";
-                uploadProgressBarContainer.style.display = 'none'; // Ensure progress bar is hidden
-                uploadProgressBar.style.width = '0%'; // Reset progress bar
-                uploadProgressBar.textContent = '0%';
+                uploadProgressBarContainer.style.display = 'none';
+                uploadProgressBar.style.width = '0%';
+                uploadProgressBar.textContent = '0%'; // Reset text for next use
             }
         };
 
@@ -922,8 +842,6 @@
             });
 
             // --- Attach Event Listeners for Edit/Delete/Copy ---
-            // These event listeners MUST be attached AFTER the posts are rendered
-            // as the buttons are dynamically created.
             container.querySelectorAll('.edit-post-button').forEach(button => {
                 button.addEventListener('click', async (e) => {
                     const postIdToEdit = e.currentTarget.dataset.postId;
@@ -963,11 +881,9 @@
                         return;
                     }
 
-                    // Ensure the correct path for the embed page
                     const deepLink = `${window.location.origin}/embed-posts.html?blogId=${blogId}#post-${postId}`;
 
                     try {
-                        // Using document.execCommand('copy') for broader iframe compatibility
                         const textarea = document.createElement('textarea');
                         textarea.value = deepLink;
                         document.body.appendChild(textarea);
@@ -1075,7 +991,7 @@
         // --- Event Listeners (Wrapped in DOMContentLoaded) ---
         document.addEventListener('DOMContentLoaded', () => {
             // Live Page Editor Checkbox Logic
-            if (isLivePageEditorCheckbox) { // Check if element exists
+            if (isLivePageEditorCheckbox) {
                 isLivePageEditorCheckbox.addEventListener('change', () => {
                     if (isLivePageEditorCheckbox.checked) {
                         reportingFromGroup.style.display = 'none';
@@ -1085,7 +1001,6 @@
                         reportingFromInput.value = 'Montreal';
                     }
                 });
-                // Initialize display based on initial checkbox state
                 if (isLivePageEditorCheckbox.checked) {
                     reportingFromGroup.style.display = 'none';
                 } else {
@@ -1095,7 +1010,7 @@
 
             // Tab Management Buttons
             if (addTabButton) addTabButton.addEventListener('click', addCustomTab);
-            if (customTabList) { // Check if element exists
+            if (customTabList) {
                 customTabList.addEventListener('click', (e) => {
                     if (e.target.classList.contains('delete-tab-button')) {
                         deleteCustomTab(e.target.dataset.tabName);
@@ -1104,7 +1019,7 @@
             }
 
             // Embed Code Copy Button
-            if (copyEmbedCodeButton && embedCodeInput) { // Check if both elements exist
+            if (copyEmbedCodeButton && embedCodeInput) {
                 copyEmbedCodeButton.addEventListener('click', () => {
                     embedCodeInput.select();
                     embedCodeInput.setSelectionRange(0, 99999);
@@ -1117,7 +1032,7 @@
             if (postForm) postForm.addEventListener('submit', handlePostFormSubmit);
 
             // Sign Out Button in Header
-            if (signOutButtonHeader) { // Check if element exists
+            if (signOutButtonHeader) {
                 signOutButtonHeader.addEventListener('click', async (e) => {
                     e.preventDefault();
                     try {
