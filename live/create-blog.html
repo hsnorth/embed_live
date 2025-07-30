@@ -251,6 +251,7 @@
             <span class="back-text">Return to Live Blogs</span>
         </div>
 
+        <!-- A2HS Collapsible Section -->
         <div id="a2hsCollapsibleContainer">
             <div id="a2hsToggle">
                 <span>Add page as app on phone</span>
@@ -283,6 +284,7 @@
                     <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
                 </div>
 
+                <!-- New: Live Page Editor option -->
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="isLivePageEditorCheckbox">
@@ -343,6 +345,7 @@
         <p>&copy; 2025 Live Blog</p>
     </footer>
 
+    <!-- Custom Message Box and Confirmation Modal HTML -->
     <div id="messageBox" class="message-box"></div>
     <div id="customConfirmModal" class="custom-modal-overlay">
         <div class="custom-modal-content">
@@ -365,7 +368,7 @@
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.appspot.com",
+            storageBucket: "myliveblogapp-cf9df.appspot.com", // Corrected storageBucket
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
             measurementId: "G-EZN90844XF"
@@ -381,7 +384,7 @@
         let currentBlogName = '';
         let customTabs = [];
         const defaultTab = "Live Reporting";
-        let adminAllPostsCached = []; // Cache for all posts on admin side
+        let adminAllPostsCached = [];
         let adminCurrentPage = 0;
         const adminPostsPerPage = 8;
         let editingPostId = null;
@@ -508,7 +511,7 @@
                         generateEmbedCode();
                         renderCustomTabs();
                         renderPostTabAssignmentCheckboxes([]);
-                        await loadPostsForAdmin(); // Initial load of posts
+                        await loadPostsForAdmin();
                     } else {
                         blogTitleHeader.textContent = 'Blog Not Found';
                         postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
@@ -741,7 +744,6 @@
                         assignedTabs: assignedTabs,
                     };
 
-                    // Handle media deletion/update during edit
                     if (mediaFile) {
                         const oldPostSnap = await getDoc(postDocRef);
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
@@ -770,22 +772,8 @@
                     
                     await updateDoc(postDocRef, updateData);
                     showMessageBox("Post updated successfully!");
-
-                    // Optimistically update cache for edited post
-                    const updatedPostIndex = adminAllPostsCached.findIndex(p => p.id === editingPostId);
-                    if (updatedPostIndex !== -1) {
-                        adminAllPostsCached[updatedPostIndex] = {
-                            id: editingPostId,
-                            timestamp: adminAllPostsCached[updatedPostIndex].timestamp, // Preserve original timestamp for sorting
-                            ...updateData
-                        };
-                        // Re-sort to maintain order if timestamp is not updated (it shouldn't be for edits)
-                        adminAllPostsCached.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
-                    }
-
                 } else {
-                    // Add new post
-                    const newDocRef = await addDoc(postsCollectionRef, {
+                    await addDoc(postsCollectionRef, {
                         blogId: currentBlogId,
                         authorId: currentUser.uid,
                         authorName: authorName,
@@ -796,41 +784,17 @@
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
                         assignedTabs: assignedTabs,
-                        timestamp: serverTimestamp() // Firestore will fill this
+                        timestamp: serverTimestamp()
                     });
                     showMessageBox("Post added successfully!");
-
-                    // Optimistically add new post to cache
-                    // For new posts, we can use a temporary timestamp until Firestore provides the real one on next full load
-                    // Or, more accurately, assume serverTimestamp() will be very close to Date.now()
-                    adminAllPostsCached.unshift({
-                        id: newDocRef.id,
-                        blogId: currentBlogId,
-                        authorId: currentUser.uid,
-                        authorName: authorName,
-                        authorAvatar: postAuthorAvatarUrl,
-                        subtitle: subtitle,
-                        content: content,
-                        reportingFrom: reportingFromValue,
-                        mediaUrl: mediaUrl,
-                        mediaType: mediaType,
-                        assignedTabs: assignedTabs,
-                        timestamp: { toDate: () => new Date(), toMillis: () => Date.now() } // Mock timestamp for immediate display
-                    });
-                    // Ensure the cache is sorted in case of multiple optimistic additions
-                    adminAllPostsCached.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
                 }
 
-                clearPostForm(); // Clear form immediately
+                clearPostForm();
 
-                // Re-render only the current page's posts from the updated cache
-                const startIndex = adminCurrentPage * adminPostsPerPage;
-                const endIndex = startIndex + adminPostsPerPage;
-                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
-                renderAdminPosts(postsToShow, 'postsContainer');
-                updateAdminPaginationControls(adminAllPostsCached.length);
+                adminAllPostsCached = [];
+                adminCurrentPage = 0;
+                await loadPostsForAdmin();
 
-                // Notify embed iframes
                 if (window.parent && window.parent.postMessage) {
                     window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
                 }
@@ -888,27 +852,19 @@
             return Math.floor(seconds) + " seconds ago";
         }
 
-        // --- Load Posts for Admin View (Only for initial full load or explicit refresh) ---
+        // --- Load Posts for Admin View ---
         const loadPostsForAdmin = async () => {
             try {
-                // Always fetch all posts from Firestore to ensure the cache is fresh
-                const postsCollectionRef = collection(db, 'posts');
-                const q = query(
-                    postsCollectionRef,
-                    where('blogId', '==', currentBlogId),
-                    orderBy('timestamp', 'desc')
-                );
-                const querySnapshot = await getDocs(q);
-                adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                // Ensure current page is valid after a full refresh
-                const totalPages = Math.ceil(adminAllPostsCached.length / adminPostsPerPage);
-                if (adminCurrentPage >= totalPages && totalPages > 0) {
-                    adminCurrentPage = totalPages - 1; // Go to last page if current is out of bounds
-                } else if (totalPages === 0) {
-                    adminCurrentPage = 0; // Reset to 0 if no posts
+                if (adminAllPostsCached.length === 0) {
+                    const postsCollectionRef = collection(db, 'posts');
+                    const q = query(
+                        postsCollectionRef,
+                        where('blogId', '==', currentBlogId),
+                        orderBy('timestamp', 'desc')
+                    );
+                    const querySnapshot = await getDocs(q);
+                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 }
-
 
                 const startIndex = adminCurrentPage * adminPostsPerPage;
                 const endIndex = startIndex + adminPostsPerPage;
@@ -1016,7 +972,6 @@
                 }
             });
 
-            // --- Attach Event Listeners for Edit/Delete/Copy ---
             container.querySelectorAll('.edit-post-button').forEach(button => {
                 button.addEventListener('click', async (e) => {
                     const postIdToEdit = e.currentTarget.dataset.postId;
@@ -1100,25 +1055,9 @@
                                     console.warn("Could not delete associated media from storage (might not exist or permission issue):", error.message);
                                 }
                             }
-                            
-                            // Optimistically remove from cache
-                            adminAllPostsCached = adminAllPostsCached.filter(post => post.id !== postIdToDelete);
-                            
-                            // Re-render after optimistic removal
-                            const totalPages = Math.ceil(adminAllPostsCached.length / adminPostsPerPage);
-                            if (adminCurrentPage >= totalPages && totalPages > 0) {
-                                adminCurrentPage = totalPages - 1; // Adjust page if current page becomes empty
-                            } else if (totalPages === 0) {
-                                adminCurrentPage = 0;
-                            }
-
-                            const startIndex = adminCurrentPage * adminPostsPerPage;
-                            const endIndex = startIndex + adminPostsPerPage;
-                            const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
-
-                            renderAdminPosts(postsToShow, 'postsContainer');
-                            updateAdminPaginationControls(adminAllPostsCached.length);
-
+                            adminAllPostsCached = [];
+                            adminCurrentPage = 0;
+                            await loadPostsForAdmin();
                             showMessageBox("Post deleted successfully!");
 
                             if (window.parent && window.parent.postMessage) {
@@ -1148,7 +1087,7 @@
                 prevButton.disabled = adminCurrentPage === 0;
                 prevButton.addEventListener('click', () => {
                     adminCurrentPage--;
-                    loadPostsForAdmin(); // Re-load to ensure correct page is shown
+                    loadPostsForAdmin();
                 });
                 paginationControls.appendChild(prevButton);
 
@@ -1162,7 +1101,7 @@
                     pageNumSpan.addEventListener('click', () => {
                         if (adminCurrentPage !== i) {
                             adminCurrentPage = i;
-                            loadPostsForAdmin(); // Re-load to ensure correct page is shown
+                            loadPostsForAdmin();
                         }
                     });
                     paginationControls.appendChild(pageNumSpan);
@@ -1173,7 +1112,7 @@
                 nextButton.disabled = adminCurrentPage >= totalPages - 1;
                 nextButton.addEventListener('click', () => {
                     adminCurrentPage++;
-                    loadPostsForAdmin(); // Re-load to ensure correct page is shown
+                    loadPostsForAdmin();
                 });
                 paginationControls.appendChild(nextButton);
             }
@@ -1192,6 +1131,7 @@
                         reportingFromInput.value = 'Montreal';
                     }
                 });
+                // Set initial display based on checkbox state on load
                 if (isLivePageEditorCheckbox.checked) {
                     reportingFromGroup.style.display = 'none';
                 } else {
