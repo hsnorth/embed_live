@@ -297,6 +297,10 @@
         const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
         const uploadProgressBar = document.getElementById('uploadProgressBar');
 
+        // Image compression constants
+        const MAX_IMAGE_SIZE_MB = 1; // Target max size for images in MB
+        const MAX_IMAGE_DIMENSION = 1920; // Max width or height for images (e.g., 1920px)
+
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
             messageBox.textContent = message;
@@ -341,6 +345,59 @@
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
             var results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        /**
+         * Compresses an image file (Blob or File) to a target size and dimension.
+         * @param {File | Blob} imageFile - The image file to compress.
+         * @param {number} quality - JPEG compression quality (0 to 1).
+         * @param {number} maxWidthHeight - Maximum width or height for the image.
+         * @returns {Promise<Blob>} A promise that resolves with the compressed image as a Blob.
+         */
+        function compressImage(imageFile, quality = 0.8, maxWidthHeight = MAX_IMAGE_DIMENSION) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Calculate new dimensions to fit within maxWidthHeight while maintaining aspect ratio
+                        if (width > height) {
+                            if (width > maxWidthHeight) {
+                                height *= maxWidthHeight / width;
+                                width = maxWidthHeight;
+                            }
+                        } else {
+                            if (height > maxWidthHeight) {
+                                width *= maxWidthHeight / height;
+                                height = maxWidthHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Convert canvas content to Blob
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error("Canvas to Blob conversion failed."));
+                            }
+                        }, imageFile.type, quality);
+                    };
+                    img.onerror = (error) => reject(error);
+                    img.src = event.target.result;
+                };
+                reader.onerror = (error) => reject(error);
+                reader.readAsDataURL(imageFile);
+            });
         }
 
         // --- Authentication Guard ---
@@ -525,7 +582,7 @@
                 reportingFromValue = location ? `Reporting from ${location}` : '';
             }
 
-            const mediaFile = postMediaInput.files[0];
+            let mediaFile = postMediaInput.files[0]; // This is the original file input
 
             const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
             const assignedTabs = [defaultTab];
@@ -559,6 +616,19 @@
             try {
                 if (mediaFile) {
                     uploadProgressBarContainer.style.display = 'block'; // Show progress bar
+                    uploadProgressBar.style.width = '0%'; // Reset progress bar
+                    uploadProgressBar.textContent = '0%';
+
+                    // If it's an image, attempt to compress it
+                    if (mediaFile.type.startsWith('image/')) {
+                        // Only compress if file size is above a certain threshold (e.g., 0.5 MB)
+                        if (mediaFile.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+                            showMessageBox("Compressing image...", "success");
+                            mediaFile = await compressImage(mediaFile, 0.7, MAX_IMAGE_DIMENSION); // Compress to 70% quality, max dimension
+                            showMessageBox("Image compressed. Uploading...", "success");
+                        }
+                    }
+                    
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, mediaFile);
                     
@@ -575,12 +645,13 @@
                             throw error; // Re-throw to be caught by outer catch
                         },
                         async () => {
-                            mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                            mediaType = mediaFile.type;
-                            uploadProgressBarContainer.style.display = 'none'; // Hide progress bar on completion
+                            // This 'complete' callback is just for the uploadTask.on,
+                            // the actual mediaUrl and mediaType assignment happens after await uploadTask.
                         }
                     );
                     await uploadTask; // Wait for the upload to complete
+                    mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                    mediaType = mediaFile.type; // Use the type of the (potentially compressed) mediaFile
                 }
 
                 const postsCollectionRef = collection(db, 'posts');
@@ -605,7 +676,7 @@
                         assignedTabs: assignedTabs,
                     };
 
-                    if (mediaFile) {
+                    if (mediaFile) { // If a new file was selected for upload/update
                         const oldPostSnap = await getDoc(postDocRef);
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
                             try {
@@ -617,8 +688,10 @@
                         }
                         updateData.mediaUrl = mediaUrl;
                         updateData.mediaType = mediaType;
-                    } else {
+                    } else { // No new file selected, check if existing media should be removed
                         const oldPostSnap = await getDoc(postDocRef);
+                        // This logic assumes if postMediaInput.value is empty AND there was existing media, it should be removed.
+                        // For a more explicit "remove media" feature, you'd add a checkbox or button.
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl && !postMediaInput.value) {
                             try {
                                 const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
