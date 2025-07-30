@@ -140,65 +140,98 @@
             padding-bottom: 10px; /* Space below the back button */
             border-bottom: 1px solid #eee; /* Separator line */
             margin-bottom: 15px; /* Space below the separator */
-            display: flex; /* Use flex to align the arrow */
+            display: flex; /* Use flex to align the arrow and text */
             align-items: center; /* Center the arrow vertically */
+            gap: 8px; /* Space between arrow and text */
         }
 
-        /* A2HS Modal Styles */
-        #a2hsPromptModal {
-            z-index: 2001; /* Higher than other modals */
-        }
-        #a2hsPromptModal .custom-modal-content {
-            padding: 30px;
-            max-width: 350px;
-        }
-        #a2hsPromptModal h3 {
-            font-size: 1.4em;
+        /* A2HS Collapsible Section Styles */
+        #a2hsCollapsibleContainer {
+            display: none; /* Hidden by default on large screens */
+            background-color: #f8f8f8;
+            border: 1px solid #eee;
+            border-radius: 8px;
             margin-bottom: 15px;
-            color: #e74c3c;
+            overflow: hidden; /* Ensures content is clipped when collapsed */
         }
-        #a2hsPromptModal ol {
+
+        @media (max-width: 768px) {
+            #a2hsCollapsibleContainer {
+                display: block; /* Show on small screens */
+            }
+        }
+
+        #a2hsToggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+        }
+
+        #a2hsToggle i {
+            transition: transform 0.3s ease;
+        }
+
+        #a2hsToggle.active i {
+            transform: rotate(180deg); /* Rotate arrow when active */
+        }
+
+        #a2hsContent {
+            padding: 0 15px; /* Initial padding, will be adjusted by JS */
+            max-height: 0; /* Start collapsed */
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            background-color: #fff;
+            border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+        }
+
+        #a2hsContent.show {
+            max-height: 200px; /* Adjust as needed to fit content */
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        #a2hsContent ol {
             list-style: none;
             padding: 0;
-            text-align: left;
-            margin-bottom: 20px;
+            margin: 0;
         }
-        #a2hsPromptModal ol li {
+
+        #a2hsContent ol li {
             margin-bottom: 10px;
-            font-size: 1em;
+            font-size: 0.95em;
             color: #555;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-        #a2hsPromptModal ol li .step-number {
+
+        #a2hsContent ol li:last-child {
+            margin-bottom: 0;
+        }
+
+        #a2hsContent ol li .step-number {
             background-color: #e74c3c;
             color: white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.8em;
             flex-shrink: 0;
         }
-        #a2hsPromptModal .share-icon-placeholder {
-            font-size: 1.2em;
+        #a2hsContent .share-icon-placeholder {
+            font-size: 1.1em;
             color: #34495e;
-        }
-        #a2hsPromptModal .custom-modal-buttons {
-            justify-content: center;
-        }
-        #a2hsPromptModal .confirm-got-it {
-            background-color: #34495e;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-        }
-        #a2hsPromptModal .confirm-got-it:hover {
-            background-color: #2c3e50;
         }
     </style>
 </head>
@@ -216,8 +249,23 @@
         <div class="main-back-button-container">
             <a href="view-blogs.html" class="back-arrow" aria-label="Back to View Blogs">
                 <i class="fas fa-arrow-left"></i>
-                <span class="back-text">Return to Live Blogs</span>
             </a>
+            <span class="back-text">Return to Live Blogs</span>
+        </div>
+
+        <!-- A2HS Collapsible Section -->
+        <div id="a2hsCollapsibleContainer">
+            <div id="a2hsToggle">
+                <span>Add page as app on phone</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="a2hsContent">
+                <ol>
+                    <li><span class="step-number">1</span> Click on Share button <i class="fas fa-share-square share-icon-placeholder"></i></li>
+                    <li><span class="step-number">2</span> Scroll down and click: "Add to home screen"</li>
+                    <li><span class="step-number">3</span> Write: "Gazette Live" and press "Add".</li>
+                </ol>
+            </div>
         </div>
 
         <section class="new-post-form">
@@ -311,21 +359,6 @@
         </div>
     </div>
 
-    <!-- A2HS Prompt Modal -->
-    <div id="a2hsPromptModal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <h3>Add as an app to your phone!</h3>
-            <ol>
-                <li><span class="step-number">1</span> Click the Share button <i class="fas fa-share-square share-icon-placeholder"></i></li>
-                <li><span class="step-number">2</span> Scroll down and press "Add to Home Screen."</li>
-                <li><span class="step-number">3</span> Label it "Gazette Live"</li>
-            </ol>
-            <div class="custom-modal-buttons">
-                <button id="a2hsGotItButton" class="confirm-got-it">Got It!</button>
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -391,10 +424,10 @@
         const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
         const uploadProgressBar = document.getElementById('uploadProgressBar');
 
-        // A2HS elements
-        const a2hsPromptModal = document.getElementById('a2hsPromptModal');
-        const a2hsGotItButton = document.getElementById('a2hsGotItButton');
-        let deferredPrompt; // To store the beforeinstallprompt event
+        // A2HS elements (for the new collapsible section)
+        const a2hsToggle = document.getElementById('a2hsToggle');
+        const a2hsContent = document.getElementById('a2hsContent');
+
 
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
@@ -1087,36 +1120,6 @@
             }
         };
 
-        // --- A2HS Prompt Logic ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
-            e.preventDefault();
-            // Stash the event so it can be triggered later.
-            deferredPrompt = e;
-            console.log('beforeinstallprompt event fired.');
-
-            // Only show our custom prompt if on a small screen and not already installed/dismissed
-            // Check for viewport width and if it's running in standalone mode (already installed)
-            if (window.innerWidth <= 768 && !localStorage.getItem('a2hs_dismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
-                // Show the custom A2HS modal after a short delay
-                setTimeout(() => {
-                    a2hsPromptModal.classList.add('show');
-                }, 1000); // Delay to not immediately pop up on page load
-            }
-        });
-
-        a2hsGotItButton.addEventListener('click', () => {
-            a2hsPromptModal.classList.remove('show');
-            localStorage.setItem('a2hs_dismissed', 'true'); // Store that user has seen/dismissed it
-        });
-
-        // Optional: Listen for appinstalled event
-        window.addEventListener('appinstalled', () => {
-            console.log('PWA was installed');
-            a2hsPromptModal.classList.remove('show'); // Hide prompt if user installs
-            localStorage.setItem('a2hs_dismissed', 'true'); // Mark as dismissed/installed
-        });
-
         // --- Event Listeners (Wrapped in DOMContentLoaded) ---
         document.addEventListener('DOMContentLoaded', () => {
             // Live Page Editor Checkbox Logic
@@ -1171,6 +1174,14 @@
                         console.error("Error signing out:", error);
                         showMessageBox("Could not sign out. Please try again.", "error");
                     }
+                });
+            }
+
+            // A2HS Collapsible Toggle
+            if (a2hsToggle && a2hsContent) {
+                a2hsToggle.addEventListener('click', () => {
+                    a2hsToggle.classList.toggle('active');
+                    a2hsContent.classList.toggle('show');
                 });
             }
         });
