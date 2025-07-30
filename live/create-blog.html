@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,123 +16,10 @@
     <meta name="theme-color" content="#e74c3c">
 
     <style>
-        /* Styles for the custom message box and confirmation modal */
-        .message-box {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #4CAF50; /* Green for success */
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: none; /* Hidden by default */
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            text-align: center;
-        }
-        .message-box.show {
-            display: block;
-            opacity: 1;
-        }
-        .message-box.error {
-            background-color: #dc3545; /* Red for error */
-        }
-
-        .custom-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.2s ease-in-out;
-            pointer-events: none; /* Allow clicks through when hidden */
-        }
-        .custom-modal-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .custom-modal-content {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            transform: translateY(-20px);
-            transition: transform 0.2s ease-in-out;
-        }
-        .custom-modal-overlay.show .custom-modal-content {
-            transform: translateY(0);
-        }
-        .custom-modal-content p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            color: #333;
-        }
-        .custom-modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .custom-modal-buttons button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-        }
-        .custom-modal-buttons .confirm-yes {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-        }
-        .custom-modal-buttons .confirm-yes:hover {
-            background-color: #c0392b;
-        }
-        .custom-modal-buttons .confirm-no {
-            background-color: #ccc;
-            color: #333;
-            border: 1px solid #bbb;
-        }
-        .custom-modal-buttons .confirm-no:hover {
-            background-color: #bbb;
-        }
-
         /* Ensure .reportingFromGroup is initially visible if checkbox is not checked */
         #reportingFromGroup {
             display: flex; /* Or block, depending on your desired layout */
             flex-direction: column; /* Keep consistent with form-group */
-        }
-
-        /* Styles for the progress bar */
-        .progress-container {
-            width: 100%;
-            background-color: #f3f4f6;
-            border-radius: 5px;
-            margin-top: 10px;
-            overflow: hidden;
-            display: none; /* Hidden by default */
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 20px;
-            background-color: #28a745; /* Green */
-            text-align: center;
-            color: white;
-            line-height: 20px;
-            font-size: 0.8em;
-            transition: width 0.3s ease-in-out;
         }
 
         /* New style for the back button container in main */
@@ -306,9 +193,6 @@
                 <div class="form-group">
                     <label for="postMediaInput">Image or Video:</label>
                     <input type="file" id="postMediaInput" accept="image/*,video/*">
-                    <div id="uploadProgressBarContainer" class="progress-container">
-                        <div id="uploadProgressBar" class="progress-bar">0%</div>
-                    </div>
                 </div>
                 <button type="submit" class="submit-button">Post Update</button>
             </form>
@@ -344,18 +228,6 @@
     <footer>
         <p>&copy; 2025 Live Blog</p>
     </footer>
-
-    <!-- Custom Message Box and Confirmation Modal HTML -->
-    <div id="messageBox" class="message-box"></div>
-    <div id="customConfirmModal" class="custom-modal-overlay">
-        <div class="custom-modal-content">
-            <p id="confirmMessage"></p>
-            <div class="custom-modal-buttons">
-                <button id="confirmYes" class="confirm-yes">Yes</button>
-                <button id="confirmNo" class="confirm-no">No</button>
-            </div>
-        </div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -411,59 +283,20 @@
         const paginationControls = document.getElementById('paginationControls');
         const signOutButtonHeader = document.getElementById('signOutButtonHeader');
 
-        // Custom Message Box and Modal elements
-        const messageBox = document.getElementById('messageBox');
-        const customConfirmModal = document.getElementById('customConfirmModal');
-        const confirmMessage = document.getElementById('confirmMessage');
-        const confirmYesButton = document.getElementById('confirmYes');
-        const confirmNoButton = document.getElementById('confirmNo');
-
-        // Progress bar elements
-        const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
-        const uploadProgressBar = document.getElementById('uploadProgressBar');
-
         // A2HS elements (for the new collapsible section)
         const a2hsToggle = document.getElementById('a2hsToggle');
         const a2hsContent = document.getElementById('a2hsContent');
 
 
         // --- Utility Functions ---
+        // Reverted to standard alert for simplicity as per user's request to revert
         function showMessageBox(message, type = 'success') {
-            messageBox.textContent = message;
-            messageBox.className = 'message-box show';
-            if (type === 'error') {
-                messageBox.classList.add('error');
-            } else {
-                messageBox.classList.remove('error');
-            }
-
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, 3000);
+            alert(message);
         }
 
+        // Reverted to standard confirm for simplicity as per user's request to revert
         function customConfirm(message) {
-            return new Promise((resolve) => {
-                confirmMessage.textContent = message;
-                customConfirmModal.classList.add('show');
-
-                const handleYes = () => {
-                    customConfirmModal.classList.remove('show');
-                    confirmYesButton.removeEventListener('click', handleYes);
-                    confirmNoButton.removeEventListener('click', handleNo);
-                    resolve(true);
-                };
-
-                const handleNo = () => {
-                    customConfirmModal.classList.remove('show');
-                    confirmYesButton.removeEventListener('click', handleYes);
-                    confirmNoButton.removeEventListener('click', handleNo);
-                    resolve(false);
-                };
-
-                confirmYesButton.addEventListener('click', handleYes);
-                confirmNoButton.addEventListener('click', handleNo);
-            });
+            return Promise.resolve(confirm(message));
         }
 
         function getUrlParameter(name) {
@@ -665,25 +498,21 @@
             });
 
             if (!authorName || !content) {
-                showMessageBox("Author Name and Post Content are required!", "error");
+                alert("Author Name and Post Content are required!");
                 return;
             }
             if (assignedTabs.length === 0) {
-                showMessageBox("Please assign the post to at least one tab (Live Reporting is always included).", "error");
+                alert("Please assign the post to at least one tab (Live Reporting is always included).");
                 return;
             }
 
             if (!currentBlogId) {
-                showMessageBox("No blog selected. Please go to Dashboard to select a blog.", "error");
+                alert("No blog selected. Please go to Dashboard to select a blog.");
                 return;
             }
 
             submitButton.disabled = true;
             submitButton.textContent = "Posting...";
-            uploadProgressBarContainer.style.display = 'none'; // Hide if no file or initial state
-            uploadProgressBar.style.width = '0%';
-            uploadProgressBar.textContent = '0%';
-
 
             let mediaUrl = '';
             let mediaType = '';
@@ -692,31 +521,6 @@
                 if (mediaFile) {
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, mediaFile);
-                    
-                    uploadProgressBarContainer.style.display = 'block'; // Show progress bar container
-
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            uploadProgressBar.style.width = progress + '%';
-                            uploadProgressBar.textContent = Math.round(progress) + '%';
-                        }, 
-                        (error) => {
-                            console.error("Upload failed:", error);
-                            showMessageBox(`Upload failed: ${error.message}`, "error");
-                            uploadProgressBarContainer.style.display = 'none';
-                            submitButton.disabled = false; // Re-enable button on upload error
-                            submitButton.textContent = "Post Update";
-                            throw error; // Re-throw to stop further processing
-                        }, 
-                        async () => {
-                            // This block is for when the upload is complete.
-                            // The mediaUrl and mediaType are set below after await uploadTask.
-                            // This callback is mostly for UI updates specific to the upload completion.
-                            uploadProgressBarContainer.style.display = 'none'; // Hide progress bar on completion
-                        }
-                    );
-
                     await uploadTask; // Wait for the upload to complete
                     mediaUrl = await getDownloadURL(uploadTask.snapshot.ref); // Ensure mediaUrl is set after upload
                     mediaType = mediaFile.type; // Ensure mediaType is set after upload
@@ -771,7 +575,7 @@
                     }
                     
                     await updateDoc(postDocRef, updateData);
-                    showMessageBox("Post updated successfully!");
+                    alert("Post updated successfully!");
                 } else {
                     await addDoc(postsCollectionRef, {
                         blogId: currentBlogId,
@@ -786,7 +590,7 @@
                         assignedTabs: assignedTabs,
                         timestamp: serverTimestamp()
                     });
-                    showMessageBox("Post added successfully!");
+                    alert("Post added successfully!");
                 }
 
                 clearPostForm();
@@ -801,13 +605,10 @@
 
             } catch (error) {
                 console.error("Error saving post:", error);
-                showMessageBox("Failed to save post. Please try again. " + error.message, "error");
+                alert("Failed to save post. Please try again. " + error.message);
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = "Post Update";
-                uploadProgressBarContainer.style.display = 'none'; // Ensure hidden on final
-                uploadProgressBar.style.width = '0%';
-                uploadProgressBar.textContent = '0%';
             }
         };
 
@@ -1007,7 +808,7 @@
                     const blogId = currentBlogId;
 
                     if (!blogId || !postId) {
-                        showMessageBox("Could not generate link for this post.", "error");
+                        alert("Could not generate link for this post.");
                         return;
                     }
 
@@ -1029,10 +830,10 @@
                             button.innerHTML = originalContent;
                             button.classList.remove('copied');
                         }, 2000);
-                        showMessageBox("Link copied to clipboard!");
+                        alert("Link copied to clipboard!");
                     } catch (err) {
                         console.error('Failed to copy link: ', err);
-                        showMessageBox('Failed to copy link. Please copy manually: ' + deepLink, "error");
+                        alert('Failed to copy link. Please copy manually: ' + deepLink);
                     }
                 });
             });
@@ -1058,7 +859,7 @@
                             adminAllPostsCached = [];
                             adminCurrentPage = 0;
                             await loadPostsForAdmin();
-                            showMessageBox("Post deleted successfully!");
+                            alert("Post deleted successfully!");
 
                             if (window.parent && window.parent.postMessage) {
                                 window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
@@ -1066,7 +867,7 @@
 
                         } catch (error) {
                             console.error("Error deleting post:", error);
-                            showMessageBox("Failed to delete post. Please try again: " + error.message, "error");
+                            alert("Failed to delete post. Please try again: " + error.message);
                         }
                     }
                 });
@@ -1155,7 +956,7 @@
                     embedCodeInput.select();
                     embedCodeInput.setSelectionRange(0, 0); // Select nothing, just focus
                     document.execCommand("copy");
-                    showMessageBox("Embed code copied to clipboard!");
+                    alert("Embed code copied to clipboard!");
                 });
             }
 
@@ -1171,7 +972,7 @@
                         window.location.href = 'index.html';
                     } catch (error) {
                         console.error("Error signing out:", error);
-                        showMessageBox("Could not sign out. Please try again.", "error");
+                        alert("Could not sign out. Please try again.");
                     }
                 });
             }
