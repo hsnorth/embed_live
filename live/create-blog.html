@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Web App Manifest for Add to Home Screen -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Apple Touch Icon for iOS -->
+    <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
+    <!-- Theme color for browser UI (e.g., Android Chrome address bar) -->
+    <meta name="theme-color" content="#e74c3c">
+
     <style>
         /* Styles for the custom message box and confirmation modal */
         .message-box {
@@ -126,6 +134,72 @@
             font-size: 0.8em;
             transition: width 0.3s ease-in-out;
         }
+
+        /* New style for the back button container in main */
+        .main-back-button-container {
+            padding-bottom: 10px; /* Space below the back button */
+            border-bottom: 1px solid #eee; /* Separator line */
+            margin-bottom: 15px; /* Space below the separator */
+            display: flex; /* Use flex to align the arrow */
+            align-items: center; /* Center the arrow vertically */
+        }
+
+        /* A2HS Modal Styles */
+        #a2hsPromptModal {
+            z-index: 2001; /* Higher than other modals */
+        }
+        #a2hsPromptModal .custom-modal-content {
+            padding: 30px;
+            max-width: 350px;
+        }
+        #a2hsPromptModal h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+        #a2hsPromptModal ol {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        #a2hsPromptModal ol li {
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #a2hsPromptModal ol li .step-number {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+        #a2hsPromptModal .share-icon-placeholder {
+            font-size: 1.2em;
+            color: #34495e;
+        }
+        #a2hsPromptModal .custom-modal-buttons {
+            justify-content: center;
+        }
+        #a2hsPromptModal .confirm-got-it {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+        }
+        #a2hsPromptModal .confirm-got-it:hover {
+            background-color: #2c3e50;
+        }
     </style>
 </head>
 <body>
@@ -144,6 +218,7 @@
                 <i class="fas fa-arrow-left"></i>
             </a>
         </div>
+
         <section class="new-post-form">
             <h2>Post an Update</h2>
             <form id="postForm">
@@ -235,6 +310,21 @@
         </div>
     </div>
 
+    <!-- A2HS Prompt Modal -->
+    <div id="a2hsPromptModal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <h3>Add as an app to your phone!</h3>
+            <ol>
+                <li><span class="step-number">1</span> Click the Share button <i class="fas fa-share-square share-icon-placeholder"></i></li>
+                <li><span class="step-number">2</span> Scroll down and press "Add to Home Screen."</li>
+                <li><span class="step-number">3</span> Label it "Gazette Live"</li>
+            </ol>
+            <div class="custom-modal-buttons">
+                <button id="a2hsGotItButton" class="confirm-got-it">Got It!</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -299,6 +389,11 @@
         // Progress bar elements
         const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
         const uploadProgressBar = document.getElementById('uploadProgressBar');
+
+        // A2HS elements
+        const a2hsPromptModal = document.getElementById('a2hsPromptModal');
+        const a2hsGotItButton = document.getElementById('a2hsGotItButton');
+        let deferredPrompt; // To store the beforeinstallprompt event
 
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
@@ -991,6 +1086,36 @@
             }
         };
 
+        // --- A2HS Prompt Logic ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            console.log('beforeinstallprompt event fired.');
+
+            // Only show our custom prompt if on a small screen and not already installed/dismissed
+            // Check for viewport width and if it's running in standalone mode (already installed)
+            if (window.innerWidth <= 768 && !localStorage.getItem('a2hs_dismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
+                // Show the custom A2HS modal after a short delay
+                setTimeout(() => {
+                    a2hsPromptModal.classList.add('show');
+                }, 1000); // Delay to not immediately pop up on page load
+            }
+        });
+
+        a2hsGotItButton.addEventListener('click', () => {
+            a2hsPromptModal.classList.remove('show');
+            localStorage.setItem('a2hs_dismissed', 'true'); // Store that user has seen/dismissed it
+        });
+
+        // Optional: Listen for appinstalled event
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            a2hsPromptModal.classList.remove('show'); // Hide prompt if user installs
+            localStorage.setItem('a2hs_dismissed', 'true'); // Mark as dismissed/installed
+        });
+
         // --- Event Listeners (Wrapped in DOMContentLoaded) ---
         document.addEventListener('DOMContentLoaded', () => {
             // Live Page Editor Checkbox Logic
@@ -1025,7 +1150,7 @@
             if (copyEmbedCodeButton && embedCodeInput) {
                 copyEmbedCodeButton.addEventListener('click', () => {
                     embedCodeInput.select();
-                    embedCodeInput.setSelectionRange(0, 99999);
+                    embedCodeInput.setSelectionRange(0, 0); // Select nothing, just focus
                     document.execCommand("copy");
                     showMessageBox("Embed code copied to clipboard!");
                 });
