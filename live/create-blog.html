@@ -105,6 +105,27 @@
             display: flex; /* Or block, depending on your desired layout */
             flex-direction: column; /* Keep consistent with form-group */
         }
+
+        /* Styles for the progress bar */
+        .progress-container {
+            width: 100%;
+            background-color: #f3f4f6;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none; /* Hidden by default */
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #28a745; /* Green */
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            font-size: 0.8em;
+            transition: width 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -160,6 +181,9 @@
                 <div class="form-group">
                     <label for="postMediaInput">Image or Video:</label>
                     <input type="file" id="postMediaInput" accept="image/*,video/*">
+                    <div id="uploadProgressBarContainer" class="progress-container">
+                        <div id="uploadProgressBar" class="progress-bar">0%</div>
+                    </div>
                 </div>
                 <button type="submit" class="submit-button">Post Update</button>
             </form>
@@ -268,6 +292,10 @@
         const confirmMessage = document.getElementById('confirmMessage');
         const confirmYesButton = document.getElementById('confirmYes');
         const confirmNoButton = document.getElementById('confirmNo');
+
+        // Progress bar elements
+        const uploadProgressBarContainer = document.getElementById('uploadProgressBarContainer');
+        const uploadProgressBar = document.getElementById('uploadProgressBar');
 
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
@@ -530,11 +558,29 @@
 
             try {
                 if (mediaFile) {
+                    uploadProgressBarContainer.style.display = 'block'; // Show progress bar
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
                     const uploadTask = uploadBytesResumable(storageRef, mediaFile);
-                    await uploadTask;
-                    mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                    mediaType = mediaFile.type;
+                    
+                    uploadTask.on('state_changed', 
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            uploadProgressBar.style.width = progress + '%';
+                            uploadProgressBar.textContent = Math.round(progress) + '%';
+                        },
+                        (error) => {
+                            console.error("Media upload failed:", error);
+                            showMessageBox("Media upload failed!", "error");
+                            uploadProgressBarContainer.style.display = 'none'; // Hide progress bar on error
+                            throw error; // Re-throw to be caught by outer catch
+                        },
+                        async () => {
+                            mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            mediaType = mediaFile.type;
+                            uploadProgressBarContainer.style.display = 'none'; // Hide progress bar on completion
+                        }
+                    );
+                    await uploadTask; // Wait for the upload to complete
                 }
 
                 const postsCollectionRef = collection(db, 'posts');
@@ -572,8 +618,6 @@
                         updateData.mediaUrl = mediaUrl;
                         updateData.mediaType = mediaType;
                     } else {
-                        // If no new media file, and there was existing media, check if it should be removed.
-                        // This assumes if postMediaInput.value is empty AND there was existing media, it should be removed.
                         const oldPostSnap = await getDoc(postDocRef);
                         if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl && !postMediaInput.value) {
                             try {
@@ -622,6 +666,9 @@
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = "Post Update";
+                uploadProgressBarContainer.style.display = 'none'; // Ensure progress bar is hidden
+                uploadProgressBar.style.width = '0%'; // Reset progress bar
+                uploadProgressBar.textContent = '0%';
             }
         };
 
