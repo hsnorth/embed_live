@@ -6,11 +6,8 @@
     <title>Create/Manage Live Blog</title>
     <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-        <!-- Web App Manifest for Add to Home Screen -->
-    <link rel="manifest" href="/manifest.json">
-    <!-- Apple Touch Icon for iOS -->
+        <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
-    <!-- Theme color for browser UI (e.g., Android Chrome address bar) -->
     <meta name="theme-color" content="#e74c3c">
 
     <style>
@@ -118,11 +115,42 @@
             font-size: 1.1em;
             color: #34495e;
         }
+
+        /* Notification Message Styles */
+        .notification-message {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0; /* Start hidden */
+            transform: translateY(-20px); /* Start slightly above */
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification-message.success {
+            background-color: #e6ffe6; /* Light green */
+            color: #28a745; /* Dark green */
+            border: 1px solid #28a745;
+        }
+
+        .notification-message.error {
+            background-color: #ffe6e6; /* Light red */
+            color: #dc3545; /* Dark red */
+            border: 1px solid #dc3545;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1 id="blogTitleHeader">Loading Blog...</h1>
+        <button id="signOutButtonHeader" class="sign-out-button">Sign Out</button>
     </header>
 
     <main>
@@ -133,7 +161,8 @@
             <span class="back-text">Return to Live Blogs</span>
         </div>
 
-        <!-- A2HS Collapsible Section -->
+        <div id="notificationMessage" class="notification-message" style="display: none;"></div>
+
         <div id="a2hsCollapsibleContainer">
             <div id="a2hsToggle">
                 <span>Add page as app on phone</span>
@@ -165,7 +194,6 @@
                     <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
                 </div>
 
-                <!-- New: Live Page Editor option -->
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="isLivePageEditorCheckbox">
@@ -274,6 +302,23 @@
         const addTabButton = document.getElementById('addTabButton');
         const customTabList = document.getElementById('customTabList');
         const postTabAssignmentDiv = document.getElementById('postTabAssignment');
+        const notificationMessage = document.getElementById('notificationMessage'); //
+
+
+        // --- Notification Function ---
+        const showNotification = (message, type) => {
+            notificationMessage.textContent = message;
+            notificationMessage.className = 'notification-message show ' + type; // Apply base, show, and type classes
+            notificationMessage.style.display = 'block'; // Make sure it's visible
+
+            setTimeout(() => {
+                notificationMessage.classList.remove('show');
+                // Give time for transition before hiding display
+                setTimeout(() => {
+                    notificationMessage.style.display = 'none';
+                }, 300); // Corresponds to transition duration
+            }, 4000); // Message visible for 4 seconds
+        };
 
 
         // --- Authentication Guard ---
@@ -367,7 +412,7 @@
         const addCustomTab = async () => {
             const newTabName = newTabNameInput.value.trim();
             if (!currentBlogId) {
-                alert("No blog selected. Cannot add tab.");
+                showNotification("No blog selected. Cannot add tab.", "error");
                 return;
             }
             if (newTabName && !customTabs.includes(newTabName) && newTabName !== defaultTab) {
@@ -378,24 +423,24 @@
                     renderCustomTabs();
                 } catch (error) {
                     console.error("Error adding custom tab:", error);
-                    alert("Failed to add tab. Please try again. Error: " + error.message);
+                    showNotification("Failed to add tab. Please try again. Error: " + error.message, "error");
                     // Revert local changes if Firestore update fails
                     customTabs = customTabs.filter(tab => tab !== newTabName);
                 }
             } else if (newTabName === defaultTab) {
-                alert(`"${defaultTab}" is a default tab and cannot be added as a custom tab.`);
+                showNotification(`"${defaultTab}" is a default tab and cannot be added as a custom tab.`, "error");
             } else if (customTabs.includes(newTabName)) {
-                alert(`Tab "${newTabName}" already exists.`);
+                showNotification(`Tab "${newTabName}" already exists.`, "error");
             }
         };
 
         const deleteCustomTab = async (tabName) => {
             if (!currentBlogId) {
-                alert("No blog selected. Cannot delete tab.");
+                showNotification("No blog selected. Cannot delete tab.", "error");
                 return;
             }
             if (tabName === defaultTab) {
-                alert(`"${defaultTab}" is a default tab and cannot be deleted.`);
+                showNotification(`"${defaultTab}" is a default tab and cannot be deleted.`, "error");
                 return;
             }
             if (confirm(`Are you sure you want to delete the tab "${tabName}"? Posts assigned only to this tab might become unassigned.`)) {
@@ -409,7 +454,7 @@
                     // but it won't be displayed as an option.
                 } catch (error) {
                     console.error("Error deleting custom tab:", error);
-                    alert("Failed to delete tab. Please try again. Error: " + error.message);
+                    showNotification("Failed to delete tab. Please try again. Error: " + error.message, "error");
                     // Revert local changes if Firestore update fails
                     customTabs = originalCustomTabs;
                     renderCustomTabs(); // Re-render to show original state
@@ -480,7 +525,7 @@
             embedCodeInput.select();
             embedCodeInput.setSelectionRange(0, 99999); // For mobile devices
             document.execCommand("copy");
-            alert("Embed code copied to clipboard!");
+            showNotification("Embed code copied to clipboard!", "success");
         });
 
         // --- Post Form Submission ---
@@ -510,16 +555,16 @@
             });
 
             if (!authorName || !content) {
-                alert("Author Name and Post Content are required!");
+                showNotification("Author Name and Post Content are required!", "error");
                 return;
             }
             if (assignedTabs.length === 0) {
-                alert("Please assign the post to at least one tab (Live Reporting is always included).");
+                showNotification("Please assign the post to at least one tab (Live Reporting is always included).", "error");
                 return;
             }
 
             if (!currentBlogId) {
-                alert("No blog selected. Please go to Dashboard to select a blog.");
+                showNotification("No blog selected. Please go to Dashboard to select a blog.", "error");
                 return;
             }
 
@@ -580,7 +625,7 @@
                     // For now, if no new media is selected, existing media will be kept.
 
                     await updateDoc(postDocRef, updateData);
-                    alert("Post updated successfully!");
+                    showNotification("Post updated successfully!", "success");
                     editingPostId = null;
                     submitButton.textContent = "Post Update";
                 } else {
@@ -597,7 +642,7 @@
                         assignedTabs: assignedTabs,
                         timestamp: serverTimestamp()
                     });
-                    alert("Post added successfully!");
+                    showNotification("Post added successfully!", "success");
                 }
 
                 postContentInput.value = '';
@@ -622,7 +667,7 @@
 
             } catch (error) {
                 console.error("Error saving post:", error);
-                alert("Failed to save post. Please try again. " + error.message);
+                showNotification("Failed to save post. Please try again. " + error.message, "error");
             } finally {
                 submitButton.disabled = false;
             }
@@ -817,7 +862,7 @@
                     const blogId = currentBlogId;
 
                     if (!blogId || !postId) {
-                        alert("Could not generate link for this post.");
+                        showNotification("Could not generate link for this post.", "error");
                         return;
                     }
 
@@ -835,7 +880,7 @@
                         }, 2000);
                     } catch (err) {
                         console.error('Failed to copy link: ', err);
-                        alert('Failed to copy link. Please copy manually: ' + deepLink);
+                        showNotification('Failed to copy link. Please copy manually: ' + deepLink, "error");
                     }
                 });
             });
@@ -869,7 +914,7 @@
 
                         } catch (error) {
                             console.error("Error deleting post:", error);
-                            alert("Failed to delete post. Please try again: " + error.message);
+                            showNotification("Failed to delete post. Please try again: " + error.message, "error");
                         }
                     }
                 });
@@ -930,7 +975,7 @@
                 window.location.href = 'index.html';
             } catch (error) {
                 console.error("Error signing out:", error);
-                alert("Could not sign out. Please try again.");
+                showNotification("Could not sign out. Please try again.", "error");
             }
         });
     </script>
