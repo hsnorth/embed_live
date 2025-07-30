@@ -329,15 +329,15 @@
         }
 
         /* Media query for larger screens: apply max-height to images and videos */
-        @media (min-width: 768px) {
+        @media (min-width: 600px) {
             .post-media {
-                max-height: 400px; /* Example max height for images */
+                max-height: 500px; /* Example max height for images */
                 width: auto; /* Allow width to adjust to maintain aspect ratio */
                 object-fit: contain; /* Ensure the entire image is visible within the max-height, preventing cropping */
             }
 
             .post-media.post-video {
-                max-height: 400px; /* Example max height for videos */
+                max-height: 500px; /* Example max height for videos */
                 width: auto; /* Allow width to adjust to maintain aspect ratio */
                 object-fit: contain; /* Ensure the entire video is visible within the max-height, preventing cropping */
             }
