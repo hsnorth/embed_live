@@ -298,8 +298,8 @@
         const uploadProgressBar = document.getElementById('uploadProgressBar');
 
         // Image compression constants
-        const MAX_IMAGE_SIZE_MB = 1; // Target max size for images in MB
-        const MAX_IMAGE_DIMENSION = 1920; // Max width or height for images (e.g., 1920px)
+        const MAX_IMAGE_SIZE_MB = 0.8; // Target max size for images in MB (e.g., 800KB)
+        const MAX_IMAGE_DIMENSION = 1600; // Max width or height for images (e.g., 1600px)
 
         // --- Utility Functions ---
         function showMessageBox(message, type = 'success') {
@@ -608,7 +608,7 @@
 
             submitButton.disabled = true;
             submitButton.textContent = "Posting...";
-            showMessageBox("Posting...", "success");
+            showMessageBox("Starting post process...", "success"); // Initial general message
 
             let mediaUrl = '';
             let mediaType = '';
@@ -621,12 +621,24 @@
 
                     // If it's an image, attempt to compress it
                     if (mediaFile.type.startsWith('image/')) {
-                        // Only compress if file size is above a certain threshold (e.g., 0.5 MB)
+                        // Only compress if file size is above a certain threshold
                         if (mediaFile.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
-                            showMessageBox("Compressing image...", "success");
-                            mediaFile = await compressImage(mediaFile, 0.7, MAX_IMAGE_DIMENSION); // Compress to 70% quality, max dimension
-                            showMessageBox("Image compressed. Uploading...", "success");
+                            showMessageBox("Image too large. Compressing...", "success");
+                            try {
+                                mediaFile = await compressImage(mediaFile, 0.7, MAX_IMAGE_DIMENSION); // Compress to 70% quality, max dimension
+                                showMessageBox("Compression complete. Uploading...", "success");
+                            } catch (compressionError) {
+                                console.error("Image compression failed:", compressionError);
+                                showMessageBox("Image compression failed. Uploading original file...", "error");
+                                // Continue with original file if compression fails
+                            }
+                        } else {
+                            showMessageBox("Image size OK. Uploading...", "success");
                         }
+                    } else if (mediaFile.type.startsWith('video/')) {
+                        showMessageBox("Uploading video...", "success");
+                        // No client-side video compression implemented here.
+                        // For videos, the original file will be uploaded.
                     }
                     
                     const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
@@ -637,6 +649,8 @@
                             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                             uploadProgressBar.style.width = progress + '%';
                             uploadProgressBar.textContent = Math.round(progress) + '%';
+                            // Optional: update message box with upload progress, but might be too frequent
+                            // showMessageBox(`Uploading: ${Math.round(progress)}%`, "success");
                         },
                         (error) => {
                             console.error("Media upload failed:", error);
@@ -645,8 +659,9 @@
                             throw error; // Re-throw to be caught by outer catch
                         },
                         async () => {
-                            // This 'complete' callback is just for the uploadTask.on,
+                            // This 'complete' callback is for the uploadTask.on,
                             // the actual mediaUrl and mediaType assignment happens after await uploadTask.
+                            // The final success message is handled in the outer try-catch.
                         }
                     );
                     await uploadTask; // Wait for the upload to complete
