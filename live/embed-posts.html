@@ -427,7 +427,6 @@
                 // Check if the line *starts* with known embed/media tags
                 if (trimmedLine.startsWith('<blockquote') ||
                     trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
-                    // Removed '<div class="post-video-container"' as video is directly embedded
                     trimmedLine.startsWith('<img') ||
                     trimmedLine === '') { // Allow empty lines to pass through without <p>
                     return line; // Return lines with existing HTML (like blockquote) as is
@@ -694,7 +693,7 @@
                 renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
 
-            } = (error) => {
+            } catch (error) { // Corrected syntax here
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
             }
@@ -770,7 +769,7 @@
                     firstPageSpan.addEventListener('click', () => {
                         currentPage = 0;
                         renderCurrentPage();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
                     });
                     paginationControls.appendChild(firstPageSpan);
 
@@ -794,7 +793,7 @@
                         if (currentPage !== i) { // Only update if changing page
                             currentPage = i;
                             renderCurrentPage();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
                         }
                     });
                     paginationControls.appendChild(pageNumSpan);
@@ -814,7 +813,7 @@
                     lastPageSpan.addEventListener('click', () => {
                         currentPage = totalPages - 1;
                         renderCurrentPage();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
                     });
                     paginationControls.appendChild(lastPageSpan);
                 }
