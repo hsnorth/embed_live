@@ -327,6 +327,21 @@
             background-color: rgb(170, 0, 20);
             transform: translateX(-50%) translateY(-2px);
         }
+
+        /* Media query for larger screens: apply max-height to images and videos */
+        @media (min-width: 768px) {
+            .post-media {
+                max-height: 400px; /* Example max height for images */
+                width: auto; /* Allow width to adjust to maintain aspect ratio */
+                object-fit: contain; /* Ensure the entire image is visible within the max-height, preventing cropping */
+            }
+
+            .post-media.post-video {
+                max-height: 400px; /* Example max height for videos */
+                width: auto; /* Allow width to adjust to maintain aspect ratio */
+                object-fit: contain; /* Ensure the entire video is visible within the max-height, preventing cropping */
+            }
+        }
     </style>
 </head>
 <body>
@@ -351,7 +366,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"; // Corrected www.gstatic.com
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
         const firebaseConfig = {
@@ -693,7 +708,7 @@
                 renderTabs(); // Render/update tabs based on fetched data
                 setupRealtimeListener(currentBlogId); // Start listening for real-time updates
 
-            } catch (error) { // Corrected syntax here
+            } catch (error) {
                 console.error("Error loading blog details for embed:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
             }
