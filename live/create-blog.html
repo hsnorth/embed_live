@@ -3,805 +3,774 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create/Manage Live Blog</title>
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <title>Create Blog Post</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+        }
+        .btn-primary {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 600; /* font-semibold */
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        .btn-danger {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-weight: 500; /* font-medium */
+            transition: background-color 0.2s;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+        .tab-button {
+            background-color: #e0e7ff; /* indigo-100 */
+            color: #4f46e5; /* indigo-600 */
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* rounded-full */
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .tab-button.selected {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .tab-button:hover:not(.selected) {
+            background-color: #c7d2fe; /* indigo-200 */
+        }
+        .input-field {
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.75rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message-box.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <h1 id="blogTitleHeader">Loading Blog...</h1>
-    </header>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-8">
+    <div class="container mx-auto p-6 bg-white rounded-xl shadow-md space-y-8">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">Manage: Test Wednesday</h1>
 
-    <main>
-        <div class="header-left">
-            <a href="view-blogs.html" class="back-arrow" aria-label="Back to View Blogs">
-                <i class="fas fa-arrow-left"></i>
-            </a>
+        <!-- Blog Name and Author Info (Read-only for now) -->
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-700 mb-2" id="blog-name-display">Loading Blog Name...</h2>
+            <p class="text-gray-600" id="author-info-display">Author: Loading...</p>
         </div>
-        <section class="new-post-form">
-            <h2>Post an Update</h2>
-            <form id="postForm">
-                <div class="form-group">
-                    <label for="authorNameInput">Author Name:</label>
-                    <input type="text" id="authorNameInput" class="input-field" placeholder="Your Name" required>
-                </div>
 
-                <div class="form-group">
-                    <label for="postSubtitleInput">Subtitle (Optional):</label>
-                    <input type="text" id="postSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
-                </div>
-
-                <div class="form-group">
-                    <label for="postContentInput">Post Content:</label>
-                    <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
-                </div>
-
-                <!-- New: Live Page Editor option -->
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="isLivePageEditorCheckbox">
-                        I am the Live Page Editor
-                    </label>
-                </div>
-
-                <div class="form-group" id="reportingFromGroup">
-                    <label for="reportingFromInput">Reporting From:</label>
-                    <input type="text" id="reportingFromInput" class="input-field" value="Montreal">
-                </div>
-
-                <div class="form-group">
-                    <label>Assign to Tabs:</label>
-                    <div id="postTabAssignment" class="tab-selection-group">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="postMediaInput">Image or Video:</label>
-                    <input type="file" id="postMediaInput" accept="image/*,video/*">
-                </div>
-                <button type="submit" class="submit-button">Post Update</button>
-            </form>
-        </section>
-        <section class="tab-management-section">
-            <h2>Manage Custom Tabs</h2>
-            <div class="tab-management-controls">
-                <input type="text" id="newTabNameInput" class="input-field" placeholder="New Tab Name">
-                <button id="addTabButton" class="submit-button">Add Tab</button>
+        <!-- Assign to Tabs Section -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Assign to Tabs</h2>
+            <div id="tabs-container" class="flex flex-wrap gap-2">
+                <!-- Tabs will be loaded here by JavaScript -->
             </div>
-            <ul id="customTabList" class="tab-list">
-            </ul>
-        </section>
-
-        <section class="embed-code-section">
-            <h2>Embed This Live Blog</h2>
-            <p>Copy the code below and paste it into your website's HTML where you want the live blog to appear.</p>
-            <div class="embed-code-container">
-                <input type="text" id="embedCodeInput" class="input-field" readonly>
-                <button id="copyEmbedCodeButton" class="submit-button">Copy Code</button>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="live-reporting-checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                <label for="live-reporting-checkbox" class="text-gray-700">Live Reporting</label>
             </div>
-        </section>
-
-        <section class="live-blog-posts">
-            <h2>Live Blog Posts</h2>
-            <div id="postsContainer">
-                <p class="no-posts-message">No posts yet. Be the first to add an update!</p>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="whats-on-today-checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                <label for="whats-on-today-checkbox" class="text-gray-700">What's on today</label>
             </div>
-            <div id="paginationControls" class="pagination-controls"></div>
-        </section>
-    </main>
+        </div>
 
-    <footer>
-        <p>&copy; 2025 Live Blog</p>
-    </footer>
+        <!-- Image/Video Upload Section -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Image or Video:</h2>
+            <input type="file" id="media-upload" accept="image/*,video/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+            <div id="media-preview-container" class="mt-4 hidden">
+                <img id="media-preview-image" src="#" alt="Media Preview" class="max-w-full h-auto rounded-lg shadow-sm hidden">
+                <video id="media-preview-video" controls class="max-w-full h-auto rounded-lg shadow-sm hidden"></video>
+                <button id="remove-media-button" class="mt-2 btn-danger">Remove Media</button>
+            </div>
+        </div>
 
+        <!-- Post Creation Form -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Posting...</h2>
+            <input type="text" id="post-subtitle" placeholder="Subtitle" class="input-field">
+            <textarea id="post-content" placeholder="Content" class="input-field"></textarea>
+            <input type="text" id="reporting-from" placeholder="Reporting from (e.g., Montreal, Quebec)" class="input-field">
+            <button id="post-button" class="btn-primary w-full">Post</button>
+            <button id="update-post-button" class="btn-primary w-full hidden">Update Post</button>
+            <button id="cancel-edit-button" class="btn-danger w-full mt-2 hidden">Cancel Edit</button>
+        </div>
+
+        <!-- Manage Custom Tabs Section -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Manage Custom Tabs</h2>
+            <div class="flex space-x-2">
+                <input type="text" id="new-tab-name" placeholder="New Tab Name" class="input-field flex-grow">
+                <button id="add-tab-button" class="btn-primary">Add Tab</button>
+            </div>
+            <div id="custom-tabs-list" class="space-y-2">
+                <!-- Custom tabs will be listed here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Embed Code Section -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Embed This Live Blog</h2>
+            <p class="text-gray-600">Copy the code below and paste it into your website's HTML where you want the live blog to appear.</p>
+            <div class="relative">
+                <textarea id="embed-code-textarea" class="input-field text-sm bg-gray-50 font-mono" rows="4" readonly>&lt;iframe src="https://myliveblogapp-cf9df.web.app/embed-posts.html?blogId=YOUR_BLOG_ID" width="100%" height="600px" frameborder="0"&gt;&lt;/iframe&gt;</textarea>
+                <button id="copy-embed-code-button" class="absolute top-2 right-2 btn-primary px-3 py-1 text-sm">Copy Code</button>
+            </div>
+        </div>
+
+        <!-- Live Blog Posts Section -->
+        <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Live Blog Posts</h2>
+            <div id="posts-container" class="space-y-6">
+                <p id="loading-posts-message" class="text-gray-500 text-center">Loading posts...</p>
+                <p id="no-posts-message" class="text-gray-500 text-center hidden">No posts for this blog. Please try again later.</p>
+                <!-- Posts will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div id="message-box" class="message-box"></div>
+
+    <!-- Firebase SDK Imports (already present in your setup) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
+        // Your firebaseConfig object goes here
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            apiKey: "", // Left blank as per instructions, Canvas will provide
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
+            storageBucket: "myliveblogapp-cf9df.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID", // Replace with your actual sender ID if needed
+            appId: "YOUR_APP_ID", // Replace with your actual app ID if needed
+            measurementId: "YOUR_MEASUREMENT_ID" // Optional
         };
-        // !!! END IMPORTANT !!!
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
         const auth = getAuth(app);
 
+        // Global variables for Firebase instances and user ID
+        let currentUserId = null;
         let currentUser = null;
-        let currentBlogId = null;
-        let currentBlogName = '';
-        let customTabs = [];
-        const defaultTab = "Live Reporting"; // Consistent default tab name
-        let adminAllPostsCached = [];
-        let adminCurrentPage = 0;
-        const adminPostsPerPage = 8;
-        let editingPostId = null;
-        let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // New variable to store the current user's avatar URL
+        let currentBlogId = null; // Will be set from URL or new blog creation
+        let currentBlogData = null; // To store blog name and custom tabs
 
-        const blogTitleHeader = document.getElementById('blogTitleHeader');
-        const authorNameInput = document.getElementById('authorNameInput');
-        const postSubtitleInput = document.getElementById('postSubtitleInput');
-        const postContentInput = document.getElementById('postContentInput');
-        const reportingFromInput = document.getElementById('reportingFromInput');
-        const reportingFromGroup = document.getElementById('reportingFromGroup'); // New: Reference to the reporting from group
-        const isLivePageEditorCheckbox = document.getElementById('isLivePageEditorCheckbox'); // New: Reference to the checkbox
-        const postMediaInput = document.getElementById('postMediaInput');
-        const postForm = document.getElementById('postForm');
-        const postsContainer = document.getElementById('postsContainer');
-        const submitButton = document.querySelector('.submit-button');
-        const embedCodeInput = document.getElementById('embedCodeInput');
-        const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
-        const newTabNameInput = document.getElementById('newTabNameInput');
-        const addTabButton = document.getElementById('addTabButton');
-        const customTabList = document.getElementById('customTabList');
-        const postTabAssignmentDiv = document.getElementById('postTabAssignment');
-
-
-        // --- Authentication Guard ---
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                // No user is signed in, redirect to login
-                window.location.href = 'index.html';
+        // --- Utility Functions ---
+        function showMessageBox(message, type = 'success') {
+            const msgBox = document.getElementById('message-box');
+            msgBox.textContent = message;
+            msgBox.className = 'message-box show'; // Reset classes and show
+            if (type === 'error') {
+                msgBox.style.backgroundColor = '#dc2626'; // Red for error
             } else {
-                currentUser = user;
-                // Fetch user's name and avatar from Firestore 'users' collection
-                try {
-                    const userDocRef = doc(db, 'users', currentUser.uid);
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        authorNameInput.value = userData.name || user.displayName || user.email; // Prefer 'name' from Firestore, fallback to Auth displayName or email
-                        authorNameInput.readOnly = true; // Make the input field read-only
-
-                        if (userData.avatarUrl) {
-                            currentUserAvatarUrl = userData.avatarUrl;
-                        } else {
-                            // Fallback if no avatarUrl in user document, use default
-                            currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
-                        }
-                    } else {
-                        // User document not found, fallback to displayName or email for authorName
-                        authorNameInput.value = user.displayName || user.email;
-                        authorNameInput.readOnly = true; // Keep it read-only
-                        console.warn("User document not found in 'users' collection for UID:", currentUser.uid);
-                        // currentUserAvatarUrl already defaults to harry.png
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data from Firestore:", error);
-                    authorNameInput.value = user.displayName || user.email; // Fallback on error
-                    authorNameInput.readOnly = true; // Keep it read-only
-                    // currentUserAvatarUrl already defaults to harry.png
-                }
-
-
-                const urlParams = new URLSearchParams(window.location.search);
-                currentBlogId = urlParams.get('blogId');
-
-                if (currentBlogId) {
-                    const blogDocRef = doc(db, 'blogs', currentBlogId);
-                    const blogDocSnap = await getDoc(blogDocRef);
-                    if (blogDocSnap.exists()) {
-                        currentBlogName = blogDocSnap.data().name;
-                        customTabs = blogDocSnap.data().customTabs || [];
-                        blogTitleHeader.textContent = `Managing: ${currentBlogName}`;
-                        generateEmbedCode();
-                        renderCustomTabs();
-                        renderPostTabAssignmentCheckboxes([]);
-                        await loadPostsForAdmin();
-                    } else {
-                        blogTitleHeader.textContent = 'Blog Not Found';
-                        postsContainer.innerHTML = '<p class="error-message">Blog not found. Please select a valid blog from the dashboard.</p>';
-                    }
-                } else {
-                    blogTitleHeader.textContent = 'No Blog Selected';
-                    postsContainer.innerHTML = '<p class="error-message">No blog selected. Please go to your <a href="dashboard.html">dashboard</a> to create or select a blog.</p>';
-                }
-            }
-        });
-
-        // --- Live Page Editor Checkbox Logic ---
-        isLivePageEditorCheckbox.addEventListener('change', () => {
-            if (isLivePageEditorCheckbox.checked) {
-                reportingFromGroup.style.display = 'none';
-                reportingFromInput.value = 'Live Page Editor'; // Set the value when checked
-            } else {
-                reportingFromGroup.style.display = 'flex'; // Use flex as per your CSS
-                reportingFromInput.value = 'Montreal'; // Reset to default or clear
-            }
-        });
-
-
-        // --- Tab Management Functions ---
-        const renderCustomTabs = () => {
-            customTabList.innerHTML = ''; // Clear existing list
-            customTabs.forEach(tabName => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span class="tab-name">${tabName}</span>
-                    <button class="delete-tab-button" data-tab-name="${tabName}">Delete</button>
-                `;
-                customTabList.appendChild(li);
-            });
-            renderPostTabAssignmentCheckboxes([]); // Re-render post tab checkboxes
-        };
-
-        const addCustomTab = async () => {
-            const newTabName = newTabNameInput.value.trim();
-            if (!currentBlogId) {
-                alert("No blog selected. Cannot add tab.");
-                return;
-            }
-            if (newTabName && !customTabs.includes(newTabName) && newTabName !== defaultTab) {
-                customTabs.push(newTabName);
-                try {
-                    await updateBlogTabsInFirestore();
-                    newTabNameInput.value = ''; // Clear input
-                    renderCustomTabs();
-                } catch (error) {
-                    console.error("Error adding custom tab:", error);
-                    alert("Failed to add tab. Please try again. Error: " + error.message);
-                    // Revert local changes if Firestore update fails
-                    customTabs = customTabs.filter(tab => tab !== newTabName);
-                }
-            } else if (newTabName === defaultTab) {
-                alert(`"${defaultTab}" is a default tab and cannot be added as a custom tab.`);
-            } else if (customTabs.includes(newTabName)) {
-                alert(`Tab "${newTabName}" already exists.`);
-            }
-        };
-
-        const deleteCustomTab = async (tabName) => {
-            if (!currentBlogId) {
-                alert("No blog selected. Cannot delete tab.");
-                return;
-            }
-            if (tabName === defaultTab) {
-                alert(`"${defaultTab}" is a default tab and cannot be deleted.`);
-                return;
-            }
-            if (confirm(`Are you sure you want to delete the tab "${tabName}"? Posts assigned only to this tab might become unassigned.`)) {
-                const originalCustomTabs = [...customTabs]; // Save original for rollback
-                customTabs = customTabs.filter(tab => tab !== tabName);
-                try {
-                    await updateBlogTabsInFirestore();
-                    renderCustomTabs();
-                    // Optionally, you might want to remove this tab from any posts that were assigned to it
-                    // For now, posts will just retain the deleted tab name in their assignedTabs array
-                    // but it won't be displayed as an option.
-                } catch (error) {
-                    console.error("Error deleting custom tab:", error);
-                    alert("Failed to delete tab. Please try again. Error: " + error.message);
-                    // Revert local changes if Firestore update fails
-                    customTabs = originalCustomTabs;
-                    renderCustomTabs(); // Re-render to show original state
-                }
-            }
-        };
-
-        const updateBlogTabsInFirestore = async () => {
-            if (currentBlogId) {
-                const blogDocRef = doc(db, 'blogs', currentBlogId);
-                try {
-                    await updateDoc(blogDocRef, { customTabs: customTabs });
-                    console.log("Custom tabs updated in Firestore successfully.");
-                } catch (error) {
-                    console.error("Error updating blog tabs in Firestore:", error);
-                    throw error; // Re-throw to be caught by calling function (add/deleteCustomTab)
-                }
-            } else {
-                console.warn("currentBlogId is null. Cannot update blog tabs in Firestore.");
-            }
-        };
-
-        addTabButton.addEventListener('click', addCustomTab);
-        customTabList.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-tab-button')) {
-                deleteCustomTab(e.target.dataset.tabName);
-            }
-        });
-
-        // --- Post Tab Assignment Checkbox Rendering ---
-        const renderPostTabAssignmentCheckboxes = (assignedPostTabs = []) => {
-            postTabAssignmentDiv.innerHTML = ''; // Clear existing checkboxes
-
-            // Add "Live Reporting" checkbox (always checked and disabled)
-            const liveReportingCheckbox = document.createElement('label');
-            liveReportingCheckbox.innerHTML = `
-                <input type="checkbox" name="postTab" value="${defaultTab}" checked disabled>
-                ${defaultTab}
-            `;
-            postTabAssignmentDiv.appendChild(liveReportingCheckbox);
-
-            // Add custom tabs
-            customTabs.forEach(tabName => {
-                const label = document.createElement('label');
-                const isChecked = assignedPostTabs.includes(tabName);
-                label.innerHTML = `
-                    <input type="checkbox" name="postTab" value="${tabName}" ${isChecked ? 'checked' : ''}>
-                    ${tabName}
-                `;
-                postTabAssignmentDiv.appendChild(label);
-            });
-        };
-
-        // --- Generate Embed Code ---
-        const generateEmbedCode = () => {
-            if (currentBlogId) {
-                // Ensure the correct path for the embed page
-                const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
-                const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
-                embedCodeInput.value = embedCode;
-            } else {
-                embedCodeInput.value = 'Select a blog to generate embed code.';
-            }
-        };
-
-        // --- Copy Embed Code ---
-        copyEmbedCodeButton.addEventListener('click', () => {
-            embedCodeInput.select();
-            embedCodeInput.setSelectionRange(0, 99999); // For mobile devices
-            document.execCommand("copy");
-            alert("Embed code copied to clipboard!");
-        });
-
-        // --- Post Form Submission ---
-        postForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const authorName = authorNameInput.value.trim();
-            const content = postContentInput.value.trim();
-            const subtitle = postSubtitleInput.value.trim();
-            
-            let reportingFromValue;
-            if (isLivePageEditorCheckbox.checked) {
-                reportingFromValue = 'Live Page Editor';
-            } else {
-                const location = reportingFromInput.value.trim();
-                reportingFromValue = location ? `Reporting from ${location}` : ''; // Prefix "Reporting from "
+                msgBox.style.backgroundColor = '#4CAF50'; // Green for success
             }
 
-            const mediaFile = postMediaInput.files[0];
-
-            const selectedTabCheckboxes = postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked:not(:disabled)');
-            const assignedTabs = [defaultTab];
-            selectedTabCheckboxes.forEach(checkbox => {
-                if (checkbox.value !== defaultTab) {
-                    assignedTabs.push(checkbox.value);
-                }
-            });
-
-            if (!authorName || !content) {
-                alert("Author Name and Post Content are required!");
-                return;
-            }
-            if (assignedTabs.length === 0) {
-                alert("Please assign the post to at least one tab (Live Reporting is always included).");
-                return;
-            }
-
-            if (!currentBlogId) {
-                alert("No blog selected. Please go to Dashboard to select a blog.");
-                return;
-            }
-
-            submitButton.disabled = true;
-            submitButton.textContent = "Posting...";
-
-            let mediaUrl = '';
-            let mediaType = '';
-
-            try {
-                if (mediaFile) {
-                    const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
-                    const uploadTask = uploadBytesResumable(storageRef, mediaFile);
-                    await uploadTask;
-                    mediaUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                    mediaType = mediaFile.type;
-                }
-
-                const postsCollectionRef = collection(db, 'posts');
-
-                // Re-fetch the current user's avatar right before saving the post
-                // This ensures the most up-to-date avatar is saved with the post.
-                let postAuthorAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default fallback
-                if (currentUser && currentUser.uid) {
-                    const userDocRef = doc(db, 'users', currentUser.uid);
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (userDocSnap.exists() && userDocSnap.data().avatarUrl) {
-                        postAuthorAvatarUrl = userDocSnap.data().avatarUrl;
-                    }
-                }
-
-                if (editingPostId) {
-                    const postDocRef = doc(db, 'posts', editingPostId);
-                    const updateData = {
-                        authorName: authorName,
-                        authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
-                        subtitle: subtitle,
-                        content: content,
-                        reportingFrom: reportingFromValue, // Use the determined reportingFrom value
-                        assignedTabs: assignedTabs,
-                    };
-
-                    if (mediaFile) {
-                        const oldPostSnap = await getDoc(postDocRef);
-                        if (oldPostSnap.exists() && oldPostSnap.data().mediaUrl) {
-                            try {
-                                const oldMediaRef = ref(storage, oldPostSnap.data().mediaUrl);
-                                await deleteObject(oldMediaRef);
-                            } catch (error) {
-                                console.warn("Could not delete old media file (might not exist or permission issue):", error);
-                            }
-                        }
-                        updateData.mediaUrl = mediaUrl;
-                        updateData.mediaType = mediaType;
-                    }
-                    // If you wanted to *remove* existing media without uploading new, you'd need
-                    // a separate UI element (e.g., a "clear media" checkbox) and logic here.
-                    // For now, if no new media is selected, existing media will be kept.
-
-                    await updateDoc(postDocRef, updateData);
-                    alert("Post updated successfully!");
-                    editingPostId = null;
-                    submitButton.textContent = "Post Update";
-                } else {
-                    await addDoc(postsCollectionRef, {
-                        blogId: currentBlogId,
-                        authorId: currentUser.uid,
-                        authorName: authorName,
-                        authorAvatar: postAuthorAvatarUrl, // Use the dynamically fetched avatar URL
-                        subtitle: subtitle,
-                        content: content,
-                        reportingFrom: reportingFromValue, // Use the determined reportingFrom value
-                        mediaUrl: mediaUrl,
-                        mediaType: mediaType,
-                        assignedTabs: assignedTabs,
-                        timestamp: serverTimestamp()
-                    });
-                    alert("Post added successfully!");
-                }
-
-                postContentInput.value = '';
-                postSubtitleInput.value = '';
-                postMediaInput.value = '';
-                // Do not reset authorNameInput as it's readOnly and populated from user data
-                // localStorage.setItem('authorName', authorName); // This line is no longer needed if authorName is readOnly
-                isLivePageEditorCheckbox.checked = false; // Reset checkbox
-                reportingFromGroup.style.display = 'flex'; // Show reporting from input
-                reportingFromInput.value = 'Montreal'; // Reset reporting from input
-
-                renderPostTabAssignmentCheckboxes([]);
-
-                adminAllPostsCached = []; // Clear cache to force reload
-                adminCurrentPage = 0;
-                await loadPostsForAdmin(); // Reload posts to show updates
-
-                // Send message to embed to refresh when a post is added/updated/deleted
-                if (window.parent && window.parent.postMessage) {
-                    window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
-                }
-
-            } catch (error) {
-                console.error("Error saving post:", error);
-                alert("Failed to save post. Please try again. " + error.message);
-            } finally {
-                submitButton.disabled = false;
-            }
-        });
-
-        // --- Time Formatting Function ---
-        function timeAgo(timestamp) {
-            const now = new Date();
-            const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
-            const seconds = Math.floor((now - postDate) / 1000);
-
-            let interval = seconds / 31536000;
-            if (interval > 1) {
-                return Math.floor(interval) + " years ago";
-            }
-            interval = seconds / 2592000;
-            if (interval > 1) {
-                return Math.floor(interval) + " months ago";
-            }
-            interval = seconds / 86400;
-            if (interval > 1) {
-                return Math.floor(interval) + " days ago";
-            }
-            interval = seconds / 3600;
-            if (interval > 1) {
-                return Math.floor(interval) + " hours ago";
-            }
-            interval = seconds / 60;
-            if (interval > 1) {
-                return Math.floor(interval) + " minutes ago";
-            }
-            return Math.floor(seconds) + " seconds ago";
+            setTimeout(() => {
+                msgBox.classList.remove('show');
+            }, 3000); // Hide after 3 seconds
         }
 
-        // --- Load Posts for Admin View ---
-        const loadPostsForAdmin = async () => {
-            try {
-                if (adminAllPostsCached.length === 0) {
-                    const postsCollectionRef = collection(db, 'posts');
-                    const q = query(
-                        postsCollectionRef,
-                        where('blogId', '==', currentBlogId),
-                        orderBy('timestamp', 'desc')
-                    );
-                    const querySnapshot = await getDocs(q);
-                    adminAllPostsCached = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Function to parse URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // --- DOM Elements ---
+        const blogNameDisplay = document.getElementById('blog-name-display');
+        const authorInfoDisplay = document.getElementById('author-info-display');
+        const tabsContainer = document.getElementById('tabs-container');
+        const liveReportingCheckbox = document.getElementById('live-reporting-checkbox');
+        const whatsOnTodayCheckbox = document.getElementById('whats-on-today-checkbox');
+        const mediaUploadInput = document.getElementById('media-upload');
+        const mediaPreviewContainer = document.getElementById('media-preview-container');
+        const mediaPreviewImage = document.getElementById('media-preview-image');
+        const mediaPreviewVideo = document.getElementById('media-preview-video');
+        const removeMediaButton = document.getElementById('remove-media-button');
+        const postSubtitleInput = document.getElementById('post-subtitle');
+        const postContentInput = document.getElementById('post-content');
+        const reportingFromInput = document.getElementById('reporting-from');
+        const postButton = document.getElementById('post-button');
+        const updatePostButton = document.getElementById('update-post-button');
+        const cancelEditButton = document.getElementById('cancel-edit-button');
+        const newTabNameInput = document.getElementById('new-tab-name');
+        const addTabButton = document.getElementById('add-tab-button');
+        const customTabsList = document.getElementById('custom-tabs-list');
+        const embedCodeTextarea = document.getElementById('embed-code-textarea');
+        const copyEmbedCodeButton = document.getElementById('copy-embed-code-button');
+        const postsContainer = document.getElementById('posts-container');
+        const loadingPostsMessage = document.getElementById('loading-posts-message');
+        const noPostsMessage = document.getElementById('no-posts-message');
+
+        let currentMediaFile = null;
+        let currentMediaType = null;
+        let editingPostId = null;
+
+        // --- Firebase Auth & User Management ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                // Fetch or create user profile
+                const userDocRef = doc(db, 'users', currentUserId);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    currentUser = userDocSnap.data();
+                    // Update UI with user info if needed
+                } else {
+                    // Create a new user profile if it doesn't exist
+                    currentUser = {
+                        name: user.displayName || `User-${user.uid.substring(0, 6)}`,
+                        email: user.email || '',
+                        avatarUrl: user.photoURL || 'https://placehold.co/40x40/cccccc/ffffff?text=U'
+                    };
+                    await setDoc(userDocRef, currentUser);
                 }
 
-                const startIndex = adminCurrentPage * adminPostsPerPage;
-                const endIndex = startIndex + adminPostsPerPage;
-                const postsToShow = adminAllPostsCached.slice(startIndex, endIndex);
+                // Initialize blog logic after user is authenticated
+                initializeBlogManagement();
 
-                renderAdminPosts(postsToShow, 'postsContainer');
-                updateAdminPaginationControls(adminAllPostsCached.length);
-
-            } catch (error) {
-                console.error("Error loading admin posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading posts for this blog. Please try again later.</p>';
+            } else {
+                currentUserId = null;
+                currentUser = null;
+                // Redirect to login or show message if not authenticated
+                showMessageBox("Please log in to manage blogs.", "error");
+                // Optionally redirect to index.html or login page
+                window.location.href = 'index.html';
             }
-        };
+        });
 
-        // --- Render Posts for Admin View ---
-        const renderAdminPosts = (posts, containerId) => {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
+        // --- Blog Management Logic ---
+        async function initializeBlogManagement() {
+            currentBlogId = getUrlParameter('blogId');
 
-            if (posts.length === 0) {
-                container.innerHTML = '<p class="no-posts-message">No posts yet. Be the first to add an update!</p>';
+            if (currentBlogId) {
+                // Editing an existing blog
+                await loadBlogDetails(currentBlogId);
+                setupRealtimePostListener(currentBlogId);
+            } else {
+                // No blogId in URL, redirect to dashboard or create new blog flow
+                showMessageBox("No blog ID specified. Redirecting to dashboard.", "error");
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        async function loadBlogDetails(blogId) {
+            try {
+                const blogDocRef = doc(db, 'blogs', blogId);
+                const blogDocSnap = await getDoc(blogDocRef);
+
+                if (blogDocSnap.exists()) {
+                    currentBlogData = { id: blogDocSnap.id, ...blogDocSnap.data() };
+                    blogNameDisplay.textContent = currentBlogData.name;
+                    authorInfoDisplay.textContent = `Author: ${currentBlogData.authorName || 'N/A'}`;
+                    updateEmbedCode(); // Update embed code with the actual blog ID
+                    renderCustomTabs(currentBlogData.customTabs || []);
+                } else {
+                    showMessageBox("Blog not found!", "error");
+                    blogNameDisplay.textContent = "Blog Not Found";
+                    authorInfoDisplay.textContent = "";
+                }
+            } catch (error) {
+                console.error("Error loading blog details:", error);
+                showMessageBox("Error loading blog details.", "error");
+            }
+        }
+
+        function updateEmbedCode() {
+            if (currentBlogId) {
+                const embedUrl = `https://myliveblogapp-cf9df.web.app/embed-posts.html?blogId=${currentBlogId}`;
+                embedCodeTextarea.value = `<iframe src="${embedUrl}" width="100%" height="600px" frameborder="0"></iframe>`;
+            }
+        }
+
+        // --- Custom Tabs Management ---
+        function renderCustomTabs(tabs) {
+            tabsContainer.innerHTML = '';
+            customTabsList.innerHTML = ''; // Clear existing list
+            tabs.forEach(tab => {
+                // For assign to tabs section
+                const tabButton = document.createElement('button');
+                tabButton.className = 'tab-button';
+                tabButton.textContent = tab;
+                tabButton.dataset.tabName = tab;
+                tabButton.addEventListener('click', () => {
+                    tabButton.classList.toggle('selected');
+                });
+                tabsContainer.appendChild(tabButton);
+
+                // For manage custom tabs list
+                const tabListItem = document.createElement('div');
+                tabListItem.className = 'flex justify-between items-center bg-gray-50 p-2 rounded-md';
+                tabListItem.innerHTML = `
+                    <span class="text-gray-700">${tab}</span>
+                    <button class="btn-danger delete-custom-tab" data-tab-name="${tab}">Delete</button>
+                `;
+                customTabsList.appendChild(tabListItem);
+            });
+
+            // Attach event listeners to delete buttons
+            document.querySelectorAll('.delete-custom-tab').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const tabToDelete = event.target.dataset.tabName;
+                    if (confirm(`Are you sure you want to delete the tab "${tabToDelete}"?`)) {
+                        await deleteCustomTab(tabToDelete);
+                    }
+                });
+            });
+        }
+
+        async function addCustomTab() {
+            const newTabName = newTabNameInput.value.trim();
+            if (!newTabName) {
+                showMessageBox("Tab name cannot be empty!", "error");
                 return;
             }
 
-            const MAX_CHARS_PREVIEW = 450;
+            if (currentBlogData.customTabs.includes(newTabName)) {
+                showMessageBox("Tab already exists!", "error");
+                return;
+            }
+
+            try {
+                const blogDocRef = doc(db, 'blogs', currentBlogId);
+                const updatedTabs = [...currentBlogData.customTabs, newTabName];
+                await updateDoc(blogDocRef, { customTabs: updatedTabs });
+                currentBlogData.customTabs = updatedTabs; // Update local data
+                renderCustomTabs(updatedTabs);
+                newTabNameInput.value = '';
+                showMessageBox("Tab added successfully!");
+            } catch (error) {
+                console.error("Error adding custom tab:", error);
+                showMessageBox("Failed to add tab.", "error");
+            }
+        }
+
+        async function deleteCustomTab(tabName) {
+            try {
+                const blogDocRef = doc(db, 'blogs', currentBlogId);
+                const updatedTabs = currentBlogData.customTabs.filter(tab => tab !== tabName);
+                await updateDoc(blogDocRef, { customTabs: updatedTabs });
+                currentBlogData.customTabs = updatedTabs; // Update local data
+                renderCustomTabs(updatedTabs);
+                showMessageBox("Tab deleted successfully!");
+            } catch (error) {
+                console.error("Error deleting custom tab:", error);
+                showMessageBox("Failed to delete tab.", "error");
+            }
+        }
+
+        // --- Media Upload & Preview ---
+        mediaUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                currentMediaFile = file;
+                const fileType = file.type.split('/')[0]; // "image" or "video"
+                currentMediaType = fileType;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    mediaPreviewContainer.classList.remove('hidden');
+                    if (fileType === 'image') {
+                        mediaPreviewImage.src = e.target.result;
+                        mediaPreviewImage.classList.remove('hidden');
+                        mediaPreviewVideo.classList.add('hidden');
+                    } else if (fileType === 'video') {
+                        mediaPreviewVideo.src = e.target.result;
+                        mediaPreviewVideo.classList.remove('hidden');
+                        mediaPreviewImage.classList.add('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            } else {
+                currentMediaFile = null;
+                currentMediaType = null;
+                mediaPreviewContainer.classList.add('hidden');
+                mediaPreviewImage.classList.add('hidden');
+                mediaPreviewVideo.classList.add('hidden');
+                mediaPreviewImage.src = '';
+                mediaPreviewVideo.src = '';
+            }
+        });
+
+        removeMediaButton.addEventListener('click', () => {
+            mediaUploadInput.value = ''; // Clear the file input
+            currentMediaFile = null;
+            currentMediaType = null;
+            mediaPreviewContainer.classList.add('hidden');
+            mediaPreviewImage.classList.add('hidden');
+            mediaPreviewVideo.classList.add('hidden');
+            mediaPreviewImage.src = '';
+            mediaPreviewVideo.src = '';
+        });
+
+        // --- Post Creation/Update ---
+        async function uploadMedia(file) {
+            if (!file) return null;
+
+            const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            return new Promise((resolve, reject) => {
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Optional: Handle progress
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    },
+                    (error) => {
+                        console.error("Media upload failed:", error);
+                        showMessageBox("Media upload failed!", "error");
+                        reject(error);
+                    },
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    }
+                );
+            });
+        }
+
+        async function createOrUpdatePost() {
+            if (!currentUserId || !currentUser || !currentBlogId) {
+                showMessageBox("Authentication or blog details missing. Please refresh.", "error");
+                return;
+            }
+
+            const subtitle = postSubtitleInput.value.trim();
+            const content = postContentInput.value.trim();
+            const reportingFromValue = reportingFromInput.value.trim();
+
+            if (!subtitle && !content && !currentMediaFile) {
+                showMessageBox("Post cannot be empty!", "error");
+                return;
+            }
+
+            postButton.disabled = true;
+            updatePostButton.disabled = true;
+            showMessageBox("Posting...", "success"); // Temporary message
+
+            try {
+                let mediaUrl = null;
+                if (currentMediaFile) {
+                    mediaUrl = await uploadMedia(currentMediaFile);
+                } else if (editingPostId) {
+                    // If editing and no new file, retain existing media URL
+                    const postDocSnap = await getDoc(doc(db, 'posts', editingPostId));
+                    if (postDocSnap.exists()) {
+                        mediaUrl = postDocSnap.data().mediaUrl || null;
+                    }
+                }
+
+                const assignedTabs = Array.from(tabsContainer.children)
+                    .filter(button => button.classList.contains('selected'))
+                    .map(button => button.dataset.tabName);
+
+                if (liveReportingCheckbox.checked) {
+                    if (!assignedTabs.includes('Live Reporting')) {
+                        assignedTabs.push('Live Reporting');
+                    }
+                } else {
+                    const index = assignedTabs.indexOf('Live Reporting');
+                    if (index > -1) {
+                        assignedTabs.splice(index, 1);
+                    }
+                }
+
+                if (whatsOnTodayCheckbox.checked) {
+                    if (!assignedTabs.includes('What\'s on today')) {
+                        assignedTabs.push('What\'s on today');
+                    }
+                } else {
+                    const index = assignedTabs.indexOf('What\'s on today');
+                    if (index > -1) {
+                        assignedTabs.splice(index, 1);
+                    }
+                }
+
+                const postData = {
+                    blogId: currentBlogId,
+                    authorId: currentUserId,
+                    authorName: currentUser.name,
+                    authorAvatar: currentUser.avatarUrl,
+                    subtitle: subtitle,
+                    content: content,
+                    reportingFrom: reportingFromValue,
+                    mediaUrl: mediaUrl,
+                    mediaType: currentMediaFile ? currentMediaType : (editingPostId ? (await getDoc(doc(db, 'posts', editingPostId))).data().mediaType : null),
+                    assignedTabs: assignedTabs,
+                    timestamp: serverTimestamp()
+                };
+
+                if (editingPostId) {
+                    // Update existing post
+                    const postDocRef = doc(db, 'posts', editingPostId);
+                    await updateDoc(postDocRef, postData);
+                    showMessageBox("Post updated successfully!");
+                } else {
+                    // Create new post
+                    await addDoc(collection(db, 'posts'), postData);
+                    showMessageBox("Post created successfully!");
+                }
+
+                // Clear form after successful post/update
+                clearPostForm();
+
+            } catch (error) {
+                console.error("Error creating/updating post:", error);
+                showMessageBox("Failed to create/update post.", "error");
+            } finally {
+                postButton.disabled = false;
+                updatePostButton.disabled = false;
+            }
+        }
+
+        function clearPostForm() {
+            postSubtitleInput.value = '';
+            postContentInput.value = '';
+            reportingFromInput.value = '';
+            mediaUploadInput.value = '';
+            currentMediaFile = null;
+            currentMediaType = null;
+            mediaPreviewContainer.classList.add('hidden');
+            mediaPreviewImage.classList.add('hidden');
+            mediaPreviewVideo.classList.add('hidden');
+            mediaPreviewImage.src = '';
+            mediaPreviewVideo.src = '';
+
+            // Deselect all tabs
+            Array.from(tabsContainer.children).forEach(button => {
+                button.classList.remove('selected');
+            });
+            liveReportingCheckbox.checked = false;
+            whatsOnTodayCheckbox.checked = false;
+
+            editingPostId = null;
+            postButton.classList.remove('hidden');
+            updatePostButton.classList.add('hidden');
+            cancelEditButton.classList.add('hidden');
+        }
+
+        // --- Real-time Post Listener ---
+        let unsubscribeFromPosts = null;
+
+        function setupRealtimePostListener(blogId) {
+            if (unsubscribeFromPosts) {
+                unsubscribeFromPosts(); // Unsubscribe from previous listener if exists
+            }
+
+            const postsCollectionRef = collection(db, 'posts');
+            const q = query(
+                postsCollectionRef,
+                where('blogId', '==', blogId),
+                orderBy('timestamp', 'desc')
+            );
+
+            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
+                const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPosts(updatedPosts);
+            }, (error) => {
+                console.error("Error listening to posts:", error);
+                showMessageBox("Error loading live posts.", "error");
+                loadingPostsMessage.classList.add('hidden');
+                noPostsMessage.classList.remove('hidden');
+            });
+        }
+
+        function renderPosts(posts) {
+            postsContainer.innerHTML = ''; // Clear existing posts
+            loadingPostsMessage.classList.add('hidden');
+
+            if (posts.length === 0) {
+                noPostsMessage.classList.remove('hidden');
+                return;
+            } else {
+                noPostsMessage.classList.add('hidden');
+            }
 
             posts.forEach(post => {
-                const postCard = document.createElement('div');
-                postCard.className = 'post-card';
-                postCard.dataset.postId = post.id;
-
-                let mediaHtml = '';
-                if (post.mediaUrl) {
-                    if (post.mediaType && post.mediaType.startsWith('image')) {
-                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        mediaHtml = `<video controls src="${post.mediaUrl}" class="post-media"></video>`;
-                    }
-                }
-
-                // This line is correct, it uses post.authorAvatar, which should now be dynamic
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
-
-                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-
-                let displayContentHtml = post.content;
-                let showMoreButtonHtml = '';
-                let isTruncated = false;
-
-                if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
-                    displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
-                    isTruncated = true;
-                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
-                }
-
-                const assignedTabsHtml = (post.assignedTabs && post.assignedTabs.length > 0)
-                    ? `<p class="assigned-tabs"><small>Tabs: ${post.assignedTabs.join(', ')}</small></p>`
-                    : '';
-
-                // Determine how to display the reportingFrom field
-                let reportingFromDisplay = '';
-                if (post.reportingFrom) {
-                    if (post.reportingFrom === 'Live Page Editor') {
-                        reportingFromDisplay = `<span>Live Page Editor</span>`;
-                    } else {
-                        reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
-                    }
-                }
-
-
-                postCard.innerHTML = `
-                    <div class="post-header-line">
-                        <div class="author-avatar">
-                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
+                const postElement = document.createElement('div');
+                postElement.className = 'card p-4 space-y-3';
+                postElement.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <img src="${post.authorAvatar || 'https://placehold.co/40x40/cccccc/ffffff?text=U'}" alt="${post.authorName}'s avatar" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="font-semibold text-gray-800">${post.authorName}</p>
+                            <p class="text-sm text-gray-500">${post.timestamp ? new Date(post.timestamp.toDate()).toLocaleString() : 'N/A'}</p>
                         </div>
-                        <div class="post-meta">
-                            <div class="meta-line-one">
-                                <strong>${post.authorName || 'Anonymous'}</strong>
-                                <span class="bullet">•</span>
-                                <span class="time-ago">${timeAgo(post.timestamp)}</span>
-                            </div>
-                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
-                        </div>
-                        <button class="copy-link-button" data-post-id="${post.id}" title="Copy Link to Post">
-                            <i class="fas fa-link"></i>
-                        </button>
                     </div>
-                    ${subtitleHtml}
-                    <p class="post-text">${displayContentHtml}</p>
-                    ${mediaHtml}
-                    ${showMoreButtonHtml}
-                    ${assignedTabsHtml}
-                    <div class="post-actions">
-                        <button class="edit-post-button" data-post-id="${post.id}" title="Edit Post"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="delete-post-button" data-post-id="${post.id}" data-media-url="${post.mediaUrl || ''}" title="Delete Post"><i class="fas fa-trash"></i> Delete</button>
+                    ${post.subtitle ? `<h3 class="text-lg font-semibold text-gray-800">${post.subtitle}</h3>` : ''}
+                    ${post.content ? `<p class="text-gray-700">${post.content}</p>` : ''}
+                    ${post.mediaUrl ? `
+                        <div class="media-container">
+                            ${post.mediaType === 'image' ? `<img src="${post.mediaUrl}" alt="Post media" class="max-w-full h-auto rounded-lg">` : ''}
+                            ${post.mediaType === 'video' ? `<video controls src="${post.mediaUrl}" class="max-w-full h-auto rounded-lg"></video>` : ''}
+                        </div>
+                    ` : ''}
+                    ${post.reportingFrom ? `<p class="text-sm text-gray-600">Reporting from: ${post.reportingFrom}</p>` : ''}
+                    <div class="flex flex-wrap gap-2">
+                        ${(post.assignedTabs || []).map(tab => `<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${tab}</span>`).join('')}
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button class="btn-primary edit-post-btn" data-post-id="${post.id}">Edit</button>
+                        <button class="btn-danger delete-post-btn" data-post-id="${post.id}" data-media-url="${post.mediaUrl || ''}">Delete</button>
                     </div>
                 `;
-                container.appendChild(postCard);
-
-                if (isTruncated) {
-                    const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentParagraph = postCard.querySelector('.post-text');
-
-                    showMoreButton.addEventListener('click', () => {
-                        contentParagraph.innerHTML = post.content;
-                        showMoreButton.style.display = 'none';
-                    });
-                }
+                postsContainer.appendChild(postElement);
             });
 
-            container.querySelectorAll('.edit-post-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const postIdToEdit = e.currentTarget.dataset.postId;
-                    const postToEdit = adminAllPostsCached.find(p => p.id === postIdToEdit);
-                    if (postToEdit) {
-                        editingPostId = postIdToEdit;
-                        postContentInput.value = postToEdit.content || '';
-                        postSubtitleInput.value = postToEdit.subtitle || '';
-                        
-                        // Handle "Live Page Editor" for editing
-                        if (postToEdit.reportingFrom === 'Live Page Editor') {
-                            isLivePageEditorCheckbox.checked = true;
-                            reportingFromGroup.style.display = 'none';
-                            reportingFromInput.value = 'Live Page Editor'; // Ensure value is set
-                        } else {
-                            isLivePageEditorCheckbox.checked = false;
-                            reportingFromGroup.style.display = 'flex';
-                            // Strip "Reporting from " prefix for display in the input field
-                            const displayLocation = postToEdit.reportingFrom ? 
-                                postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') : 'Montreal';
-                            reportingFromInput.value = displayLocation;
-                        }
-
-                        authorNameInput.value = postToEdit.authorName || '';
-                        renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
-                        submitButton.textContent = "Save Changes";
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
+            // Attach event listeners for edit and delete
+            document.querySelectorAll('.edit-post-btn').forEach(button => {
+                button.addEventListener('click', (event) => editPost(event.target.dataset.postId));
             });
-
-            container.querySelectorAll('.copy-link-button').forEach(button => {
-                button.addEventListener('click', async () => {
-                    const postId = button.dataset.postId;
-                    const blogId = currentBlogId;
-
-                    if (!blogId || !postId) {
-                        alert("Could not generate link for this post.");
-                        return;
-                    }
-
-                    const deepLink = `${window.location.origin}/embed-posts.html?blogId=${blogId}#post-${postId}`;
-
-                    try {
-                        await navigator.clipboard.writeText(deepLink);
-                        const originalContent = button.innerHTML;
-                        button.innerHTML = '<i class="fas fa-check"></i> Link Copied!';
-                        button.classList.add('copied');
-
-                        setTimeout(() => {
-                            button.innerHTML = originalContent;
-                            button.classList.remove('copied');
-                        }, 2000);
-                    } catch (err) {
-                        console.error('Failed to copy link: ', err);
-                        alert('Failed to copy link. Please copy manually: ' + deepLink);
-                    }
-                });
+            document.querySelectorAll('.delete-post-btn').forEach(button => {
+                button.addEventListener('click', (event) => deletePost(event.target.dataset.postId, event.target.dataset.mediaUrl));
             });
+        }
 
-            container.querySelectorAll('.delete-post-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const postIdToDelete = e.currentTarget.dataset.postId;
-                    const mediaUrlToDelete = e.currentTarget.dataset.mediaUrl;
-
-                    if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
-                        try {
-                            await deleteDoc(doc(db, 'posts', postIdToDelete));
-
-                            if (mediaUrlToDelete) {
-                                try {
-                                    const mediaRef = ref(storage, mediaUrlToDelete);
-                                    await deleteObject(mediaRef);
-                                } catch (error) {
-                                    console.warn("Could not delete associated media from storage (might not exist or permission issue):", error);
-                                }
-                            }
-                            // Refresh posts after delete
-                            adminAllPostsCached = [];
-                            adminCurrentPage = 0;
-                            await loadPostsForAdmin();
-
-                            // Send message to embed to refresh
-                            if (window.parent && window.parent.postMessage) {
-                                window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
-                            }
-
-                        } catch (error) {
-                            console.error("Error deleting post:", error);
-                            alert("Failed to delete post. Please try again: " + error.message);
-                        }
-                    }
-                });
-            });
-        };
-
-        // --- Update Admin Pagination Controls ---
-        const updateAdminPaginationControls = (totalPosts) => {
-            const paginationControls = document.getElementById('paginationControls');
-            if (!paginationControls) return;
-
-            paginationControls.innerHTML = '';
-
-            const totalPages = Math.ceil(totalPosts / adminPostsPerPage);
-
-            if (totalPages > 1) {
-                const prevButton = document.createElement('button');
-                prevButton.textContent = 'Previous';
-                prevButton.disabled = adminCurrentPage === 0;
-                prevButton.addEventListener('click', () => {
-                    adminCurrentPage--;
-                    loadPostsForAdmin();
-                });
-                paginationControls.appendChild(prevButton);
-
-                for (let i = 0; i < totalPages; i++) {
-                    const pageNumSpan = document.createElement('span');
-                    pageNumSpan.textContent = i + 1;
-                    pageNumSpan.className = 'page-number';
-                    if (i === adminCurrentPage) {
-                        pageNumSpan.classList.add('current-page');
-                    }
-                    pageNumSpan.addEventListener('click', () => {
-                        if (adminCurrentPage !== i) {
-                            adminCurrentPage = i;
-                            loadPostsForAdmin();
-                        }
-                    });
-                    paginationControls.appendChild(pageNumSpan);
-                }
-
-                const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
-                nextButton.disabled = adminCurrentPage >= totalPages - 1;
-                nextButton.addEventListener('click', () => {
-                    adminCurrentPage++;
-                    loadPostsForAdmin();
-                });
-                paginationControls.appendChild(nextButton);
-            }
-        };
-
-        // --- Sign Out ---
-        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
-            e.preventDefault();
+        async function editPost(postId) {
             try {
-                await signOut(auth);
-                window.location.href = 'index.html';
+                const postDocRef = doc(db, 'posts', postId);
+                const postDocSnap = await getDoc(postDocRef);
+
+                if (postDocSnap.exists()) {
+                    const postData = postDocSnap.data();
+                    editingPostId = postId;
+
+                    postSubtitleInput.value = postData.subtitle || '';
+                    postContentInput.value = postData.content || '';
+                    reportingFromInput.value = postData.reportingFrom || '';
+
+                    // Handle media preview for editing
+                    if (postData.mediaUrl) {
+                        mediaPreviewContainer.classList.remove('hidden');
+                        if (postData.mediaType === 'image') {
+                            mediaPreviewImage.src = postData.mediaUrl;
+                            mediaPreviewImage.classList.remove('hidden');
+                            mediaPreviewVideo.classList.add('hidden');
+                        } else if (postData.mediaType === 'video') {
+                            mediaPreviewVideo.src = postData.mediaUrl;
+                            mediaPreviewVideo.classList.remove('hidden');
+                            mediaPreviewImage.classList.add('hidden');
+                        }
+                    } else {
+                        mediaPreviewContainer.classList.add('hidden');
+                        mediaPreviewImage.classList.add('hidden');
+                        mediaPreviewVideo.classList.add('hidden');
+                    }
+
+                    // Select assigned tabs
+                    Array.from(tabsContainer.children).forEach(button => {
+                        if (postData.assignedTabs && postData.assignedTabs.includes(button.dataset.tabName)) {
+                            button.classList.add('selected');
+                        } else {
+                            button.classList.remove('selected');
+                        }
+                    });
+                    liveReportingCheckbox.checked = postData.assignedTabs && postData.assignedTabs.includes('Live Reporting');
+                    whatsOnTodayCheckbox.checked = postData.assignedTabs && postData.assignedTabs.includes('What\'s on today');
+
+                    postButton.classList.add('hidden');
+                    updatePostButton.classList.remove('hidden');
+                    cancelEditButton.classList.remove('hidden');
+
+                    // Scroll to top of form
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                } else {
+                    showMessageBox("Post not found for editing!", "error");
+                }
             } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Could not sign out. Please try again.");
+                console.error("Error editing post:", error);
+                showMessageBox("Failed to load post for editing.", "error");
+            }
+        }
+
+        async function deletePost(postId, mediaUrl) {
+            if (confirm("Are you sure you want to delete this post?")) {
+                try {
+                    // Delete media from storage if it exists
+                    if (mediaUrl) {
+                        const mediaRef = ref(storage, mediaUrl);
+                        await deleteObject(mediaRef).catch(e => console.warn("Could not delete media from storage:", e.message));
+                    }
+
+                    // Delete post document from Firestore
+                    await deleteDoc(doc(db, 'posts', postId));
+                    showMessageBox("Post deleted successfully!");
+                } catch (error) {
+                    console.error("Error deleting post:", error);
+                    showMessageBox("Failed to delete post.", "error");
+                }
+            }
+        }
+
+        // --- Event Listeners ---
+        // Wrap all DOM-dependent event listeners inside DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if elements exist before attaching listeners
+            if (postButton) postButton.addEventListener('click', createOrUpdatePost);
+            if (updatePostButton) updatePostButton.addEventListener('click', createOrUpdatePost);
+            if (cancelEditButton) cancelEditButton.addEventListener('click', clearPostForm);
+            if (addTabButton) addTabButton.addEventListener('click', addCustomTab);
+            if (copyEmbedCodeButton) {
+                copyEmbedCodeButton.addEventListener('click', () => {
+                    embedCodeTextarea.select();
+                    document.execCommand('copy');
+                    showMessageBox("Embed code copied!");
+                });
             }
         });
     </script>
