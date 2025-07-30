@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://gazetteplus.com", "https://www.gazetteplus.com", "https://myliveblogapp-cf9df.web.app", "https://myliveblogapp-cf9df.firebaseapp.com"],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600
+  }
+]
