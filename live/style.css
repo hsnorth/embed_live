@@ -171,13 +171,19 @@ section {
 .live-blog-posts .post-card:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
+.live-blog-posts .author-avatar-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 .live-blog-posts .post-media {
     max-width: 100%;
     height: auto;
     display: block;
     border-radius: 8px;
     margin-top: 10px;
-    max-height: 500px;
+    max-height: 500px; /* Constrain image/video height */
     width: auto;
 }
 
