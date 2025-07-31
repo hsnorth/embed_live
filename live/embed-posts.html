@@ -342,6 +342,24 @@
                 object-fit: contain; /* Ensure the entire video is visible within the max-height, preventing cropping */
             }
         }
+
+        /* Styles for pinned indicator */
+        .pinned-indicator {
+            background-color: #f0f8ff; /* Light blue background */
+            color: #1a73e8; /* Blue text */
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px; /* Space from other meta info */
+            display: inline-flex; /* To align icon and text */
+            align-items: center;
+            gap: 5px;
+            border: 1px solid #cce0ff;
+        }
+        .pinned-indicator i {
+            color: #1a73e8; /* Ensure icon color matches text */
+        }
     </style>
 </head>
 <body>
@@ -524,6 +542,10 @@
                     }
                 }
 
+                // Pinned indicator HTML
+                const pinnedIndicatorHtml = post.isPinned ?
+                    `<span class="pinned-indicator"><i class="fas fa-thumbtack"></i> Pinned</span>` : '';
+
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -535,6 +557,7 @@
                                 <strong>${post.authorName || 'Anonymous'}</strong>
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                                ${pinnedIndicatorHtml}
                             </div>
                             ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                         </div>
@@ -592,7 +615,8 @@
             const q = query(
                 postsCollectionRef,
                 where('blogId', '==', blogId),
-                orderBy('timestamp', 'desc')
+                orderBy('isPinned', 'desc'), // Pinned posts first (true comes before false)
+                orderBy('timestamp', 'desc') // Then by timestamp (latest first)
             );
 
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
@@ -763,6 +787,9 @@
 
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update message.');
+                // Force a full re-render on the embed side to reflect pinning changes
+                initialLoadComplete = false; // Reset to force full re-evaluation on next snapshot
+                setupRealtimeListener(currentBlogId); // Re-attach listener to get fresh data
             }
         });
     </script>
