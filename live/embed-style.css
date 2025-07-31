@@ -17,7 +17,7 @@ html, body {
 main {
     padding: 0;
     margin: 0 auto;
-    max-width: 800px;
+    max-width: 700px;
     width: 100%;
 }
 
@@ -190,4 +190,20 @@ main {
 #newUpdatesButton:hover {
     background-color: rgb(170, 0, 20);
     transform: translateX(-50%) translateY(-2px);
+}
+
+/* --- Responsive Adjustments for smaller screens --- */
+@media (max-width: 600px) {
+    .post-text {
+        font-size: 17px; /* One notch up from 16px */
+        line-height: 1.5; /* Adjust line height for better readability */
+    }
+
+    .post-subtitle {
+        font-size: 1.4em; /* Slightly adjust subtitle to match */
+    }
+
+    .post-meta {
+        font-size: 16px; /* Increase meta text slightly as well */
+    }
 }
