@@ -5,127 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Previous Live Blogs</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* Specific styles for view-blogs.html that might override or supplement main style.css */
-        main { /* Main content container should align with the max-width in style.css */
-            margin: 8px auto; /* Inherit from style.css */
-            padding: 15px 25px; /* Inherit from style.css */
-            max-width: 900px; /* Inherit from style.css */
-            width: 100%; /* Inherit from style.css */
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            flex-grow: 1; /* Ensure it grows to fill space */
-        }
-
-        .previous-blogs-container {
-            /* These styles are still fine, they apply within the main content area */
-            max-width: none; /* Let the main container control width */
-            margin: 0; /* Remove specific margins, let main handle it */
-            padding: 0; /* Remove specific padding, let main handle it */
-            background-color: transparent; /* Remove background, let main handle it */
-            box-shadow: none; /* Remove shadow, let main handle it */
-        }
-        .previous-blogs-container h2 {
-            margin-top: 0;
-            color: #e74c3c; /* Consistent heading color */
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 1.6em; /* Match h2 in style.css */
-        }
-        .blog-list ul {
-            list-style: none;
-            padding: 0;
-            margin: 0; /* Ensure no default list margins */
-        }
-        .blog-list li {
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            flex-wrap: wrap; /* Allow content to wrap on small screens */
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px; /* Space between elements within the list item */
-        }
-        .blog-list li:hover {
-            background-color: #f0f0f0;
-        }
-        .blog-list a {
-            text-decoration: none;
-            color: #34495e; /* Use the primary blue/grey from your palette */
-            font-weight: bold;
-            font-size: 1.1em;
-            flex-grow: 1; /* Allow link to take available space */
-        }
-        .blog-list span {
-            font-size: 14px;
-            color: #777;
-            flex-shrink: 0; /* Prevent timestamp from shrinking too much */
-            text-align: right;
-            white-space: nowrap; /* Keep time on one line */
-        }
-        .no-blogs-message {
-            text-align: center;
-            color: #888;
-            padding: 20px;
-        }
-
-        /* Adjust body to use flexbox for footer pushing */
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        footer {
-            margin-top: auto; /* Push footer to the bottom */
-        }
-
-        /* Media queries for specific list item behavior on small screens */
-        @media (max-width: 500px) {
-            .blog-list li {
-                flex-direction: column; /* Stack name and date vertically */
-                align-items: flex-start;
-            }
-            .blog-list span {
-                text-align: left;
-            }
-        }
-    </style>
 </head>
 <body>
     <header>
-        <div class="header-left">
-            <h1><a href="dashboard.html">Gazette Live</a></h1>
-        </div>
-        <button class="hamburger-menu" id="hamburgerMenu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <nav class="main-nav" id="mainNav">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="#" id="signOutNavButton">Sign Out</a>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
+        <nav>
+            <button id="signOutButton" class="submit-button">Sign Out</button>
         </nav>
     </header>
 
     <main>
-        <section class="previous-blogs-container">
+        <section class="view-blogs-container">
             <h2>Archived Live Blogs</h2>
             <div class="blog-list" id="blogListContainer">
                 <ul id="liveBlogsList">
-                    </ul>
+                    <!-- Blog items will be inserted here by JavaScript -->
+                </ul>
                 <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No blogs created yet. Go to Dashboard to create one!</p>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy;The Gazette. All rights reserved.</p>
+        <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
     </footer>
 
     <script type="module">
@@ -133,7 +35,6 @@
         import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
@@ -141,21 +42,16 @@
             storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
-            measurementId: "G-EZN90844XF"
         };
-        // !!! END IMPORTANT !!!
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Authentication Guard
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                // No user is signed in, redirect to login
                 window.location.href = 'index.html';
             } else {
-                // User is signed in, load blogs
                 loadBlogs();
             }
         });
@@ -169,12 +65,11 @@
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
-                    liveBlogsList.innerHTML = ''; // Clear any static content
+                    liveBlogsList.innerHTML = '';
                     querySnapshot.forEach(doc => {
                         const blog = doc.data();
                         const blogId = doc.id;
                         const listItem = document.createElement('li');
-
                         const createdDate = blog.created ? blog.created.toDate().toLocaleString() : 'N/A';
 
                         listItem.innerHTML = `
@@ -185,7 +80,7 @@
                     });
                     noBlogsMessage.style.display = 'none';
                 } else {
-                    liveBlogsList.innerHTML = ''; // Ensure list is empty
+                    liveBlogsList.innerHTML = '';
                     noBlogsMessage.style.display = 'block';
                 }
             } catch (error) {
@@ -195,34 +90,14 @@
             }
         };
 
-        // Sign Out from navigation dropdown
-        document.getElementById('signOutNavButton').addEventListener('click', async (e) => {
-            e.preventDefault();
+        document.getElementById('signOutButton').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = 'index.html'; // Redirect to login after sign out
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
             }
-        });
-
-        // JavaScript for Hamburger Menu Toggle (replicated for this page)
-        const hamburgerMenu = document.getElementById('hamburgerMenu');
-        const mainNav = document.getElementById('mainNav');
-
-        hamburgerMenu.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-            hamburgerMenu.classList.toggle('active');
-        });
-
-        mainNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                    hamburgerMenu.classList.remove('active');
-                }
-            });
         });
     </script>
 </body>
