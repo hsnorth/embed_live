@@ -25,12 +25,12 @@
         </section>
 
         <section class="view-blogs-container">
-            <h2>Archived Live Blogs</h2>
+            <h2>Your Archived Live Blogs</h2>
             <div class="blog-list" id="blogListContainer">
                 <ul id="liveBlogsList">
                     <!-- Blog items will be inserted here by JavaScript -->
                 </ul>
-                <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No blogs created yet. Create one above!</p>
+                <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">You haven't created any blogs yet. Create one above!</p>
             </div>
         </section>
     </main>
@@ -57,6 +57,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // This flag ensures we only attach event listeners once.
+        let isDashboardSetup = false;
+
         // --- Authentication Guard ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -68,14 +71,12 @@
             }
         });
 
-        // This flag ensures we only attach event listeners once.
-        let isDashboardSetup = false;
-
         function setupDashboard(user) {
+            // Prevent re-running this setup if the auth state changes multiple times.
             if (isDashboardSetup) return;
             isDashboardSetup = true;
 
-            // Load the user's blogs.
+            // Load the user's blogs now that we know who they are.
             loadUserBlogs(user.uid);
 
             // Attach event listener for creating a new blog.
@@ -86,10 +87,11 @@
                         const docRef = await addDoc(collection(db, "blogs"), {
                             name: blogName,
                             created: serverTimestamp(),
-                            createdBy: user.uid // Use the guaranteed user ID.
+                            createdBy: user.uid // Use the guaranteed user ID from the auth state.
                         });
                         const blogId = docRef.id;
-                        window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}`;
+                        // Redirect to the create-blog page for the new blog.
+                        window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
                     } catch (e) {
                         console.error("Error adding document: ", e);
                         alert("Error creating blog. Please try again.");
@@ -117,7 +119,7 @@
             const noBlogsMessage = document.getElementById('noBlogsMessage');
 
             try {
-                // Query for blogs created by the current user.
+                // Query for blogs created ONLY by the current user.
                 const q = query(collection(db, "blogs"), where("createdBy", "==", userId), orderBy("created", "desc"));
                 const querySnapshot = await getDocs(q);
 
