@@ -383,14 +383,13 @@
                     showNotification("Post added!", "success");
                 }
 
-                // Reset form fields manually to avoid clearing the author's name
+                // Reset only the necessary form fields
                 postContentInput.value = '';
                 postSubtitleInput.value = '';
                 postMediaInput.value = '';
                 pinPostCheckbox.checked = false;
                 isLivePageEditorCheckbox.checked = false;
-                reportingFromGroup.style.display = 'flex';
-                reportingFromInput.value = 'Montreal';
+                isLivePageEditorCheckbox.dispatchEvent(new Event('change')); // Trigger change to reset reportingFrom
                 renderPostTabAssignmentCheckboxes([]);
                 
                 editingPostId = null;
@@ -479,6 +478,8 @@
             const deleteButton = e.target.closest('.delete-post-button');
 
             if (editButton) {
+                // NOTE: Any authenticated user can edit any post.
+                // There is no check here to see if the current user is the original author.
                 const postId = editButton.dataset.postId;
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
@@ -498,6 +499,8 @@
             }
 
             if (deleteButton) {
+                // NOTE: Any authenticated user can delete any post.
+                // There is no check here to see if the current user is the original author.
                 const postId = deleteButton.dataset.postId;
                 if (confirm("Are you sure you want to delete this post?")) {
                     try {
