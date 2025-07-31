@@ -973,7 +973,8 @@
                         console.error("Error pinning/unpinning post:", error);
                         showNotification("Failed to update pin status. Please try again: " + error.message, "error");
                     } finally {
-                        e.currentTarget.disabled = false; // Re-enable button
+                        // Removed the line e.currentTarget.disabled = false;
+                        // The button will be re-rendered and re-enabled by loadPostsForAdmin()
                     }
                 });
             });
