@@ -42,7 +42,7 @@
             width: 100%; /* Ensure it always takes 100% of parent */
             min-width: 0; /* Allow posts container to shrink */
             margin: 0 auto; /* Center the posts content within its parent */
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
     
         /* Hide elements not needed in the embed */
@@ -260,6 +260,7 @@
         }
     
         /* --- Tab Navigation (Embed Page Specific) --- */
+        /* Note: Tab navigation is currently commented out for this embed post. */
         .tab-navigation {
             position: sticky;
             top: 0;
@@ -347,10 +348,14 @@
 <body>
     <main>
         <section class="live-blog-posts">
-            <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
             </div>
-            </section>
+            <div class="pagination-controls" id="paginationControls">
+                <button id="prevPage" disabled>&lt; Previous</button>
+                <span id="pageNumbers"></span>
+                <button id="nextPage">Next &gt;</button>
+            </div>
+        </section>
     </main>
 
     <button id="newUpdatesButton">
@@ -377,19 +382,20 @@
         const db = getFirestore(app);
 
         // --- Global Variables for Embed ---
-        // Pagination-related variables removed
+        let currentPage = 0;
+        const postsPerPage = 8; // Number of posts to show per page
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        const defaultTab = "Live Updates"; // Default active tab name
-        let currentActiveTab = defaultTab; // Start with the default tab
-        let customTabs = []; // To store custom tabs defined in the blog document
+        // const defaultTab = "Live Updates"; // Default active tab name
+        // let currentActiveTab = defaultTab; // Start with the default tab
+        // let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
 
         // DOM element references
         const postsContainer = document.getElementById('postsContainer');
-        // Pagination controls element removed
+        const paginationControls = document.getElementById('paginationControls');
         const tabNavigationDiv = document.getElementById('tabNavigation');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
@@ -452,20 +458,16 @@
                 return;
             }
             container.innerHTML = ''; // Clear existing posts
-
             if (postsToRender.length === 0) {
                 container.innerHTML = '<p class="no-posts-message">No posts yet for this tab. Be the first to add an update!</p>';
                 return;
             }
-
             const MAX_CHARS_PREVIEW = 450; // Max characters before truncating post content
-
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
                 postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
-
                 let mediaHtml = '';
                 if (post.mediaUrl) {
                     if (post.mediaType && post.mediaType.startsWith('image')) {
@@ -473,22 +475,15 @@
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
                         // For videos: keep aspect ratio, prevent expansion, add controls
                         mediaHtml = `
-                            <video src="${post.mediaUrl}" class="post-media post-video" 
-                                controls playsinline disablePictureInPicture
-                                preload="metadata"
-                            ></video>
+                            <video src="${post.mediaUrl}" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata" ></video>
                         `;
                     }
                 }
-
                 const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default avatar
-
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-
                 let displayContent = post.content;
                 let showMoreButtonHtml = '';
                 let isTruncated = false;
-
                 // --- Truncation Logic for Raw HTML Content ---
                 const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
                 if (plainTextContent.length > MAX_CHARS_PREVIEW) {
@@ -497,14 +492,13 @@
                     let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW);
                     // Basic attempt to close any open tags if truncated mid-tag
                     const openTags = (truncatedRawHtml.match(/<([a-z]+)(?![^>]*\/>)[^>]*>/ig) || [])
-                                           .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
-                                           .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
+                                     .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
+                                     .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
                     openTags.reverse().forEach(tag => {
                         if (!truncatedRawHtml.includes(`</${tag}>`)) {
                             truncatedRawHtml += `</${tag}>`;
                         }
                     });
-
                     displayContent = truncatedRawHtml + '...';
                     isTruncated = true;
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
@@ -523,8 +517,6 @@
                         reportingFromDisplay = `<span>${post.reportingFrom}</span>`; // Display as saved (e.g., "Reporting from Montreal")
                     }
                 }
-
-
                 postCard.innerHTML = `
                     <div class="post-header-line">
                         <div class="author-avatar">
@@ -536,235 +528,126 @@
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
                             </div>
-                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
+                            <span class="reporting-from">${reportingFromDisplay}</span>
                         </div>
                     </div>
                     ${subtitleHtml}
-                    <div class="post-text">${displayContentHtml}</div>
+                    <div class="post-text">
+                        ${displayContentHtml}
+                    </div>
                     ${mediaHtml}
                     ${showMoreButtonHtml}
                 `;
                 container.appendChild(postCard);
 
-                // Add event listener for "Show more" button if content was truncated
+                // Add event listener for "Show more" button if it exists
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentDiv = postCard.querySelector('.post-text');
-
                     showMoreButton.addEventListener('click', () => {
-                        contentDiv.innerHTML = fullContentHtml; // Set full formatted content including embeds
-                        showMoreButton.style.display = 'none'; // Hide the button
-
-                        // Notify parent iframe to adjust height after expansion
-                        if (window.parent) {
-                            const height = document.body.scrollHeight;
-                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
-                        }
-                        // IMPORTANT: Load Twitter widgets for the newly revealed content
-                        if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
-                            twttr.ready(function (twttrInstance) {
-                                console.log('twttr.ready callback executed: Loading Twitter widgets for expanded contentDiv.');
-                                twttrInstance.widgets.load(contentDiv); // Load for the expanded contentDiv
-                            });
-                        } else {
-                            console.warn('twttr object or twttr.ready function not available for expanded content.');
-                        }
+                        postCard.querySelector('.post-text').innerHTML = fullContentHtml;
+                        showMoreButton.style.display = 'none';
                     });
                 }
             });
-
-            // Notify parent iframe (if any) to adjust height after rendering posts
-            if (window.parent) {
-                const height = document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
-            }
         };
 
-        // --- Live Updates Listener (onSnapshot) ---
-        let unsubscribeFromPosts = null; // To store the unsubscribe function for real-time listener
-
-        const setupRealtimeListener = (blogId) => {
-            if (unsubscribeFromPosts) {
-                unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
-            }
-
-            const postsCollectionRef = collection(db, 'posts');
-            const q = query(
-                postsCollectionRef,
-                where('blogId', '==', blogId),
-                orderBy('timestamp', 'desc')
-            );
-
-            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
-                const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                // Compare with current cached posts to detect new ones
-                const oldPostIds = new Set(allPostsCached.map(p => p.id));
-                let newPostsDetected = false;
-                if (initialLoadComplete) { // Only show "New Update" after initial load
-                    for (const post of updatedPosts) {
-                        if (!oldPostIds.has(post.id)) {
-                            newPostsDetected = true;
-                            break;
-                        }
-                    }
-                }
-
-                allPostsCached = updatedPosts; // Update the cache with the latest data
-
-                // If a new post is detected and we are not at the top of the page, show the "New Update" button
-                if (newPostsDetected && window.scrollY > 0) {
-                    newUpdatesCount++;
-                    newUpdatesCountSpan.textContent = newUpdatesCount;
-                    newUpdatesButton.style.display = 'block';
-                } else {
-                    newUpdatesCount = 0; // Reset count
-                    newUpdatesButton.style.display = 'none';
-                    filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
-                }
-
-                // Handle deep linking and scrolling AFTER posts are rendered or updated
-                // This block should only run on the initial load or after a full refresh
-                // not on every snapshot update unless it's a new page load
-                if (!initialLoadComplete && window.location.hash) {
-                    const postIdFromHash = window.location.hash.substring(1); // Remove '#'
-                    scrollToPost(postIdFromHash);
-                }
-
-                initialLoadComplete = true; // Mark initial load as complete
-            }, (error) => {
-                console.error("Error listening to posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
-            });
-        };
-
-        // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
-        const scrollToPost = (postId) => {
-            const postIndex = filteredPosts.findIndex(p => `post-${p.id}` === postId);
-            if (postIndex !== -1) {
-                const targetElement = document.getElementById(postId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                    targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
-                    setTimeout(() => {
-                        targetElement.style.backgroundColor = ''; // Remove highlight
-                    }, 3000);
-                }
-            }
-        };
-
-        // --- Function: loadPosts (Initial loading of blog ID and setting up listeners) ---
-        const loadPosts = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentBlogId = urlParams.get('blogId');
-
+        // --- Function: fetchAndRenderPosts (Fetches posts from Firestore and renders them) ---
+        // This function has been simplified to not use tabs, as they are now disabled.
+        const fetchAndRenderPosts = async () => {
             if (!currentBlogId) {
-                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL. Please provide a valid blog ID.</p>';
-                tabNavigationDiv.innerHTML = '';
-                console.error("Blog ID not found in URL.");
+                postsContainer.innerHTML = '<p class="error-message">No blog ID provided for embed.</p>';
                 return;
             }
 
             try {
-                // Fetch blog details to get custom tabs
-                const blogDocRef = doc(db, 'blogs', currentBlogId);
-                const blogDocSnap = await getDoc(blogDocRef);
-                if (blogDocSnap.exists()) {
-                    customTabs = blogDocSnap.data().customTabs || [];
-                }
+                const postsCollectionRef = collection(db, 'blogs', currentBlogId, 'posts');
+                // Removed the `where` clause for assignedTabs as we are no longer filtering by tabs
+                const q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
+                
+                // Set up a real-time listener
+                onSnapshot(q, (querySnapshot) => {
+                    const latestPosts = [];
+                    querySnapshot.forEach((doc) => {
+                        latestPosts.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    const firstPostTimestamp = latestPosts[0]?.timestamp?.seconds;
 
-                renderTabs(); // Render/update tabs based on fetched data
-                setupRealtimeListener(currentBlogId); // Start listening for real-time updates
+                    if (initialLoadComplete && firstPostTimestamp > allPostsCached[0]?.timestamp?.seconds) {
+                        const newPosts = latestPosts.filter(post => post.timestamp.seconds > allPostsCached[0]?.timestamp?.seconds);
+                        newUpdatesCount = newPosts.length;
+                        newUpdatesCountSpan.textContent = newUpdatesCount;
+                        newUpdatesButton.style.display = 'block';
+                    }
+
+                    // Update the cache and render the latest posts
+                    allPostsCached = latestPosts;
+                    filteredPosts = allPostsCached; // Since there are no tabs, all posts are "filtered" posts
+                    renderPostsForCurrentPage();
+                    initialLoadComplete = true; // Set flag after first load
+                });
 
             } catch (error) {
-                console.error("Error loading blog details for embed:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
+                console.error("Error fetching live blog posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Failed to load posts. Please check the blog ID and network connection.</p>';
             }
         };
 
-        // --- Function: filterAndRenderPosts (Filters posts by active tab and re-renders) ---
-        const filterAndRenderPosts = () => {
-            if (currentActiveTab === defaultTab) {
-                filteredPosts = allPostsCached; // Show all if default tab is active
+
+        // --- Pagination Functions ---
+        const renderPostsForCurrentPage = () => {
+            const start = currentPage * postsPerPage;
+            const end = start + postsPerPage;
+            const postsToShow = filteredPosts.slice(start, end);
+            renderPosts(postsToShow, 'postsContainer');
+            updatePaginationControls();
+        };
+
+        const updatePaginationControls = () => {
+            const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+            const prevPageButton = document.getElementById('prevPage');
+            const nextPageButton = document.getElementById('nextPage');
+            const pageNumbersSpan = document.getElementById('pageNumbers');
+
+            prevPageButton.disabled = currentPage === 0;
+            nextPageButton.disabled = currentPage >= totalPages - 1;
+
+            if (totalPages > 1) {
+                pageNumbersSpan.textContent = `${currentPage + 1} of ${totalPages}`;
+                paginationControls.style.display = 'flex';
             } else {
-                filteredPosts = allPostsCached.filter(post =>
-                    post.assignedTabs && post.assignedTabs.includes(currentActiveTab) // Filter by assigned tabs
-                );
-            }
-
-            // Render all posts on one page, since pagination has been removed
-            renderPosts(filteredPosts, 'postsContainer'); 
-        };
-
-        // --- Function: renderTabs (Renders the tab navigation buttons) ---
-        const renderTabs = () => {
-            tabNavigationDiv.innerHTML = ''; // Clear existing tabs
-
-            // As per user request, tabs only appear if at least one custom tab exists.
-            if (customTabs.length === 0) {
-                tabNavigationDiv.style.display = 'none'; // Hide the entire tab container
-                return;
-            }
-            tabNavigationDiv.style.display = 'flex'; // Show the container if there are tabs
-
-            // Always add the default "Live Updates" tab if custom tabs exist
-            const liveUpdatesButton = document.createElement('button');
-            liveUpdatesButton.textContent = defaultTab;
-            liveUpdatesButton.classList.add('tab-button');
-            if (currentActiveTab === defaultTab) {
-                liveUpdatesButton.classList.add('active-tab'); // Set active class
-            }
-            liveUpdatesButton.addEventListener('click', () => {
-                currentActiveTab = defaultTab;
-                renderTabs(); // Re-render tabs to update active state
-                filterAndRenderPosts(); // Filter and render posts for the new tab
-            });
-            tabNavigationDiv.appendChild(liveUpdatesButton);
-
-            // Add custom tabs from Firestore
-            customTabs.forEach(tabName => {
-                const tabButton = document.createElement('button');
-                tabButton.textContent = tabName;
-                tabButton.classList.add('tab-button');
-                if (currentActiveTab === tabName) {
-                    tabButton.classList.add('active-tab'); // Set active class
-                }
-                tabButton.addEventListener('click', () => {
-                    currentActiveTab = tabName;
-                    renderTabs(); // Re-render tabs to update active state
-                    filterAndRenderPosts(); // Filter and render posts for the new tab
-                });
-                tabNavigationDiv.appendChild(tabButton);
-            });
-            
-            // Notify parent iframe (if any) to adjust height after rendering/updating tabs
-            if (window.parent) {
-                const height = document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                paginationControls.style.display = 'none';
             }
         };
 
-        // --- Event Listener: DOMContentLoaded (Initializes the embed when the page loads) ---
-        document.addEventListener('DOMContentLoaded', loadPosts);
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPostsForCurrentPage();
+            }
+        });
 
-        // --- New Update Button Click Listener ---
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                renderPostsForCurrentPage();
+            }
+        });
+
         newUpdatesButton.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the embed
-            newUpdatesCount = 0; // Reset new updates count
+            currentPage = 0; // Go back to the first page
+            renderPostsForCurrentPage(); // Render the new posts
             newUpdatesButton.style.display = 'none'; // Hide the button
-            filterAndRenderPosts(); // Re-render to ensure latest posts are visible
+            newUpdatesCount = 0; // Reset the count
+            newUpdatesCountSpan.textContent = '';
         });
 
-        // --- Message Listener (for communication with parent window/admin page) ---
-        window.addEventListener('message', (event) => {
-            // IMPORTANT: In a production environment, validate event.origin for security!
-            // Example: if (event.origin !== "http://your-admin-domain.com") return;
-
-            if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
-                console.log('Refreshing embed posts due to admin update message.');
-            }
-        });
+        // --- Initialization on page load ---
+        const urlParams = new URLSearchParams(window.location.search);
+        currentBlogId = urlParams.get('blogId');
+        fetchAndRenderPosts();
+        
     </script>
 </body>
 </html>
