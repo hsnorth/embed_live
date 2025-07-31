@@ -350,12 +350,7 @@
             <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
             </div>
-            <div class="pagination-controls" id="paginationControls">
-                <button id="prevPage" disabled>&lt; Previous</button>
-                <span id="pageNumbers"></span>
-                <button id="nextPage">Next &gt;</button>
-            </div>
-        </section>
+            </section>
     </main>
 
     <button id="newUpdatesButton">
@@ -382,8 +377,7 @@
         const db = getFirestore(app);
 
         // --- Global Variables for Embed ---
-        let currentPage = 0;
-        const postsPerPage = 8; // Number of posts to show per page
+        // Pagination-related variables removed
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
@@ -395,7 +389,7 @@
 
         // DOM element references
         const postsContainer = document.getElementById('postsContainer');
-        const paginationControls = document.getElementById('paginationControls');
+        // Pagination controls element removed
         const tabNavigationDiv = document.getElementById('tabNavigation');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
@@ -577,10 +571,6 @@
                         }
                     });
                 }
-
-                // Removed the entire "Video Playback and Expansion Logic" block here
-                // as per user's request to not expand and previous guidance to simplify video handling.
-
             });
 
             // Notify parent iframe (if any) to adjust height after rendering posts
@@ -650,36 +640,16 @@
 
         // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
         const scrollToPost = (postId) => {
-            // Find the index of the post in the *filtered* list to determine its page
             const postIndex = filteredPosts.findIndex(p => `post-${p.id}` === postId);
             if (postIndex !== -1) {
-                const targetPage = Math.floor(postIndex / postsPerPage);
-                if (currentPage !== targetPage) {
-                    currentPage = targetPage; // Set current page to the post's page
-                    renderCurrentPage(); // Render the new page
-                    // Wait a moment for rendering, then scroll
+                const targetElement = document.getElementById(postId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                    targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
                     setTimeout(() => {
-                        const targetElement = document.getElementById(postId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                            targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
-                            setTimeout(() => {
-                                targetElement.style.backgroundColor = ''; // Remove highlight
-                            }, 3000); // Highlight for 3 seconds
-                        }
-                    }, 100); // Small delay to allow rendering
-                } else {
-                    // Already on the correct page, just scroll
-                    const targetElement = document.getElementById(postId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                        targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
-                        setTimeout(() => {
-                            targetElement.style.backgroundColor = ''; // Remove highlight
-                        }, 3000);
-                    }
+                        targetElement.style.backgroundColor = ''; // Remove highlight
+                    }, 3000);
                 }
             }
         };
@@ -691,7 +661,6 @@
 
             if (!currentBlogId) {
                 postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL. Please provide a valid blog ID.</p>';
-                paginationControls.innerHTML = '';
                 tabNavigationDiv.innerHTML = '';
                 console.error("Blog ID not found in URL.");
                 return;
@@ -724,172 +693,34 @@
                 );
             }
 
-            // If we're coming from a deep link, currentPage might have been set by scrollToPost
-            // Otherwise, reset to the first page when tab changes or initially loads
-            if (!window.location.hash || initialLoadComplete) { // Only reset if not an initial deep link load
-                currentPage = 0;
-            }
-            renderCurrentPage(); // Render the current page and update pagination controls
-        };
-
-        // --- Function: updatePaginationControls (Generates and updates the pagination links) ---
-        const updatePaginationControls = (totalPosts) => {
-            const paginationControls = document.getElementById('paginationControls');
-            if (!paginationControls) return;
-
-            paginationControls.innerHTML = ''; // Clear existing controls
-
-            const totalPages = Math.ceil(totalPosts / postsPerPage);
-
-            if (totalPages > 1) { // Only show pagination if more than one page
-                // Previous button
-                const prevButton = document.createElement('button');
-                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>'; // Left arrow icon
-                prevButton.disabled = currentPage === 0; // Disable if on first page
-                prevButton.title = 'Previous Page';
-                prevButton.addEventListener('click', () => {
-                    currentPage--;
-                    renderCurrentPage();
-                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
-                });
-                paginationControls.appendChild(prevButton);
-
-                // Page numbers and ellipsis logic
-                const maxPagesToShow = 5; // Max number of page numbers (e.g., < 1, 2, ..., 5 >)
-                let startPage, endPage;
-
-                if (totalPages <= maxPagesToShow) {
-                    // Less than or equal to maxPagesToShow, show all pages
-                    startPage = 0;
-                    endPage = totalPages - 1;
-                } else {
-                    // More than maxPagesToShow, implement ellipsis logic
-                    if (currentPage < maxPagesToShow - 2) { // Near the beginning (e.g., 1, 2, 3, ..., N)
-                        startPage = 0;
-                        endPage = maxPagesToShow - 2;
-                    } else if (currentPage > totalPages - (maxPagesToShow - 1)) { // Near the end (e.g., 1, ..., N-2, N-1, N)
-                        startPage = totalPages - (maxPagesToShow - 1);
-                        endPage = totalPages - 1;
-                    } else { // In the middle (e.g., 1, ..., C-1, C, C+1, ..., N)
-                        startPage = currentPage - 1;
-                        endPage = currentPage + 1;
-                    }
-                }
-
-                // Add first page number and leading ellipsis if needed
-                if (startPage > 0) {
-                    const firstPageSpan = document.createElement('span');
-                    firstPageSpan.textContent = '1';
-                    firstPageSpan.className = 'page-number';
-                    firstPageSpan.addEventListener('click', () => {
-                        currentPage = 0;
-                        renderCurrentPage();
-                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
-                    });
-                    paginationControls.appendChild(firstPageSpan);
-
-                    if (startPage > 1) { // Only show ellipsis if there's a gap
-                        const ellipsisSpan = document.createElement('span');
-                        ellipsisSpan.textContent = '...';
-                        ellipsisSpan.className = 'ellipsis';
-                        paginationControls.appendChild(ellipsisSpan);
-                    }
-                }
-
-                // Add dynamic page numbers
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageNumSpan = document.createElement('span');
-                    pageNumSpan.textContent = i + 1; // Display 1-based index
-                    pageNumSpan.className = 'page-number';
-                    if (i === currentPage) {
-                        pageNumSpan.classList.add('current-page'); // Highlight current page
-                    }
-                    pageNumSpan.addEventListener('click', () => {
-                        if (currentPage !== i) { // Only update if changing page
-                            currentPage = i;
-                            renderCurrentPage();
-                            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
-                        }
-                    });
-                    paginationControls.appendChild(pageNumSpan);
-                }
-
-                // Add trailing ellipsis and last page number if needed
-                if (endPage < totalPages - 1) {
-                    if (endPage < totalPages - 2) { // Only show ellipsis if there's a gap
-                        const ellipsisSpan = document.createElement('span');
-                        ellipsisSpan.textContent = '...';
-                        ellipsisSpan.className = 'ellipsis';
-                        paginationControls.appendChild(ellipsisSpan);
-                    }
-                    const lastPageSpan = document.createElement('span');
-                    lastPageSpan.textContent = totalPages;
-                    lastPageSpan.className = 'page-number';
-                    lastPageSpan.addEventListener('click', () => {
-                        currentPage = totalPages - 1;
-                        renderCurrentPage();
-                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page number click
-                    });
-                    paginationControls.appendChild(lastPageSpan);
-                }
-
-                // Next button
-                const nextButton = document.createElement('button');
-                nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>'; // Right arrow icon
-                nextButton.disabled = currentPage >= totalPages - 1; // Disable if on last page
-                nextButton.title = 'Next Page';
-                nextButton.addEventListener('click', () => {
-                    currentPage++;
-                    renderCurrentPage();
-                    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
-                });
-                paginationControls.appendChild(nextButton);
-            }
-            // Notify parent iframe (if any) to adjust height after pagination renders/updates
-            if (window.parent) {
-                const height = document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
-            }
-        };
-
-        // --- Function: renderCurrentPage (Calculates posts for current page and renders them) ---
-        const renderCurrentPage = () => {
-            const startIndex = currentPage * postsPerPage;
-            const endIndex = startIndex + postsPerPage;
-            const postsToShow = filteredPosts.slice(startIndex, endIndex);
-
-            renderPosts(postsToShow, 'postsContainer');
-            updatePaginationControls(filteredPosts.length);
-
-            // Ensure twttr.widgets.load() is called when the Twitter widgets script is ready
-            // This is a more robust way to ensure the script has loaded and initialized.
-            if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
-                twttr.ready(function (twttrInstance) {
-                    console.log('twttr.ready callback executed: Loading Twitter widgets for postsContainer.');
-                    twttrInstance.widgets.load(postsContainer);
-                });
-            } else {
-                console.warn('twttr object or twttr.ready function not available immediately. Twitter embeds might not load.');
-            }
+            // Render all posts on one page, since pagination has been removed
+            renderPosts(filteredPosts, 'postsContainer'); 
         };
 
         // --- Function: renderTabs (Renders the tab navigation buttons) ---
         const renderTabs = () => {
             tabNavigationDiv.innerHTML = ''; // Clear existing tabs
 
-            // Always add the default "Live Reporting" tab
-            const liveReportingButton = document.createElement('button'); // Changed variable name for clarity
-            liveReportingButton.textContent = defaultTab;
-            liveReportingButton.classList.add('tab-button');
-            if (currentActiveTab === defaultTab) {
-                liveReportingButton.classList.add('active-tab'); // Set active class
+            // As per user request, tabs only appear if at least one custom tab exists.
+            if (customTabs.length === 0) {
+                tabNavigationDiv.style.display = 'none'; // Hide the entire tab container
+                return;
             }
-            liveReportingButton.addEventListener('click', () => {
+            tabNavigationDiv.style.display = 'flex'; // Show the container if there are tabs
+
+            // Always add the default "Live Updates" tab if custom tabs exist
+            const liveUpdatesButton = document.createElement('button');
+            liveUpdatesButton.textContent = defaultTab;
+            liveUpdatesButton.classList.add('tab-button');
+            if (currentActiveTab === defaultTab) {
+                liveUpdatesButton.classList.add('active-tab'); // Set active class
+            }
+            liveUpdatesButton.addEventListener('click', () => {
                 currentActiveTab = defaultTab;
                 renderTabs(); // Re-render tabs to update active state
                 filterAndRenderPosts(); // Filter and render posts for the new tab
             });
-            tabNavigationDiv.appendChild(liveReportingButton);
+            tabNavigationDiv.appendChild(liveUpdatesButton);
 
             // Add custom tabs from Firestore
             customTabs.forEach(tabName => {
@@ -906,6 +737,12 @@
                 });
                 tabNavigationDiv.appendChild(tabButton);
             });
+            
+            // Notify parent iframe (if any) to adjust height after rendering/updating tabs
+            if (window.parent) {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+            }
         };
 
         // --- Event Listener: DOMContentLoaded (Initializes the embed when the page loads) ---
