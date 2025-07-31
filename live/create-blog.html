@@ -4,45 +4,216 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create/Manage Live Blog</title>
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-        <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
     <meta name="theme-color" content="#e74c3c">
 
     <style>
-        /* Ensure .reportingFromGroup is initially visible if checkbox is not checked */
-        #reportingFromGroup {
-            display: flex; /* Or block, depending on your desired layout */
-            flex-direction: column; /* Keep consistent with form-group */
+        /* --- General Layout --- */
+        body {
+            background-color: #f7f9f9;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h2 {
+            font-family: 'Noto Sans', sans-serif;
+            color: #1d2129;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+        h2:first-of-type {
+            margin-top: 0;
+        }
+        section {
+            padding: 25px;
+            background-color: #ffffff;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-top: 25px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
-        /* New style for the back button container in main */
+        /* --- Header & Back Button --- */
         .main-back-button-container {
-            padding-bottom: 10px; /* Space below the back button */
-            border-bottom: 1px solid #eee; /* Separator line */
-            margin-bottom: 15px; /* Space below the separator */
-            display: flex; /* Use flex to align the arrow and text */
-            align-items: center; /* Center the arrow vertically */
-            gap: 8px; /* Space between arrow and text */
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .main-back-button-container a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .main-back-button-container a:hover {
+            color: #e74c3c;
         }
 
-        /* A2HS Collapsible Section Styles */
+        /* --- Form Styling --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        .input-field, .textarea-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-size: 1rem;
+        }
+        .input-field:focus, .textarea-field:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+            outline: none;
+        }
+        .textarea-field {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 1.2em;
+            height: 1.2em;
+            accent-color: #e74c3c;
+        }
+
+        /* --- Button Styling --- */
+        .submit-button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 700;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .submit-button:hover:not(:disabled) {
+            background-color: #c0392b;
+            transform: translateY(-1px);
+        }
+        .submit-button:disabled {
+            background-color: #f3a69e;
+            cursor: not-allowed;
+        }
+
+        /* --- Tab Management & Embed Code --- */
+        .tab-management-controls, .embed-code-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .tab-management-controls .input-field, .embed-code-container .input-field {
+            flex-grow: 1;
+        }
+        .tab-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .tab-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .tab-list li:last-child {
+            border-bottom: none;
+        }
+        .delete-tab-button {
+            background: none;
+            border: 1px solid #ddd;
+            color: #dc3545;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .delete-tab-button:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* --- Live Posts Admin View --- */
+        .live-blog-posts .post-card {
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            padding: 15px;
+        }
+        .post-card.pinned {
+            background-color: #f0f2f5;
+            border-left: 4px solid #1d9bf0;
+        }
+
+        /* --- Notification & A2HS --- */
+        .notification-message {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .notification-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .notification-message.success {
+            background-color: #e6ffe6;
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+        .notification-message.error {
+            background-color: #ffe6e6;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
         #a2hsCollapsibleContainer {
-            display: none; /* Hidden by default on large screens */
+            display: none;
             background-color: #f8f8f8;
             border: 1px solid #eee;
             border-radius: 8px;
             margin-bottom: 15px;
-            overflow: hidden; /* Ensures content is clipped when collapsed */
+            overflow: hidden;
         }
-
         @media (max-width: 768px) {
             #a2hsCollapsibleContainer {
-                display: block; /* Show on small screens */
+                display: block;
             }
         }
-
         #a2hsToggle {
             display: flex;
             justify-content: space-between;
@@ -53,38 +224,32 @@
             color: white;
             font-weight: bold;
             font-size: 1.1em;
-            border-radius: 8px 8px 0 0; /* Rounded top corners */
+            border-radius: 8px 8px 0 0;
         }
-
         #a2hsToggle i {
             transition: transform 0.3s ease;
         }
-
         #a2hsToggle.active i {
-            transform: rotate(180deg); /* Rotate arrow when active */
+            transform: rotate(180deg);
         }
-
         #a2hsContent {
-            padding: 0 15px; /* Initial padding, will be adjusted by JS */
-            max-height: 0; /* Start collapsed */
+            padding: 0 15px;
+            max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out, padding 0.3s ease-out;
             background-color: #fff;
-            border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+            border-radius: 0 0 8px 8px;
         }
-
         #a2hsContent.show {
-            max-height: 200px; /* Adjust as needed to fit content */
+            max-height: 200px;
             padding: 15px;
             border-top: 1px solid #eee;
         }
-
         #a2hsContent ol {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         #a2hsContent ol li {
             margin-bottom: 10px;
             font-size: 0.95em;
@@ -93,11 +258,9 @@
             align-items: center;
             gap: 8px;
         }
-
         #a2hsContent ol li:last-child {
             margin-bottom: 0;
         }
-
         #a2hsContent ol li .step-number {
             background-color: #e74c3c;
             color: white;
@@ -114,42 +277,6 @@
         #a2hsContent .share-icon-placeholder {
             font-size: 1.1em;
             color: #34495e;
-        }
-
-        /* Notification Message Styles */
-        .notification-message {
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            opacity: 0; /* Start hidden */
-            transform: translateY(-20px); /* Start slightly above */
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .notification-message.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .notification-message.success {
-            background-color: #e6ffe6; /* Light green */
-            color: #28a745; /* Dark green */
-            border: 1px solid #28a745;
-        }
-
-        .notification-message.error {
-            background-color: #ffe6e6; /* Light red */
-            color: #dc3545; /* Dark red */
-            border: 1px solid #dc3545;
-        }
-        
-        /* Pinned Post Style in Admin */
-        .post-card.pinned {
-            background-color: #f0f2f5;
-            border-left: 4px solid #1d9bf0;
         }
     </style>
 </head>
