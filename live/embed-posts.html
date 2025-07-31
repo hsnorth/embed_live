@@ -13,7 +13,7 @@
             padding: 0;
             width: 100%;
             min-width: 0;
-            height: 100%;
+            height: auto;
             box-sizing: border-box;
             background-color: transparent !important;
             overflow-x: hidden;
@@ -403,8 +403,13 @@
         };
 
         const renderTabNavigation = () => {
-            tabNavigationDiv.innerHTML = '';
             const tabs = [defaultTab, ...customTabs];
+            if (tabs.length <= 1) {
+                tabNavigationDiv.style.display = 'none';
+                return;
+            }
+            tabNavigationDiv.style.display = 'flex';
+            tabNavigationDiv.innerHTML = '';
             tabs.forEach(tab => {
                 const button = document.createElement('button');
                 button.textContent = tab;
@@ -483,7 +488,7 @@
                         </div>
                         <div class="post-meta">
                             <span class="meta-line-one">
-                                <strong>${post.author}</strong>
+                                <strong>${post.author || 'Undefined'}</strong>
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
                             </span>
