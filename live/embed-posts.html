@@ -177,17 +177,29 @@
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
                     const contentDiv = postCard.querySelector('.post-text');
+                    let isExpanded = false; // State to track if the content is expanded
 
                     showMoreButton.addEventListener('click', () => {
-                        contentDiv.innerHTML = fullContentHtml;
-                        showMoreButton.style.display = 'none';
+                        isExpanded = !isExpanded; // Toggle the state
 
+                        if (isExpanded) {
+                            // Expand the content
+                            contentDiv.innerHTML = fullContentHtml;
+                            showMoreButton.textContent = 'Show less';
+                            // Load Twitter widgets for the newly revealed content
+                            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
+                                twttr.widgets.load(contentDiv);
+                            }
+                        } else {
+                            // Collapse the content
+                            contentDiv.innerHTML = displayContentHtml; // Use the truncated version
+                            showMoreButton.textContent = 'Show more';
+                        }
+
+                        // Notify parent iframe to adjust height after expansion/collapse
                         if (window.parent) {
                             const height = document.body.scrollHeight;
                             window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                        }
-                        if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
-                            twttr.widgets.load(contentDiv);
                         }
                     });
                 }
