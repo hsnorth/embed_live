@@ -626,9 +626,6 @@
         const postTabAssignmentDiv = document.getElementById('postTabAssignment');
         const notificationMessage = document.getElementById('notificationMessage');
         const signOutButtonHeader = document.getElementById('signOutButtonHeader');
-        const prevPageButton = document.getElementById('prevPageButton');
-        const nextPageButton = document.getElementById('nextPageButton');
-        const pageInfoSpan = document.getElementById('pageInfo');
         const paginationControls = document.getElementById('paginationControls');
         const a2hsToggle = document.getElementById('a2hsToggle');
         const a2hsContent = document.getElementById('a2hsContent');
@@ -831,7 +828,7 @@
         const generateEmbedCode = () => {
             if (currentBlogId) {
                 const embedUrl = `${window.location.origin}/embed-posts.html?blogId=${currentBlogId}`;
-                const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
+                const embedCode = `<iframe src="${embedUrl}" style="width:100%; height:auto; border:none; min-height: 500px;" title="${currentBlogName} Live Blog"></iframe>`;
                 embedCodeInput.value = embedCode;
             } else {
                 embedCodeInput.value = 'Select a blog to generate embed code.';
