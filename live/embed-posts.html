@@ -42,7 +42,7 @@
             width: 100%; /* Ensure it always takes 100% of parent */
             min-width: 0; /* Allow posts container to shrink */
             margin: 0 auto; /* Center the posts content within its parent */
-            box-sizing: border-box; 
+            box-sizing: border-box;
         }
     
         /* Hide elements not needed in the embed */
@@ -65,30 +65,9 @@
             position: relative;
             box-sizing: border-box;
         }
-        /* New style for pinned post */
-        .post-card.pinned-post {
-            background-color: #f5f5f5; /* Light grey background */
-            border-top: 2px solid rgb(208, 2, 27); /* Highlight with a border */
-        }
     
         .post-card:last-child {
             border-bottom: none;
-        }
-        /* Pinned label style */
-        .pinned-label {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: rgb(208, 2, 27);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-        .pinned-label::before {
-            content: "\f08d"; /* Font Awesome pin icon */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            margin-right: 6px;
         }
     
         .post-header-line {
@@ -369,7 +348,6 @@
 <body>
     <main>
         <section class="live-blog-posts">
-            <div id="tabNavigation" class="tab-navigation"></div>
             <div id="postsContainer">
             </div>
             <div class="pagination-controls" id="paginationControls">
@@ -409,9 +387,9 @@
         let currentBlogId = null; // ID of the blog being displayed
         let allPostsCached = []; // Stores all posts for the current blog
         let filteredPosts = []; // Posts filtered by the currently active tab
-        const defaultTab = "Live Updates"; // Default active tab name
-        let currentActiveTab = defaultTab; // Start with the default tab
-        let customTabs = []; // To store custom tabs defined in the blog document
+        // const defaultTab = "Live Updates"; // Default active tab name
+        // let currentActiveTab = defaultTab; // Start with the default tab
+        // let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
 
@@ -488,9 +466,6 @@
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
-                if (post.isPinned) {
-                    postCard.classList.add('pinned-post'); // Add the pinned-post class if the post is pinned
-                }
                 postCard.dataset.postId = post.id;
                 postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
                 let mediaHtml = '';
@@ -542,9 +517,7 @@
                         reportingFromDisplay = `<span>${post.reportingFrom}</span>`; // Display as saved (e.g., "Reporting from Montreal")
                     }
                 }
-                const pinnedLabelHtml = post.isPinned ? `<div class="pinned-label">Pinned</div>` : '';
                 postCard.innerHTML = `
-                    ${pinnedLabelHtml}
                     <div class="post-header-line">
                         <div class="author-avatar">
                             <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
@@ -579,6 +552,7 @@
         };
 
         // --- Function: fetchAndRenderPosts (Fetches posts from Firestore and renders them) ---
+        // This function has been simplified to not use tabs, as they are now disabled.
         const fetchAndRenderPosts = async () => {
             if (!currentBlogId) {
                 postsContainer.innerHTML = '<p class="error-message">No blog ID provided for embed.</p>';
@@ -586,52 +560,31 @@
             }
 
             try {
-                // Get the blog's custom tabs
-                const blogDoc = await getDoc(doc(db, 'blogs', currentBlogId));
-                customTabs = blogDoc.data()?.customTabs || [];
-                renderTabs(); // Render the tabs first
-
                 const postsCollectionRef = collection(db, 'blogs', currentBlogId, 'posts');
-
-                // Set up a real-time listener for ALL posts. We'll filter locally.
-                onSnapshot(postsCollectionRef, (querySnapshot) => {
+                // Removed the `where` clause for assignedTabs as we are no longer filtering by tabs
+                const q = query(postsCollectionRef, orderBy('timestamp', 'desc'));
+                
+                // Set up a real-time listener
+                onSnapshot(q, (querySnapshot) => {
                     const latestPosts = [];
                     querySnapshot.forEach((doc) => {
                         latestPosts.push({ id: doc.id, ...doc.data() });
                     });
                     
-                    // Separate pinned post from the rest
-                    const pinnedPost = latestPosts.find(post => post.isPinned);
-                    const otherPosts = latestPosts.filter(post => !post.isPinned).sort((a, b) => b.timestamp.toDate() - a.timestamp.toDate());
+                    const firstPostTimestamp = latestPosts[0]?.timestamp?.seconds;
 
-                    // Combine and cache the results, with pinned post at the top
-                    allPostsCached = pinnedPost ? [pinnedPost, ...otherPosts] : otherPosts;
-
-                    // Filter based on the currently active tab
-                    if (currentActiveTab === defaultTab) {
-                        filteredPosts = allPostsCached;
-                    } else {
-                        // Filter the posts for the active tab, and ensure the pinned post is always shown if it has the active tab
-                        const tabPosts = allPostsCached.filter(post => post.assignedTabs.includes(currentActiveTab));
-                        filteredPosts = tabPosts;
+                    if (initialLoadComplete && firstPostTimestamp > allPostsCached[0]?.timestamp?.seconds) {
+                        const newPosts = latestPosts.filter(post => post.timestamp.seconds > allPostsCached[0]?.timestamp?.seconds);
+                        newUpdatesCount = newPosts.length;
+                        newUpdatesCountSpan.textContent = newUpdatesCount;
+                        newUpdatesButton.style.display = 'block';
                     }
 
-                    // Handle new updates button logic
-                    if (initialLoadComplete) {
-                        const newPosts = allPostsCached.filter(post => !initialPosts.some(initialPost => initialPost.id === post.id));
-                        if (newPosts.length > 0) {
-                            newUpdatesCount = newPosts.length;
-                            newUpdatesCountSpan.textContent = newUpdatesCount;
-                            newUpdatesButton.style.display = 'block';
-                        }
-                    } else {
-                        initialLoadComplete = true;
-                        // Store the initial list of posts to compare against later
-                        initialPosts = [...allPostsCached];
-                    }
-
-                    // Render the filtered posts
+                    // Update the cache and render the latest posts
+                    allPostsCached = latestPosts;
+                    filteredPosts = allPostsCached; // Since there are no tabs, all posts are "filtered" posts
                     renderPostsForCurrentPage();
+                    initialLoadComplete = true; // Set flag after first load
                 });
 
             } catch (error) {
@@ -640,46 +593,7 @@
             }
         };
 
-        // --- Tab Navigation and Rendering ---
-        const renderTabs = () => {
-            const tabs = [defaultTab, ...customTabs];
-            tabNavigationDiv.innerHTML = '';
-            tabs.forEach(tabName => {
-                const button = document.createElement('button');
-                button.textContent = tabName;
-                button.dataset.tabName = tabName;
-                if (tabName === currentActiveTab) {
-                    button.classList.add('active-tab');
-                }
-                button.addEventListener('click', () => {
-                    currentActiveTab = tabName;
-                    currentPage = 0; // Reset to the first page when changing tabs
-                    // Re-render tabs to set active class
-                    document.querySelectorAll('.tab-navigation button').forEach(btn => btn.classList.remove('active-tab'));
-                    button.classList.add('active-tab');
 
-                    // Re-filter and re-render posts for the new tab
-                    if (currentActiveTab === defaultTab) {
-                        filteredPosts = allPostsCached;
-                    } else {
-                        const pinnedPost = allPostsCached.find(post => post.isPinned);
-                        let tabPosts = allPostsCached.filter(post => post.assignedTabs.includes(currentActiveTab));
-                         // If there's a pinned post, and it's assigned to the current tab, ensure it's at the top.
-                        if (pinnedPost && pinnedPost.assignedTabs.includes(currentActiveTab)) {
-                           // Remove pinned post from the tabPosts to prevent duplication
-                            tabPosts = tabPosts.filter(post => !post.isPinned);
-                           // Add it back to the beginning
-                            filteredPosts = [pinnedPost, ...tabPosts];
-                        } else {
-                            filteredPosts = tabPosts;
-                        }
-                    }
-                    renderPostsForCurrentPage();
-                });
-                tabNavigationDiv.appendChild(button);
-            });
-        };
-        
         // --- Pagination Functions ---
         const renderPostsForCurrentPage = () => {
             const start = currentPage * postsPerPage;
