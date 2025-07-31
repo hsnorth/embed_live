@@ -344,21 +344,34 @@
         }
 
         /* Styles for pinned indicator */
-        .pinned-indicator {
-            background-color: #f0f8ff; /* Light blue background */
-            color: #1a73e8; /* Blue text */
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-left: 10px; /* Space from other meta info */
-            display: inline-flex; /* To align icon and text */
+        .pinned-indicator-container {
+            display: flex;
             align-items: center;
-            gap: 5px;
-            border: 1px solid #cce0ff;
+            margin-bottom: 8px; /* Space above author/avatar */
+            color: #555;
+            font-size: 0.9em;
+            font-weight: bold;
         }
-        .pinned-indicator i {
-            color: #1a73e8; /* Ensure icon color matches text */
+
+        .pinned-indicator-container i {
+            margin-right: 5px;
+            color: #555;
+        }
+
+        /* Style for pinned posts */
+        .post-card.pinned {
+            background-color: #f5f5f5; /* Light grey background for pinned posts */
+            border-left: 5px solid #3498db; /* A blue border to signify pinned */
+            padding-left: 11px; /* Adjust padding due to border */
+        }
+
+        /* Hide timestamp for pinned posts */
+        .post-card.pinned .time-ago {
+            display: none;
+        }
+        /* Adjust bullet point if timestamp is hidden */
+        .post-card.pinned .meta-line-one .bullet {
+            display: none; /* Hide bullet if timestamp is hidden */
         }
     </style>
 </head>
@@ -484,6 +497,11 @@
                 postCard.dataset.postId = post.id;
                 postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
 
+                // Add 'pinned' class if the post is pinned
+                if (post.isPinned) {
+                    postCard.classList.add('pinned');
+                }
+
                 let mediaHtml = '';
                 if (post.mediaUrl) {
                     if (post.mediaType && post.mediaType.startsWith('image')) {
@@ -542,12 +560,13 @@
                     }
                 }
 
-                // Pinned indicator HTML
+                // Pinned indicator HTML - moved above the header line
                 const pinnedIndicatorHtml = post.isPinned ?
-                    `<span class="pinned-indicator"><i class="fas fa-thumbtack"></i> Pinned</span>` : '';
+                    `<div class="pinned-indicator-container"><i class="fas fa-thumbtack"></i> Pinned</div>` : '';
 
 
                 postCard.innerHTML = `
+                    ${pinnedIndicatorHtml}
                     <div class="post-header-line">
                         <div class="author-avatar">
                             <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
@@ -557,7 +576,6 @@
                                 <strong>${post.authorName || 'Anonymous'}</strong>
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
-                                ${pinnedIndicatorHtml}
                             </div>
                             ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                         </div>
