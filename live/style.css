@@ -178,6 +178,37 @@ section {
     transform: translateY(-1px);
 }
 
+/* --- Tab Management Section --- */
+.tab-management-controls {
+    display: flex;
+    gap: 10px;
+}
+.tab-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+.tab-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e1e8ed;
+}
+.delete-tab-button {
+    background: none;
+    border: 1px solid #ddd;
+    color: #c0392b;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.delete-tab-button:hover {
+    background-color: #c0392b;
+    color: white;
+}
+
 /* --- Live Blog Posts Admin View --- */
 .live-blog-posts .post-card {
     border: 1px solid #e1e8ed;
@@ -204,6 +235,41 @@ section {
     margin-top: 10px;
     max-height: 500px; /* Constrain image/video height */
     width: auto;
+}
+.post-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e1e8ed;
+}
+.post-actions button {
+    background: none;
+    border: 1px solid #ced4da;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.post-actions .edit-post-button {
+    color: #27ae60;
+    border-color: #27ae60;
+}
+.post-actions .edit-post-button:hover {
+    background-color: #27ae60;
+    color: white;
+}
+.post-actions .delete-post-button {
+    color: #c0392b;
+    border-color: #c0392b;
+}
+.post-actions .delete-post-button:hover {
+    background-color: #c0392b;
+    color: white;
 }
 
 
