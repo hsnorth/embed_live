@@ -155,6 +155,7 @@
         let adminCurrentPage = 0;
         const adminPostsPerPage = 8;
         let editingPostId = null;
+        let currentUserName = 'Anonymous'; // Store the logged-in user's name
         let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
 
         const blogTitleHeader = document.getElementById('blogTitleHeader');
@@ -197,18 +198,17 @@
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        authorNameInput.value = userData.name || user.displayName || user.email;
-                        authorNameInput.readOnly = true;
+                        currentUserName = userData.name || user.displayName || user.email;
                         currentUserAvatarUrl = userData.avatarUrl || 'https://hsnorth.github.io/embed_live/live/harry.png';
                     } else {
-                        authorNameInput.value = user.displayName || user.email;
-                        authorNameInput.readOnly = true;
+                        currentUserName = user.displayName || user.email;
                         console.warn("User document not found for UID:", currentUser.uid);
                     }
+                    authorNameInput.value = currentUserName; // Set default for new posts
                 } catch (error) {
                     console.error("Error fetching user data:", error);
-                    authorNameInput.value = user.displayName || user.email;
-                    authorNameInput.readOnly = true;
+                    currentUserName = user.displayName || user.email;
+                    authorNameInput.value = currentUserName;
                 }
 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -356,8 +356,7 @@
                 const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
                 
                 const postData = {
-                    authorName,
-                    authorAvatar: currentUserAvatarUrl,
+                    authorName: authorNameInput.value.trim(),
                     subtitle: postSubtitleInput.value.trim(),
                     content,
                     reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
@@ -366,6 +365,8 @@
                 };
 
                 if (editingPostId) {
+                    // When editing, we preserve the original author's ID and avatar.
+                    // The author name is taken from the form, which may have been edited.
                     const postDocRef = doc(db, 'posts', editingPostId);
                     if (mediaFile) {
                         postData.mediaUrl = mediaUrl;
@@ -374,8 +375,10 @@
                     await updateDoc(postDocRef, postData);
                     showNotification("Post updated!", "success");
                 } else {
+                    // For new posts, we use the current user's details.
                     postData.blogId = currentBlogId;
                     postData.authorId = currentUser.uid;
+                    postData.authorAvatar = currentUserAvatarUrl;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
                     postData.mediaType = mediaType;
@@ -383,14 +386,15 @@
                     showNotification("Post added!", "success");
                 }
 
-                // Reset only the necessary form fields
+                // Reset form fields
                 postContentInput.value = '';
                 postSubtitleInput.value = '';
                 postMediaInput.value = '';
                 pinPostCheckbox.checked = false;
                 isLivePageEditorCheckbox.checked = false;
-                isLivePageEditorCheckbox.dispatchEvent(new Event('change')); // Trigger change to reset reportingFrom
+                isLivePageEditorCheckbox.dispatchEvent(new Event('change'));
                 renderPostTabAssignmentCheckboxes([]);
+                authorNameInput.value = currentUserName; // Reset author name to current user for the next new post.
                 
                 editingPostId = null;
                 submitButton.textContent = "Post Update";
@@ -478,12 +482,11 @@
             const deleteButton = e.target.closest('.delete-post-button');
 
             if (editButton) {
-                // NOTE: Any authenticated user can edit any post.
-                // There is no check here to see if the current user is the original author.
                 const postId = editButton.dataset.postId;
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
                     editingPostId = postId;
+                    authorNameInput.value = postToEdit.authorName || ''; // Set to original author's name
                     postContentInput.value = postToEdit.content || '';
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
@@ -499,8 +502,6 @@
             }
 
             if (deleteButton) {
-                // NOTE: Any authenticated user can delete any post.
-                // There is no check here to see if the current user is the original author.
                 const postId = deleteButton.dataset.postId;
                 if (confirm("Are you sure you want to delete this post?")) {
                     try {
