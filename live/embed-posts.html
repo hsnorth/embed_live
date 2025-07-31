@@ -49,26 +49,8 @@
         .live-blog-posts h2,
         .new-post-form,
         footer,
-        header,
-        .pagination-controls {
+        header {
             display: none !important;
-        }
-
-        /* New styles for the Pinned feature */
-        .post-card.pinned {
-            border-left: 5px solid #007bff; /* Highlight pinned post with a blue border */
-            background-color: #f8f9fa;
-        }
-
-        .pinned-label {
-            background-color: #007bff;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 8px;
-            flex-shrink: 0; /* Prevents the label from shrinking */
         }
     
         /* --- Individual Post Card Styling --- */
@@ -204,7 +186,7 @@
             width: 100%; /* Ensure it takes 100% of parent's width */
             min-width: 0; /* Allow the wrapper to shrink */
             overflow: hidden; /* Hide any overflow within this wrapper */
-            display: block; /* Ensure block behavior */
+            display: block; /* Ensure it behaves as a block element */
             box-sizing: border-box;
             flex-shrink: 0; /* Prevents this wrapper from shrinking itself when inside a flex container */
         }
@@ -404,9 +386,6 @@
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
-        let lastTimestamp = null; // To keep track of the last post timestamp for updates
-        let pinnedPostsCached = []; // Cache for pinned posts
-        let otherPostsCached = []; // Cache for other posts
 
         // DOM element references
         const postsContainer = document.getElementById('postsContainer');
@@ -483,7 +462,7 @@
 
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
-                postCard.className = `post-card ${post.isPinned ? 'pinned' : ''}`; // Add 'pinned' class if applicable
+                postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
                 postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
 
@@ -545,9 +524,6 @@
                     }
                 }
 
-                // New: Add a "Pinned" label if the post is pinned
-                const pinnedLabelHtml = post.isPinned ? '<span class="pinned-label">Pinned</span>' : '';
-
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -557,7 +533,6 @@
                         <div class="post-meta">
                             <div class="meta-line-one">
                                 <strong>${post.authorName || 'Anonymous'}</strong>
-                                ${pinnedLabelHtml}
                                 <span class="bullet">•</span>
                                 <span class="time-ago">${timeAgo(post.timestamp)}</span>
                             </div>
@@ -613,59 +588,55 @@
                 unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
             }
 
-            // Listen for pinned posts
-            const unsubscribePinned = onSnapshot(query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', true)), (snapshot) => {
-                const newPinnedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // Pinned posts will either be an empty array or an array with one post
-                pinnedPostsCached = newPinnedPosts;
-                updatePostsDisplay();
-            });
+            const postsCollectionRef = collection(db, 'posts');
+            const q = query(
+                postsCollectionRef,
+                where('blogId', '==', blogId),
+                orderBy('timestamp', 'desc')
+            );
 
-            // Listen for other posts
-            const unsubscribeOthers = onSnapshot(query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', false), orderBy('timestamp', 'desc')), (snapshot) => {
-                const newOtherPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                otherPostsCached = newOtherPosts;
-                updatePostsDisplay();
-            });
+            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
+                const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // Combine the unsubscribe functions for a clean shutdown
-            unsubscribeFromPosts = () => {
-                unsubscribePinned();
-                unsubscribeOthers();
-            };
+                // Compare with current cached posts to detect new ones
+                const oldPostIds = new Set(allPostsCached.map(p => p.id));
+                let newPostsDetected = false;
+                if (initialLoadComplete) { // Only show "New Update" after initial load
+                    for (const post of updatedPosts) {
+                        if (!oldPostIds.has(post.id)) {
+                            newPostsDetected = true;
+                            break;
+                        }
+                    }
+                }
+
+                allPostsCached = updatedPosts; // Update the cache with the latest data
+
+                // If a new post is detected and we are not at the top of the page, show the "New Update" button
+                if (newPostsDetected && window.scrollY > 0) {
+                    newUpdatesCount++;
+                    newUpdatesCountSpan.textContent = newUpdatesCount;
+                    newUpdatesButton.style.display = 'block';
+                } else {
+                    newUpdatesCount = 0; // Reset count
+                    newUpdatesButton.style.display = 'none';
+                    filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
+                }
+
+                // Handle deep linking and scrolling AFTER posts are rendered or updated
+                // This block should only run on the initial load or after a full refresh
+                // not on every snapshot update unless it's a new page load
+                if (!initialLoadComplete && window.location.hash) {
+                    const postIdFromHash = window.location.hash.substring(1); // Remove '#'
+                    scrollToPost(postIdFromHash);
+                }
+
+                initialLoadComplete = true; // Mark initial load as complete
+            }, (error) => {
+                console.error("Error listening to posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
+            });
         };
-
-        // Helper function to handle the combination and rendering of posts
-        const updatePostsDisplay = () => {
-            const updatedPosts = [...pinnedPostsCached, ...otherPostsCached];
-
-            // Compare with current cached posts to detect new ones
-            const oldPostIds = new Set(allPostsCached.map(p => p.id));
-            const newPostsSinceLastLoad = updatedPosts.filter(p => !oldPostIds.has(p.id));
-
-            allPostsCached = updatedPosts; // Update the cache with the latest data
-
-            // If a new post is detected and we are not at the top of the page, show the "New Update" button
-            if (newPostsSinceLastLoad.length > 0 && initialLoadComplete && window.scrollY > 0) {
-                newUpdatesCount += newPostsSinceLastLoad.length;
-                newUpdatesCountSpan.textContent = newUpdatesCount;
-                newUpdatesButton.style.display = 'block';
-            } else {
-                newUpdatesCount = 0; // Reset count
-                newUpdatesButton.style.display = 'none';
-                filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
-            }
-
-            // Handle deep linking and scrolling AFTER posts are rendered or updated
-            // This block should only run on the initial load or after a full refresh
-            // not on every snapshot update unless it's a new page load
-            if (!initialLoadComplete && window.location.hash) {
-                const postIdFromHash = window.location.hash.substring(1); // Remove '#'
-                scrollToPost(postIdFromHash);
-            }
-
-            initialLoadComplete = true; // Mark initial load as complete
-        }
 
         // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
         const scrollToPost = (postId) => {
