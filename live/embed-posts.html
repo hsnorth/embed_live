@@ -204,7 +204,7 @@
             width: 100%; /* Ensure it takes 100% of parent's width */
             min-width: 0; /* Allow the wrapper to shrink */
             overflow: hidden; /* Hide any overflow within this wrapper */
-            display: block; /* Ensure it behaves as a block element */
+            display: block; /* Ensure block behavior */
             box-sizing: border-box;
             flex-shrink: 0; /* Prevents this wrapper from shrinking itself when inside a flex container */
         }
@@ -404,6 +404,9 @@
         let customTabs = []; // To store custom tabs defined in the blog document
         let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
         let newUpdatesCount = 0; // Count of new updates for the button
+        let lastTimestamp = null; // To keep track of the last post timestamp for updates
+        let pinnedPostsCached = []; // Cache for pinned posts
+        let otherPostsCached = []; // Cache for other posts
 
         // DOM element references
         const postsContainer = document.getElementById('postsContainer');
@@ -610,19 +613,19 @@
                 unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
             }
 
-            // Fetch the pinned post separately
-            const pinnedPostsQuery = query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', true));
-            const otherPostsQuery = query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', false), orderBy('timestamp', 'desc'));
-
-            // Listen for changes on both pinned and other posts
-            const unsubscribePinned = onSnapshot(pinnedPostsQuery, (pinnedSnapshot) => {
-                const pinnedPosts = pinnedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                updatePostsDisplay(pinnedPosts, allPostsCached.filter(p => !p.isPinned));
+            // Listen for pinned posts
+            const unsubscribePinned = onSnapshot(query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', true)), (snapshot) => {
+                const newPinnedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Pinned posts will either be an empty array or an array with one post
+                pinnedPostsCached = newPinnedPosts;
+                updatePostsDisplay();
             });
 
-            const unsubscribeOthers = onSnapshot(otherPostsQuery, (otherSnapshot) => {
-                const otherPosts = otherSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                updatePostsDisplay(allPostsCached.filter(p => p.isPinned), otherPosts);
+            // Listen for other posts
+            const unsubscribeOthers = onSnapshot(query(collection(db, 'posts'), where('blogId', '==', blogId), where('isPinned', '==', false), orderBy('timestamp', 'desc')), (snapshot) => {
+                const newOtherPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                otherPostsCached = newOtherPosts;
+                updatePostsDisplay();
             });
 
             // Combine the unsubscribe functions for a clean shutdown
@@ -633,26 +636,18 @@
         };
 
         // Helper function to handle the combination and rendering of posts
-        const updatePostsDisplay = (pinnedPosts, otherPosts) => {
-            const updatedPosts = pinnedPosts.concat(otherPosts);
+        const updatePostsDisplay = () => {
+            const updatedPosts = [...pinnedPostsCached, ...otherPostsCached];
 
             // Compare with current cached posts to detect new ones
             const oldPostIds = new Set(allPostsCached.map(p => p.id));
-            let newPostsDetected = false;
-            if (initialLoadComplete) { // Only show "New Update" after initial load
-                for (const post of updatedPosts) {
-                    if (!oldPostIds.has(post.id)) {
-                        newPostsDetected = true;
-                        break;
-                    }
-                }
-            }
+            const newPostsSinceLastLoad = updatedPosts.filter(p => !oldPostIds.has(p.id));
 
             allPostsCached = updatedPosts; // Update the cache with the latest data
 
             // If a new post is detected and we are not at the top of the page, show the "New Update" button
-            if (newPostsDetected && window.scrollY > 0) {
-                newUpdatesCount++;
+            if (newPostsSinceLastLoad.length > 0 && initialLoadComplete && window.scrollY > 0) {
+                newUpdatesCount += newPostsSinceLastLoad.length;
                 newUpdatesCountSpan.textContent = newUpdatesCount;
                 newUpdatesButton.style.display = 'block';
             } else {
