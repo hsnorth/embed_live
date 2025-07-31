@@ -12,25 +12,25 @@
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%; /* Ensure both HTML and Body take full width of the iframe */
-            min-width: 0; /* Allow shrinking if parent iframe gets very small */
-            height: 100%; /* Occupy full height of iframe */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
-            background-color: transparent !important; /* Essential for iframe transparency */
-            overflow-x: hidden; /* Prevent horizontal scrollbars from this embed itself */
+            width: 100%;
+            min-width: 0;
+            height: 100%;
+            box-sizing: border-box;
+            background-color: transparent !important;
+            overflow-x: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.5;
             color: #000;
         }
         main {
             padding: 0;
-            margin: 0 auto; /* Center main content */
+            margin: 0 auto;
             box-shadow: none;
             border-radius: 0;
             background-color: transparent;
-            max-width: 700px; /* Set max width for main content area */
-            width: 100%; /* Ensure it always tries to take 100% of parent up to max-width */
-            min-width: 0; /* Allow main to shrink if needed by small screens */
+            max-width: 700px;
+            width: 100%;
+            min-width: 0;
             box-sizing: border-box;
         }
         .live-blog-posts {
@@ -38,10 +38,10 @@
             padding: 0;
             border: none;
             background-color: transparent;
-            max-width: 100%; /* This should be 100% of its parent (main) */
-            width: 100%; /* Ensure it always takes 100% of parent */
-            min-width: 0; /* Allow posts container to shrink */
-            margin: 0 auto; /* Center the posts content within its parent */
+            max-width: 100%;
+            width: 100%;
+            min-width: 0;
+            margin: 0 auto;
             box-sizing: border-box; 
         }
     
@@ -57,15 +57,37 @@
     
         /* --- Individual Post Card Styling --- */
         .post-card {
-            display: block; /* Ensure it's a block-level element */
-            width: 100%; /* Occupy full width of its parent */
-            min-width: 0; /* Allow post card to shrink */
+            display: block;
+            width: 100%;
+            min-width: 0;
             padding: 12px 16px;
             border-bottom: 1px solid #ebeef0;
             background-color: #fff;
             word-wrap: break-word;
             position: relative;
             box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        /* --- Pinned Post Styling --- */
+        .post-card.pinned {
+            background-color: #f7f9f9; /* A very light grey */
+        }
+
+        .pinned-indicator {
+            font-size: 12px;
+            font-weight: bold;
+            color: #536471; /* Twitter's secondary text color */
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            /* Aligns with the start of the author name, accounting for avatar + margin */
+            padding-left: 50px; 
+        }
+
+        .pinned-indicator .fa-thumbtack {
+            margin-right: 6px;
+            font-size: 11px;
         }
     
         .post-card:last-child {
@@ -169,42 +191,38 @@
             color: #0f1419;
             line-height: 20px;
             word-break: break-word;
-            width: 100%; /* Ensure it fills its parent */
+            width: 100%;
             box-sizing: border-box;
-            min-width: 0; /* Allow the text container to shrink */
+            min-width: 0;
         }
-        /* Style for paragraphs within post-text */
         .post-text p {
-            margin-bottom: 1em; /* Add space between paragraphs */
+            margin-bottom: 1em;
         }
         .post-text p:last-child {
-            margin-bottom: 0; /* No margin after the last paragraph */
+            margin-bottom: 0;
         }
     
-        /* Wrapper for Twitter embeds to provide consistent spacing */
         .tweet-embed-wrapper {
-            margin: 15px 0; /* Add some vertical space around embeds */
-            max-width: 100%; /* Ensure it doesn't overflow its parent */
-            width: 100%; /* Ensure it takes 100% of parent's width */
-            min-width: 0; /* Allow the wrapper to shrink */
-            overflow: hidden; /* Hide any overflow within this wrapper */
-            display: block; /* Ensure it behaves as a block element */
+            margin: 15px 0;
+            max-width: 100%;
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            display: block;
             box-sizing: border-box;
-            flex-shrink: 0; /* Prevents this wrapper from shrinking itself when inside a flex container */
+            flex-shrink: 0;
         }
     
-        /* Crucial for fixing Twitter embed width issues: Target the iframe itself */
         .tweet-embed-wrapper iframe,
         blockquote.twitter-tweet iframe {
-            max-width: 100% !important; /* Ensure it never exceeds its parent */
-            min-width: 0 !important; /* Allow it to shrink below Twitter's default if needed */
-            height: auto !important; /* Let height adjust naturally */
-            display: block; /* Ensure block behavior */
-            box-sizing: border-box; /* Include padding in calculations */
-            flex-shrink: 0; /* Prevents a flex parent from shrinking this iframe */
+            max-width: 100% !important;
+            min-width: 0 !important;
+            height: auto !important;
+            display: block;
+            box-sizing: border-box;
+            flex-shrink: 0;
         }
     
-        /* Media styles (images and video containers) */
         .post-media {
             max-width: 100%;
             height: auto;
@@ -213,15 +231,14 @@
             margin-top: 8px;
             transition: all 0.3s ease-in-out;
         }
-        /* Styles for embedded videos in posts */
         .post-media.post-video {
             display: block;
-            width: 100%; /* Make video take full width of its parent */
-            height: auto; /* Maintain aspect ratio */
+            width: 100%;
+            height: auto;
             margin-top: 10px;
             margin-bottom: 10px;
             background-color: #000;
-            object-fit: cover; /* Scales the video to fill the container, possibly cropping edges */
+            object-fit: cover;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -238,7 +255,6 @@
             font-size: 16px;
         }
     
-        /* Show more button for truncated text */
         .show-more-button {
             background-color: #f0f0f0;
             color: #333;
@@ -261,51 +277,6 @@
             border-color: #ccc;
         }
     
-        /* --- Tab Navigation (Embed Page Specific) --- */
-        .tab-navigation {
-            position: sticky;
-            top: 0;
-            background-color: #fff;
-            border-bottom: 1px solid #ebeef0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            z-index: 1000;
-            display: flex;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            white-space: nowrap;
-            padding: 0 10px;
-            justify-content: flex-start;
-            box-sizing: border-box; /* Important for width calculation with padding */
-            max-width: 700px; /* Match the max-width of .live-blog-posts's parent (main) */
-            width: 100%; /* Ensure it takes 100% of available space */
-            min-width: 0; /* Allow it to shrink */
-            margin: 0 auto; /* Center it like the posts */
-        }
-    
-        .tab-navigation button {
-            background: none;
-            border: none;
-            padding: 12px 15px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #555;
-            cursor: pointer;
-            transition: color 0.2s ease, border-bottom 0.2s ease;
-            flex-shrink: 0; /* Prevents buttons from shrinking */
-        }
-    
-        .tab-navigation button.active-tab {
-            color: rgb(208, 2, 27);
-            border-bottom: 2px solid rgb(208, 2, 27);
-            font-weight: bold;
-        }
-    
-        .tab-navigation button:hover:not(.active-tab) {
-            color: #333;
-            background-color: #f9f9f9;
-        }
-    
-        /* New Update Notification Button */
         #newUpdatesButton {
             position: fixed;
             bottom: 20px;
@@ -330,18 +301,17 @@
             transform: translateX(-50%) translateY(-2px);
         }
 
-        /* Media query for larger screens: apply max-height to images and videos */
         @media (min-width: 600px) {
             .post-media {
-                max-height: 500px; /* Example max height for images */
-                width: auto; /* Allow width to adjust to maintain aspect ratio */
-                object-fit: contain; /* Ensure the entire image is visible within the max-height, preventing cropping */
+                max-height: 500px;
+                width: auto;
+                object-fit: contain;
             }
 
             .post-media.post-video {
-                max-height: 500px; /* Example max height for videos */
-                width: auto; /* Allow width to adjust to maintain aspect ratio */
-                object-fit: contain; /* Ensure the entire video is visible within the max-height, preventing cropping */
+                max-height: 500px;
+                width: auto;
+                object-fit: contain;
             }
         }
     </style>
@@ -364,170 +334,130 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-        // Your Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        // Your Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // REPLACE THIS
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // REPLACE THIS
-            projectId: "myliveblogapp-cf9df", // REPLACE THIS
-            storageBucket: "myliveblogapp-cf9df.firebase-storage.app", // REPLACE THIS
-            messagingSenderId: "324824649312", // REPLACE THIS (optional)
-            appId: "1:324824649312:web:c0750693346091d853bd05", // REPLACE THIS (optional)
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebase-storage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         // --- Global Variables for Embed ---
-        let currentPage = 0;
-        const postsPerPage = 8; // Number of posts to show per page
-        let currentBlogId = null; // ID of the blog being displayed
-        let allPostsCached = []; // Stores all posts for the current blog
-        let filteredPosts = []; // Posts filtered by the currently active tab
-        const defaultTab = "Live Updates"; // Default active tab name
-        let currentActiveTab = defaultTab; // Start with the default tab
-        let customTabs = []; // To store custom tabs defined in the blog document
-        let initialLoadComplete = false; // Flag to prevent "New Update" button on first load
-        let newUpdatesCount = 0; // Count of new updates for the button
+        let currentBlogId = null;
+        let allPostsCached = [];
+        let initialLoadComplete = false;
+        let newUpdatesCount = 0;
 
         // DOM element references
         const postsContainer = document.getElementById('postsContainer');
-        const paginationControls = document.getElementById('paginationControls');
-        const tabNavigationDiv = document.getElementById('tabNavigation');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
-        // --- Helper Function: timeAgo (for displaying how long ago a post was made) ---
+        // --- Helper Function: timeAgo ---
         function timeAgo(timestamp) {
             const now = new Date();
-            // Convert Firestore Timestamp to Date object if applicable
             const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
             const seconds = Math.floor((now - postDate) / 1000);
 
-            let interval = seconds / 31536000; // Years
-            if (interval > 1) {
-                return Math.floor(interval) + " years ago";
-            }
-            interval = seconds / 2592000; // Months
-            if (interval > 1) {
-                return Math.floor(interval) + " months ago";
-            }
-            interval = seconds / 86400; // Days
-            if (interval > 1) {
-                return Math.floor(interval) + " days ago";
-            }
-            interval = seconds / 3600; // Hours
-            if (interval > 1) {
-                return Math.floor(interval) + " hours ago";
-            }
-            interval = seconds / 60; // Minutes
-            if (interval > 1) {
-                return Math.floor(interval) + " minutes ago";
-            }
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
             return Math.floor(seconds) + " seconds ago";
         }
 
-        // --- Function: processContentForEmbeds (Now simply formats paragraphs, expects direct embed HTML) ---
+        // --- Function: processContentForEmbeds ---
         function processContentForEmbeds(content) {
             if (!content) return '';
-
-            // Split content by newlines to handle paragraphs.
-            // Critically, it will *not* wrap lines containing <blockquote or <div (for media) in <p> tags,
-            // preserving existing HTML structure.
             return content.split(/\r?\n/).map(line => {
                 const trimmedLine = line.trim();
-                // Check if the line *starts* with known embed/media tags
                 if (trimmedLine.startsWith('<blockquote') ||
                     trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
                     trimmedLine.startsWith('<img') ||
-                    trimmedLine === '') { // Allow empty lines to pass through without <p>
-                    return line; // Return lines with existing HTML (like blockquote) as is
+                    trimmedLine === '') {
+                    return line;
                 }
-                return `<p>${line}</p>`; // Wrap plain text lines in <p> tags
+                return `<p>${line}</p>`;
             }).join('');
         }
 
-        // --- Function: renderPosts (Renders a given array of posts into a container) ---
+        // --- Function: renderPosts ---
         const renderPosts = (postsToRender, containerId) => {
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error(`Container with ID "${containerId}" not found.`);
                 return;
             }
-            container.innerHTML = ''; // Clear existing posts
+            container.innerHTML = '';
 
             if (postsToRender.length === 0) {
                 container.innerHTML = '<p class="no-posts-message">No posts yet for this tab. Be the first to add an update!</p>';
                 return;
             }
 
-            const MAX_CHARS_PREVIEW = 450; // Max characters before truncating post content
+            const MAX_CHARS_PREVIEW = 450;
 
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
                 postCard.dataset.postId = post.id;
-                postCard.id = `post-${post.id}`; // Add an ID for deep linking/scrolling
+                postCard.id = `post-${post.id}`;
+
+                // --- Pinned Post Logic ---
+                let pinnedHtml = '';
+                if (post.isPinned) {
+                    postCard.classList.add('pinned');
+                    pinnedHtml = `
+                        <div class="pinned-indicator">
+                            <i class="fas fa-thumbtack"></i> PINNED
+                        </div>
+                    `;
+                }
 
                 let mediaHtml = '';
                 if (post.mediaUrl) {
                     if (post.mediaType && post.mediaType.startsWith('image')) {
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        // For videos: keep aspect ratio, prevent expansion, add controls
-                        mediaHtml = `
-                            <video src="${post.mediaUrl}" class="post-media post-video" 
-                                controls playsinline disablePictureInPicture
-                                preload="metadata"
-                            ></video>
-                        `;
+                        mediaHtml = `<video src="${post.mediaUrl}" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
                     }
                 }
 
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'; // Default avatar
-
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-
                 let displayContent = post.content;
                 let showMoreButtonHtml = '';
                 let isTruncated = false;
 
-                // --- Truncation Logic for Raw HTML Content ---
                 const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
                 if (plainTextContent.length > MAX_CHARS_PREVIEW) {
-                    // Find a safe truncation point that doesn't split an HTML tag.
-                    // This is a simplified approach, a true HTML truncation needs a robust parser.
-                    let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW);
-                    // Basic attempt to close any open tags if truncated mid-tag
-                    const openTags = (truncatedRawHtml.match(/<([a-z]+)(?![^>]*\/>)[^>]*>/ig) || [])
-                                           .filter(tag => !tag.startsWith('</') && !tag.endsWith('/>'))
-                                           .map(tag => tag.substring(1, tag.indexOf(' ')).replace('>', ''));
-                    openTags.reverse().forEach(tag => {
-                        if (!truncatedRawHtml.includes(`</${tag}>`)) {
-                            truncatedRawHtml += `</${tag}>`;
-                        }
-                    });
-
-                    displayContent = truncatedRawHtml + '...';
+                    let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    displayContent = truncatedRawHtml;
                     isTruncated = true;
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
-                // Process content for paragraphs, expecting direct embed HTML
                 const displayContentHtml = processContentForEmbeds(displayContent);
                 const fullContentHtml = processContentForEmbeds(post.content);
 
-                // Determine how to display the reportingFrom field based on its content
                 let reportingFromDisplay = '';
                 if (post.reportingFrom) {
-                    if (post.reportingFrom === 'Live Page Editor') {
-                        reportingFromDisplay = `<span>Live Page Editor</span>`; // Display only "Live Page Editor"
-                    } else {
-                        reportingFromDisplay = `<span>${post.reportingFrom}</span>`; // Display as saved (e.g., "Reporting from Montreal")
-                    }
+                    reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
                 }
 
-
                 postCard.innerHTML = `
+                    ${pinnedHtml}
                     <div class="post-header-line">
                         <div class="author-avatar">
                             <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
@@ -548,53 +478,45 @@
                 `;
                 container.appendChild(postCard);
 
-                // Add event listener for "Show more" button if content was truncated
                 if (isTruncated) {
                     const showMoreButton = postCard.querySelector('.show-more-button');
                     const contentDiv = postCard.querySelector('.post-text');
 
                     showMoreButton.addEventListener('click', () => {
-                        contentDiv.innerHTML = fullContentHtml; // Set full formatted content including embeds
-                        showMoreButton.style.display = 'none'; // Hide the button
+                        contentDiv.innerHTML = fullContentHtml;
+                        showMoreButton.style.display = 'none';
 
-                        // Notify parent iframe to adjust height after expansion
                         if (window.parent) {
                             const height = document.body.scrollHeight;
-                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
                         }
-                        // IMPORTANT: Load Twitter widgets for the newly revealed content
-                        if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
-                            twttr.ready(function (twttrInstance) {
-                                console.log('twttr.ready callback executed: Loading Twitter widgets for expanded contentDiv.');
-                                twttrInstance.widgets.load(contentDiv); // Load for the expanded contentDiv
-                            });
-                        } else {
-                            console.warn('twttr object or twttr.ready function not available for expanded content.');
+                        if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
+                            twttr.widgets.load(contentDiv);
                         }
                     });
                 }
-
-                // Removed the entire "Video Playback and Expansion Logic" block here
-                // as per user's request to not expand and previous guidance to simplify video handling.
-
             });
 
-            // Notify parent iframe (if any) to adjust height after rendering posts
             if (window.parent) {
                 const height = document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, window.location.origin);
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+            }
+            
+            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
+                twttr.widgets.load(container);
             }
         };
 
         // --- Live Updates Listener (onSnapshot) ---
-        let unsubscribeFromPosts = null; // To store the unsubscribe function for real-time listener
+        let unsubscribeFromPosts = null;
 
         const setupRealtimeListener = (blogId) => {
             if (unsubscribeFromPosts) {
-                unsubscribeFromPosts(); // Unsubscribe from previous listener if it exists
+                unsubscribeFromPosts();
             }
 
             const postsCollectionRef = collection(db, 'posts');
+            // We order by timestamp initially, but will re-sort in JS to handle pinning
             const q = query(
                 postsCollectionRef,
                 where('blogId', '==', blogId),
@@ -602,12 +524,25 @@
             );
 
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
-                const updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                let updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // Compare with current cached posts to detect new ones
+                // --- Sort posts: pinned post first, then by timestamp ---
+                updatedPosts.sort((a, b) => {
+                    const aIsPinned = a.isPinned || false;
+                    const bIsPinned = b.isPinned || false;
+
+                    if (aIsPinned && !bIsPinned) return -1; // a comes first
+                    if (!aIsPinned && bIsPinned) return 1;  // b comes first
+
+                    // If both are the same (pinned or not), sort by timestamp
+                    const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
+                    const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
+                    return dateB - dateA; // Descending order
+                });
+
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
                 let newPostsDetected = false;
-                if (initialLoadComplete) { // Only show "New Update" after initial load
+                if (initialLoadComplete) {
                     for (const post of updatedPosts) {
                         if (!oldPostIds.has(post.id)) {
                             newPostsDetected = true;
@@ -616,136 +551,73 @@
                     }
                 }
 
-                allPostsCached = updatedPosts; // Update the cache with the latest data
+                allPostsCached = updatedPosts;
 
-                // If a new post is detected and we are not at the top of the page, show the "New Update" button
                 if (newPostsDetected && window.scrollY > 0) {
                     newUpdatesCount++;
                     newUpdatesCountSpan.textContent = newUpdatesCount;
                     newUpdatesButton.style.display = 'block';
                 } else {
-                    newUpdatesCount = 0; // Reset count
+                    newUpdatesCount = 0;
                     newUpdatesButton.style.display = 'none';
-                    filterAndRenderPosts(); // Re-render to show latest posts, or re-render after initial page load or update from the top
+                    renderPosts(allPostsCached, 'postsContainer'); // Re-render with sorted posts
                 }
 
-                // Handle deep linking and scrolling AFTER posts are rendered or updated
-                // This block should only run on the initial load or after a full refresh
-                // not on every snapshot update unless it's a new page load
                 if (!initialLoadComplete && window.location.hash) {
-                    const postIdFromHash = window.location.hash.substring(1); // Remove '#'
+                    const postIdFromHash = window.location.hash.substring(1);
                     scrollToPost(postIdFromHash);
                 }
 
-                initialLoadComplete = true; // Mark initial load as complete
+                initialLoadComplete = true;
             }, (error) => {
                 console.error("Error listening to posts:", error);
                 postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
             });
         };
 
-        // --- Function: scrollToPost (Scrolls to a specific post by ID) ---
+        // --- Function: scrollToPost ---
         const scrollToPost = (postId) => {
             const targetElement = document.getElementById(postId);
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                targetElement.style.backgroundColor = '#fffbe6'; // Light yellow highlight
+                targetElement.style.backgroundColor = '#fffbe6';
                 setTimeout(() => {
-                    targetElement.style.backgroundColor = ''; // Remove highlight
-                }, 3000); // Highlight for 3 seconds
+                    targetElement.style.backgroundColor = '';
+                }, 3000);
             }
         };
 
-        // --- Function: loadPosts (Initial loading of blog ID and setting up listeners) ---
+        // --- Function: loadPosts ---
         const loadPosts = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
 
             if (!currentBlogId) {
-                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL. Please provide a valid blog ID.</p>';
-                paginationControls.innerHTML = '';
-                // tabNavigationDiv.innerHTML = '';
+                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
                 console.error("Blog ID not found in URL.");
                 return;
             }
 
-            try {
-                // Fetch blog details to get custom tabs
-                const blogDocRef = doc(db, 'blogs', currentBlogId);
-                const blogDocSnap = await getDoc(blogDocRef);
-                if (blogDocSnap.exists()) {
-                    customTabs = blogDocSnap.data().customTabs || [];
-                }
-
-                // renderTabs(); // Render/update tabs based on fetched data
-                setupRealtimeListener(currentBlogId); // Start listening for real-time updates
-
-            } catch (error) {
-                console.error("Error loading blog details for embed:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading blog details. Please try again later.</p>';
-            }
+            setupRealtimeListener(currentBlogId);
         };
 
-        // --- Function: filterAndRenderPosts (Filters posts by active tab and re-renders) ---
-        const filterAndRenderPosts = () => {
-            if (currentActiveTab === defaultTab) {
-                filteredPosts = allPostsCached; // Show all if default tab is active
-            } else {
-                filteredPosts = allPostsCached.filter(post =>
-                    post.assignedTabs && post.assignedTabs.includes(currentActiveTab) // Filter by assigned tabs
-                );
-            }
-
-            renderCurrentPage(); // Render all posts
-        };
-
-        // --- Function: updatePaginationControls (Generates and updates the pagination links) ---
-        const updatePaginationControls = (totalPosts) => {
-            // Pagination controls are now hidden, so this function is empty.
-        };
-
-        // --- Function: renderCurrentPage (Calculates posts for current page and renders them) ---
-        const renderCurrentPage = () => {
-            // With pagination removed, we render all filtered posts.
-            renderPosts(filteredPosts, 'postsContainer');
-            updatePaginationControls(filteredPosts.length);
-
-            // Ensure twttr.widgets.load() is called when the Twitter widgets script is ready
-            // This is a more robust way to ensure the script has loaded and initialized.
-            if (typeof twttr === 'object' && typeof twttr.ready === 'function') {
-                twttr.ready(function (twttrInstance) {
-                    console.log('twttr.ready callback executed: Loading Twitter widgets for postsContainer.');
-                    twttrInstance.widgets.load(postsContainer);
-                });
-            } else {
-                console.warn('twttr object or twttr.ready function not available immediately. Twitter embeds might not load.');
-            }
-        };
-
-        // --- Function: renderTabs (Renders the tab navigation buttons) ---
-        const renderTabs = () => {
-            // Tab navigation is now hidden, so this function is empty.
-        };
-
-        // --- Event Listener: DOMContentLoaded (Initializes the embed when the page loads) ---
+        // --- Event Listener: DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', loadPosts);
 
         // --- New Update Button Click Listener ---
         newUpdatesButton.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the embed
-            newUpdatesCount = 0; // Reset new updates count
-            newUpdatesButton.style.display = 'none'; // Hide the button
-            filterAndRenderPosts(); // Re-render to ensure latest posts are visible
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            newUpdatesCount = 0;
+            newUpdatesButton.style.display = 'none';
+            renderPosts(allPostsCached, 'postsContainer'); // Re-render to ensure latest posts are visible
         });
 
-        // --- Message Listener (for communication with parent window/admin page) ---
+        // --- Message Listener ---
         window.addEventListener('message', (event) => {
-            // IMPORTANT: In a production environment, validate event.origin for security!
-            // Example: if (event.origin !== "http://your-admin-domain.com") return;
-
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update message.');
+                // The onSnapshot listener will handle the refresh automatically.
             }
         });
     </script>
