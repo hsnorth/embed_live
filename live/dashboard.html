@@ -41,7 +41,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -57,22 +57,68 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- Authentication Guard ---
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = 'index.html';
+            if (user) {
+                // User is signed in, set up the dashboard functionality.
+                setupDashboard(user);
             } else {
-                // When user is logged in, load their blogs
-                loadBlogs();
+                // No user is signed in, redirect to the login page.
+                window.location.href = 'index.html';
             }
         });
 
-        // Function to load and display existing blogs
-        const loadBlogs = async () => {
+        // This flag ensures we only attach event listeners once.
+        let isDashboardSetup = false;
+
+        function setupDashboard(user) {
+            if (isDashboardSetup) return;
+            isDashboardSetup = true;
+
+            // Load the user's blogs.
+            loadUserBlogs(user.uid);
+
+            // Attach event listener for creating a new blog.
+            document.getElementById('startNewBlogBtn').addEventListener('click', async () => {
+                const blogName = document.getElementById('newBlogName').value.trim();
+                if (blogName) {
+                    try {
+                        const docRef = await addDoc(collection(db, "blogs"), {
+                            name: blogName,
+                            created: serverTimestamp(),
+                            createdBy: user.uid // Use the guaranteed user ID.
+                        });
+                        const blogId = docRef.id;
+                        window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}`;
+                    } catch (e) {
+                        console.error("Error adding document: ", e);
+                        alert("Error creating blog. Please try again.");
+                    }
+                } else {
+                    alert('Please enter a name for your new blog.');
+                }
+            });
+
+            // Attach event listener for the sign-out button.
+            document.getElementById('signOutButton').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    // onAuthStateChanged will handle the redirect to the login page.
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    alert("Could not sign out. Please try again.");
+                }
+            });
+        }
+
+        // --- Function to load and display the current user's blogs ---
+        const loadUserBlogs = async (userId) => {
             const liveBlogsList = document.getElementById('liveBlogsList');
             const noBlogsMessage = document.getElementById('noBlogsMessage');
 
             try {
-                const q = query(collection(db, "blogs"), orderBy("created", "desc"));
+                // Query for blogs created by the current user.
+                const q = query(collection(db, "blogs"), where("createdBy", "==", userId), orderBy("created", "desc"));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
@@ -100,38 +146,6 @@
                 noBlogsMessage.style.display = 'block';
             }
         };
-
-        // Event listener for creating a new blog
-        document.getElementById('startNewBlogBtn').addEventListener('click', async () => {
-            const blogName = document.getElementById('newBlogName').value.trim();
-            if (blogName) {
-                try {
-                    const docRef = await addDoc(collection(db, "blogs"), {
-                        name: blogName,
-                        created: serverTimestamp(),
-                        createdBy: auth.currentUser.uid
-                    });
-                    const blogId = docRef.id;
-                    window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}`;
-                } catch (e) {
-                    console.error("Error adding document: ", e);
-                    alert("Error creating blog. Please try again.");
-                }
-            } else {
-                alert('Please enter a name for your new blog.');
-            }
-        });
-
-        // Event listener for the sign out button
-        document.getElementById('signOutButton').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Could not sign out. Please try again.");
-            }
-        });
     </script>
 </body>
 </html>
