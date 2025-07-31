@@ -119,24 +119,38 @@
             const noBlogsMessage = document.getElementById('noBlogsMessage');
 
             try {
-                // Query for blogs created ONLY by the current user.
-                const q = query(collection(db, "blogs"), where("createdBy", "==", userId), orderBy("created", "desc"));
+                // Query for blogs created ONLY by the current user, without server-side ordering to avoid index error.
+                const q = query(collection(db, "blogs"), where("createdBy", "==", userId));
                 const querySnapshot = await getDocs(q);
 
                 if (!querySnapshot.empty) {
                     liveBlogsList.innerHTML = '';
+                    
+                    // Convert snapshot to an array to sort on the client-side
+                    const blogs = [];
                     querySnapshot.forEach(doc => {
-                        const blog = doc.data();
-                        const blogId = doc.id;
+                        blogs.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    // Sort the blogs array by date in descending order
+                    blogs.sort((a, b) => {
+                        const dateA = a.created ? a.created.toDate() : new Date(0);
+                        const dateB = b.created ? b.created.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    // Render the sorted blogs
+                    blogs.forEach(blog => {
                         const listItem = document.createElement('li');
                         const createdDate = blog.created ? blog.created.toDate().toLocaleString() : 'N/A';
 
                         listItem.innerHTML = `
-                            <a href="create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}">${blog.name}</a>
+                            <a href="create-blog.html?blogId=${blog.id}&blogName=${encodeURIComponent(blog.name)}">${blog.name}</a>
                             <span>Created: ${createdDate}</span>
                         `;
                         liveBlogsList.appendChild(listItem);
                     });
+
                     noBlogsMessage.style.display = 'none';
                 } else {
                     liveBlogsList.innerHTML = '';
