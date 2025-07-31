@@ -5,107 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Blog Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Specific styles for dashboard.html that might override or supplement main style.css
-           It's generally better to put these in style.css, but if they are truly page-specific
-           and you want to keep them here for clarity, that's fine.
-           I've made slight adjustments here to better fit with the responsive header.
-        */
-        body {
-            display: flex;
-            justify-content: center; /* Remove this on small screens if header is fixed */
-            align-items: center; /* Remove this on small screens if header is fixed */
-            min-height: 100vh;
-            background-color: #f0f2f5;
-            margin: 0;
-            flex-direction: column;
-        }
-        .main-menu {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            text-align: center;
-            /* Ensure it respects max-width set in main if applicable */
-            max-width: 900px;
-            width: 100%;
-        }
-        .main-menu h1 {
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .main-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .main-menu li {
-            margin-bottom: 20px;
-        }
-        .main-menu a {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-            width: 250px; /* Make buttons consistent width */
-        }
-        .main-menu a:hover {
-            background-color: #0056b3;
-        }
-        .new-blog-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        .new-blog-section input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 10px;
-            width: 200px;
-            max-width: calc(100% - 100px); /* Adjust for responsive input */
-            box-sizing: border-box; /* Crucial for input width */
-        }
-        .new-blog-section button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .new-blog-section button:hover {
-            background-color: #218838;
-        }
-        #signOutButton {
-            background-color: #dc3545;
-            margin-top: 20px;
-        }
-        #signOutButton:hover {
-            background-color: #c82333;
-        }
-    </style>
 </head>
 <body>
 
+    <header>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
+        <nav>
+            <button id="signOutButton" class="submit-button">Sign Out</button>
+        </nav>
+    </header>
 
     <main>
-        <div class="main-menu">
-            <h1>Welcome to Gazette Live</h1>
+        <section class="dashboard-container">
+            <h1>Dashboard</h1>
             <ul>
-                <li><a href="view-blogs.html">Access Previous Live Blogs</a></li>
+                <li><a href="view-blogs.html" class="button-link">View Live Blogs</a></li>
             </ul>
 
             <div class="new-blog-section">
-                <input type="text" id="newBlogName" placeholder="Enter blog title">
-                <button id="startNewBlogBtn">Start Blog</button>
+                <h2>Create a New Blog</h2>
+                <input type="text" id="newBlogName" class="input-field" placeholder="Enter blog title">
+                <button id="startNewBlogBtn" class="submit-button">Start New Blog</button>
             </div>
-        </div>
+        </section>
     </main>
 
     <footer>
@@ -117,26 +39,21 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-        // !!! IMPORTANT: REPLACE WITH YOUR ACTUAL FIREBASE CONFIG !!!
         const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk", // Your API Key
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com", // Your Auth Domain
-            projectId: "myliveblogapp-cf9df", // Your Project ID
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // Your Storage Bucket
-            messagingSenderId: "324824649312", // Your Messaging Sender ID
-            appId: "1:324824649312:web:c0750693346091d853bd05", // Your App ID
-            measurementId: "G-EZN90844XF" // Your Measurement ID (if using Analytics)
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
         };
-        // !!! END IMPORTANT !!!
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Authentication Guard
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                // No user is signed in, redirect to login
                 window.location.href = 'index.html';
             }
         });
@@ -154,58 +71,21 @@
                     window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
                 } catch (e) {
                     console.error("Error adding document: ", e);
-                    alert("Error creating blog. Please try again. Check console for details.");
+                    alert("Error creating blog. Please try again.");
                 }
             } else {
                 alert('Please enter a name for your new blog.');
             }
         });
 
-        document.getElementById('createNewBlogLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelector('.new-blog-section').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('newBlogName').focus();
-        });
-
-        // Sign Out from main dashboard button
         document.getElementById('signOutButton').addEventListener('click', async () => {
             try {
                 await signOut(auth);
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error("Error signing out:", error);
                 alert("Could not sign out. Please try again.");
             }
-        });
-
-        // Sign Out from navigation dropdown (if applicable)
-        document.getElementById('signOutNavButton').addEventListener('click', async (e) => {
-            e.preventDefault(); // Prevent default link behavior
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Error signing out from nav:", error);
-                alert("Could not sign out. Please try again.");
-            }
-        });
-
-        // JavaScript for Hamburger Menu Toggle
-        const hamburgerMenu = document.getElementById('hamburgerMenu');
-        const mainNav = document.getElementById('mainNav');
-
-        hamburgerMenu.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-            hamburgerMenu.classList.toggle('active'); // Optional: for hamburger icon animation
-        });
-
-        // Close menu if a nav link is clicked (optional, but good for UX)
-        mainNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                // Check if the menu is currently active (open)
-                if (mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                    hamburgerMenu.classList.remove('active');
-                }
-            });
         });
     </script>
 </body>
