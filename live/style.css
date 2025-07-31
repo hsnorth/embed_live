@@ -73,49 +73,7 @@ section {
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
-/* --- Dashboard Page --- */
-.dashboard-container {
-    text-align: center;
-}
-
-.dashboard-container h1 {
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.dashboard-container ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 30px 0;
-}
-
-.dashboard-container .button-link {
-    display: inline-block;
-    background-color: #e74c3c;
-    color: white;
-    padding: 15px 30px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    max-width: 300px;
-}
-.dashboard-container .button-link:hover {
-    background-color: #c0392b;
-}
-
-.new-blog-section {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.new-blog-section .input-field {
-    margin-bottom: 10px;
-}
-
-/* --- View Blogs Page --- */
+/* --- Dashboard & View Blogs Page --- */
 .blog-list ul {
     list-style: none;
     padding: 0;
