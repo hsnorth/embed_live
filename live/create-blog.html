@@ -145,6 +145,34 @@
             color: #dc3545; /* Dark red */
             border: 1px solid #dc3545;
         }
+
+        /* New styles for Pinned button */
+        .pin-post-button {
+            background-color: #3498db; /* Blue for pin */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pin-post-button.unpin {
+            background-color: #e74c3c; /* Red for unpin */
+        }
+
+        .pin-post-button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        .pin-post-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -640,7 +668,8 @@
                         mediaUrl: mediaUrl,
                         mediaType: mediaType,
                         assignedTabs: assignedTabs,
-                        timestamp: serverTimestamp()
+                        timestamp: serverTimestamp(),
+                        isPinned: false // New field: default to false
                     });
                     showNotification("Post added successfully!", "success");
                 }
@@ -784,6 +813,9 @@
                     }
                 }
 
+                const pinButtonText = post.isPinned ? '<i class="fas fa-thumbtack"></i> Unpin' : '<i class="fas fa-thumbtack"></i> Pin';
+                const pinButtonClass = post.isPinned ? 'pin-post-button unpin' : 'pin-post-button';
+
 
                 postCard.innerHTML = `
                     <div class="post-header-line">
@@ -809,6 +841,7 @@
                     ${assignedTabsHtml}
                     <div class="post-actions">
                         <button class="edit-post-button" data-post-id="${post.id}" title="Edit Post"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="${pinButtonClass}" data-post-id="${post.id}" data-is-pinned="${post.isPinned || false}" title="${post.isPinned ? 'Unpin this post' : 'Pin this post'}">${pinButtonText}</button>
                         <button class="delete-post-button" data-post-id="${post.id}" data-media-url="${post.mediaUrl || ''}" title="Delete Post"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 `;
@@ -881,6 +914,66 @@
                     } catch (err) {
                         console.error('Failed to copy link: ', err);
                         showNotification('Failed to copy link. Please copy manually: ' + deepLink, "error");
+                    }
+                });
+            });
+
+            container.querySelectorAll('.pin-post-button').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const postIdToTogglePin = e.currentTarget.dataset.postId;
+                    const isCurrentlyPinned = e.currentTarget.dataset.isPinned === 'true';
+
+                    e.currentTarget.disabled = true; // Disable button during operation
+
+                    try {
+                        if (isCurrentlyPinned) {
+                            // Unpin the current post
+                            await updateDoc(doc(db, 'posts', postIdToTogglePin), {
+                                isPinned: false
+                            });
+                            showNotification("Post unpinned successfully!", "success");
+                        } else {
+                            // Pin the current post
+                            // First, unpin any other currently pinned post for this blog
+                            const postsCollectionRef = collection(db, 'posts');
+                            const q = query(
+                                postsCollectionRef,
+                                where('blogId', '==', currentBlogId),
+                                where('isPinned', '==', true)
+                            );
+                            const pinnedPostsSnapshot = await getDocs(q);
+                            if (!pinnedPostsSnapshot.empty) {
+                                // Only one pinned post allowed, so iterate and unpin all found (should be max one)
+                                for (const docSnapshot of pinnedPostsSnapshot.docs) {
+                                    await updateDoc(doc(db, 'posts', docSnapshot.id), {
+                                        isPinned: false
+                                    });
+                                }
+                            }
+
+                            // Now, pin the selected post and update its timestamp to bring it to top
+                            await updateDoc(doc(db, 'posts', postIdToTogglePin), {
+                                isPinned: true,
+                                timestamp: serverTimestamp() // Update timestamp to bring to top
+                            });
+                            showNotification("Post pinned successfully! It will now appear at the top of your live blog.", "success");
+                        }
+
+                        // Refresh posts after pin/unpin
+                        adminAllPostsCached = []; // Clear cache to force reload
+                        adminCurrentPage = 0;
+                        await loadPostsForAdmin();
+
+                        // Send message to embed to refresh
+                        if (window.parent && window.parent.postMessage) {
+                            window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
+                        }
+
+                    } catch (error) {
+                        console.error("Error pinning/unpinning post:", error);
+                        showNotification("Failed to update pin status. Please try again: " + error.message, "error");
+                    } finally {
+                        e.currentTarget.disabled = false; // Re-enable button
                     }
                 });
             });
