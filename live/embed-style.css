@@ -142,7 +142,30 @@ main {
     display: block;
     border-radius: 8px;
     margin-top: 8px;
+    max-height: 500px;
+    width: auto;
 }
+
+/* --- Show More Button --- */
+.show-more-button {
+    display: block;
+    width: fit-content;
+    margin: 20px auto 10px auto; /* Centering the button */
+    background-color: #f0f2f5;
+    color: #0f1419;
+    border: 1px solid #cfd9de;
+    padding: 10px 25px;
+    border-radius: 9999px; /* Creates a pill shape */
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.show-more-button:hover {
+    background-color: #e1e8ed;
+}
+
 
 /* --- New Update Notification Button --- */
 #newUpdatesButton {
