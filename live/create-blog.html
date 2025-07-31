@@ -924,17 +924,50 @@
                 });
             }
         };
+        // Function to handle rich text content for paragraphs and embeds
+        function processContentForEmbeds(content) {
+            if (!content) return '';
 
-        // --- Add To Home Screen Logic for Mobile ---
-        const a2hsToggle = document.getElementById('a2hsToggle');
-        const a2hsContent = document.getElementById('a2hsContent');
-
-        if (a2hsToggle && a2hsContent) {
-            a2hsToggle.addEventListener('click', () => {
-                a2hsToggle.classList.toggle('active');
-                a2hsContent.classList.toggle('show');
-            });
+            // Split content by newlines to handle paragraphs.
+            // Critically, it will *not* wrap lines containing <blockquote, <div, or <img in <p> tags,
+            // preserving existing HTML structure.
+            return content.split(/\r?\n/).map(line => {
+                const trimmedLine = line.trim();
+                // Check if the line *starts* with known embed/media tags
+                if (trimmedLine.startsWith('<blockquote') ||
+                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
+                    trimmedLine.startsWith('<img') ||
+                    trimmedLine === '') { // Allow empty lines to pass through without <p>
+                    return line; // Return lines with existing HTML (like blockquote) as is
+                }
+                return `<p>${line}</p>`; // Wrap plain text lines in <p> tags
+            }).join('');
         }
+
+        // --- Sign Out --
+        document.getElementById('signOutButtonHeader').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await signOut(auth);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error signing out:", error);
+                showNotification("Could not sign out. Please try again.", "error");
+            }
+        });
+
+        // --- A2HS Collapsible Section Script --
+        document.addEventListener('DOMContentLoaded', () => {
+            const a2hsToggle = document.getElementById('a2hsToggle');
+            const a2hsContent = document.getElementById('a2hsContent');
+
+            if (a2hsToggle && a2hsContent) {
+                a2hsToggle.addEventListener('click', () => {
+                    a2hsToggle.classList.toggle('active'); // Toggles the arrow rotation
+                    a2hsContent.classList.toggle('show'); // Toggles content visibility
+                });
+            }
+        });
     </script>
 </body>
 </html>
