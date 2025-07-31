@@ -159,6 +159,101 @@ section {
     transform: translateY(-1px);
 }
 
+/* --- Live Blog Posts Admin View --- */
+.live-blog-posts .post-card {
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 15px;
+    transition: box-shadow 0.2s ease;
+}
+.live-blog-posts .post-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.live-blog-posts .post-media {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    margin-top: 10px;
+    max-height: 500px;
+    width: auto;
+}
+
+
+/* --- A2HS (Add to Home Screen) Section --- */
+#a2hsCollapsibleContainer {
+    display: none; /* Hidden by default on large screens */
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+@media (max-width: 768px) {
+    #a2hsCollapsibleContainer {
+        display: block; /* Show on small screens */
+    }
+}
+#a2hsToggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+}
+#a2hsToggle i {
+    transition: transform 0.3s ease;
+}
+#a2hsToggle.active i {
+    transform: rotate(180deg);
+}
+#a2hsContent {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    background-color: #fff;
+}
+#a2hsContent.show {
+    max-height: 200px;
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+#a2hsContent ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#a2hsContent ol li {
+    margin-bottom: 10px;
+    font-size: 0.95em;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#a2hsContent ol li:last-child {
+    margin-bottom: 0;
+}
+#a2hsContent ol li .step-number {
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.8em;
+    flex-shrink: 0;
+}
+
 /* --- Footer --- */
 footer {
     background-color: #34495e;
