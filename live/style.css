@@ -92,6 +92,41 @@ section {
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
+/* --- Notification Message --- */
+.notification-message {
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Make it a floating alert */
+    top: 80px; /* Position below the header */
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    z-index: 2000;
+    min-width: 300px;
+}
+
+.notification-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.notification-message.success {
+    background-color: #e6f9f0;
+    color: #27ae60;
+    border: 1px solid #a3e9c9;
+}
+
+.notification-message.error {
+    background-color: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f9caca;
+}
+
+
 /* --- Dashboard & View Blogs Page --- */
 .blog-list ul {
     list-style: none;
