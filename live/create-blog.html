@@ -755,13 +755,11 @@
 
                 const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-                let displayContentHtml = post.content;
+                
+                let displayContentHtml = post.content || '';
                 let showMoreButtonHtml = '';
-                let isTruncated = false;
-
                 if (post.content && post.content.length > MAX_CHARS_PREVIEW) {
                     displayContentHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
-                    isTruncated = true;
                     showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
                 }
 
@@ -800,7 +798,7 @@
                         </button>
                     </div>
                     ${subtitleHtml}
-                    <p class="post-text">${displayContentHtml}</p>
+                    <div class="post-text">${displayContentHtml}</div>
                     ${mediaHtml}
                     ${showMoreButtonHtml}
                     ${assignedTabsHtml}
@@ -810,97 +808,102 @@
                     </div>
                 `;
                 container.appendChild(postCard);
-
-                if (isTruncated) {
-                    const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentParagraph = postCard.querySelector('.post-text');
-                    showMoreButton.addEventListener('click', () => {
-                        contentParagraph.innerHTML = post.content;
-                        showMoreButton.style.display = 'none';
-                    });
-                }
-            });
-
-            container.querySelectorAll('.edit-post-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const postIdToEdit = e.currentTarget.dataset.postId;
-                    const postToEdit = adminAllPostsCached.find(p => p.id === postIdToEdit);
-                    if (postToEdit) {
-                        editingPostId = postIdToEdit;
-                        postContentInput.value = postToEdit.content || '';
-                        postSubtitleInput.value = postToEdit.subtitle || '';
-                        pinPostCheckbox.checked = postToEdit.isPinned || false;
-                        
-                        if (postToEdit.reportingFrom === 'Live Page Editor') {
-                            isLivePageEditorCheckbox.checked = true;
-                            reportingFromGroup.style.display = 'none';
-                            reportingFromInput.value = 'Live Page Editor';
-                        } else {
-                            isLivePageEditorCheckbox.checked = false;
-                            reportingFromGroup.style.display = 'flex';
-                            const displayLocation = postToEdit.reportingFrom ? 
-                                postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') : 'Montreal';
-                            reportingFromInput.value = displayLocation;
-                        }
-
-                        authorNameInput.value = postToEdit.authorName || '';
-                        renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
-                        submitButton.textContent = "Save Changes";
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            });
-
-            container.querySelectorAll('.copy-link-button').forEach(button => {
-                button.addEventListener('click', async () => {
-                    const postId = button.dataset.postId;
-                    const deepLink = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}#post-${postId}`;
-
-                    try {
-                        await navigator.clipboard.writeText(deepLink);
-                        const originalContent = button.innerHTML;
-                        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                        setTimeout(() => { button.innerHTML = originalContent; }, 2000);
-                    } catch (err) {
-                        console.error('Failed to copy link: ', err);
-                        showNotification('Failed to copy link.', "error");
-                    }
-                });
-            });
-
-            container.querySelectorAll('.delete-post-button').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const postIdToDelete = e.currentTarget.dataset.postId;
-                    const mediaUrlToDelete = e.currentTarget.dataset.mediaUrl;
-
-                    if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
-                        try {
-                            await deleteDoc(doc(db, 'posts', postIdToDelete));
-
-                            if (mediaUrlToDelete) {
-                                try {
-                                    const mediaRef = ref(storage, mediaUrlToDelete);
-                                    await deleteObject(mediaRef);
-                                } catch (error) {
-                                    console.warn("Could not delete associated media:", error);
-                                }
-                            }
-                            adminAllPostsCached = [];
-                            adminCurrentPage = 0;
-                            await loadPostsForAdmin();
-
-                            if (window.parent && window.parent.postMessage) {
-                                window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
-                            }
-
-                        } catch (error) {
-                            console.error("Error deleting post:", error);
-                            showNotification("Failed to delete post. " + error.message, "error");
-                        }
-                    }
-                });
             });
         };
+        
+        // --- Event Delegation for Post Actions ---
+        postsContainer.addEventListener('click', async (e) => {
+            const showMoreButton = e.target.closest('.show-more-button');
+            const editButton = e.target.closest('.edit-post-button');
+            const deleteButton = e.target.closest('.delete-post-button');
+            const copyLinkButton = e.target.closest('.copy-link-button');
+
+            if (showMoreButton) {
+                const postCard = showMoreButton.closest('.post-card');
+                const postId = postCard.dataset.postId;
+                const post = adminAllPostsCached.find(p => p.id === postId);
+                if (post) {
+                    const contentParagraph = postCard.querySelector('.post-text');
+                    contentParagraph.innerHTML = post.content;
+                    showMoreButton.style.display = 'none';
+                }
+            }
+
+            if (editButton) {
+                const postIdToEdit = editButton.dataset.postId;
+                const postToEdit = adminAllPostsCached.find(p => p.id === postIdToEdit);
+                if (postToEdit) {
+                    editingPostId = postIdToEdit;
+                    postContentInput.value = postToEdit.content || '';
+                    postSubtitleInput.value = postToEdit.subtitle || '';
+                    pinPostCheckbox.checked = postToEdit.isPinned || false;
+                    
+                    if (postToEdit.reportingFrom === 'Live Page Editor') {
+                        isLivePageEditorCheckbox.checked = true;
+                        reportingFromGroup.style.display = 'none';
+                        reportingFromInput.value = 'Live Page Editor';
+                    } else {
+                        isLivePageEditorCheckbox.checked = false;
+                        reportingFromGroup.style.display = 'flex';
+                        const displayLocation = postToEdit.reportingFrom ? 
+                            postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') : 'Montreal';
+                        reportingFromInput.value = displayLocation;
+                    }
+
+                    authorNameInput.value = postToEdit.authorName || '';
+                    renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
+                    submitButton.textContent = "Save Changes";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            if (copyLinkButton) {
+                const postId = copyLinkButton.dataset.postId;
+                const deepLink = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}#post-${postId}`;
+
+                try {
+                    await navigator.clipboard.writeText(deepLink);
+                    const originalContent = copyLinkButton.innerHTML;
+                    copyLinkButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => { copyLinkButton.innerHTML = originalContent; }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy link: ', err);
+                    showNotification('Failed to copy link.', "error");
+                }
+            }
+
+            if (deleteButton) {
+                const postIdToDelete = deleteButton.dataset.postId;
+                const mediaUrlToDelete = deleteButton.dataset.mediaUrl;
+
+                if (confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+                    try {
+                        await deleteDoc(doc(db, 'posts', postIdToDelete));
+
+                        if (mediaUrlToDelete) {
+                            try {
+                                const mediaRef = ref(storage, mediaUrlToDelete);
+                                await deleteObject(mediaRef);
+                            } catch (error) {
+                                console.warn("Could not delete associated media:", error);
+                            }
+                        }
+                        adminAllPostsCached = [];
+                        adminCurrentPage = 0;
+                        await loadPostsForAdmin();
+
+                        if (window.parent && window.parent.postMessage) {
+                            window.parent.postMessage({ type: 'refreshEmbed', blogId: currentBlogId }, '*');
+                        }
+
+                    } catch (error) {
+                        console.error("Error deleting post:", error);
+                        showNotification("Failed to delete post. " + error.message, "error");
+                    }
+                }
+            }
+        });
+
 
         // --- Update Admin Pagination Controls ---
         const updateAdminPaginationControls = (totalPosts) => {
