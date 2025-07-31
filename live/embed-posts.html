@@ -71,7 +71,7 @@
 
         /* --- Pinned Post Styling --- */
         .post-card.pinned {
-            background-color: #f7f9f9; /* A very light grey */
+            background-color: #f0f2f5; /* A slightly darker grey */
         }
 
         .pinned-indicator {
@@ -81,8 +81,6 @@
             margin-bottom: 8px;
             display: flex;
             align-items: center;
-            /* Aligns with the start of the author name, accounting for avatar + margin */
-            padding-left: 50px; 
         }
 
         .pinned-indicator .fa-thumbtack {
@@ -455,6 +453,11 @@
                 if (post.reportingFrom) {
                     reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
                 }
+                
+                // Conditionally show the timestamp
+                const timeAgoHtml = post.isPinned 
+                    ? '' 
+                    : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
 
                 postCard.innerHTML = `
                     ${pinnedHtml}
@@ -465,8 +468,7 @@
                         <div class="post-meta">
                             <div class="meta-line-one">
                                 <strong>${post.authorName || 'Anonymous'}</strong>
-                                <span class="bullet">•</span>
-                                <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                                ${timeAgoHtml}
                             </div>
                             ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                         </div>
