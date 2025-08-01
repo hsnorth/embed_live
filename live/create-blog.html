@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create/Manage Live Blog</title>
-    <!-- External Stylesheet -->
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
     <meta name="theme-color" content="#e74c3c">
+    <style>
+        .main-back-button-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .back-arrow {
+            color: #e74c3c;
+            font-size: 1.5em;
+            margin-right: 10px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        .back-arrow:hover {
+            transform: translateX(-5px);
+        }
+        .back-text {
+            font-size: 1em;
+            color: #34495e;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1 id="blogTitleHeader">Loading Blog...</h1>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
         <button id="signOutButtonHeader" class="sign-out-button">Sign Out</button>
     </header>
 
@@ -28,6 +46,8 @@
             </a>
             <span class="back-text">Return to Dashboard</span>
         </div>
+
+        <h2 id="blogHeader">You're on Live Blog: </h2>
 
         <div id="notificationMessage" class="notification-message" style="display: none;"></div>
 
@@ -105,7 +125,7 @@
         </section>
 
         <section class="embed-code-section">
-            <h2>Embed This Live Blog</h2>
+            <h2>Only for CUE: Copy the code below</h2>
             <p>Copy the code below and paste it into your website's HTML where you want the live blog to appear.</p>
             <div class="embed-code-container">
                 <input type="text" id="embedCodeInput" class="input-field" readonly>
@@ -159,6 +179,7 @@
         let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
 
         const blogTitleHeader = document.getElementById('blogTitleHeader');
+        const blogHeader = document.getElementById('blogHeader');
         const authorNameInput = document.getElementById('authorNameInput');
         const postSubtitleInput = document.getElementById('postSubtitleInput');
         const postContentInput = document.getElementById('postContentInput');
@@ -213,24 +234,24 @@
 
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBlogId = urlParams.get('blogId');
+                currentBlogName = urlParams.get('blogName');
 
-                if (currentBlogId) {
+                if (currentBlogId && currentBlogName) {
+                    blogHeader.textContent = `You're on Live Blog: ${decodeURIComponent(currentBlogName)}`;
                     const blogDocRef = doc(db, 'blogs', currentBlogId);
                     const blogDocSnap = await getDoc(blogDocRef);
                     if (blogDocSnap.exists()) {
-                        currentBlogName = blogDocSnap.data().name;
                         customTabs = blogDocSnap.data().customTabs || [];
-                        blogTitleHeader.textContent = `Managing: ${currentBlogName}`;
                         generateEmbedCode();
                         renderCustomTabs();
                         renderPostTabAssignmentCheckboxes([]);
                         await loadPostsForAdmin();
                     } else {
-                        blogTitleHeader.textContent = 'Blog Not Found';
+                        blogHeader.textContent = 'You are on a Live Blog that does not exist';
                         postsContainer.innerHTML = '<p class="error-message">Blog not found.</p>';
                     }
                 } else {
-                    blogTitleHeader.textContent = 'No Blog Selected';
+                    blogHeader.textContent = 'No Blog Selected';
                     postsContainer.innerHTML = '<p class="error-message">No blog selected. <a href="dashboard.html">Go to dashboard</a>.</p>';
                 }
             }
@@ -310,7 +331,7 @@
         const generateEmbedCode = () => {
             if (currentBlogId) {
                 const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}`;
-                embedCodeInput.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${currentBlogName} Live Blog"></iframe>`;
+                embedCodeInput.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${decodeURIComponent(currentBlogName)} Live Blog"></iframe>`;
             }
         };
 
