@@ -31,6 +31,23 @@
             color: #34495e;
             font-weight: bold;
         }
+        /* START CHANGE: CSS for the new author dropdown */
+        .author-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .author-avatar-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+        #authorSelect {
+            flex-grow: 1;
+        }
+        /* END CHANGE */
     </style>
 </head>
 <body>
@@ -67,10 +84,15 @@
         <section class="new-post-form">
             <h2>Post an Update</h2>
             <form id="postForm">
+                <!-- START CHANGE: Replaced text input with a dropdown for author selection -->
                 <div class="form-group">
-                    <label for="authorNameInput">Author Name:</label>
-                    <input type="text" id="authorNameInput" class="input-field" placeholder="Your Name" required>
+                    <label for="authorSelect">Author:</label>
+                    <div class="author-select-wrapper">
+                        <img id="authorAvatarPreview" src="https://hsnorth.github.io/embed_live/live/harry.png" alt="Author Avatar">
+                        <select id="authorSelect" class="input-field" required></select>
+                    </div>
                 </div>
+                <!-- END CHANGE -->
 
                 <div class="form-group">
                     <label for="postSubtitleInput">Subtitle (Optional):</label>
@@ -179,15 +201,14 @@
         let customTabs = [];
         const defaultTab = "Live Reporting";
         let adminAllPostsCached = [];
-        let adminCurrentPage = 0;
-        const adminPostsPerPage = 8;
         let editingPostId = null;
-        let currentUserName = 'Anonymous'; // Store the logged-in user's name
-        let currentUserAvatarUrl = 'https://hsnorth.github.io/embed_live/live/harry.png';
+        let allUsers = []; // START CHANGE: To store all users for the dropdown
 
-        const blogTitleHeader = document.getElementById('blogTitleHeader');
         const blogHeader = document.getElementById('blogHeader');
-        const authorNameInput = document.getElementById('authorNameInput');
+        // START CHANGE: Get references to new author elements
+        const authorSelect = document.getElementById('authorSelect');
+        const authorAvatarPreview = document.getElementById('authorAvatarPreview');
+        // END CHANGE
         const postSubtitleInput = document.getElementById('postSubtitleInput');
         const postContentInput = document.getElementById('postContentInput');
         const reportingFromInput = document.getElementById('reportingFromInput');
@@ -216,29 +237,51 @@
                 setTimeout(() => { notificationMessage.style.display = 'none'; }, 300);
             }, 4000);
         };
+        
+        // START CHANGE: Function to load all users and populate the author dropdown
+        const loadAllUsersAndPopulateDropdown = async () => {
+            try {
+                const usersCollectionRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersCollectionRef);
+                allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                authorSelect.innerHTML = ''; // Clear existing options
+                allUsers.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.name || 'Unnamed User';
+                    option.dataset.avatar = user.avatarUrl || 'https://hsnorth.github.io/embed_live/live/harry.png';
+                    authorSelect.appendChild(option);
+                });
+
+                // Set the dropdown to the current logged-in user by default
+                if (currentUser) {
+                    authorSelect.value = currentUser.uid;
+                }
+                updateAuthorAvatarPreview();
+
+            } catch (error) {
+                console.error("Error loading users:", error);
+                showNotification("Could not load author list.", "error");
+            }
+        };
+
+        const updateAuthorAvatarPreview = () => {
+            const selectedOption = authorSelect.options[authorSelect.selectedIndex];
+            if (selectedOption) {
+                authorAvatarPreview.src = selectedOption.dataset.avatar;
+            }
+        };
+
+        authorSelect.addEventListener('change', updateAuthorAvatarPreview);
+        // END CHANGE
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = 'index.html';
             } else {
                 currentUser = user;
-                try {
-                    const userDocRef = doc(db, 'users', currentUser.uid);
-                    const userDocSnap = await getDoc(userDocRef);
-                    if (userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        currentUserName = userData.name || user.displayName || user.email;
-                        currentUserAvatarUrl = userData.avatarUrl || 'https://hsnorth.github.io/embed_live/live/harry.png';
-                    } else {
-                        currentUserName = user.displayName || user.email;
-                        console.warn("User document not found for UID:", currentUser.uid);
-                    }
-                    authorNameInput.value = currentUserName; // Set default for new posts
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                    currentUserName = user.displayName || user.email;
-                    authorNameInput.value = currentUserName;
-                }
+                await loadAllUsersAndPopulateDropdown(); // Load users for dropdown
 
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBlogId = urlParams.get('blogId');
@@ -265,7 +308,6 @@
             }
         });
 
-        // START CHANGE: Logic to hide/show the "Reporting From" input based on checkboxes
         function updateReportingFromVisibility() {
             const isLiveEditor = isLivePageEditorCheckbox.checked;
             const isHidden = hideReportingFromCheckbox.checked;
@@ -285,7 +327,6 @@
         hideReportingFromCheckbox.addEventListener('change', () => {
             updateReportingFromVisibility();
         });
-        // END CHANGE
 
         const renderCustomTabs = () => {
             customTabList.innerHTML = customTabs.map(tabName => `
@@ -368,16 +409,25 @@
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const authorName = authorNameInput.value.trim();
             const content = postContentInput.value.trim();
-            if (!authorName || !content || !currentBlogId) {
-                return showNotification("Missing required fields or blog ID.", "error");
+            if (!content || !currentBlogId) {
+                return showNotification("Missing content or blog ID.", "error");
             }
 
             submitButton.disabled = true;
             submitButton.textContent = "Posting...";
 
             try {
+                // START CHANGE: Get author details from the dropdown
+                const selectedOption = authorSelect.options[authorSelect.selectedIndex];
+                if (!selectedOption) {
+                    throw new Error("No author selected.");
+                }
+                const authorId = selectedOption.value;
+                const authorName = selectedOption.textContent;
+                const authorAvatar = selectedOption.dataset.avatar;
+                // END CHANGE
+
                 const isPinned = pinPostCheckbox.checked;
                 if (isPinned) {
                     const postsRef = collection(db, 'posts');
@@ -402,7 +452,11 @@
                 const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
                 
                 const postData = {
-                    authorName: authorNameInput.value.trim(),
+                    // START CHANGE: Use selected author data
+                    authorId: authorId,
+                    authorName: authorName,
+                    authorAvatar: authorAvatar,
+                    // END CHANGE
                     subtitle: postSubtitleInput.value.trim(),
                     content,
                     reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
@@ -421,8 +475,6 @@
                     showNotification("Post updated!", "success");
                 } else {
                     postData.blogId = currentBlogId;
-                    postData.authorId = currentUser.uid;
-                    postData.authorAvatar = currentUserAvatarUrl;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
                     postData.mediaType = mediaType;
@@ -430,16 +482,16 @@
                     showNotification("Post added!", "success");
                 }
 
-                // Reset form fields
                 postContentInput.value = '';
                 postSubtitleInput.value = '';
                 postMediaInput.value = '';
                 pinPostCheckbox.checked = false;
                 isLivePageEditorCheckbox.checked = false;
                 hideReportingFromCheckbox.checked = false;
-                updateReportingFromVisibility(); // Update visibility after reset
+                updateReportingFromVisibility();
                 renderPostTabAssignmentCheckboxes([]);
-                authorNameInput.value = currentUserName;
+                authorSelect.value = currentUser.uid; // Reset dropdown to current user
+                updateAuthorAvatarPreview();
                 
                 editingPostId = null;
                 submitButton.textContent = "Post Update";
@@ -531,21 +583,19 @@
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
                     editingPostId = postId;
-                    authorNameInput.value = postToEdit.authorName || '';
+                    // START CHANGE: Set author dropdown to the post's original author
+                    authorSelect.value = postToEdit.authorId;
+                    updateAuthorAvatarPreview();
+                    // END CHANGE
                     postContentInput.value = postToEdit.content || '';
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
                     hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
                     isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
-                    
-                    // START CHANGE: Call the function to correctly set visibility when editing
                     updateReportingFromVisibility();
-                    
                     if(postToEdit.reportingFrom !== 'Live Page Editor'){
                         reportingFromInput.value = postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') || 'Montreal';
                     }
-                    // END CHANGE
-
                     renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
                     submitButton.textContent = "Save Changes";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
