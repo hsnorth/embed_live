@@ -221,623 +221,655 @@
         <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
     </footer>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    // --- CONFIGURATION FIX: Corrected storageBucket URL ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-        authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-        projectId: "myliveblogapp-cf9df",
-        storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // CORRECTED
-        messagingSenderId: "324824649312",
-        appId: "1:324824649312:web:c0750693346091d853bd05",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-    const auth = getAuth(app);
-
-    let currentUser = null;
-    let currentBlogId = null;
-    let currentBlogName = '';
-    let customTabs = [];
-    const defaultTab = "Live Reporting";
-    let adminAllPostsCached = [];
-    let editingPostId = null;
-    let allUsers = [];
-
-    // Form Elements
-    const formHeader = document.getElementById('formHeader');
-    const blogHeader = document.getElementById('blogHeader');
-    const authorSelect = document.getElementById('authorSelect');
-    const authorAvatarPreview = document.getElementById('authorAvatarPreview');
-    const postSubtitleInput = document.getElementById('postSubtitleInput');
-    const postContentEditor = document.getElementById('postContentEditor');
-    const postContentSource = document.getElementById('postContentSource');
-    const reportingFromInput = document.getElementById('reportingFromInput');
-    const reportingFromGroup = document.getElementById('reportingFromGroup');
-    const isLivePageEditorCheckbox = document.getElementById('isLivePageEditorCheckbox');
-    const pinPostCheckbox = document.getElementById('pinPostCheckbox');
-    const postMediaInput = document.getElementById('postMediaInput');
-    const postForm = document.getElementById('postForm');
-    const postsContainer = document.getElementById('postsContainer');
-    const submitButton = postForm.querySelector('.submit-button');
-    const copyableEmbedCode = document.getElementById('copyableEmbedCode');
-    const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
-    const newTabNameInput = document.getElementById('newTabNameInput');
-    const addTabButton = document.getElementById('addTabButton');
-    const customTabList = document.getElementById('customTabList');
-    const postTabAssignmentDiv = document.getElementById('postTabAssignment');
-    const notificationMessage = document.getElementById('notificationMessage');
-    const hideReportingFromCheckbox = document.getElementById('hideReportingFromCheckbox');
-
-    const showNotification = (message, type) => {
-        notificationMessage.textContent = message;
-        notificationMessage.className = 'notification-message show ' + type;
-        notificationMessage.style.display = 'block';
-        setTimeout(() => {
-            notificationMessage.classList.remove('show');
-            setTimeout(() => { notificationMessage.style.display = 'none'; }, 300);
-        }, 4000);
-    };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
     
-    const loadAllUsersAndPopulateDropdown = async () => {
-        try {
-            const usersCollectionRef = collection(db, 'users');
-            const querySnapshot = await getDocs(usersCollectionRef);
-            allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            authorSelect.innerHTML = '';
-            allUsers.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = user.name || 'Unnamed User';
-                option.dataset.avatar = user.avatarUrl || 'https://hsnorth.github.io/embed_live/live/harry.png';
-                authorSelect.appendChild(option);
-            });
-
+        // --- CONFIGURATION FIX: Corrected storageBucket URL ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // CORRECTED
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const auth = getAuth(app);
+    
+        let currentUser = null;
+        let currentBlogId = null;
+        let currentBlogName = '';
+        let customTabs = [];
+        const defaultTab = "Live Reporting";
+        let adminAllPostsCached = [];
+        let editingPostId = null;
+        let allUsers = [];
+    
+        // Form Elements
+        const formHeader = document.getElementById('formHeader');
+        const blogHeader = document.getElementById('blogHeader');
+        const authorSelect = document.getElementById('authorSelect');
+        const authorAvatarPreview = document.getElementById('authorAvatarPreview');
+        const postSubtitleInput = document.getElementById('postSubtitleInput');
+        const postContentEditor = document.getElementById('postContentEditor');
+        const postContentSource = document.getElementById('postContentSource');
+        const reportingFromInput = document.getElementById('reportingFromInput');
+        const reportingFromGroup = document.getElementById('reportingFromGroup');
+        const isLivePageEditorCheckbox = document.getElementById('isLivePageEditorCheckbox');
+        const pinPostCheckbox = document.getElementById('pinPostCheckbox');
+        const postMediaInput = document.getElementById('postMediaInput');
+        const postForm = document.getElementById('postForm');
+        const postsContainer = document.getElementById('postsContainer');
+        const submitButton = postForm.querySelector('.submit-button');
+        const copyableEmbedCode = document.getElementById('copyableEmbedCode');
+        const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
+        const newTabNameInput = document.getElementById('newTabNameInput');
+        const addTabButton = document.getElementById('addTabButton');
+        const customTabList = document.getElementById('customTabList');
+        const postTabAssignmentDiv = document.getElementById('postTabAssignment');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const hideReportingFromCheckbox = document.getElementById('hideReportingFromCheckbox');
+    
+        const showNotification = (message, type) => {
+            notificationMessage.textContent = message;
+            notificationMessage.className = 'notification-message show ' + type;
+            notificationMessage.style.display = 'block';
+            setTimeout(() => {
+                notificationMessage.classList.remove('show');
+                setTimeout(() => { notificationMessage.style.display = 'none'; }, 300);
+            }, 4000);
+        };
+        
+        const loadAllUsersAndPopulateDropdown = async () => {
+            try {
+                const usersCollectionRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersCollectionRef);
+                allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+                authorSelect.innerHTML = '';
+                allUsers.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.name || 'Unnamed User';
+                    option.dataset.avatar = user.avatarUrl || 'https://hsnorth.github.io/embed_live/live/harry.png';
+                    authorSelect.appendChild(option);
+                });
+    
+                if (currentUser) {
+                    authorSelect.value = currentUser.uid;
+                }
+                updateAuthorAvatarPreview();
+    
+            } catch (error) {
+                console.error("Error loading users:", error);
+                showNotification("Could not load author list.", "error");
+            }
+        };
+    
+        const updateAuthorAvatarPreview = () => {
+            const selectedOption = authorSelect.options[authorSelect.selectedIndex];
+            if (selectedOption) {
+                authorAvatarPreview.src = selectedOption.dataset.avatar;
+            }
+        };
+    
+        authorSelect.addEventListener('change', updateAuthorAvatarPreview);
+    
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                currentUser = user;
+                await loadAllUsersAndPopulateDropdown(); 
+    
+                const urlParams = new URLSearchParams(window.location.search);
+                currentBlogId = urlParams.get('blogId');
+                currentBlogName = urlParams.get('blogName');
+    
+                if (currentBlogId && currentBlogName) {
+                    blogHeader.textContent = `You're on Live Blog: ${decodeURIComponent(currentBlogName)}`;
+                    const blogDocRef = doc(db, 'blogs', currentBlogId);
+                    const blogDocSnap = await getDoc(blogDocRef);
+                    if (blogDocSnap.exists()) {
+                        customTabs = blogDocSnap.data().customTabs || [];
+                        generateEmbedCode();
+                        renderCustomTabs();
+                        renderPostTabAssignmentCheckboxes([]);
+                        await loadPostsForAdmin();
+                    } else {
+                        blogHeader.textContent = 'You are on a Live Blog that does not exist';
+                        postsContainer.innerHTML = '<p class="error-message">Blog not found.</p>';
+                    }
+                } else {
+                    blogHeader.textContent = 'No Blog Selected';
+                    postsContainer.innerHTML = '<p class="error-message">No blog selected. <a href="dashboard.html">Go to dashboard</a>.</p>';
+                }
+            }
+        });
+    
+        function updateReportingFromVisibility() {
+            const isLiveEditor = isLivePageEditorCheckbox.checked;
+            const isHidden = hideReportingFromCheckbox.checked;
+    
+            reportingFromGroup.style.display = (isLiveEditor || isHidden) ? 'none' : 'flex';
+        }
+        
+        isLivePageEditorCheckbox.addEventListener('change', () => {
+            if (isLivePageEditorCheckbox.checked) {
+                hideReportingFromCheckbox.checked = false;
+            }
+            updateReportingFromVisibility();
+            reportingFromInput.value = isLivePageEditorCheckbox.checked ? 'Live Page Editor' : 'Montreal';
+        });
+    
+        hideReportingFromCheckbox.addEventListener('change', () => {
+            if (hideReportingFromCheckbox.checked) {
+                isLivePageEditorCheckbox.checked = false;
+            }
+            updateReportingFromVisibility();
+        });
+    
+        function resetPostForm() {
+            editingPostId = null;
+            
+            postForm.reset(); 
+            postContentEditor.innerHTML = '';
+            postContentSource.value = '';
+            
+            isLivePageEditorCheckbox.checked = false;
+            hideReportingFromCheckbox.checked = false;
+            pinPostCheckbox.checked = false;
+            updateReportingFromVisibility();
+    
             if (currentUser) {
                 authorSelect.value = currentUser.uid;
             }
             updateAuthorAvatarPreview();
-
-        } catch (error) {
-            console.error("Error loading users:", error);
-            showNotification("Could not load author list.", "error");
+            
+            renderPostTabAssignmentCheckboxes([]);
+            
+            formHeader.textContent = "Post an Update";
+            submitButton.textContent = "Post Update";
+            submitButton.disabled = false;
         }
-    };
-
-    const updateAuthorAvatarPreview = () => {
-        const selectedOption = authorSelect.options[authorSelect.selectedIndex];
-        if (selectedOption) {
-            authorAvatarPreview.src = selectedOption.dataset.avatar;
-        }
-    };
-
-    authorSelect.addEventListener('change', updateAuthorAvatarPreview);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-            window.location.href = 'index.html';
-        } else {
-            currentUser = user;
-            await loadAllUsersAndPopulateDropdown(); 
-
-            const urlParams = new URLSearchParams(window.location.search);
-            currentBlogId = urlParams.get('blogId');
-            currentBlogName = urlParams.get('blogName');
-
-            if (currentBlogId && currentBlogName) {
-                blogHeader.textContent = `You're on Live Blog: ${decodeURIComponent(currentBlogName)}`;
-                const blogDocRef = doc(db, 'blogs', currentBlogId);
-                const blogDocSnap = await getDoc(blogDocRef);
-                if (blogDocSnap.exists()) {
-                    customTabs = blogDocSnap.data().customTabs || [];
-                    generateEmbedCode();
+    
+        const renderCustomTabs = () => {
+            customTabList.innerHTML = customTabs.map(tabName => `
+                <li>
+                    <span class="tab-name">${tabName}</span>
+                    <button class="delete-tab-button" data-tab-name="${tabName}">Delete</button>
+                </li>
+            `).join('');
+            renderPostTabAssignmentCheckboxes([]);
+        };
+    
+        const addCustomTab = async () => {
+            const newTabName = newTabNameInput.value.trim();
+            if (!currentBlogId) return showNotification("No blog selected.", "error");
+            if (newTabName && !customTabs.includes(newTabName) && newTabName !== defaultTab) {
+                customTabs.push(newTabName);
+                try {
+                    await updateBlogTabsInFirestore();
+                    newTabNameInput.value = '';
                     renderCustomTabs();
-                    renderPostTabAssignmentCheckboxes([]);
-                    await loadPostsForAdmin();
-                } else {
-                    blogHeader.textContent = 'You are on a Live Blog that does not exist';
-                    postsContainer.innerHTML = '<p class="error-message">Blog not found.</p>';
+                } catch (error) {
+                    showNotification("Failed to add tab: " + error.message, "error");
+                    customTabs = customTabs.filter(tab => tab !== newTabName);
                 }
             } else {
-                blogHeader.textContent = 'No Blog Selected';
-                postsContainer.innerHTML = '<p class="error-message">No blog selected. <a href="dashboard.html">Go to dashboard</a>.</p>';
-            }
-        }
-    });
-
-    function updateReportingFromVisibility() {
-        const isLiveEditor = isLivePageEditorCheckbox.checked;
-        const isHidden = hideReportingFromCheckbox.checked;
-
-        reportingFromGroup.style.display = (isLiveEditor || isHidden) ? 'none' : 'flex';
-    }
-    
-    isLivePageEditorCheckbox.addEventListener('change', () => {
-        if (isLivePageEditorCheckbox.checked) {
-            hideReportingFromCheckbox.checked = false;
-        }
-        updateReportingFromVisibility();
-        reportingFromInput.value = isLivePageEditorCheckbox.checked ? 'Live Page Editor' : 'Montreal';
-    });
-
-    hideReportingFromCheckbox.addEventListener('change', () => {
-        if (hideReportingFromCheckbox.checked) {
-            isLivePageEditorCheckbox.checked = false;
-        }
-        updateReportingFromVisibility();
-    });
-
-    function resetPostForm() {
-        editingPostId = null;
-        
-        postForm.reset(); 
-        postContentEditor.innerHTML = '';
-        postContentSource.value = '';
-        
-        isLivePageEditorCheckbox.checked = false;
-        hideReportingFromCheckbox.checked = false;
-        pinPostCheckbox.checked = false;
-        updateReportingFromVisibility();
-
-        if (currentUser) {
-            authorSelect.value = currentUser.uid;
-        }
-        updateAuthorAvatarPreview();
-        
-        renderPostTabAssignmentCheckboxes([]);
-        
-        formHeader.textContent = "Post an Update";
-        submitButton.textContent = "Post Update";
-        submitButton.disabled = false;
-    }
-
-    const renderCustomTabs = () => {
-        customTabList.innerHTML = customTabs.map(tabName => `
-            <li>
-                <span class="tab-name">${tabName}</span>
-                <button class="delete-tab-button" data-tab-name="${tabName}">Delete</button>
-            </li>
-        `).join('');
-        renderPostTabAssignmentCheckboxes([]);
-    };
-
-    const addCustomTab = async () => {
-        const newTabName = newTabNameInput.value.trim();
-        if (!currentBlogId) return showNotification("No blog selected.", "error");
-        if (newTabName && !customTabs.includes(newTabName) && newTabName !== defaultTab) {
-            customTabs.push(newTabName);
-            try {
-                await updateBlogTabsInFirestore();
-                newTabNameInput.value = '';
-                renderCustomTabs();
-            } catch (error) {
-                showNotification("Failed to add tab: " + error.message, "error");
-                customTabs = customTabs.filter(tab => tab !== newTabName);
-            }
-        } else {
-            showNotification("Tab name is invalid or already exists.", "error");
-        }
-    };
-
-    const deleteCustomTab = async (tabName) => {
-        if (!currentBlogId) return showNotification("No blog selected.", "error");
-        if (window.confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
-            const originalTabs = [...customTabs];
-            customTabs = customTabs.filter(tab => tab !== tabName);
-            try {
-                await updateBlogTabsInFirestore();
-                renderCustomTabs();
-            } catch (error) {
-                showNotification("Failed to delete tab: " + error.message, "error");
-                customTabs = originalTabs;
-                renderCustomTabs();
-            }
-        }
-    };
-
-    const updateBlogTabsInFirestore = () => {
-        if (!currentBlogId) throw new Error("No blog ID selected.");
-        const blogDocRef = doc(db, 'blogs', currentBlogId);
-        return updateDoc(blogDocRef, { customTabs });
-    };
-
-    addTabButton.addEventListener('click', addCustomTab);
-    customTabList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-tab-button')) {
-            deleteCustomTab(e.target.dataset.tabName);
-        }
-    });
-
-    const renderPostTabAssignmentCheckboxes = (assignedPostTabs = []) => {
-        const defaultCheckbox = `<label><input type="checkbox" name="postTab" value="${defaultTab}" checked disabled> ${defaultTab}</label>`;
-        const customCheckboxes = customTabs.map(tabName => {
-            const isChecked = assignedPostTabs.includes(tabName);
-            return `<label><input type="checkbox" name="postTab" value="${tabName}" ${isChecked ? 'checked' : ''}> ${tabName}</label>`;
-        }).join('');
-        postTabAssignmentDiv.innerHTML = defaultCheckbox + customCheckboxes;
-    };
-
-    const generateEmbedCode = () => {
-        if (currentBlogId) {
-            const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}`;
-            copyableEmbedCode.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${decodeURIComponent(currentBlogName)} Live Blog"></iframe>`;
-        }
-    };
-
-    copyEmbedCodeButton.addEventListener('click', () => {
-        copyableEmbedCode.select();
-        document.execCommand("copy");
-        showNotification("Embed code copied!", "success");
-    });
-    
-    const formatBoldButton = document.getElementById('formatBoldButton');
-    const formatItalicButton = document.getElementById('formatItalicButton');
-    const formatLinkButton = document.getElementById('formatLinkButton');
-    const formatCodeButton = document.getElementById('formatCodeButton');
-    const formatEmbedButton = document.getElementById('formatEmbedButton');
-    const linkModal = document.getElementById('linkModal');
-    const linkUrlInput = document.getElementById('linkUrlInput');
-    const saveLinkButton = document.getElementById('saveLinkButton');
-    const cancelLinkButton = document.getElementById('cancelLinkButton');
-    const embedModal = document.getElementById('embedModal');
-    const embedModalTextarea = document.getElementById('embedModalTextarea');
-    const saveEmbedButton = document.getElementById('saveEmbedButton');
-    const cancelEmbedButton = document.getElementById('cancelEmbedButton');
-    let savedSelection;
-
-    postContentEditor.addEventListener('input', () => {
-        let sourceHtml = postContentEditor.innerHTML;
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = sourceHtml;
-        tempDiv.querySelectorAll('.embed-placeholder').forEach(placeholder => {
-            const decodedEmbed = placeholder.dataset.embedCode;
-            if (decodedEmbed) {
-                placeholder.outerHTML = decodedEmbed;
-            }
-        });
-        postContentSource.value = tempDiv.innerHTML;
-    });
-
-    postContentSource.addEventListener('input', () => {
-        postContentEditor.innerHTML = postContentSource.value;
-    });
-
-    formatBoldButton.addEventListener('click', () => { document.execCommand('bold'); postContentEditor.dispatchEvent(new Event('input')); });
-    formatItalicButton.addEventListener('click', () => { document.execCommand('italic'); postContentEditor.dispatchEvent(new Event('input')); });
-
-    formatCodeButton.addEventListener('click', () => {
-        if (postContentEditor.style.display === 'none') {
-            postContentEditor.innerHTML = postContentSource.value;
-            postContentEditor.style.display = 'block';
-            postContentSource.style.display = 'none';
-        } else {
-            postContentEditor.dispatchEvent(new Event('input'));
-            postContentEditor.style.display = 'none';
-            postContentSource.style.display = 'block';
-        }
-    });
-    
-    const openLinkModal = () => {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
-            savedSelection = selection.getRangeAt(0);
-            linkModal.style.display = 'flex';
-            linkUrlInput.focus();
-        } else { showNotification("Please select text to create a link.", "error"); }
-    };
-    const closeLinkModal = () => { linkModal.style.display = 'none'; linkUrlInput.value = ''; };
-    const applyLink = () => {
-        let url = linkUrlInput.value.trim();
-        if (url && !/^https?:\/\//i.test(url)) { url = 'https://' + url; }
-        if (url && savedSelection) {
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(savedSelection);
-            document.execCommand('createLink', false, url);
-            const newLink = postContentEditor.querySelector(`a[href="${url}"]`);
-            if (newLink) {
-                newLink.target = '_blank';
-                newLink.style.color = 'red';
-                newLink.style.textDecoration = 'underline';
-                newLink.style.textDecorationStyle = 'dotted';
-            }
-            postContentEditor.dispatchEvent(new Event('input'));
-            closeLinkModal();
-        }
-    };
-    const openEmbedModal = () => { savedSelection = window.getSelection().getRangeAt(0); embedModal.style.display = 'flex'; };
-    const closeEmbedModal = () => { embedModal.style.display = 'none'; embedModalTextarea.value = ''; };
-    const applyEmbed = () => {
-        let embedCode = embedModalTextarea.value.trim();
-        const redditPostRegex = /https?:\/\/(?:www\.)?reddit\.com\/r\/\w+\/comments\/\w+/;
-        if (redditPostRegex.test(embedCode)) {
-            embedCode = `<blockquote class="reddit-card" data-card-controls="false" data-card-width="100%"><a href="${embedCode}"></a></blockquote>`;
-        }
-        if (embedCode && savedSelection) {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'embed-placeholder';
-            placeholder.textContent = 'EMBEDDED CONTENT';
-            placeholder.setAttribute('contenteditable', 'false');
-            placeholder.dataset.embedCode = embedCode;
-            savedSelection.deleteContents();
-            savedSelection.insertNode(placeholder);
-            placeholder.after(document.createElement('br'));
-            postContentEditor.dispatchEvent(new Event('input'));
-            closeEmbedModal();
-        }
-    };
-
-    formatLinkButton.addEventListener('click', openLinkModal);
-    cancelLinkButton.addEventListener('click', closeLinkModal);
-    saveLinkButton.addEventListener('click', applyLink);
-    formatEmbedButton.addEventListener('click', openEmbedModal);
-    cancelEmbedButton.addEventListener('click', closeEmbedModal);
-    saveEmbedButton.addEventListener('click', applyEmbed);
-
-    // --- REWRITTEN: Form submission logic with upload progress ---
-    postForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        postContentEditor.dispatchEvent(new Event('input'));
-        const content = postContentSource.value.trim();
-
-        if (!content || !currentBlogId) {
-            showNotification("Post content cannot be empty.", "error");
-            return;
-        }
-
-        submitButton.disabled = true;
-        submitButton.textContent = editingPostId ? "Saving..." : "Posting...";
-
-        const mediaFile = postMediaInput.files[0];
-
-        // This self-executing function saves the post data to Firestore.
-        // It's called either after a successful upload or directly if there's no media.
-        const savePostToFirestore = async (mediaUrl = '', mediaType = '') => {
-            try {
-                const isPinned = pinPostCheckbox.checked;
-                if (isPinned) {
-                    const postsRef = collection(db, 'posts');
-                    const q = query(postsRef, where('blogId', '==', currentBlogId), where('isPinned', '==', true));
-                    const querySnapshot = await getDocs(q);
-                    for (const docSnap of querySnapshot.docs) {
-                        if (docSnap.id !== editingPostId) {
-                            await updateDoc(doc(db, 'posts', docSnap.id), { isPinned: false });
-                        }
-                    }
-                }
-
-                const selectedOption = authorSelect.options[authorSelect.selectedIndex];
-                const authorId = selectedOption.value;
-                const authorName = selectedOption.textContent;
-                const authorAvatar = selectedOption.dataset.avatar;
-                const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
-
-                if (editingPostId) {
-                    const postDocRef = doc(db, 'posts', editingPostId);
-                    const existingPost = adminAllPostsCached.find(p => p.id === editingPostId);
-                    
-                    const dataToUpdate = {
-                        authorId, authorName, authorAvatar,
-                        subtitle: postSubtitleInput.value.trim(),
-                        content,
-                        reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
-                        hideReportingFrom: hideReportingFromCheckbox.checked,
-                        assignedTabs: selectedTabs,
-                        isPinned,
-                        mediaUrl: mediaUrl || (existingPost ? existingPost.mediaUrl : ''),
-                        mediaType: mediaType || (existingPost ? existingPost.mediaType : '')
-                    };
-                    
-                    await updateDoc(postDocRef, dataToUpdate);
-                    showNotification("Post updated successfully!", "success");
-                } else {
-                    const newPostData = {
-                        blogId: currentBlogId,
-                        timestamp: serverTimestamp(),
-                        authorId, authorName, authorAvatar,
-                        subtitle: postSubtitleInput.value.trim(),
-                        content,
-                        reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
-                        hideReportingFrom: hideReportingFromCheckbox.checked,
-                        assignedTabs: selectedTabs,
-                        isPinned,
-                        mediaUrl, mediaType
-                    };
-                    await addDoc(collection(db, 'posts'), newPostData);
-                    showNotification("Post added successfully!", "success");
-                }
-                
-                resetPostForm();
-                await loadPostsForAdmin();
-
-            } catch (error) {
-                console.error("Error saving post:", error);
-                showNotification(`Failed to save post: ${error.message}`, "error");
-                submitButton.disabled = false;
-                submitButton.textContent = editingPostId ? "Save Changes" : "Post Update";
+                showNotification("Tab name is invalid or already exists.", "error");
             }
         };
-
-        // If a media file is selected, upload it first.
-        if (mediaFile) {
-            const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, mediaFile);
-
-            // Listen for state changes, errors, and completion of the upload.
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    submitButton.textContent = `Uploading: ${Math.round(progress)}%`;
-                }, 
-                (error) => {
-                    console.error("Upload failed:", error);
-                    showNotification("Media upload failed. Please try again.", "error");
+    
+        const deleteCustomTab = async (tabName) => {
+            if (!currentBlogId) return showNotification("No blog selected.", "error");
+            if (window.confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
+                const originalTabs = [...customTabs];
+                customTabs = customTabs.filter(tab => tab !== tabName);
+                try {
+                    await updateBlogTabsInFirestore();
+                    renderCustomTabs();
+                } catch (error) {
+                    showNotification("Failed to delete tab: " + error.message, "error");
+                    customTabs = originalTabs;
+                    renderCustomTabs();
+                }
+            }
+        };
+    
+        const updateBlogTabsInFirestore = () => {
+            if (!currentBlogId) throw new Error("No blog ID selected.");
+            const blogDocRef = doc(db, 'blogs', currentBlogId);
+            return updateDoc(blogDocRef, { customTabs });
+        };
+    
+        addTabButton.addEventListener('click', addCustomTab);
+        customTabList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-tab-button')) {
+                deleteCustomTab(e.target.dataset.tabName);
+            }
+        });
+    
+        const renderPostTabAssignmentCheckboxes = (assignedPostTabs = []) => {
+            const defaultCheckbox = `<label><input type="checkbox" name="postTab" value="${defaultTab}" checked disabled> ${defaultTab}</label>`;
+            const customCheckboxes = customTabs.map(tabName => {
+                const isChecked = assignedPostTabs.includes(tabName);
+                return `<label><input type="checkbox" name="postTab" value="${tabName}" ${isChecked ? 'checked' : ''}> ${tabName}</label>`;
+            }).join('');
+            postTabAssignmentDiv.innerHTML = defaultCheckbox + customCheckboxes;
+        };
+    
+        const generateEmbedCode = () => {
+            if (currentBlogId) {
+                const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}`;
+                copyableEmbedCode.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${decodeURIComponent(currentBlogName)} Live Blog"></iframe>`;
+            }
+        };
+    
+        copyEmbedCodeButton.addEventListener('click', () => {
+            copyableEmbedCode.select();
+            document.execCommand("copy");
+            showNotification("Embed code copied!", "success");
+        });
+        
+        const formatBoldButton = document.getElementById('formatBoldButton');
+        const formatItalicButton = document.getElementById('formatItalicButton');
+        const formatLinkButton = document.getElementById('formatLinkButton');
+        const formatCodeButton = document.getElementById('formatCodeButton');
+        const formatEmbedButton = document.getElementById('formatEmbedButton');
+        const linkModal = document.getElementById('linkModal');
+        const linkUrlInput = document.getElementById('linkUrlInput');
+        const saveLinkButton = document.getElementById('saveLinkButton');
+        const cancelLinkButton = document.getElementById('cancelLinkButton');
+        const embedModal = document.getElementById('embedModal');
+        const embedModalTextarea = document.getElementById('embedModalTextarea');
+        const saveEmbedButton = document.getElementById('saveEmbedButton');
+        const cancelEmbedButton = document.getElementById('cancelEmbedButton');
+        let savedSelection;
+    
+        postContentEditor.addEventListener('input', () => {
+            let sourceHtml = postContentEditor.innerHTML;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sourceHtml;
+            tempDiv.querySelectorAll('.embed-placeholder').forEach(placeholder => {
+                const decodedEmbed = placeholder.dataset.embedCode;
+                if (decodedEmbed) {
+                    placeholder.outerHTML = decodedEmbed;
+                }
+            });
+            postContentSource.value = tempDiv.innerHTML;
+        });
+    
+        postContentSource.addEventListener('input', () => {
+            postContentEditor.innerHTML = postContentSource.value;
+        });
+    
+        formatBoldButton.addEventListener('click', () => { document.execCommand('bold'); postContentEditor.dispatchEvent(new Event('input')); });
+        formatItalicButton.addEventListener('click', () => { document.execCommand('italic'); postContentEditor.dispatchEvent(new Event('input')); });
+    
+        formatCodeButton.addEventListener('click', () => {
+            if (postContentEditor.style.display === 'none') {
+                postContentEditor.innerHTML = postContentSource.value;
+                postContentEditor.style.display = 'block';
+                postContentSource.style.display = 'none';
+            } else {
+                postContentEditor.dispatchEvent(new Event('input'));
+                postContentEditor.style.display = 'none';
+                postContentSource.style.display = 'block';
+            }
+        });
+        
+        const openLinkModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
+                savedSelection = selection.getRangeAt(0);
+                linkModal.style.display = 'flex';
+                linkUrlInput.focus();
+            } else { showNotification("Please select text to create a link.", "error"); }
+        };
+        const closeLinkModal = () => { linkModal.style.display = 'none'; linkUrlInput.value = ''; };
+        const applyLink = () => {
+            let url = linkUrlInput.value.trim();
+            if (url && !/^https?:\/\//i.test(url)) { url = 'https://' + url; }
+            if (url && savedSelection) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                document.execCommand('createLink', false, url);
+                const newLink = postContentEditor.querySelector(`a[href="${url}"]`);
+                if (newLink) {
+                    newLink.target = '_blank';
+                    newLink.style.color = 'red';
+                    newLink.style.textDecoration = 'underline';
+                    newLink.style.textDecorationStyle = 'dotted';
+                }
+                postContentEditor.dispatchEvent(new Event('input'));
+                closeLinkModal();
+            }
+        };
+    
+        const openEmbedModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                savedSelection = selection.getRangeAt(0).cloneRange();
+                embedModal.style.display = 'flex';
+                embedModalTextarea.focus();
+            } else {
+                showNotification("Place your cursor where you want to embed.", "error");
+            }
+        };
+        
+        const closeEmbedModal = () => { 
+            embedModal.style.display = 'none'; 
+            embedModalTextarea.value = ''; 
+        };
+        
+        const applyEmbed = () => {
+            let embedCode = embedModalTextarea.value.trim();
+            const redditPostRegex = /https?:\/\/(?:www\.)?reddit\.com\/r\/\w+\/comments\/\w+/;
+            if (redditPostRegex.test(embedCode)) {
+                embedCode = `<blockquote class="reddit-card" data-card-controls="false" data-card-width="100%"><a href="${embedCode}"></a></blockquote>`;
+            }
+            if (embedCode && savedSelection) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'embed-placeholder';
+                placeholder.textContent = 'EMBEDDED CONTENT';
+                placeholder.setAttribute('contenteditable', 'false');
+                placeholder.dataset.embedCode = embedCode;
+    
+                // Restore selection and insert the placeholder
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                
+                selection.getRangeAt(0).deleteContents();
+                selection.getRangeAt(0).insertNode(placeholder);
+    
+                // Move cursor after the inserted element
+                const range = document.createRange();
+                range.setStartAfter(placeholder);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Add a line break after for better editing flow
+                const br = document.createElement('br');
+                placeholder.after(br);
+    
+                postContentEditor.dispatchEvent(new Event('input'));
+                closeEmbedModal();
+            }
+        };
+    
+        formatLinkButton.addEventListener('click', openLinkModal);
+        cancelLinkButton.addEventListener('click', closeLinkModal);
+        saveLinkButton.addEventListener('click', applyLink);
+        formatEmbedButton.addEventListener('click', openEmbedModal);
+        cancelEmbedButton.addEventListener('click', closeEmbedModal);
+        saveEmbedButton.addEventListener('click', applyEmbed);
+    
+        // --- REWRITTEN: Form submission logic with upload progress ---
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            postContentEditor.dispatchEvent(new Event('input'));
+            const content = postContentSource.value.trim();
+    
+            if (!content || !currentBlogId) {
+                showNotification("Post content cannot be empty.", "error");
+                return;
+            }
+    
+            submitButton.disabled = true;
+            submitButton.textContent = editingPostId ? "Saving..." : "Posting...";
+    
+            const mediaFile = postMediaInput.files[0];
+    
+            // This self-executing function saves the post data to Firestore.
+            // It's called either after a successful upload or directly if there's no media.
+            const savePostToFirestore = async (mediaUrl = '', mediaType = '') => {
+                try {
+                    const isPinned = pinPostCheckbox.checked;
+                    if (isPinned) {
+                        const postsRef = collection(db, 'posts');
+                        const q = query(postsRef, where('blogId', '==', currentBlogId), where('isPinned', '==', true));
+                        const querySnapshot = await getDocs(q);
+                        for (const docSnap of querySnapshot.docs) {
+                            if (docSnap.id !== editingPostId) {
+                                await updateDoc(doc(db, 'posts', docSnap.id), { isPinned: false });
+                            }
+                        }
+                    }
+    
+                    const selectedOption = authorSelect.options[authorSelect.selectedIndex];
+                    const authorId = selectedOption.value;
+                    const authorName = selectedOption.textContent;
+                    const authorAvatar = selectedOption.dataset.avatar;
+                    const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
+    
+                    if (editingPostId) {
+                        const postDocRef = doc(db, 'posts', editingPostId);
+                        const existingPost = adminAllPostsCached.find(p => p.id === editingPostId);
+                        
+                        const dataToUpdate = {
+                            authorId, authorName, authorAvatar,
+                            subtitle: postSubtitleInput.value.trim(),
+                            content,
+                            reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
+                            hideReportingFrom: hideReportingFromCheckbox.checked,
+                            assignedTabs: selectedTabs,
+                            isPinned,
+                            mediaUrl: mediaUrl || (existingPost ? existingPost.mediaUrl : ''),
+                            mediaType: mediaType || (existingPost ? existingPost.mediaType : '')
+                        };
+                        
+                        await updateDoc(postDocRef, dataToUpdate);
+                        showNotification("Post updated successfully!", "success");
+                    } else {
+                        const newPostData = {
+                            blogId: currentBlogId,
+                            timestamp: serverTimestamp(),
+                            authorId, authorName, authorAvatar,
+                            subtitle: postSubtitleInput.value.trim(),
+                            content,
+                            reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
+                            hideReportingFrom: hideReportingFromCheckbox.checked,
+                            assignedTabs: selectedTabs,
+                            isPinned,
+                            mediaUrl, mediaType
+                        };
+                        await addDoc(collection(db, 'posts'), newPostData);
+                        showNotification("Post added successfully!", "success");
+                    }
+                    
+                    resetPostForm();
+                    await loadPostsForAdmin();
+    
+                } catch (error) {
+                    console.error("Error saving post:", error);
+                    showNotification(`Failed to save post: ${error.message}`, "error");
                     submitButton.disabled = false;
                     submitButton.textContent = editingPostId ? "Save Changes" : "Post Update";
-                }, 
-                async () => {
-                    // Upload completed successfully, get the download URL and save the post.
-                    try {
-                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                        await savePostToFirestore(downloadURL, mediaFile.type);
-                    } catch (error) {
-                         console.error("Error getting download URL:", error);
-                        showNotification("Could not process uploaded file.", "error");
+                }
+            };
+    
+            // If a media file is selected, upload it first.
+            if (mediaFile) {
+                const storageRef = ref(storage, `blog_media/${currentBlogId}/${Date.now()}_${mediaFile.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, mediaFile);
+    
+                // Listen for state changes, errors, and completion of the upload.
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        submitButton.textContent = `Uploading: ${Math.round(progress)}%`;
+                    }, 
+                    (error) => {
+                        console.error("Upload failed:", error);
+                        showNotification("Media upload failed. Please try again.", "error");
                         submitButton.disabled = false;
                         submitButton.textContent = editingPostId ? "Save Changes" : "Post Update";
+                    }, 
+                    async () => {
+                        // Upload completed successfully, get the download URL and save the post.
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            await savePostToFirestore(downloadURL, mediaFile.type);
+                        } catch (error) {
+                             console.error("Error getting download URL:", error);
+                            showNotification("Could not process uploaded file.", "error");
+                            submitButton.disabled = false;
+                            submitButton.textContent = editingPostId ? "Save Changes" : "Post Update";
+                        }
+                    }
+                );
+            } else {
+                // If no media file, save the post directly.
+                savePostToFirestore();
+            }
+        });
+    
+        function timeAgo(timestamp) {
+            if (!timestamp) return 'Just now';
+            const postDate = timestamp.toDate();
+            const seconds = Math.floor((new Date() - postDate) / 1000);
+            if (seconds < 60) return `${seconds}s ago`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+    
+        const loadPostsForAdmin = async () => {
+            if (!currentBlogId) return;
+            try {
+                const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                let posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                posts.sort((a, b) => (b.isPinned === true) - (a.isPinned === true)); 
+                adminAllPostsCached = posts;
+                renderAdminPosts(posts);
+            } catch (error) {
+                console.error("Error loading admin posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading posts.</p>';
+            }
+        };
+    
+        const renderAdminPosts = (posts) => {
+            if (posts.length === 0) {
+                postsContainer.innerHTML = '<p class="no-posts-message">No posts yet. Be the first!</p>';
+                return;
+            }
+            postsContainer.innerHTML = posts.map(post => {
+                const isPinned = post.isPinned ? 'pinned' : '';
+                const pinnedIcon = post.isPinned ? `<i class="fas fa-thumbtack pinned-icon" title="Pinned Post"></i>` : '';
+                const mediaHtml = post.mediaUrl && post.mediaType && post.mediaType.startsWith('image')
+                    ? `<img src="${post.mediaUrl}" alt="Post media" class="post-media">`
+                    : post.mediaUrl && post.mediaType && post.mediaType.startsWith('video')
+                    ? `<video src="${post.mediaUrl}" class="post-media" controls></video>`
+                    : '';
+                
+                let reportingFromHtml = '';
+                if (post.reportingFrom && !post.hideReportingFrom) {
+                    reportingFromHtml = `<span class="reporting-from">${post.reportingFrom}</span>`;
+                }
+    
+                return `
+                    <div class="post-card ${isPinned}" data-post-id="${post.id}">
+                        <div class="post-header-line">
+                            <div class="author-avatar">
+                                <img src="${post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'}" alt="Author Avatar" class="author-avatar-img">
+                            </div>
+                            <div class="post-meta">
+                                <div class="meta-line-one">
+                                    <strong>${post.authorName || 'Anonymous'}</strong>
+                                    <span class="bullet">•</span>
+                                    <span class="time-ago">${timeAgo(post.timestamp)}</span>
+                                    ${pinnedIcon}
+                                </div>
+                                ${reportingFromHtml}
+                            </div>
+                        </div>
+                        <p class="post-subtitle">${post.subtitle || ''}</p>
+                        <div class="post-text">${post.content || ''}</div>
+                        ${mediaHtml}
+                        <div class="post-actions">
+                            <button class="edit-post-button" data-post-id="${post.id}"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-post-button" data-post-id="${post.id}"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+        
+        postsContainer.addEventListener('click', async (e) => {
+            const editButton = e.target.closest('.edit-post-button');
+            const deleteButton = e.target.closest('.delete-post-button');
+    
+            if (editButton) {
+                const postId = editButton.dataset.postId;
+                const postToEdit = adminAllPostsCached.find(p => p.id === postId);
+                if (postToEdit) {
+                    editingPostId = postId;
+                    
+                    authorSelect.value = postToEdit.authorId;
+                    updateAuthorAvatarPreview();
+                    
+                    postContentEditor.innerHTML = postToEdit.content || '';
+                    postContentSource.value = postToEdit.content || '';
+                    
+                    postSubtitleInput.value = postToEdit.subtitle || '';
+                    pinPostCheckbox.checked = postToEdit.isPinned || false;
+                    hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
+                    isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
+                    
+                    updateReportingFromVisibility(); 
+                    
+                    if(!isLivePageEditorCheckbox.checked && !hideReportingFromCheckbox.checked){
+                        reportingFromInput.value = (postToEdit.reportingFrom || '').replace(/^Reporting from\s*/, '') || 'Montreal';
+                    }
+    
+                    renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
+                    
+                    formHeader.textContent = "Edit Post";
+                    submitButton.textContent = "Save Changes";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+    
+            if (deleteButton) {
+                const postId = deleteButton.dataset.postId;
+                if (window.confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+                    try {
+                        await deleteDoc(doc(db, 'posts', postId));
+                        showNotification("Post deleted.", "success");
+                        await loadPostsForAdmin();
+                    } catch (error) {
+                        showNotification("Error deleting post: " + error.message, "error");
                     }
                 }
-            );
-        } else {
-            // If no media file, save the post directly.
-            savePostToFirestore();
-        }
-    });
-
-    function timeAgo(timestamp) {
-        if (!timestamp) return 'Just now';
-        const postDate = timestamp.toDate();
-        const seconds = Math.floor((new Date() - postDate) / 1000);
-        if (seconds < 60) return `${seconds}s ago`;
-        const minutes = Math.floor(seconds / 60);
-        if (minutes < 60) return `${minutes}m ago`;
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours}h ago`;
-        const days = Math.floor(hours / 24);
-        return `${days}d ago`;
-    }
-
-    const loadPostsForAdmin = async () => {
-        if (!currentBlogId) return;
-        try {
-            const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
-            const querySnapshot = await getDocs(q);
-            let posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            posts.sort((a, b) => (b.isPinned === true) - (a.isPinned === true)); 
-            adminAllPostsCached = posts;
-            renderAdminPosts(posts);
-        } catch (error) {
-            console.error("Error loading admin posts:", error);
-            postsContainer.innerHTML = '<p class="error-message">Error loading posts.</p>';
-        }
-    };
-
-    const renderAdminPosts = (posts) => {
-        if (posts.length === 0) {
-            postsContainer.innerHTML = '<p class="no-posts-message">No posts yet. Be the first!</p>';
-            return;
-        }
-        postsContainer.innerHTML = posts.map(post => {
-            const isPinned = post.isPinned ? 'pinned' : '';
-            const pinnedIcon = post.isPinned ? `<i class="fas fa-thumbtack pinned-icon" title="Pinned Post"></i>` : '';
-            const mediaHtml = post.mediaUrl && post.mediaType && post.mediaType.startsWith('image')
-                ? `<img src="${post.mediaUrl}" alt="Post media" class="post-media">`
-                : post.mediaUrl && post.mediaType && post.mediaType.startsWith('video')
-                ? `<video src="${post.mediaUrl}" class="post-media" controls></video>`
-                : '';
-            
-            let reportingFromHtml = '';
-            if (post.reportingFrom && !post.hideReportingFrom) {
-                reportingFromHtml = `<span class="reporting-from">${post.reportingFrom}</span>`;
             }
-
-            return `
-                <div class="post-card ${isPinned}" data-post-id="${post.id}">
-                    <div class="post-header-line">
-                        <div class="author-avatar">
-                            <img src="${post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png'}" alt="Author Avatar" class="author-avatar-img">
-                        </div>
-                        <div class="post-meta">
-                            <div class="meta-line-one">
-                                <strong>${post.authorName || 'Anonymous'}</strong>
-                                <span class="bullet">•</span>
-                                <span class="time-ago">${timeAgo(post.timestamp)}</span>
-                                ${pinnedIcon}
-                            </div>
-                            ${reportingFromHtml}
-                        </div>
-                    </div>
-                    <p class="post-subtitle">${post.subtitle || ''}</p>
-                    <div class="post-text">${post.content || ''}</div>
-                    ${mediaHtml}
-                    <div class="post-actions">
-                        <button class="edit-post-button" data-post-id="${post.id}"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="delete-post-button" data-post-id="${post.id}"><i class="fas fa-trash"></i> Delete</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    };
+        });
     
-    postsContainer.addEventListener('click', async (e) => {
-        const editButton = e.target.closest('.edit-post-button');
-        const deleteButton = e.target.closest('.delete-post-button');
-
-        if (editButton) {
-            const postId = editButton.dataset.postId;
-            const postToEdit = adminAllPostsCached.find(p => p.id === postId);
-            if (postToEdit) {
-                editingPostId = postId;
-                
-                authorSelect.value = postToEdit.authorId;
-                updateAuthorAvatarPreview();
-                
-                postContentEditor.innerHTML = postToEdit.content || '';
-                postContentSource.value = postToEdit.content || '';
-                
-                postSubtitleInput.value = postToEdit.subtitle || '';
-                pinPostCheckbox.checked = postToEdit.isPinned || false;
-                hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
-                isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
-                
-                updateReportingFromVisibility(); 
-                
-                if(!isLivePageEditorCheckbox.checked && !hideReportingFromCheckbox.checked){
-                    reportingFromInput.value = (postToEdit.reportingFrom || '').replace(/^Reporting from\s*/, '') || 'Montreal';
-                }
-
-                renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
-                
-                formHeader.textContent = "Edit Post";
-                submitButton.textContent = "Save Changes";
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('signOutButtonHeader').addEventListener('click', () => signOut(auth));
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const a2hsToggle = document.getElementById('a2hsToggle');
+            const a2hsContent = document.getElementById('a2hsContent');
+            if (a2hsToggle) {
+                a2hsToggle.addEventListener('click', () => {
+                    a2hsToggle.classList.toggle('active');
+                    a2hsContent.classList.toggle('show');
+                });
             }
-        }
-
-        if (deleteButton) {
-            const postId = deleteButton.dataset.postId;
-            if (window.confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
-                try {
-                    await deleteDoc(doc(db, 'posts', postId));
-                    showNotification("Post deleted.", "success");
-                    await loadPostsForAdmin();
-                } catch (error) {
-                    showNotification("Error deleting post: " + error.message, "error");
-                }
-            }
-        }
-    });
-
-    document.getElementById('signOutButtonHeader').addEventListener('click', () => signOut(auth));
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const a2hsToggle = document.getElementById('a2hsToggle');
-        const a2hsContent = document.getElementById('a2hsContent');
-        if (a2hsToggle) {
-            a2hsToggle.addEventListener('click', () => {
-                a2hsToggle.classList.toggle('active');
-                a2hsContent.classList.toggle('show');
-            });
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
