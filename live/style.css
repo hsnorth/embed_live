@@ -189,15 +189,10 @@ section {
     font-size: 1rem;
 }
 
-/* START CHANGE: Increased height of textarea */
 .textarea-field {
     height: 250px;
     resize: vertical;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
 }
-/* END CHANGE */
-
 
 .input-field:focus,
 .textarea-field:focus {
@@ -223,9 +218,18 @@ section {
     transform: translateY(-1px);
 }
 
-/* START CHANGE: Styles for formatting buttons */
-.textarea-wrapper {
-    position: relative;
+/* --- Rich Text Editor --- */
+.editor-wrapper {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+}
+
+.editor-wrapper .textarea-field {
+    border: none;
+    border-radius: 6px 6px 0 0;
+}
+.editor-wrapper .textarea-field:focus {
+    box-shadow: none;
 }
 
 .format-buttons-container {
@@ -233,9 +237,7 @@ section {
     gap: 5px;
     padding: 8px;
     background-color: #f8f9fa;
-    border: 1px solid #ced4da;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
+    border-top: 1px solid #ced4da;
 }
 
 .format-button {
@@ -253,8 +255,52 @@ section {
     background-color: #f0f0f0;
     border-color: #bbb;
 }
-/* END CHANGE */
 
+.source-view {
+    font-family: monospace;
+    background-color: #2d2d2d;
+    color: #f0f0f0;
+}
+
+/* --- Link Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+}
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+.cancel-button {
+    background-color: #f0f2f5;
+    color: #333;
+    border: 1px solid #ccc;
+}
+.cancel-button:hover {
+    background-color: #e1e8ed;
+}
 
 /* --- Tab Management Section --- */
 .tab-management-controls {
