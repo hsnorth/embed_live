@@ -89,6 +89,7 @@
                             <button type="button" id="formatBoldButton" class="format-button" title="Bold"><i class="fas fa-bold"></i></button>
                             <button type="button" id="formatItalicButton" class="format-button" title="Italic"><i class="fas fa-italic"></i></button>
                             <button type="button" id="formatLinkButton" class="format-button" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" id="formatEmbedButton" class="format-button" title="Embed"><i class="fas fa-plus-square"></i></button>
                             <button type="button" id="formatCodeButton" class="format-button" title="Source Code"><i class="fas fa-code"></i></button>
                         </div>
                     </div>
@@ -171,6 +172,19 @@
             </div>
         </div>
     </div>
+
+    <!-- START CHANGE: Custom Modal for Embed Input -->
+    <div id="embedModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Paste Embed Code</h3>
+            <textarea id="embedCodeInput" class="textarea-field" placeholder="Paste your embed code here..."></textarea>
+            <div class="modal-actions">
+                <button id="saveEmbedButton" class="submit-button">Done</button>
+                <button id="cancelEmbedButton" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- END CHANGE -->
 
     <footer>
         <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
@@ -408,10 +422,15 @@
         const formatItalicButton = document.getElementById('formatItalicButton');
         const formatLinkButton = document.getElementById('formatLinkButton');
         const formatCodeButton = document.getElementById('formatCodeButton');
+        const formatEmbedButton = document.getElementById('formatEmbedButton');
         const linkModal = document.getElementById('linkModal');
         const linkUrlInput = document.getElementById('linkUrlInput');
         const saveLinkButton = document.getElementById('saveLinkButton');
         const cancelLinkButton = document.getElementById('cancelLinkButton');
+        const embedModal = document.getElementById('embedModal');
+        const embedCodeTextarea = document.getElementById('embedCodeInput');
+        const saveEmbedButton = document.getElementById('saveEmbedButton');
+        const cancelEmbedButton = document.getElementById('cancelEmbedButton');
         let savedSelection;
 
         postContentEditor.addEventListener('input', () => {
@@ -485,9 +504,40 @@
             }
         };
 
+        const openEmbedModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
+                showNotification("Cannot embed over selected text. Place cursor where you want to embed.", "error");
+                return;
+            }
+            savedSelection = selection.getRangeAt(0);
+            embedModal.style.display = 'flex';
+            embedCodeTextarea.focus();
+        };
+
+        const closeEmbedModal = () => {
+            embedModal.style.display = 'none';
+            embedCodeTextarea.value = '';
+        };
+
+        const applyEmbed = () => {
+            const embedCode = embedCodeTextarea.value.trim();
+            if (embedCode && savedSelection) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                document.execCommand('insertHTML', false, embedCode);
+                postContentSource.value = postContentEditor.innerHTML;
+                closeEmbedModal();
+            }
+        };
+
         formatLinkButton.addEventListener('click', openLinkModal);
         cancelLinkButton.addEventListener('click', closeLinkModal);
         saveLinkButton.addEventListener('click', applyLink);
+        formatEmbedButton.addEventListener('click', openEmbedModal);
+        cancelEmbedButton.addEventListener('click', closeEmbedModal);
+        saveEmbedButton.addEventListener('click', applyEmbed);
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
