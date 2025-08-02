@@ -143,10 +143,13 @@
                 const displayContentHtml = processContentForEmbeds(displayContent);
                 const fullContentHtml = processContentForEmbeds(post.content);
 
+                // START CHANGE: Check the new `hideReportingFrom` flag before creating the "Reporting From" HTML.
                 let reportingFromDisplay = '';
-                if (post.reportingFrom) {
+                // Only show the reporting line if the field has content AND the `hideReportingFrom` flag is false or undefined.
+                if (post.reportingFrom && !post.hideReportingFrom) {
                     reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
                 }
+                // END CHANGE
                 
                 // Conditionally show the timestamp
                 const timeAgoHtml = post.isPinned 
