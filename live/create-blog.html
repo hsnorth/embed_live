@@ -80,10 +80,22 @@
                     <input type="text" id="postSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
                 </div>
 
+                <!-- START CHANGE: Added a wrapper and formatting buttons for the textarea -->
                 <div class="form-group">
                     <label for="postContentInput">Post Content:</label>
-                    <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
+                    <div class="textarea-wrapper">
+                        <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
+                        <div class="format-buttons-container">
+                            <button type="button" id="formatBoldButton" class="format-button" title="Bold">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" id="formatLinkButton" class="format-button" title="Link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                <!-- END CHANGE -->
 
                 <div class="form-group">
                     <label class="checkbox-label">
@@ -382,6 +394,39 @@
             document.execCommand("copy");
             showNotification("Embed code copied!", "success");
         });
+        
+        // START CHANGE: Logic for formatting buttons
+        const formatBoldButton = document.getElementById('formatBoldButton');
+        const formatLinkButton = document.getElementById('formatLinkButton');
+
+        function wrapText(textarea, startTag, endTag) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const beforeText = textarea.value.substring(0, start);
+            const afterText = textarea.value.substring(end);
+
+            if (selectedText) {
+                textarea.value = beforeText + startTag + selectedText + endTag + afterText;
+                textarea.focus();
+                // Adjust selection to be after the inserted tags
+                textarea.selectionStart = start + startTag.length;
+                textarea.selectionEnd = end + startTag.length;
+            }
+        }
+
+        formatBoldButton.addEventListener('click', () => {
+            wrapText(postContentInput, '<strong>', '</strong>');
+        });
+
+        formatLinkButton.addEventListener('click', () => {
+            const url = prompt("Enter the URL:");
+            if (url) {
+                const startTag = `<a href="${url}" style="color: red; text-decoration: underline; text-decoration-style: dotted;">`;
+                wrapText(postContentInput, startTag, '</a>');
+            }
+        });
+        // END CHANGE
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -519,12 +564,10 @@
                     ? `<img src="${post.mediaUrl}" alt="Post media" class="post-media">`
                     : '';
                 
-                // START CHANGE: Conditionally create the "Reporting From" HTML string
                 let reportingFromHtml = '';
                 if (post.reportingFrom && !post.hideReportingFrom) {
                     reportingFromHtml = `<span class="reporting-from">${post.reportingFrom}</span>`;
                 }
-                // END CHANGE
 
                 return `
                     <div class="post-card ${isPinned}" data-post-id="${post.id}">
