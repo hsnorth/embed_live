@@ -11,9 +11,10 @@
 <body>
     <main>
         <section class="live-blog-posts">
-            <div id="postsContainer">
+            <div id="postsContainer" class="posts-page">
             </div>
-            </section>
+        </section>
+        <div id="paginationControls" class="pagination-controls"></div>
     </main>
 
     <button id="newUpdatesButton">
@@ -26,9 +27,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot, limit, startAfter } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
@@ -41,41 +41,37 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Global Variables for Embed ---
         let currentBlogId = null;
-        let allPostsCached = [];
-        let initialLoadComplete = false;
-        let newUpdatesCount = 0;
+        let allPosts = [];
+        let pages = [];
+        let currentPage = 1;
+        const PAGE_HEIGHT = 5000;
 
-        // DOM element references
         const postsContainer = document.getElementById('postsContainer');
+        const paginationControls = document.getElementById('paginationControls');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
-        // --- Helper Function: timeAgo ---
         function timeAgo(timestamp) {
             const now = new Date();
             const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
             const seconds = Math.floor((now - postDate) / 1000);
-
             let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
+            if (interval > 1) return `${Math.floor(interval)} years ago`;
             interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
+            if (interval > 1) return `${Math.floor(interval)} months ago`;
             interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
+            if (interval > 1) return `${Math.floor(interval)} days ago`;
             interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
+            if (interval > 1) return `${Math.floor(interval)} hours ago`;
             interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-            return Math.floor(seconds) + " seconds ago";
+            if (interval > 1) return `${Math.floor(interval)} minutes ago`;
+            return `${Math.floor(seconds)} seconds ago`;
         }
 
-        // --- Function: processContentForEmbeds ---
         function processContentForEmbeds(content) {
             if (!content) return '';
             const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
-            
             const placeholders = [];
             let processedContent = content.replace(embedRegex, (match) => {
                 placeholders.push(match);
@@ -84,218 +80,163 @@
 
             processedContent = processedContent.split(/\r?\n/).map(line => {
                 const trimmedLine = line.trim();
-                if (trimmedLine.startsWith('__EMBED_PLACEHOLDER_') || trimmedLine === '') {
-                    return line;
-                }
+                if (trimmedLine.startsWith('__EMBED_PLACEHOLDER_') || trimmedLine === '') return line;
                 return `<p>${line}</p>`;
             }).join('');
 
             placeholders.forEach((placeholder, index) => {
                 processedContent = processedContent.replace(`__EMBED_PLACEHOLDER_${index}__`, placeholder);
             });
-
             return processedContent;
         }
 
+        function createPostCard(post) {
+            const postCard = document.createElement('div');
+            postCard.className = 'post-card';
+            postCard.dataset.postId = post.id;
+            postCard.id = `post-${post.id}`;
 
-        // --- Function: renderPosts ---
-        const renderPosts = (postsToRender, containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error(`Container with ID "${containerId}" not found.`);
-                return;
+            let pinnedHtml = '';
+            if (post.isPinned) {
+                postCard.classList.add('pinned');
+                pinnedHtml = `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
             }
-            container.innerHTML = '';
+
+            let mediaHtml = '';
+            if (post.mediaUrl) {
+                if (post.mediaType && post.mediaType.startsWith('image')) {
+                    mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                } else if (post.mediaType && post.mediaType.startsWith('video')) {
+                    mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                }
+            }
+
+            const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
+            const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+            const fullContentHtml = processContentForEmbeds(post.content);
+            let reportingFromDisplay = '';
+            if (post.reportingFrom && !post.hideReportingFrom) {
+                reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
+            }
+            const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
+
+            postCard.innerHTML = `
+                ${pinnedHtml}
+                <div class="post-header-line">
+                    <div class="author-avatar"><img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img"></div>
+                    <div class="post-meta">
+                        <div class="meta-line-one"><strong>${post.authorName || 'Anonymous'}</strong>${timeAgoHtml}</div>
+                        ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
+                    </div>
+                </div>
+                ${subtitleHtml}
+                <div class="post-text">${fullContentHtml}</div>
+                ${mediaHtml}`;
+            return postCard;
+        }
+
+        async function calculatePages() {
+            postsContainer.innerHTML = ''; // Clear container for calculation
+            pages = [];
+            let currentPagePosts = [];
+            let currentHeight = 0;
+
+            for (const post of allPosts) {
+                const postCard = createPostCard(post);
+                postsContainer.appendChild(postCard);
+                await new Promise(resolve => setTimeout(resolve, 0)); // Allow DOM to update
+
+                // Trigger embed processing to get accurate height
+                if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postCard);
+                if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+                
+                await new Promise(resolve => setTimeout(resolve, 50)); // Wait for embeds to potentially resize
+
+                const postHeight = postCard.offsetHeight;
+                
+                if (currentHeight + postHeight > PAGE_HEIGHT && currentPagePosts.length > 0) {
+                    pages.push(currentPagePosts);
+                    currentPagePosts = [post];
+                    currentHeight = postHeight;
+                } else {
+                    currentPagePosts.push(post);
+                    currentHeight += postHeight;
+                }
+            }
+            if (currentPagePosts.length > 0) {
+                pages.push(currentPagePosts);
+            }
+            postsContainer.innerHTML = '';
+        }
+
+        function renderPage(pageNumber) {
+            currentPage = pageNumber;
+            postsContainer.innerHTML = '';
+            const postsToRender = pages[pageNumber - 1] || [];
 
             if (postsToRender.length === 0) {
-                container.innerHTML = '<p class="no-posts-message">No posts yet. Be the first to add an update!</p>';
+                postsContainer.innerHTML = '<p class="no-posts-message">No posts on this page.</p>';
                 return;
             }
 
             postsToRender.forEach(post => {
-                const postCard = document.createElement('div');
-                postCard.className = 'post-card';
-                postCard.dataset.postId = post.id;
-                postCard.id = `post-${post.id}`;
-
-                let pinnedHtml = '';
-                if (post.isPinned) {
-                    postCard.classList.add('pinned');
-                    pinnedHtml = `
-                        <div class="pinned-indicator">
-                            <i class="fas fa-thumbtack"></i> PINNED
-                        </div>
-                    `;
-                }
-
-                let mediaHtml = '';
-                if (post.mediaUrl) {
-                    if (post.mediaType && post.mediaType.startsWith('image')) {
-                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        // START CHANGE: Added a poster attribute to the video tag
-                        mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
-                        // END CHANGE
-                    }
-                }
-
-                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
-                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-                
-                const fullContentHtml = processContentForEmbeds(post.content);
-
-                let reportingFromDisplay = '';
-                if (post.reportingFrom && !post.hideReportingFrom) {
-                    reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
-                }
-                
-                const timeAgoHtml = post.isPinned 
-                    ? '' 
-                    : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
-
-                postCard.innerHTML = `
-                    ${pinnedHtml}
-                    <div class="post-header-line">
-                        <div class="author-avatar">
-                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
-                        </div>
-                        <div class="post-meta">
-                            <div class="meta-line-one">
-                                <strong>${post.authorName || 'Anonymous'}</strong>
-                                ${timeAgoHtml}
-                            </div>
-                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
-                        </div>
-                    </div>
-                    ${subtitleHtml}
-                    <div class="post-text">${fullContentHtml}</div>
-                    ${mediaHtml}
-                `;
-                container.appendChild(postCard);
+                const postCard = createPostCard(post);
+                postsContainer.appendChild(postCard);
             });
 
-            if (window.parent) {
-                const height = document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-            }
-            
-            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
-                twttr.widgets.load(container);
-            }
-            if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') {
-                instgrm.Embeds.process();
-            }
-        };
+            updatePaginationControls();
 
-        // --- Live Updates Listener (onSnapshot) ---
-        let unsubscribeFromPosts = null;
+            // Process embeds after rendering
+            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
+            if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+        }
 
-        const setupRealtimeListener = (blogId) => {
-            if (unsubscribeFromPosts) {
-                unsubscribeFromPosts();
-            }
+        function updatePaginationControls() {
+            paginationControls.innerHTML = '';
+            if (pages.length <= 1) return;
 
-            const postsCollectionRef = collection(db, 'posts');
-            const q = query(
-                postsCollectionRef,
-                where('blogId', '==', blogId),
-                orderBy('timestamp', 'desc')
-            );
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => renderPage(currentPage - 1));
+            paginationControls.appendChild(prevButton);
 
-            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
-                let updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const pageInfo = document.createElement('span');
+            pageInfo.textContent = `Page ${currentPage} of ${pages.length}`;
+            paginationControls.appendChild(pageInfo);
 
-                updatedPosts.sort((a, b) => {
-                    const aIsPinned = a.isPinned || false;
-                    const bIsPinned = b.isPinned || false;
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === pages.length;
+            nextButton.addEventListener('click', () => renderPage(currentPage + 1));
+            paginationControls.appendChild(nextButton);
+        }
 
-                    if (aIsPinned && !bIsPinned) return -1;
-                    if (!aIsPinned && bIsPinned) return 1;
-
-                    const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
-                    const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
-                    return dateB - dateA;
-                });
-
-                const oldPostIds = new Set(allPostsCached.map(p => p.id));
-                let newPostsDetected = false;
-                if (initialLoadComplete) {
-                    for (const post of updatedPosts) {
-                        if (!oldPostIds.has(post.id)) {
-                            newPostsDetected = true;
-                            break;
-                        }
-                    }
-                }
-
-                allPostsCached = updatedPosts;
-
-                if (newPostsDetected && window.scrollY > 0) {
-                    newUpdatesCount++;
-                    newUpdatesCountSpan.textContent = newUpdatesCount;
-                    newUpdatesButton.style.display = 'block';
-                } else {
-                    newUpdatesCount = 0;
-                    newUpdatesButton.style.display = 'none';
-                    renderPosts(allPostsCached, 'postsContainer');
-                }
-
-                if (!initialLoadComplete && window.location.hash) {
-                    const postIdFromHash = window.location.hash.substring(1);
-                    scrollToPost(postIdFromHash);
-                }
-
-                initialLoadComplete = true;
-            }, (error) => {
-                console.error("Error listening to posts:", error);
-                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
-            });
-        };
-
-        // --- Function: scrollToPost ---
-        const scrollToPost = (postId) => {
-            const targetElement = document.getElementById(postId);
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetElement.style.transition = 'background-color 0.5s ease-in-out';
-                targetElement.style.backgroundColor = '#fffbe6';
-                setTimeout(() => {
-                    targetElement.style.backgroundColor = '';
-                }, 3000);
-            }
-        };
-
-        // --- Function: loadPosts ---
-        const loadPosts = async () => {
+        async function loadInitialPosts() {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
-
             if (!currentBlogId) {
                 postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
-                console.error("Blog ID not found in URL.");
                 return;
             }
 
-            setupRealtimeListener(currentBlogId);
-        };
+            const postsCollectionRef = collection(db, 'posts');
+            const q = query(postsCollectionRef, where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
+            const snapshot = await getDocs(q);
+            allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // --- Event Listener: DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', loadPosts);
-
-        // --- New Update Button Click Listener ---
-        newUpdatesButton.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            newUpdatesCount = 0;
-            newUpdatesButton.style.display = 'none';
-            renderPosts(allPostsCached, 'postsContainer');
-        });
-
-        // --- Message Listener ---
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
-                console.log('Refreshing embed posts due to admin update message.');
+            // Handle pinned post
+            const pinnedPostIndex = allPosts.findIndex(p => p.isPinned);
+            if (pinnedPostIndex > -1) {
+                const [pinnedPost] = allPosts.splice(pinnedPostIndex, 1);
+                allPosts.unshift(pinnedPost);
             }
-        });
+
+            await calculatePages();
+            renderPage(1);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadInitialPosts);
     </script>
 </body>
 </html>
