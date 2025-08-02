@@ -35,6 +35,15 @@
             min-height: 150px;
             height: auto;
         }
+
+        /* **FIX**: This centers the main content and gives it a max-width */
+        main {
+            max-width: 960px;
+            margin: 20px auto; /* Adds space from top/bottom and centers horizontally */
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box; /* Ensures padding is included in the width */
+        }
     </style>
 </head>
 <body>
@@ -323,8 +332,6 @@
             }
         });
 
-        // --- IMPROVED LOGIC FOR CHECKBOXES AND FORM STATE ---
-
         function updateReportingFromVisibility() {
             const isLiveEditor = isLivePageEditorCheckbox.checked;
             const isHidden = hideReportingFromCheckbox.checked;
@@ -332,7 +339,6 @@
             reportingFromGroup.style.display = (isLiveEditor || isHidden) ? 'none' : 'flex';
         }
         
-        // **FIX**: Make checkboxes mutually exclusive
         isLivePageEditorCheckbox.addEventListener('change', () => {
             if (isLivePageEditorCheckbox.checked) {
                 hideReportingFromCheckbox.checked = false;
@@ -348,30 +354,25 @@
             updateReportingFromVisibility();
         });
 
-        // **NEW**: Centralized function to reset the entire post form
         function resetPostForm() {
             editingPostId = null;
             
-            postForm.reset(); // Resets input fields, textareas, and checkboxes
+            postForm.reset(); 
             postContentEditor.innerHTML = '';
             postContentSource.value = '';
             
-            // Explicitly reset checkbox states and visibility
             isLivePageEditorCheckbox.checked = false;
             hideReportingFromCheckbox.checked = false;
             pinPostCheckbox.checked = false;
             updateReportingFromVisibility();
 
-            // Reset author to the current logged-in user
             if (currentUser) {
                 authorSelect.value = currentUser.uid;
             }
             updateAuthorAvatarPreview();
             
-            // Reset tab assignments
             renderPostTabAssignmentCheckboxes([]);
             
-            // Reset button and header text
             formHeader.textContent = "Post an Update";
             submitButton.textContent = "Post Update";
             submitButton.disabled = false;
@@ -407,7 +408,6 @@
 
         const deleteCustomTab = async (tabName) => {
             if (!currentBlogId) return showNotification("No blog selected.", "error");
-            // **FIX**: Using a custom modal/confirm is better, but window.confirm is used here as per original code.
             if (window.confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
                 const originalTabs = [...customTabs];
                 customTabs = customTabs.filter(tab => tab !== tabName);
@@ -457,7 +457,6 @@
             showNotification("Embed code copied!", "success");
         });
         
-        // Rich Text Editor Logic (No changes needed here)
         const formatBoldButton = document.getElementById('formatBoldButton');
         const formatItalicButton = document.getElementById('formatItalicButton');
         const formatLinkButton = document.getElementById('formatLinkButton');
@@ -562,10 +561,9 @@
         cancelEmbedButton.addEventListener('click', closeEmbedModal);
         saveEmbedButton.addEventListener('click', applyEmbed);
 
-        // --- REFACTORED POST SUBMISSION LOGIC ---
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            postContentEditor.dispatchEvent(new Event('input')); // Ensure source is updated
+            postContentEditor.dispatchEvent(new Event('input'));
             const content = postContentSource.value.trim();
             if (!content || !currentBlogId) {
                 return showNotification("Post content cannot be empty.", "error");
@@ -580,14 +578,12 @@
                 const authorName = selectedOption.textContent;
                 const authorAvatar = selectedOption.dataset.avatar;
 
-                // **SOLIDIFIED**: Unpin other posts if this one is being pinned.
                 const isPinned = pinPostCheckbox.checked;
                 if (isPinned) {
                     const postsRef = collection(db, 'posts');
                     const q = query(postsRef, where('blogId', '==', currentBlogId), where('isPinned', '==', true));
                     const querySnapshot = await getDocs(q);
                     for (const docSnap of querySnapshot.docs) {
-                        // Only unpin if it's not the very post we are currently editing.
                         if (docSnap.id !== editingPostId) {
                             await updateDoc(doc(db, 'posts', docSnap.id), { isPinned: false });
                         }
@@ -620,7 +616,6 @@
                 if (editingPostId) {
                     const postDocRef = doc(db, 'posts', editingPostId);
                     const existingPost = adminAllPostsCached.find(p => p.id === editingPostId);
-                    // Only update media if a new file is chosen, otherwise keep the old one.
                     postData.mediaUrl = mediaUrl || existingPost.mediaUrl;
                     postData.mediaType = mediaType || existingPost.mediaType;
                     
@@ -635,13 +630,13 @@
                     showNotification("Post added successfully!", "success");
                 }
 
-                resetPostForm(); // Use the centralized reset function
+                resetPostForm(); 
                 await loadPostsForAdmin();
 
             } catch (error) {
                 console.error("Error saving post:", error);
                 showNotification("Failed to save post: " + error.message, "error");
-                submitButton.disabled = false; // Re-enable on error
+                submitButton.disabled = false; 
             }
         });
 
@@ -664,7 +659,7 @@
                 const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
                 const querySnapshot = await getDocs(q);
                 let posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                posts.sort((a, b) => (b.isPinned === true) - (a.isPinned === true)); // Robust pin sorting
+                posts.sort((a, b) => (b.isPinned === true) - (a.isPinned === true)); 
                 adminAllPostsCached = posts;
                 renderAdminPosts(posts);
             } catch (error) {
@@ -720,7 +715,6 @@
             }).join('');
         };
         
-        // --- REFACTORED POST ACTIONS (EDIT/DELETE) ---
         postsContainer.addEventListener('click', async (e) => {
             const editButton = e.target.closest('.edit-post-button');
             const deleteButton = e.target.closest('.delete-post-button');
@@ -729,7 +723,6 @@
                 const postId = editButton.dataset.postId;
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
-                    // **FIX**: Robustly populate the entire form for editing
                     editingPostId = postId;
                     
                     authorSelect.value = postToEdit.authorId;
@@ -743,7 +736,7 @@
                     hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
                     isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
                     
-                    updateReportingFromVisibility(); // Update visibility based on checkbox state
+                    updateReportingFromVisibility(); 
                     
                     if(!isLivePageEditorCheckbox.checked && !hideReportingFromCheckbox.checked){
                         reportingFromInput.value = postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') || 'Montreal';
