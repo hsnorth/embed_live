@@ -43,9 +43,8 @@
 
         let currentBlogId = null;
         let allPosts = [];
-        let pages = [];
         let currentPage = 1;
-        const PAGE_HEIGHT = 5000;
+        const POSTS_PER_PAGE = 10; // Define a fixed number of posts per page
 
         const postsContainer = document.getElementById('postsContainer');
         const paginationControls = document.getElementById('paginationControls');
@@ -135,52 +134,15 @@
             return postCard;
         }
 
-        async function calculatePages() {
-            const tempContainer = document.createElement('div');
-            tempContainer.style.visibility = 'hidden';
-            tempContainer.style.position = 'absolute';
-            tempContainer.style.width = '100%';
-            document.body.appendChild(tempContainer);
-
-            pages = [];
-            let currentPagePosts = [];
-            let currentHeight = 0;
-
-            for (const post of allPosts) {
-                const postCard = createPostCard(post);
-                tempContainer.appendChild(postCard);
-                
-                // Allow time for embeds to initialize and resize
-                await new Promise(resolve => setTimeout(resolve, 150)); 
-                
-                const postHeight = postCard.offsetHeight;
-                
-                // START CHANGE: Improved logic to prevent post cutoff
-                if (currentPagePosts.length > 0 && currentHeight + postHeight > PAGE_HEIGHT) {
-                    pages.push(currentPagePosts);
-                    currentPagePosts = [post];
-                    currentHeight = postHeight;
-                } else {
-                    currentPagePosts.push(post);
-                    currentHeight += postHeight;
-                }
-                // END CHANGE
-            }
-            if (currentPagePosts.length > 0) {
-                pages.push(currentPagePosts);
-            }
-            
-            document.body.removeChild(tempContainer);
-        }
-
         function renderPage(pageNumber) {
-            // START CHANGE: Scroll to top when changing pages
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            // END CHANGE
 
             currentPage = pageNumber;
             postsContainer.innerHTML = '';
-            const postsToRender = pages[pageNumber - 1] || [];
+
+            const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+            const endIndex = startIndex + POSTS_PER_PAGE;
+            const postsToRender = allPosts.slice(startIndex, endIndex);
 
             if (postsToRender.length === 0) {
                 postsContainer.innerHTML = '<p class="no-posts-message">No posts on this page.</p>';
@@ -196,11 +158,20 @@
 
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+            
+            // Adjust parent iframe height after rendering
+            if (window.parent) {
+                setTimeout(() => {
+                    const height = document.body.scrollHeight;
+                    window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+                }, 500); // Delay to allow embeds to load
+            }
         }
 
         function updatePaginationControls() {
             paginationControls.innerHTML = '';
-            if (pages.length <= 1) return;
+            const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+            if (totalPages <= 1) return;
 
             const prevButton = document.createElement('button');
             prevButton.textContent = 'Previous';
@@ -209,12 +180,12 @@
             paginationControls.appendChild(prevButton);
 
             const pageInfo = document.createElement('span');
-            pageInfo.textContent = `Page ${currentPage} of ${pages.length}`;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
             paginationControls.appendChild(pageInfo);
 
             const nextButton = document.createElement('button');
             nextButton.textContent = 'Next';
-            nextButton.disabled = currentPage === pages.length;
+            nextButton.disabled = currentPage === totalPages;
             nextButton.addEventListener('click', () => renderPage(currentPage + 1));
             paginationControls.appendChild(nextButton);
         }
@@ -238,7 +209,6 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            await calculatePages();
             renderPage(1);
         }
 
