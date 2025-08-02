@@ -449,9 +449,7 @@
                     postData.blogId = currentBlogId;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
-                    // START CHANGE: Fixed the typo causing the error
                     postData.mediaType = mediaType;
-                    // END CHANGE
                     await addDoc(collection(db, 'posts'), postData);
                     showNotification("Post added!", "success");
                 }
@@ -520,6 +518,14 @@
                 const mediaHtml = post.mediaUrl
                     ? `<img src="${post.mediaUrl}" alt="Post media" class="post-media">`
                     : '';
+                
+                // START CHANGE: Conditionally create the "Reporting From" HTML string
+                let reportingFromHtml = '';
+                if (post.reportingFrom && !post.hideReportingFrom) {
+                    reportingFromHtml = `<span class="reporting-from">${post.reportingFrom}</span>`;
+                }
+                // END CHANGE
+
                 return `
                     <div class="post-card ${isPinned}" data-post-id="${post.id}">
                         <div class="post-header-line">
@@ -533,7 +539,7 @@
                                     <span class="time-ago">${timeAgo(post.timestamp)}</span>
                                     ${pinnedIcon}
                                 </div>
-                                <span class="reporting-from">${post.reportingFrom || ''}</span>
+                                ${reportingFromHtml}
                             </div>
                         </div>
                         <p class="post-subtitle">${post.subtitle || ''}</p>
