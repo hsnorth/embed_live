@@ -528,15 +528,38 @@
     }
 
     /**
-     * REWRITTEN FORM SUBMISSION HANDLER
+     * REWRITTEN AND FIXED FORM SUBMISSION HANDLER
      */
     postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        postContentEditor.dispatchEvent(new Event('input'));
-        const content = postContentSource.value.trim();
-        if (!content || !currentBlogId) {
+
+        // Explicitly sync the editor content to the source textarea for reliability
+        let sourceHtml = postContentEditor.innerHTML;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = sourceHtml;
+        tempDiv.querySelectorAll('.embed-placeholder').forEach(placeholder => {
+            const decodedEmbed = placeholder.dataset.embedCode;
+            if (decodedEmbed) {
+                placeholder.outerHTML = decodedEmbed;
+            }
+        });
+        postContentSource.value = tempDiv.innerHTML;
+        const content = postContentSource.value; // Use the full HTML for saving
+
+        // --- REVISED AND MORE ROBUST VALIDATION ---
+        // This provides clearer error messages to the user.
+        if (!currentBlogId) {
+            return showNotification("Cannot save: No blog is selected. Please go back to the dashboard.", "error");
+        }
+
+        // An editor is considered empty if it has no visible text AND no media/embed elements.
+        const hasVisibleText = postContentEditor.innerText.trim() !== '';
+        const hasNonTextElements = postContentEditor.querySelector('img, video, iframe, .embed-placeholder') !== null;
+
+        if (!hasVisibleText && !hasNonTextElements) {
             return showNotification("Post content cannot be empty.", "error");
         }
+        // --- END REVISED VALIDATION ---
 
         submitButton.disabled = true;
         submitButton.textContent = editingPostId ? "Saving..." : "Posting...";
@@ -580,7 +603,7 @@
                 authorName,
                 authorAvatar,
                 subtitle: postSubtitleInput.value.trim(),
-                content,
+                content, // Use the full, unsanitized HTML from the editor
                 reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
                 hideReportingFrom: hideReportingFromCheckbox.checked,
                 assignedTabs: selectedTabs,
