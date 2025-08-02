@@ -11,6 +11,35 @@
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
     <meta name="theme-color" content="#e74c3c">
     <style>
+        /* --- NEW RESPONSIVE FIX STARTS HERE --- */
+        html, body {
+            /* Prevents horizontal scrolling on the entire page */
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        main {
+            /* Centers the main content block */
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ensures all sections within main behave correctly */
+        main > section {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Forces form elements to not overflow their container */
+        .input-field, .textarea-field, .editor-wrapper, .author-select-wrapper {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        /* --- NEW RESPONSIVE FIX ENDS HERE --- */
+
         .main-back-button-container {
             display: flex;
             align-items: center;
@@ -34,15 +63,6 @@
         #postContentEditor.textarea-field {
             min-height: 150px;
             height: auto;
-        }
-
-        /* **FIX**: This centers the main content and gives it a max-width */
-        main {
-            max-width: 960px;
-            margin: 20px auto; /* Adds space from top/bottom and centers horizontally */
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box; /* Ensures padding is included in the width */
         }
     </style>
 </head>
