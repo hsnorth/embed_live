@@ -24,8 +24,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        // ## CHANGE 1: Imported Timestamp ##
-        import { getFirestore, collection, query, orderBy, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        // ## FIX: Replaced polling with a real-time listener (onSnapshot) ##
+        import { getFirestore, collection, query, orderBy, where, getDocs, Timestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -44,7 +44,7 @@
         let postsVisibleCount = 0;
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
-        let updateCheckerInterval = null;
+        let unsubscribe = null; // To hold the listener function
         let latestPostTimestamp = null; 
 
         const postsContainer = document.getElementById('postsContainer');
@@ -172,26 +172,33 @@
             }
         }
         
-        async function loadNewPosts() {
+        function listenForNewPosts() {
             if (!currentBlogId || !latestPostTimestamp) return;
-            
+
             const q = query(
                 collection(db, 'posts'),
                 where('blogId', '==', currentBlogId),
                 where('isPinned', '!=', true),
-                where('timestamp', '>', latestPostTimestamp),
-                orderBy('timestamp', 'desc')
+                where('timestamp', '>', latestPostTimestamp)
             );
-            
-            const snapshot = await getDocs(q);
-            const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            if (newPosts.length > 0) {
-                displayPosts(newPosts, true); 
-                allPosts.unshift(...newPosts);
-                latestPostTimestamp = newPosts[0].timestamp;
-                postsVisibleCount += newPosts.length;
-            }
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                const newPosts = [];
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        newPosts.push({ id: change.doc.id, ...change.doc.data() });
+                    }
+                });
+
+                if (newPosts.length > 0) {
+                    newPosts.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
+                    
+                    displayPosts(newPosts, true); 
+                    allPosts.unshift(...newPosts);
+                    latestPostTimestamp = newPosts[0].timestamp;
+                    postsVisibleCount += newPosts.length;
+                }
+            });
         }
 
         async function loadInitialPosts() {
@@ -202,7 +209,7 @@
                 return;
             }
 
-            if (updateCheckerInterval) clearInterval(updateCheckerInterval);
+            if (unsubscribe) unsubscribe(); 
 
             const postsCollectionRef = collection(db, 'posts');
             const q = query(postsCollectionRef, where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
@@ -216,13 +223,10 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            // ## CHANGE 2: Added an 'else' condition to handle empty blogs ##
             const firstNonPinnedPost = allPosts.find(p => !p.isPinned);
             if (firstNonPinnedPost) {
                 latestPostTimestamp = firstNonPinnedPost.timestamp;
             } else {
-                // If the blog is empty, set the starting time to now.
-                // This ensures the next check will find any newly created posts.
                 latestPostTimestamp = Timestamp.now();
             }
 
@@ -233,7 +237,8 @@
             displayPosts(initialPosts);
             updateLoadMoreButton();
             
-            updateCheckerInterval = setInterval(loadNewPosts, 30000);
+            // Start listening for real-time updates
+            listenForNewPosts();
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
