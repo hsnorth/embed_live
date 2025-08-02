@@ -135,11 +135,9 @@
             return postCard;
         }
 
-        function renderVisiblePosts() {
-            postsContainer.innerHTML = '';
-            const postsToRender = allPosts.slice(0, postsVisibleCount);
-
-            if (postsToRender.length === 0) {
+        // START CHANGE: This function now only appends posts, it doesn't clear the container.
+        function renderPosts(postsToRender) {
+            if (postsToRender.length === 0 && postsContainer.children.length === 0) {
                 postsContainer.innerHTML = '<p class="no-posts-message">No posts yet.</p>';
                 return;
             }
@@ -159,6 +157,7 @@
                 }, 500);
             }
         }
+        // END CHANGE
 
         function updateLoadMoreButton() {
             loadMoreContainer.innerHTML = '';
@@ -167,9 +166,13 @@
                 loadMoreButton.textContent = 'Load More Posts';
                 loadMoreButton.className = 'load-more-button';
                 loadMoreButton.addEventListener('click', () => {
+                    // START CHANGE: Logic to append only the new posts
+                    const oldVisibleCount = postsVisibleCount;
                     postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
-                    renderVisiblePosts();
+                    const postsToAdd = allPosts.slice(oldVisibleCount, postsVisibleCount);
+                    renderPosts(postsToAdd);
                     updateLoadMoreButton();
+                    // END CHANGE
                 });
                 loadMoreContainer.appendChild(loadMoreButton);
             }
@@ -194,9 +197,13 @@
                 allPosts.unshift(pinnedPost);
             }
 
+            // START CHANGE: Clear container only on initial load and render the first batch
+            postsContainer.innerHTML = '';
             postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
-            renderVisiblePosts();
+            const initialPosts = allPosts.slice(0, postsVisibleCount);
+            renderPosts(initialPosts);
             updateLoadMoreButton();
+            // END CHANGE
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
