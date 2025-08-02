@@ -148,7 +148,7 @@
             <h2>Only for CUE: Copy the code below</h2>
             <p>Copy the code below and paste it into your website's HTML where you want the live blog to appear.</p>
             <div class="embed-code-container">
-                <input type="text" id="embedCodeInput" class="input-field" readonly>
+                <input type="text" id="copyableEmbedCode" class="input-field" readonly>
                 <button id="copyEmbedCodeButton" class="submit-button">Copy Code</button>
             </div>
         </section>
@@ -173,18 +173,18 @@
         </div>
     </div>
 
-    <!-- START CHANGE: Custom Modal for Embed Input -->
     <div id="embedModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h3>Paste Embed Code</h3>
-            <textarea id="embedCodeInput" class="textarea-field" placeholder="Paste your embed code here..."></textarea>
+            <!-- START CHANGE: Renamed ID to avoid conflict -->
+            <textarea id="embedModalTextarea" class="textarea-field" placeholder="Paste your embed code here..."></textarea>
+            <!-- END CHANGE -->
             <div class="modal-actions">
                 <button id="saveEmbedButton" class="submit-button">Done</button>
                 <button id="cancelEmbedButton" class="cancel-button">Cancel</button>
             </div>
         </div>
     </div>
-    <!-- END CHANGE -->
 
     <footer>
         <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
@@ -233,7 +233,9 @@
         const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
         const submitButton = postForm.querySelector('.submit-button');
-        const embedCodeInput = document.getElementById('embedCodeInput');
+        // START CHANGE: Renamed ID to avoid conflict
+        const copyableEmbedCode = document.getElementById('copyableEmbedCode');
+        // END CHANGE
         const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
         const newTabNameInput = document.getElementById('newTabNameInput');
         const addTabButton = document.getElementById('addTabButton');
@@ -408,12 +410,12 @@
         const generateEmbedCode = () => {
             if (currentBlogId) {
                 const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-blog.html', 'embed-posts.html')}?blogId=${currentBlogId}`;
-                embedCodeInput.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${decodeURIComponent(currentBlogName)} Live Blog"></iframe>`;
+                copyableEmbedCode.value = `<iframe src="${embedUrl}" style="width:100%; height:2000px; border:none;" title="${decodeURIComponent(currentBlogName)} Live Blog"></iframe>`;
             }
         };
 
         copyEmbedCodeButton.addEventListener('click', () => {
-            embedCodeInput.select();
+            copyableEmbedCode.select();
             document.execCommand("copy");
             showNotification("Embed code copied!", "success");
         });
@@ -428,7 +430,9 @@
         const saveLinkButton = document.getElementById('saveLinkButton');
         const cancelLinkButton = document.getElementById('cancelLinkButton');
         const embedModal = document.getElementById('embedModal');
-        const embedCodeTextarea = document.getElementById('embedCodeInput');
+        // START CHANGE: Get reference to the correct textarea ID
+        const embedModalTextarea = document.getElementById('embedModalTextarea');
+        // END CHANGE
         const saveEmbedButton = document.getElementById('saveEmbedButton');
         const cancelEmbedButton = document.getElementById('cancelEmbedButton');
         let savedSelection;
@@ -512,16 +516,20 @@
             }
             savedSelection = selection.getRangeAt(0);
             embedModal.style.display = 'flex';
-            embedCodeTextarea.focus();
+            // START CHANGE: Removed the focus call that caused scrolling
+            // embedModalTextarea.focus();
+            // END CHANGE
         };
 
         const closeEmbedModal = () => {
             embedModal.style.display = 'none';
-            embedCodeTextarea.value = '';
+            embedModalTextarea.value = '';
         };
 
         const applyEmbed = () => {
-            const embedCode = embedCodeTextarea.value.trim();
+            // START CHANGE: Get code from the correct textarea
+            const embedCode = embedModalTextarea.value.trim();
+            // END CHANGE
             if (embedCode && savedSelection) {
                 const selection = window.getSelection();
                 selection.removeAllRanges();
