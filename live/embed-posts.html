@@ -136,25 +136,27 @@
         }
 
         async function calculatePages() {
-            postsContainer.innerHTML = ''; // Clear container for calculation
+            const tempContainer = document.createElement('div');
+            tempContainer.style.visibility = 'hidden';
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.width = '100%';
+            document.body.appendChild(tempContainer);
+
             pages = [];
             let currentPagePosts = [];
             let currentHeight = 0;
 
             for (const post of allPosts) {
                 const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard);
-                await new Promise(resolve => setTimeout(resolve, 0)); // Allow DOM to update
-
-                // Trigger embed processing to get accurate height
-                if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postCard);
-                if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+                tempContainer.appendChild(postCard);
                 
-                await new Promise(resolve => setTimeout(resolve, 50)); // Wait for embeds to potentially resize
-
+                // Allow time for embeds to initialize and resize
+                await new Promise(resolve => setTimeout(resolve, 150)); 
+                
                 const postHeight = postCard.offsetHeight;
                 
-                if (currentHeight + postHeight > PAGE_HEIGHT && currentPagePosts.length > 0) {
+                // START CHANGE: Improved logic to prevent post cutoff
+                if (currentPagePosts.length > 0 && currentHeight + postHeight > PAGE_HEIGHT) {
                     pages.push(currentPagePosts);
                     currentPagePosts = [post];
                     currentHeight = postHeight;
@@ -162,14 +164,20 @@
                     currentPagePosts.push(post);
                     currentHeight += postHeight;
                 }
+                // END CHANGE
             }
             if (currentPagePosts.length > 0) {
                 pages.push(currentPagePosts);
             }
-            postsContainer.innerHTML = '';
+            
+            document.body.removeChild(tempContainer);
         }
 
         function renderPage(pageNumber) {
+            // START CHANGE: Scroll to top when changing pages
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // END CHANGE
+
             currentPage = pageNumber;
             postsContainer.innerHTML = '';
             const postsToRender = pages[pageNumber - 1] || [];
@@ -186,7 +194,6 @@
 
             updatePaginationControls();
 
-            // Process embeds after rendering
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
         }
@@ -225,7 +232,6 @@
             const snapshot = await getDocs(q);
             allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // Handle pinned post
             const pinnedPostIndex = allPosts.findIndex(p => p.isPinned);
             if (pinnedPostIndex > -1) {
                 const [pinnedPost] = allPosts.splice(pinnedPostIndex, 1);
