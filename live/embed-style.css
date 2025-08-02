@@ -136,6 +136,47 @@ main {
     margin-bottom: 0;
 }
 
+/* --- NEW: Styles for expandable content --- */
+.post-text.expandable:not(.expanded) {
+    max-height: 220px; /* Approx 8-10 lines based on font size and line height */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Fade-out effect for truncated text */
+.post-text.expandable:not(.expanded)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 0));
+    pointer-events: none; /* Allows clicking through the gradient */
+}
+
+.post-text.expandable.expanded {
+    max-height: 5000px; /* Large enough for any content */
+    transition: max-height 0.4s ease-in-out;
+}
+
+.toggle-content-button {
+    background: none;
+    border: none;
+    color: rgb(208, 2, 27);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 4px 0;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+.toggle-content-button:hover {
+    text-decoration: underline;
+}
+/* --- END NEW --- */
+
 .post-media {
     max-width: 100%;
     height: auto;
