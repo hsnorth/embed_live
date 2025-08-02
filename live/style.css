@@ -230,6 +230,7 @@ section {
     border: none;
     border-radius: 0;
     flex-grow: 1;
+    order: 1; /* This ensures the editor is on top */
 }
 
 .editor-wrapper .textarea-field:focus {
@@ -271,7 +272,7 @@ section {
     color: #f0f0f0;
 }
 
-/* --- Link Modal --- */
+/* --- Link & Embed Modals --- */
 .modal-overlay {
     position: fixed;
     top: 0;
