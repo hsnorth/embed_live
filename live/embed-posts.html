@@ -21,6 +21,8 @@
     </button>
 
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -72,17 +74,33 @@
         // --- Function: processContentForEmbeds ---
         function processContentForEmbeds(content) {
             if (!content) return '';
-            return content.split(/\r?\n/).map(line => {
+            // This regex helps ensure embeds are not wrapped in <p> tags
+            const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
+            
+            // Temporarily replace embeds with a placeholder
+            const placeholders = [];
+            let processedContent = content.replace(embedRegex, (match) => {
+                placeholders.push(match);
+                return `__EMBED_PLACEHOLDER_${placeholders.length - 1}__`;
+            });
+
+            // Wrap remaining lines in <p> tags
+            processedContent = processedContent.split(/\r?\n/).map(line => {
                 const trimmedLine = line.trim();
-                if (trimmedLine.startsWith('<blockquote') ||
-                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
-                    trimmedLine.startsWith('<img') ||
-                    trimmedLine === '') {
+                if (trimmedLine.startsWith('__EMBED_PLACEHOLDER_') || trimmedLine === '') {
                     return line;
                 }
                 return `<p>${line}</p>`;
             }).join('');
+
+            // Restore the embeds from placeholders
+            placeholders.forEach((placeholder, index) => {
+                processedContent = processedContent.replace(`__EMBED_PLACEHOLDER_${index}__`, placeholder);
+            });
+
+            return processedContent;
         }
+
 
         // --- Function: renderPosts ---
         const renderPosts = (postsToRender, containerId) => {
@@ -106,7 +124,6 @@
                 postCard.dataset.postId = post.id;
                 postCard.id = `post-${post.id}`;
 
-                // --- Pinned Post Logic ---
                 let pinnedHtml = '';
                 if (post.isPinned) {
                     postCard.classList.add('pinned');
@@ -128,30 +145,14 @@
 
                 const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
                 const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-                let displayContent = post.content;
-                let showMoreButtonHtml = '';
-                let isTruncated = false;
-
-                const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
-                if (plainTextContent.length > MAX_CHARS_PREVIEW) {
-                    let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
-                    displayContent = truncatedRawHtml;
-                    isTruncated = true;
-                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
-                }
-
-                const displayContentHtml = processContentForEmbeds(displayContent);
+                
                 const fullContentHtml = processContentForEmbeds(post.content);
 
-                // START CHANGE: Check the new `hideReportingFrom` flag before creating the "Reporting From" HTML.
                 let reportingFromDisplay = '';
-                // Only show the reporting line if the field has content AND the `hideReportingFrom` flag is false or undefined.
                 if (post.reportingFrom && !post.hideReportingFrom) {
                     reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
                 }
-                // END CHANGE
                 
-                // Conditionally show the timestamp
                 const timeAgoHtml = post.isPinned 
                     ? '' 
                     : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
@@ -171,41 +172,10 @@
                         </div>
                     </div>
                     ${subtitleHtml}
-                    <div class="post-text">${displayContentHtml}</div>
+                    <div class="post-text">${fullContentHtml}</div>
                     ${mediaHtml}
-                    ${showMoreButtonHtml}
                 `;
                 container.appendChild(postCard);
-
-                if (isTruncated) {
-                    const showMoreButton = postCard.querySelector('.show-more-button');
-                    const contentDiv = postCard.querySelector('.post-text');
-                    let isExpanded = false; // State to track if the content is expanded
-
-                    showMoreButton.addEventListener('click', () => {
-                        isExpanded = !isExpanded; // Toggle the state
-
-                        if (isExpanded) {
-                            // Expand the content
-                            contentDiv.innerHTML = fullContentHtml;
-                            showMoreButton.textContent = 'Show less';
-                            // Load Twitter widgets for the newly revealed content
-                            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
-                                twttr.widgets.load(contentDiv);
-                            }
-                        } else {
-                            // Collapse the content
-                            contentDiv.innerHTML = displayContentHtml; // Use the truncated version
-                            showMoreButton.textContent = 'Show more';
-                        }
-
-                        // Notify parent iframe to adjust height after expansion/collapse
-                        if (window.parent) {
-                            const height = document.body.scrollHeight;
-                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                        }
-                    });
-                }
             });
 
             if (window.parent) {
@@ -213,8 +183,12 @@
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
             }
             
+            // Re-process embeds after they are in the DOM
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
                 twttr.widgets.load(container);
+            }
+            if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') {
+                instgrm.Embeds.process();
             }
         };
 
@@ -227,7 +201,6 @@
             }
 
             const postsCollectionRef = collection(db, 'posts');
-            // We order by timestamp initially, but will re-sort in JS to handle pinning
             const q = query(
                 postsCollectionRef,
                 where('blogId', '==', blogId),
@@ -237,18 +210,16 @@
             unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
                 let updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // --- Sort posts: pinned post first, then by timestamp ---
                 updatedPosts.sort((a, b) => {
                     const aIsPinned = a.isPinned || false;
                     const bIsPinned = b.isPinned || false;
 
-                    if (aIsPinned && !bIsPinned) return -1; // a comes first
-                    if (!aIsPinned && bIsPinned) return 1;  // b comes first
+                    if (aIsPinned && !bIsPinned) return -1;
+                    if (!aIsPinned && bIsPinned) return 1;
 
-                    // If both are the same (pinned or not), sort by timestamp
                     const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
                     const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
-                    return dateB - dateA; // Descending order
+                    return dateB - dateA;
                 });
 
                 const oldPostIds = new Set(allPostsCached.map(p => p.id));
@@ -271,7 +242,7 @@
                 } else {
                     newUpdatesCount = 0;
                     newUpdatesButton.style.display = 'none';
-                    renderPosts(allPostsCached, 'postsContainer'); // Re-render with sorted posts
+                    renderPosts(allPostsCached, 'postsContainer');
                 }
 
                 if (!initialLoadComplete && window.location.hash) {
@@ -321,14 +292,13 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
             newUpdatesCount = 0;
             newUpdatesButton.style.display = 'none';
-            renderPosts(allPostsCached, 'postsContainer'); // Re-render to ensure latest posts are visible
+            renderPosts(allPostsCached, 'postsContainer');
         });
 
         // --- Message Listener ---
         window.addEventListener('message', (event) => {
             if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
                 console.log('Refreshing embed posts due to admin update message.');
-                // The onSnapshot listener will handle the refresh automatically.
             }
         });
     </script>
