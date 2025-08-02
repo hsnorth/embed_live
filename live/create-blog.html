@@ -520,14 +520,13 @@
         const applyEmbed = () => {
             const embedCode = embedModalTextarea.value.trim();
             if (embedCode && savedSelection) {
-                const wrapper = document.createElement('div');
-                wrapper.innerHTML = embedCode;
+                const embedWrapperHtml = `<div class="embedded-content-wrapper" contenteditable="false">${embedCode}</div><div><br></div>`;
                 
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedSelection);
-                savedSelection.deleteContents();
-                savedSelection.insertNode(wrapper);
+                
+                document.execCommand('insertHTML', false, embedWrapperHtml);
 
                 postContentSource.value = postContentEditor.innerHTML;
                 closeEmbedModal();
@@ -762,6 +761,347 @@
                     a2hsToggle.classList.toggle('active');
                     a2hsContent.classList.toggle('show');
                 });
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+Most up-to-date Immersive Artifact for "liveblog_embed_updated" is:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Blog Posts Embed</title>
+    <link rel="stylesheet" href="embed-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <section class="live-blog-posts">
+            <div id="postsContainer">
+            </div>
+            </section>
+    </main>
+
+    <button id="newUpdatesButton">
+        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
+    </button>
+
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebase-storage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- Global Variables for Embed ---
+        let currentBlogId = null;
+        let allPostsCached = [];
+        let initialLoadComplete = false;
+        let newUpdatesCount = 0;
+
+        // DOM element references
+        const postsContainer = document.getElementById('postsContainer');
+        const newUpdatesButton = document.getElementById('newUpdatesButton');
+        const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
+
+        // --- Helper Function: timeAgo ---
+        function timeAgo(timestamp) {
+            const now = new Date();
+            const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
+            const seconds = Math.floor((now - postDate) / 1000);
+
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+            return Math.floor(seconds) + " seconds ago";
+        }
+
+        // --- Function: processContentForEmbeds ---
+        function processContentForEmbeds(content) {
+            if (!content) return '';
+            return content.split(/\r?\n/).map(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('<blockquote') ||
+                    trimmedLine.startsWith('<div class="tweet-embed-wrapper"') ||
+                    trimmedLine.startsWith('<img') ||
+                    trimmedLine === '') {
+                    return line;
+                }
+                return `<p>${line}</p>`;
+            }).join('');
+        }
+
+        // --- Function: renderPosts ---
+        const renderPosts = (postsToRender, containerId) => {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error(`Container with ID "${containerId}" not found.`);
+                return;
+            }
+            container.innerHTML = '';
+
+            if (postsToRender.length === 0) {
+                container.innerHTML = '<p class="no-posts-message">No posts yet. Be the first to add an update!</p>';
+                return;
+            }
+
+            const MAX_CHARS_PREVIEW = 450;
+
+            postsToRender.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                postCard.dataset.postId = post.id;
+                postCard.id = `post-${post.id}`;
+
+                // --- Pinned Post Logic ---
+                let pinnedHtml = '';
+                if (post.isPinned) {
+                    postCard.classList.add('pinned');
+                    pinnedHtml = `
+                        <div class="pinned-indicator">
+                            <i class="fas fa-thumbtack"></i> PINNED
+                        </div>
+                    `;
+                }
+
+                let mediaHtml = '';
+                if (post.mediaUrl) {
+                    if (post.mediaType && post.mediaType.startsWith('image')) {
+                        mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                    } else if (post.mediaType && post.mediaType.startsWith('video')) {
+                        mediaHtml = `<video src="${post.mediaUrl}" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                    }
+                }
+
+                const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
+                const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+                let displayContent = post.content;
+                let showMoreButtonHtml = '';
+                let isTruncated = false;
+
+                const plainTextContent = new DOMParser().parseFromString(post.content, 'text/html').body.textContent || '';
+                if (plainTextContent.length > MAX_CHARS_PREVIEW) {
+                    let truncatedRawHtml = post.content.substring(0, MAX_CHARS_PREVIEW) + '...';
+                    displayContent = truncatedRawHtml;
+                    isTruncated = true;
+                    showMoreButtonHtml = `<button class="show-more-button">Show more</button>`;
+                }
+
+                const displayContentHtml = processContentForEmbeds(displayContent);
+                const fullContentHtml = processContentForEmbeds(post.content);
+
+                // START CHANGE: Check the new `hideReportingFrom` flag before creating the "Reporting From" HTML.
+                let reportingFromDisplay = '';
+                // Only show the reporting line if the field has content AND the `hideReportingFrom` flag is false or undefined.
+                if (post.reportingFrom && !post.hideReportingFrom) {
+                    reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
+                }
+                // END CHANGE
+                
+                // Conditionally show the timestamp
+                const timeAgoHtml = post.isPinned 
+                    ? '' 
+                    : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
+
+                postCard.innerHTML = `
+                    ${pinnedHtml}
+                    <div class="post-header-line">
+                        <div class="author-avatar">
+                            <img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img">
+                        </div>
+                        <div class="post-meta">
+                            <div class="meta-line-one">
+                                <strong>${post.authorName || 'Anonymous'}</strong>
+                                ${timeAgoHtml}
+                            </div>
+                            ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
+                        </div>
+                    </div>
+                    ${subtitleHtml}
+                    <div class="post-text">${displayContentHtml}</div>
+                    ${mediaHtml}
+                    ${showMoreButtonHtml}
+                `;
+                container.appendChild(postCard);
+
+                if (isTruncated) {
+                    const showMoreButton = postCard.querySelector('.show-more-button');
+                    const contentDiv = postCard.querySelector('.post-text');
+                    let isExpanded = false; // State to track if the content is expanded
+
+                    showMoreButton.addEventListener('click', () => {
+                        isExpanded = !isExpanded; // Toggle the state
+
+                        if (isExpanded) {
+                            // Expand the content
+                            contentDiv.innerHTML = fullContentHtml;
+                            showMoreButton.textContent = 'Show less';
+                            // Load Twitter widgets for the newly revealed content
+                            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
+                                twttr.widgets.load(contentDiv);
+                            }
+                        } else {
+                            // Collapse the content
+                            contentDiv.innerHTML = displayContentHtml; // Use the truncated version
+                            showMoreButton.textContent = 'Show more';
+                        }
+
+                        // Notify parent iframe to adjust height after expansion/collapse
+                        if (window.parent) {
+                            const height = document.body.scrollHeight;
+                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+                        }
+                    });
+                }
+            });
+
+            if (window.parent) {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+            }
+            
+            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
+                twttr.widgets.load(container);
+            }
+        };
+
+        // --- Live Updates Listener (onSnapshot) ---
+        let unsubscribeFromPosts = null;
+
+        const setupRealtimeListener = (blogId) => {
+            if (unsubscribeFromPosts) {
+                unsubscribeFromPosts();
+            }
+
+            const postsCollectionRef = collection(db, 'posts');
+            // We order by timestamp initially, but will re-sort in JS to handle pinning
+            const q = query(
+                postsCollectionRef,
+                where('blogId', '==', blogId),
+                orderBy('timestamp', 'desc')
+            );
+
+            unsubscribeFromPosts = onSnapshot(q, (snapshot) => {
+                let updatedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // --- Sort posts: pinned post first, then by timestamp ---
+                updatedPosts.sort((a, b) => {
+                    const aIsPinned = a.isPinned || false;
+                    const bIsPinned = b.isPinned || false;
+
+                    if (aIsPinned && !bIsPinned) return -1; // a comes first
+                    if (!aIsPinned && bIsPinned) return 1;  // b comes first
+
+                    // If both are the same (pinned or not), sort by timestamp
+                    const dateA = a.timestamp ? a.timestamp.toDate() : new Date(0);
+                    const dateB = b.timestamp ? b.timestamp.toDate() : new Date(0);
+                    return dateB - dateA; // Descending order
+                });
+
+                const oldPostIds = new Set(allPostsCached.map(p => p.id));
+                let newPostsDetected = false;
+                if (initialLoadComplete) {
+                    for (const post of updatedPosts) {
+                        if (!oldPostIds.has(post.id)) {
+                            newPostsDetected = true;
+                            break;
+                        }
+                    }
+                }
+
+                allPostsCached = updatedPosts;
+
+                if (newPostsDetected && window.scrollY > 0) {
+                    newUpdatesCount++;
+                    newUpdatesCountSpan.textContent = newUpdatesCount;
+                    newUpdatesButton.style.display = 'block';
+                } else {
+                    newUpdatesCount = 0;
+                    newUpdatesButton.style.display = 'none';
+                    renderPosts(allPostsCached, 'postsContainer'); // Re-render with sorted posts
+                }
+
+                if (!initialLoadComplete && window.location.hash) {
+                    const postIdFromHash = window.location.hash.substring(1);
+                    scrollToPost(postIdFromHash);
+                }
+
+                initialLoadComplete = true;
+            }, (error) => {
+                console.error("Error listening to posts:", error);
+                postsContainer.innerHTML = '<p class="error-message">Error loading live updates. Please try again later.</p>';
+            });
+        };
+
+        // --- Function: scrollToPost ---
+        const scrollToPost = (postId) => {
+            const targetElement = document.getElementById(postId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetElement.style.transition = 'background-color 0.5s ease-in-out';
+                targetElement.style.backgroundColor = '#fffbe6';
+                setTimeout(() => {
+                    targetElement.style.backgroundColor = '';
+                }, 3000);
+            }
+        };
+
+        // --- Function: loadPosts ---
+        const loadPosts = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentBlogId = urlParams.get('blogId');
+
+            if (!currentBlogId) {
+                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
+                console.error("Blog ID not found in URL.");
+                return;
+            }
+
+            setupRealtimeListener(currentBlogId);
+        };
+
+        // --- Event Listener: DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', loadPosts);
+
+        // --- New Update Button Click Listener ---
+        newUpdatesButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            newUpdatesCount = 0;
+            newUpdatesButton.style.display = 'none';
+            renderPosts(allPostsCached, 'postsContainer'); // Re-render to ensure latest posts are visible
+        });
+
+        // --- Message Listener ---
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'refreshEmbed' && event.data.blogId === currentBlogId) {
+                console.log('Refreshing embed posts due to admin update message.');
+                // The onSnapshot listener will handle the refresh automatically.
             }
         });
     </script>
