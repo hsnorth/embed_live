@@ -28,14 +28,11 @@ main {
     background-color: transparent;
 }
 
-/* START CHANGE: Styles for fixed-height page container */
 .posts-page {
-    height: 5000px;
-    overflow: hidden;
     border: 1px solid #ebeef0;
     border-radius: 8px;
+    min-height: 200px; /* Set a min-height to avoid collapse when empty */
 }
-/* END CHANGE */
 
 /* --- Individual Post Card Styling --- */
 .post-card {
