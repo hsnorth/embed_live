@@ -83,13 +83,14 @@
                 <div class="form-group">
                     <label for="postContentInput">Post Content:</label>
                     <div class="editor-wrapper">
+                        <div id="postContentEditor" class="textarea-field" contenteditable="true"></div>
+                        <textarea id="postContentSource" class="textarea-field source-view" style="display: none;"></textarea>
                         <div class="format-buttons-container">
                             <button type="button" id="formatBoldButton" class="format-button" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" id="formatItalicButton" class="format-button" title="Italic"><i class="fas fa-italic"></i></button>
                             <button type="button" id="formatLinkButton" class="format-button" title="Link"><i class="fas fa-link"></i></button>
                             <button type="button" id="formatCodeButton" class="format-button" title="Source Code"><i class="fas fa-code"></i></button>
                         </div>
-                        <div id="postContentEditor" class="textarea-field" contenteditable="true"></div>
-                        <textarea id="postContentSource" class="textarea-field source-view" style="display: none;"></textarea>
                     </div>
                 </div>
 
@@ -404,6 +405,7 @@
         });
         
         const formatBoldButton = document.getElementById('formatBoldButton');
+        const formatItalicButton = document.getElementById('formatItalicButton');
         const formatLinkButton = document.getElementById('formatLinkButton');
         const formatCodeButton = document.getElementById('formatCodeButton');
         const linkModal = document.getElementById('linkModal');
@@ -421,6 +423,11 @@
 
         formatBoldButton.addEventListener('click', () => {
             document.execCommand('bold', false, null);
+            postContentSource.value = postContentEditor.innerHTML;
+        });
+
+        formatItalicButton.addEventListener('click', () => {
+            document.execCommand('italic', false, null);
             postContentSource.value = postContentEditor.innerHTML;
         });
 
@@ -453,12 +460,10 @@
         };
 
         const applyLink = () => {
-            // START CHANGE: Ensure URL has a protocol (http/https)
             let url = linkUrlInput.value.trim();
             if (url && !/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
             }
-            // END CHANGE
 
             if (url && savedSelection) {
                 const selection = window.getSelection();
