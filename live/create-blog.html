@@ -545,7 +545,10 @@
                 placeholder.className = 'embed-placeholder';
                 placeholder.textContent = 'EMBED IS HERE';
                 placeholder.setAttribute('contenteditable', 'false');
-                placeholder.dataset.embedCode = `<div class="embedded-content-wrapper">${embedCode}</div>`;
+                
+                // This is the corrected line.
+                // It now saves the exact code you paste, without adding a wrapper.
+                placeholder.dataset.embedCode = embedCode;
 
                 const selection = window.getSelection();
                 selection.removeAllRanges();
