@@ -11,10 +11,10 @@
 <body>
     <main>
         <section class="live-blog-posts">
-            <div id="postsContainer" class="posts-page">
+            <div id="postsContainer">
             </div>
         </section>
-        <div id="paginationControls" class="pagination-controls"></div>
+        <div id="loadMoreContainer"></div>
     </main>
 
     <button id="newUpdatesButton">
@@ -27,7 +27,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, doc, getDoc, onSnapshot, limit, startAfter } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -43,11 +43,12 @@
 
         let currentBlogId = null;
         let allPosts = [];
-        let currentPage = 1;
-        const POSTS_PER_PAGE = 15; // Define a fixed number of posts per page
+        let postsVisibleCount = 0;
+        const INITIAL_POST_COUNT = 20;
+        const LOAD_MORE_COUNT = 15;
 
         const postsContainer = document.getElementById('postsContainer');
-        const paginationControls = document.getElementById('paginationControls');
+        const loadMoreContainer = document.getElementById('loadMoreContainer');
         const newUpdatesButton = document.getElementById('newUpdatesButton');
         const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
 
@@ -134,18 +135,12 @@
             return postCard;
         }
 
-        function renderPage(pageNumber) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            currentPage = pageNumber;
+        function renderVisiblePosts() {
             postsContainer.innerHTML = '';
-
-            const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-            const endIndex = startIndex + POSTS_PER_PAGE;
-            const postsToRender = allPosts.slice(startIndex, endIndex);
+            const postsToRender = allPosts.slice(0, postsVisibleCount);
 
             if (postsToRender.length === 0) {
-                postsContainer.innerHTML = '<p class="no-posts-message">No posts on this page.</p>';
+                postsContainer.innerHTML = '<p class="no-posts-message">No posts yet.</p>';
                 return;
             }
 
@@ -153,8 +148,6 @@
                 const postCard = createPostCard(post);
                 postsContainer.appendChild(postCard);
             });
-
-            updatePaginationControls();
 
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
@@ -167,26 +160,19 @@
             }
         }
 
-        function updatePaginationControls() {
-            paginationControls.innerHTML = '';
-            const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-            if (totalPages <= 1) return;
-
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Previous';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => renderPage(currentPage - 1));
-            paginationControls.appendChild(prevButton);
-
-            const pageInfo = document.createElement('span');
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-            paginationControls.appendChild(pageInfo);
-
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => renderPage(currentPage + 1));
-            paginationControls.appendChild(nextButton);
+        function updateLoadMoreButton() {
+            loadMoreContainer.innerHTML = '';
+            if (postsVisibleCount < allPosts.length) {
+                const loadMoreButton = document.createElement('button');
+                loadMoreButton.textContent = 'Load More Posts';
+                loadMoreButton.className = 'load-more-button';
+                loadMoreButton.addEventListener('click', () => {
+                    postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
+                    renderVisiblePosts();
+                    updateLoadMoreButton();
+                });
+                loadMoreContainer.appendChild(loadMoreButton);
+            }
         }
 
         async function loadInitialPosts() {
@@ -208,10 +194,26 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            renderPage(1);
+            postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
+            renderVisiblePosts();
+            updateLoadMoreButton();
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
+
+        onSnapshot(query(collection(db, 'posts'), where('blogId', '==', currentBlogId)), (snapshot) => {
+            const newPostCount = snapshot.docs.length;
+            if (newPostCount > allPosts.length && allPosts.length > 0) {
+                 newUpdatesButton.style.display = 'block';
+                 newUpdatesCountSpan.textContent = newPostCount - allPosts.length;
+            }
+        });
+        
+        newUpdatesButton.addEventListener('click', () => {
+            newUpdatesButton.style.display = 'none';
+            loadInitialPosts();
+        });
+
     </script>
 </body>
 </html>
