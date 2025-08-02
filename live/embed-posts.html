@@ -74,17 +74,14 @@
         // --- Function: processContentForEmbeds ---
         function processContentForEmbeds(content) {
             if (!content) return '';
-            // This regex helps ensure embeds are not wrapped in <p> tags
             const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
             
-            // Temporarily replace embeds with a placeholder
             const placeholders = [];
             let processedContent = content.replace(embedRegex, (match) => {
                 placeholders.push(match);
                 return `__EMBED_PLACEHOLDER_${placeholders.length - 1}__`;
             });
 
-            // Wrap remaining lines in <p> tags
             processedContent = processedContent.split(/\r?\n/).map(line => {
                 const trimmedLine = line.trim();
                 if (trimmedLine.startsWith('__EMBED_PLACEHOLDER_') || trimmedLine === '') {
@@ -93,7 +90,6 @@
                 return `<p>${line}</p>`;
             }).join('');
 
-            // Restore the embeds from placeholders
             placeholders.forEach((placeholder, index) => {
                 processedContent = processedContent.replace(`__EMBED_PLACEHOLDER_${index}__`, placeholder);
             });
@@ -116,8 +112,6 @@
                 return;
             }
 
-            const MAX_CHARS_PREVIEW = 450;
-
             postsToRender.forEach(post => {
                 const postCard = document.createElement('div');
                 postCard.className = 'post-card';
@@ -139,7 +133,9 @@
                     if (post.mediaType && post.mediaType.startsWith('image')) {
                         mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
                     } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                        mediaHtml = `<video src="${post.mediaUrl}" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                        // START CHANGE: Added a poster attribute to the video tag
+                        mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                        // END CHANGE
                     }
                 }
 
@@ -183,7 +179,6 @@
                 window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
             }
             
-            // Re-process embeds after they are in the DOM
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') {
                 twttr.widgets.load(container);
             }
