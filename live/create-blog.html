@@ -31,6 +31,12 @@
             color: #34495e;
             font-weight: bold;
         }
+        
+        /* ## FIX: Makes the content editor grow as you type ## */
+        #postContentEditor.textarea-field {
+            min-height: 150px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -176,7 +182,7 @@
     <div id="embedModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h3>Paste Embed Code</h3>
-            <textarea id="embedModalTextarea" class="textarea-field" placeholder="Paste your embed code here..."></textarea>
+            <textarea id="embedModalTextarea" class="textarea-field" placeholder="Paste your embed code or a Reddit URL here..."></textarea>
             <div class="modal-actions">
                 <button id="saveEmbedButton" class="submit-button">Done</button>
                 <button id="cancelEmbedButton" class="cancel-button">Cancel</button>
@@ -539,15 +545,20 @@
         };
 
         const applyEmbed = () => {
-            const embedCode = embedModalTextarea.value.trim();
+            let embedCode = embedModalTextarea.value.trim();
+            
+            // ## FIX: Automatically create Reddit embed code from a URL ##
+            const redditPostRegex = /https?:\/\/(?:www\.)?reddit\.com\/r\/\w+\/comments\/\w+/;
+            if (redditPostRegex.test(embedCode)) {
+                // If the user pastes a plain Reddit link, convert it to the proper embed blockquote
+                embedCode = `<blockquote class="reddit-card" data-card-controls="false" data-card-width="100%"><a href="${embedCode}"></a></blockquote>`;
+            }
+
             if (embedCode && savedSelection) {
                 const placeholder = document.createElement('div');
                 placeholder.className = 'embed-placeholder';
                 placeholder.textContent = 'EMBED IS HERE';
                 placeholder.setAttribute('contenteditable', 'false');
-                
-                // This is the corrected line.
-                // It now saves the exact code you paste, without adding a wrapper.
                 placeholder.dataset.embedCode = embedCode;
 
                 const selection = window.getSelection();
