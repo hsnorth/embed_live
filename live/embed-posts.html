@@ -24,7 +24,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        // ## CHANGE 1: Imported Timestamp ##
+        import { getFirestore, collection, query, orderBy, where, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -215,9 +216,14 @@
                 allPosts.unshift(pinnedPost);
             }
 
+            // ## CHANGE 2: Added an 'else' condition to handle empty blogs ##
             const firstNonPinnedPost = allPosts.find(p => !p.isPinned);
             if (firstNonPinnedPost) {
                 latestPostTimestamp = firstNonPinnedPost.timestamp;
+            } else {
+                // If the blog is empty, set the starting time to now.
+                // This ensures the next check will find any newly created posts.
+                latestPostTimestamp = Timestamp.now();
             }
 
             postsContainer.innerHTML = '';
@@ -227,7 +233,6 @@
             displayPosts(initialPosts);
             updateLoadMoreButton();
             
-            // This now calls loadNewPosts directly every 30 seconds to automatically update the feed.
             updateCheckerInterval = setInterval(loadNewPosts, 30000);
         }
 
