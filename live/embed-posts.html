@@ -71,18 +71,34 @@
             postCard.dataset.postId = post.id;
             postCard.id = `post-${post.id}`;
 
+            let pinnedIndicatorHtml = '';
             if (post.isPinned) {
                 postCard.classList.add('pinned');
-                postCard.innerHTML += `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
+                pinnedIndicatorHtml = `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
             }
 
             const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
             const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-            const fullContentHtml = post.content || '';
+            
+            // **FIX**: The content is now set via innerHTML on a dedicated element.
+            const fullContentHtml = post.content || ''; 
+            
             const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
             const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
 
-            postCard.innerHTML += `
+            let mediaHtml = '';
+            if (post.mediaUrl) {
+                if (post.mediaType?.startsWith('image')) {
+                    mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                } else if (post.mediaType?.startsWith('video')) {
+                    mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                }
+            }
+            
+            // **FIX**: Construct the entire inner HTML as a string, then assign it once.
+            // This is safer and correctly handles the post content.
+            postCard.innerHTML = `
+                ${pinnedIndicatorHtml}
                 <div class="post-header-line">
                     <div class="author-avatar"><img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img"></div>
                     <div class="post-meta">
@@ -91,15 +107,10 @@
                     </div>
                 </div>
                 ${subtitleHtml}
-                <div class="post-text">${fullContentHtml}</div>`;
-            
-            if (post.mediaUrl) {
-                if (post.mediaType?.startsWith('image')) {
-                    postCard.innerHTML += `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                } else if (post.mediaType?.startsWith('video')) {
-                    postCard.innerHTML += `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
-                }
-            }
+                <div class="post-text">${fullContentHtml}</div>
+                ${mediaHtml}
+            `;
+
             return postCard;
         }
 
@@ -125,7 +136,7 @@
             }
             postsToRender.forEach(post => {
                 const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard);
+                postsContainer.appendChild(postCard); // This will now work correctly
             });
             renderSocialEmbeds();
         }
@@ -146,12 +157,8 @@
             }
         }
         
-        /**
-         * The single, robust function to listen for ALL changes and re-render the visible posts.
-         * This handles new posts, edits (pinning), and deletions while preserving the "load more" state.
-         */
         function initializeLiveBlogListener() {
-            if (unsubscribe) unsubscribe(); // Stop any previous listener.
+            if (unsubscribe) unsubscribe(); 
 
             const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
 
@@ -159,30 +166,24 @@
                 const previousPostCount = allPosts.length;
                 let freshPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // --- SORTING LOGIC ---
                 const pinnedPostIndex = freshPosts.findIndex(p => p.isPinned === true);
                 if (pinnedPostIndex > -1) {
                     const [pinnedPost] = freshPosts.splice(pinnedPostIndex, 1);
-                    freshPosts.unshift(pinnedPost); // Put pinned post at the very top
+                    freshPosts.unshift(pinnedPost); 
                 }
                 
-                allPosts = freshPosts; // Update the global cache with the newly sorted list
+                allPosts = freshPosts; 
 
-                // --- VISIBILITY LOGIC ---
                 if (isInitialLoad) {
-                    // On the very first load, set the initial visible count
                     postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
                     isInitialLoad = false;
                 } else {
-                    // On subsequent updates, check if new posts were added
                     const newPostCount = allPosts.length - previousPostCount;
                     if (newPostCount > 0) {
-                        // If new posts were added, increase the visible count so they appear automatically
                         postsVisibleCount += newPostCount;
                     }
                 }
                 
-                // --- RENDERING LOGIC ---
                 const postsToDisplay = allPosts.slice(0, postsVisibleCount);
                 displayPosts(postsToDisplay);
                 updateLoadMoreButton();
