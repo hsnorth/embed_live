@@ -89,6 +89,13 @@
                     </label>
                 </div>
 
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="hideReportingFromCheckbox">
+                        Hide "Reporting From" line (shows author only)
+                    </label>
+                </div>
+
                 <div class="form-group" id="reportingFromGroup">
                     <label for="reportingFromInput">Reporting From:</label>
                     <input type="text" id="reportingFromInput" class="input-field" value="Montreal">
@@ -198,6 +205,7 @@
         const customTabList = document.getElementById('customTabList');
         const postTabAssignmentDiv = document.getElementById('postTabAssignment');
         const notificationMessage = document.getElementById('notificationMessage');
+        const hideReportingFromCheckbox = document.getElementById('hideReportingFromCheckbox');
 
         const showNotification = (message, type) => {
             notificationMessage.textContent = message;
@@ -257,10 +265,27 @@
             }
         });
 
+        // START CHANGE: Logic to hide/show the "Reporting From" input based on checkboxes
+        function updateReportingFromVisibility() {
+            const isLiveEditor = isLivePageEditorCheckbox.checked;
+            const isHidden = hideReportingFromCheckbox.checked;
+
+            if (isLiveEditor || isHidden) {
+                reportingFromGroup.style.display = 'none';
+            } else {
+                reportingFromGroup.style.display = 'flex';
+            }
+        }
+
         isLivePageEditorCheckbox.addEventListener('change', () => {
-            reportingFromGroup.style.display = isLivePageEditorCheckbox.checked ? 'none' : 'flex';
+            updateReportingFromVisibility();
             reportingFromInput.value = isLivePageEditorCheckbox.checked ? 'Live Page Editor' : 'Montreal';
         });
+
+        hideReportingFromCheckbox.addEventListener('change', () => {
+            updateReportingFromVisibility();
+        });
+        // END CHANGE
 
         const renderCustomTabs = () => {
             customTabList.innerHTML = customTabs.map(tabName => `
@@ -381,13 +406,12 @@
                     subtitle: postSubtitleInput.value.trim(),
                     content,
                     reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
+                    hideReportingFrom: hideReportingFromCheckbox.checked,
                     assignedTabs: selectedTabs,
                     isPinned,
                 };
 
                 if (editingPostId) {
-                    // When editing, we preserve the original author's ID and avatar.
-                    // The author name is taken from the form, which may have been edited.
                     const postDocRef = doc(db, 'posts', editingPostId);
                     if (mediaFile) {
                         postData.mediaUrl = mediaUrl;
@@ -396,7 +420,6 @@
                     await updateDoc(postDocRef, postData);
                     showNotification("Post updated!", "success");
                 } else {
-                    // For new posts, we use the current user's details.
                     postData.blogId = currentBlogId;
                     postData.authorId = currentUser.uid;
                     postData.authorAvatar = currentUserAvatarUrl;
@@ -413,9 +436,10 @@
                 postMediaInput.value = '';
                 pinPostCheckbox.checked = false;
                 isLivePageEditorCheckbox.checked = false;
-                isLivePageEditorCheckbox.dispatchEvent(new Event('change'));
+                hideReportingFromCheckbox.checked = false;
+                updateReportingFromVisibility(); // Update visibility after reset
                 renderPostTabAssignmentCheckboxes([]);
-                authorNameInput.value = currentUserName; // Reset author name to current user for the next new post.
+                authorNameInput.value = currentUserName;
                 
                 editingPostId = null;
                 submitButton.textContent = "Post Update";
@@ -507,15 +531,21 @@
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
                     editingPostId = postId;
-                    authorNameInput.value = postToEdit.authorName || ''; // Set to original author's name
+                    authorNameInput.value = postToEdit.authorName || '';
                     postContentInput.value = postToEdit.content || '';
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
+                    hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
                     isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
-                    isLivePageEditorCheckbox.dispatchEvent(new Event('change'));
+                    
+                    // START CHANGE: Call the function to correctly set visibility when editing
+                    updateReportingFromVisibility();
+                    
                     if(postToEdit.reportingFrom !== 'Live Page Editor'){
                         reportingFromInput.value = postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') || 'Montreal';
                     }
+                    // END CHANGE
+
                     renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
                     submitButton.textContent = "Save Changes";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
