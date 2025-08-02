@@ -1,209 +1,195 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Blog Posts Embed</title>
-    <link rel="stylesheet" href="embed-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Serif:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <main>
-        <section class="live-blog-posts">
-            <div id="postsContainer">
-                <p>Loading live blog...</p>
-            </div>
-        </section>
-        <div id="loadMoreContainer"></div>
-    </main>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    <script async src="//www.instagram.com/embed.js"></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-    <script async src="https://embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+        authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+        projectId: "myliveblogapp-cf9df",
+        storageBucket: "myliveblogapp-cf9df.appspot.com",
+        messagingSenderId: "324824649312",
+        appId: "1:324824649312:web:c0750693346091d853bd05",
+    };
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
-            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
-            projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.appspot.com",
-            messagingSenderId: "324824649312",
-            appId: "1:324824649312:web:c0750693346091d853bd05",
-        };
+    // --- STATE MANAGEMENT ---
+    let currentBlogId = null;
+    let allPosts = []; // Local cache of all posts from the database
+    let postsVisibleCount = 0;
+    const INITIAL_POST_COUNT = 20;
+    const LOAD_MORE_COUNT = 15;
+    let unsubscribe = null; 
+    let isInitialLoad = true; // Flag to handle the first data fetch
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const postsContainer = document.getElementById('postsContainer');
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    
+    function timeAgo(timestamp) {
+        if (!timestamp || typeof timestamp.toDate !== 'function') return '';
+        const now = new Date();
+        const postDate = timestamp.toDate();
+        const seconds = Math.floor((now - postDate) / 1000);
+        if (seconds < 60) return `${seconds}s ago`;
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h ago`;
+        const days = Math.floor(hours / 24);
+        return `${days}d ago`;
+    }
 
-        // --- STATE MANAGEMENT ---
-        let currentBlogId = null;
-        let allPosts = []; // Local cache of all posts from the database
-        let postsVisibleCount = 0;
-        const INITIAL_POST_COUNT = 20;
-        const LOAD_MORE_COUNT = 15;
-        let unsubscribe = null; 
-        let isInitialLoad = true; // Flag to handle the first data fetch
+    function createPostCard(post) {
+        const postCard = document.createElement('div');
+        postCard.className = 'post-card';
+        postCard.dataset.postId = post.id;
+        postCard.id = `post-${post.id}`;
 
-        const postsContainer = document.getElementById('postsContainer');
-        const loadMoreContainer = document.getElementById('loadMoreContainer');
-        
-        function timeAgo(timestamp) {
-            if (!timestamp || typeof timestamp.toDate !== 'function') return '';
-            const now = new Date();
-            const postDate = timestamp.toDate();
-            const seconds = Math.floor((now - postDate) / 1000);
-            if (seconds < 60) return `${seconds}s ago`;
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            return `${days}d ago`;
+        let pinnedIndicatorHtml = '';
+        if (post.isPinned) {
+            postCard.classList.add('pinned');
+            pinnedIndicatorHtml = `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
         }
 
-        function createPostCard(post) {
-            const postCard = document.createElement('div');
-            postCard.className = 'post-card';
-            postCard.dataset.postId = post.id;
-            postCard.id = `post-${post.id}`;
+        const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
+        const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
+        const fullContentHtml = post.content || ''; 
+        const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
+        const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
 
-            let pinnedIndicatorHtml = '';
-            if (post.isPinned) {
-                postCard.classList.add('pinned');
-                pinnedIndicatorHtml = `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
+        let mediaHtml = '';
+        if (post.mediaUrl) {
+            if (post.mediaType?.startsWith('image')) {
+                mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+            } else if (post.mediaType?.startsWith('video')) {
+                mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
             }
-
-            const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
-            const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-            
-            // **FIX**: The content is now set via innerHTML on a dedicated element.
-            const fullContentHtml = post.content || ''; 
-            
-            const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
-            const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
-
-            let mediaHtml = '';
-            if (post.mediaUrl) {
-                if (post.mediaType?.startsWith('image')) {
-                    mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                } else if (post.mediaType?.startsWith('video')) {
-                    mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
-                }
-            }
-            
-            // **FIX**: Construct the entire inner HTML as a string, then assign it once.
-            // This is safer and correctly handles the post content.
-            postCard.innerHTML = `
-                ${pinnedIndicatorHtml}
-                <div class="post-header-line">
-                    <div class="author-avatar"><img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img"></div>
-                    <div class="post-meta">
-                        <div class="meta-line-one"><strong>${post.authorName || 'Anonymous'}</strong>${timeAgoHtml}</div>
-                        ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
-                    </div>
+        }
+        
+        postCard.innerHTML = `
+            ${pinnedIndicatorHtml}
+            <div class="post-header-line">
+                <div class="author-avatar"><img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img"></div>
+                <div class="post-meta">
+                    <div class="meta-line-one"><strong>${post.authorName || 'Anonymous'}</strong>${timeAgoHtml}</div>
+                    ${reportingFromDisplay ? `<span class="reporting-from">${reportingFromDisplay}</span>` : ''}
                 </div>
-                ${subtitleHtml}
-                <div class="post-text">${fullContentHtml}</div>
-                ${mediaHtml}
-            `;
+            </div>
+            ${subtitleHtml}
+            <div class="post-text">${fullContentHtml}</div>
+            ${mediaHtml}
+        `;
 
-            return postCard;
-        }
+        return postCard;
+    }
 
-        function renderSocialEmbeds() {
-            if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
-            if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
-            if (typeof tiktok_embed === 'object') tiktok_embed.load();
-            if (typeof redditEmbed === 'object' && typeof redditEmbed.render === 'function') redditEmbed.render();
-            
-            if (window.parent) {
-                setTimeout(() => {
-                    const height = document.body.scrollHeight;
-                    window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                }, 500);
-            }
-        }
-
-        function displayPosts(postsToRender) {
-            postsContainer.innerHTML = ''; // Clear previous content
-            if (postsToRender.length === 0) {
-                 postsContainer.innerHTML = '<p class="no-posts-message">No posts yet for this live blog.</p>';
-                 return;
-            }
-            postsToRender.forEach(post => {
-                const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard); // This will now work correctly
-            });
-            renderSocialEmbeds();
-        }
-
-        function updateLoadMoreButton() {
-            loadMoreContainer.innerHTML = ''; // Clear existing button
-            if (postsVisibleCount < allPosts.length) {
-                const loadMoreButton = document.createElement('button');
-                loadMoreButton.textContent = 'Load More Posts';
-                loadMoreButton.className = 'load-more-button';
-                loadMoreButton.addEventListener('click', () => {
-                    postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
-                    const postsToDisplay = allPosts.slice(0, postsVisibleCount);
-                    displayPosts(postsToDisplay);
-                    updateLoadMoreButton(); // Re-check if the button is still needed
-                });
-                loadMoreContainer.appendChild(loadMoreButton);
-            }
-        }
+    function renderSocialEmbeds() {
+        if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
+        if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+        if (typeof tiktok_embed === 'object') tiktok_embed.load();
+        if (typeof redditEmbed === 'object' && typeof redditEmbed.render === 'function') redditEmbed.render();
         
-        function initializeLiveBlogListener() {
-            if (unsubscribe) unsubscribe(); 
-
-            const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
-
-            unsubscribe = onSnapshot(q, (snapshot) => {
-                const previousPostCount = allPosts.length;
-                let freshPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                const pinnedPostIndex = freshPosts.findIndex(p => p.isPinned === true);
-                if (pinnedPostIndex > -1) {
-                    const [pinnedPost] = freshPosts.splice(pinnedPostIndex, 1);
-                    freshPosts.unshift(pinnedPost); 
-                }
-                
-                allPosts = freshPosts; 
-
-                if (isInitialLoad) {
-                    postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
-                    isInitialLoad = false;
-                } else {
-                    const newPostCount = allPosts.length - previousPostCount;
-                    if (newPostCount > 0) {
-                        postsVisibleCount += newPostCount;
-                    }
-                }
-                
-                const postsToDisplay = allPosts.slice(0, postsVisibleCount);
-                displayPosts(postsToDisplay);
-                updateLoadMoreButton();
-
-            }, (error) => {
-                console.error("Error with real-time listener:", error);
-                postsContainer.innerHTML = '<p class="error-message">Could not load live updates. Please check the console for errors.</p>';
-            });
+        if (window.parent) {
+            setTimeout(() => {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+            }, 500);
         }
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentBlogId = urlParams.get('blogId');
-            if (!currentBlogId) {
-                postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
-                return;
-            }
-            initializeLiveBlogListener();
+    // This function now only handles the initial display and full refreshes
+    function displayPosts(postsToRender) {
+        postsContainer.innerHTML = ''; // Clear previous content
+        if (postsToRender.length === 0) {
+             postsContainer.innerHTML = '<p class="no-posts-message">No posts yet for this live blog.</p>';
+             return;
+        }
+        postsToRender.forEach(post => {
+            const postCard = createPostCard(post);
+            postsContainer.appendChild(postCard);
         });
+        renderSocialEmbeds();
+    }
 
-    </script>
-</body>
-</html>
+    // --- NEW FUNCTION ---
+    // This new function appends posts to the container without clearing it.
+    function appendPosts(postsToAppend) {
+        postsToAppend.forEach(post => {
+            const postCard = createPostCard(post);
+            postsContainer.appendChild(postCard);
+        });
+        renderSocialEmbeds(); // Process embeds in the newly added posts
+    }
+
+    // --- MODIFIED FUNCTION ---
+    // The "Load More" button's click event now uses appendPosts.
+    function updateLoadMoreButton() {
+        loadMoreContainer.innerHTML = ''; // Clear existing button
+        if (postsVisibleCount < allPosts.length) {
+            const loadMoreButton = document.createElement('button');
+            loadMoreButton.textContent = 'Load More Posts';
+            loadMoreButton.className = 'load-more-button';
+            loadMoreButton.addEventListener('click', () => {
+                const startIndex = postsVisibleCount; // The index of the first new post
+                postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
+                const postsToAppend = allPosts.slice(startIndex, postsVisibleCount);
+
+                // Use the new append function instead of the old display function
+                appendPosts(postsToAppend); 
+                updateLoadMoreButton(); // Check if the button is still needed
+            });
+            loadMoreContainer.appendChild(loadMoreButton);
+        }
+    }
+    
+    function initializeLiveBlogListener() {
+        if (unsubscribe) unsubscribe(); 
+
+        const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
+
+        unsubscribe = onSnapshot(q, (snapshot) => {
+            const previousPostCount = allPosts.length;
+            let freshPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            const pinnedPostIndex = freshPosts.findIndex(p => p.isPinned === true);
+            if (pinnedPostIndex > -1) {
+                const [pinnedPost] = freshPosts.splice(pinnedPostIndex, 1);
+                freshPosts.unshift(pinnedPost); 
+            }
+            
+            allPosts = freshPosts; 
+
+            // The logic for displaying posts on new updates remains the same,
+            // which correctly handles pinning and prepending new posts.
+            if (isInitialLoad) {
+                postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
+                isInitialLoad = false;
+            } else {
+                const newPostCount = allPosts.length - previousPostCount;
+                if (newPostCount > 0) {
+                    postsVisibleCount += newPostCount;
+                }
+            }
+            
+            const postsToDisplay = allPosts.slice(0, postsVisibleCount);
+            displayPosts(postsToDisplay); // Full refresh for real-time updates
+            updateLoadMoreButton();
+
+        }, (error) => {
+            console.error("Error with real-time listener:", error);
+            postsContainer.innerHTML = '<p class="error-message">Could not load live updates. Please check the console for errors.</p>';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        currentBlogId = urlParams.get('blogId');
+        if (!currentBlogId) {
+            postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
+            return;
+        }
+        initializeLiveBlogListener();
+    });
+
+</script>
