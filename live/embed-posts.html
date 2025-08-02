@@ -24,7 +24,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        // ## FIX: Replaced polling with a real-time listener (onSnapshot) ##
         import { getFirestore, collection, query, orderBy, where, getDocs, Timestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -44,7 +43,7 @@
         let postsVisibleCount = 0;
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
-        let unsubscribe = null; // To hold the listener function
+        let unsubscribe = null; 
         let latestPostTimestamp = null; 
 
         const postsContainer = document.getElementById('postsContainer');
@@ -191,11 +190,35 @@
                 });
 
                 if (newPosts.length > 0) {
+                    // Sort new posts so the newest is first
                     newPosts.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
+
+                    // Create the HTML elements for the new posts
+                    const newPostElements = newPosts.map(post => createPostCard(post));
                     
-                    displayPosts(newPosts, true); 
-                    allPosts.unshift(...newPosts);
+                    // Find the currently displayed pinned post in the container
+                    const pinnedPostElement = postsContainer.querySelector('.post-card.pinned');
+                    
+                    if (pinnedPostElement) {
+                        // If a pinned post exists, insert the new post elements immediately after it
+                        pinnedPostElement.after(...newPostElements);
+
+                        // Update the master list of posts, inserting the new ones at index 1
+                        allPosts.splice(1, 0, ...newPosts);
+                    } else {
+                        // If no pinned post, prepend the new posts to the top of the container
+                        postsContainer.prepend(...newPostElements);
+
+                        // Update the master list of posts by adding to the front
+                        allPosts.unshift(...newPosts);
+                    }
+                    
+                    // Ensure any social media embeds in the new posts are rendered
+                    renderSocialEmbeds();
+                    
+                    // Update the timestamp of the latest post we've received
                     latestPostTimestamp = newPosts[0].timestamp;
+                    // Update the count of visible posts
                     postsVisibleCount += newPosts.length;
                 }
             });
@@ -237,7 +260,6 @@
             displayPosts(initialPosts);
             updateLoadMoreButton();
             
-            // Start listening for real-time updates
             listenForNewPosts();
         }
 
