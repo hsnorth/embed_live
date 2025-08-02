@@ -440,3 +440,16 @@ footer {
 #authorSelect:focus {
     outline: none;
 }
+
+/* START CHANGE: Style for the options inside the dropdown */
+#authorSelect option {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+#authorSelect option:hover {
+    background-color: #f0f2f5;
+}
+/* END CHANGE */
