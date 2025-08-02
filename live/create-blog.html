@@ -80,22 +80,18 @@
                     <input type="text" id="postSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
                 </div>
 
-                <!-- START CHANGE: Added a wrapper and formatting buttons for the textarea -->
                 <div class="form-group">
                     <label for="postContentInput">Post Content:</label>
-                    <div class="textarea-wrapper">
-                        <textarea id="postContentInput" class="textarea-field" placeholder="What's happening?" required></textarea>
+                    <div class="editor-wrapper">
                         <div class="format-buttons-container">
-                            <button type="button" id="formatBoldButton" class="format-button" title="Bold">
-                                <i class="fas fa-bold"></i>
-                            </button>
-                            <button type="button" id="formatLinkButton" class="format-button" title="Link">
-                                <i class="fas fa-link"></i>
-                            </button>
+                            <button type="button" id="formatBoldButton" class="format-button" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" id="formatLinkButton" class="format-button" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" id="formatCodeButton" class="format-button" title="Source Code"><i class="fas fa-code"></i></button>
                         </div>
+                        <div id="postContentEditor" class="textarea-field" contenteditable="true"></div>
+                        <textarea id="postContentSource" class="textarea-field source-view" style="display: none;"></textarea>
                     </div>
                 </div>
-                <!-- END CHANGE -->
 
                 <div class="form-group">
                     <label class="checkbox-label">
@@ -164,6 +160,19 @@
         </section>
     </main>
 
+    <!-- START CHANGE: Custom Modal for Link Input -->
+    <div id="linkModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Add Link</h3>
+            <input type="url" id="linkUrlInput" placeholder="https://example.com" class="input-field">
+            <div class="modal-actions">
+                <button id="saveLinkButton" class="submit-button">Save</button>
+                <button id="cancelLinkButton" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- END CHANGE -->
+
     <footer>
         <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
     </footer>
@@ -201,7 +210,10 @@
         const authorSelect = document.getElementById('authorSelect');
         const authorAvatarPreview = document.getElementById('authorAvatarPreview');
         const postSubtitleInput = document.getElementById('postSubtitleInput');
-        const postContentInput = document.getElementById('postContentInput');
+        // START CHANGE: References for the new editor
+        const postContentEditor = document.getElementById('postContentEditor');
+        const postContentSource = document.getElementById('postContentSource');
+        // END CHANGE
         const reportingFromInput = document.getElementById('reportingFromInput');
         const reportingFromGroup = document.getElementById('reportingFromGroup');
         const isLivePageEditorCheckbox = document.getElementById('isLivePageEditorCheckbox');
@@ -395,42 +407,93 @@
             showNotification("Embed code copied!", "success");
         });
         
-        // START CHANGE: Logic for formatting buttons
+        // START CHANGE: Rich Text Editor Logic
         const formatBoldButton = document.getElementById('formatBoldButton');
         const formatLinkButton = document.getElementById('formatLinkButton');
+        const formatCodeButton = document.getElementById('formatCodeButton');
+        const linkModal = document.getElementById('linkModal');
+        const linkUrlInput = document.getElementById('linkUrlInput');
+        const saveLinkButton = document.getElementById('saveLinkButton');
+        const cancelLinkButton = document.getElementById('cancelLinkButton');
+        let savedSelection;
 
-        function wrapText(textarea, startTag, endTag) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            const beforeText = textarea.value.substring(0, start);
-            const afterText = textarea.value.substring(end);
-
-            if (selectedText) {
-                textarea.value = beforeText + startTag + selectedText + endTag + afterText;
-                textarea.focus();
-                // Adjust selection to be after the inserted tags
-                textarea.selectionStart = start + startTag.length;
-                textarea.selectionEnd = end + startTag.length;
-            }
-        }
+        // Sync editor view with source view
+        postContentEditor.addEventListener('input', () => {
+            postContentSource.value = postContentEditor.innerHTML;
+        });
+        postContentSource.addEventListener('input', () => {
+            postContentEditor.innerHTML = postContentSource.value;
+        });
 
         formatBoldButton.addEventListener('click', () => {
-            wrapText(postContentInput, '<strong>', '</strong>');
+            document.execCommand('bold', false, null);
+            postContentSource.value = postContentEditor.innerHTML; // Update source
         });
 
-        formatLinkButton.addEventListener('click', () => {
-            const url = prompt("Enter the URL:");
-            if (url) {
-                const startTag = `<a href="${url}" style="color: red; text-decoration: underline; text-decoration-style: dotted;">`;
-                wrapText(postContentInput, startTag, '</a>');
+        formatCodeButton.addEventListener('click', () => {
+            if (postContentEditor.style.display === 'none') {
+                // Switch to pretty view
+                postContentEditor.innerHTML = postContentSource.value;
+                postContentEditor.style.display = 'block';
+                postContentSource.style.display = 'none';
+            } else {
+                // Switch to source view
+                postContentSource.value = postContentEditor.innerHTML;
+                postContentEditor.style.display = 'none';
+                postContentSource.style.display = 'block';
             }
         });
+
+        const openLinkModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                savedSelection = selection.getRangeAt(0);
+                linkModal.style.display = 'flex';
+                linkUrlInput.focus();
+            } else {
+                showNotification("Please select text to create a link.", "error");
+            }
+        };
+        
+        const closeLinkModal = () => {
+            linkModal.style.display = 'none';
+            linkUrlInput.value = '';
+        };
+
+        const applyLink = () => {
+            const url = linkUrlInput.value;
+            if (url && savedSelection) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                
+                document.execCommand('createLink', false, 'https://temp-url.com');
+                
+                // Find the new link and update it
+                const newLink = postContentEditor.querySelector('a[href="https://temp-url.com"]');
+                if (newLink) {
+                    newLink.href = url;
+                    newLink.target = '_blank'; // Open in new tab
+                    newLink.style.color = 'red';
+                    newLink.style.textDecoration = 'underline';
+                    newLink.style.textDecorationStyle = 'dotted';
+                }
+
+                postContentSource.value = postContentEditor.innerHTML; // Update source
+                closeLinkModal();
+            }
+        };
+
+        formatLinkButton.addEventListener('click', openLinkModal);
+        cancelLinkButton.addEventListener('click', closeLinkModal);
+        saveLinkButton.addEventListener('click', applyLink);
         // END CHANGE
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const content = postContentInput.value.trim();
+            // START CHANGE: Get content from the source textarea
+            const content = postContentSource.value.trim();
+            // END CHANGE
             if (!content || !currentBlogId) {
                 return showNotification("Missing content or blog ID.", "error");
             }
@@ -499,7 +562,10 @@
                     showNotification("Post added!", "success");
                 }
 
-                postContentInput.value = '';
+                // START CHANGE: Reset the editor fields
+                postContentEditor.innerHTML = '';
+                postContentSource.value = '';
+                // END CHANGE
                 postSubtitleInput.value = '';
                 postMediaInput.value = '';
                 pinPostCheckbox.checked = false;
@@ -608,7 +674,10 @@
                     editingPostId = postId;
                     authorSelect.value = postToEdit.authorId;
                     updateAuthorAvatarPreview();
-                    postContentInput.value = postToEdit.content || '';
+                    // START CHANGE: Populate both editor and source view when editing
+                    postContentEditor.innerHTML = postToEdit.content || '';
+                    postContentSource.value = postToEdit.content || '';
+                    // END CHANGE
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
                     hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
