@@ -176,9 +176,7 @@
     <div id="embedModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h3>Paste Embed Code</h3>
-            <!-- START CHANGE: Renamed ID to avoid conflict -->
             <textarea id="embedModalTextarea" class="textarea-field" placeholder="Paste your embed code here..."></textarea>
-            <!-- END CHANGE -->
             <div class="modal-actions">
                 <button id="saveEmbedButton" class="submit-button">Done</button>
                 <button id="cancelEmbedButton" class="cancel-button">Cancel</button>
@@ -233,9 +231,7 @@
         const postForm = document.getElementById('postForm');
         const postsContainer = document.getElementById('postsContainer');
         const submitButton = postForm.querySelector('.submit-button');
-        // START CHANGE: Renamed ID to avoid conflict
         const copyableEmbedCode = document.getElementById('copyableEmbedCode');
-        // END CHANGE
         const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
         const newTabNameInput = document.getElementById('newTabNameInput');
         const addTabButton = document.getElementById('addTabButton');
@@ -430,9 +426,7 @@
         const saveLinkButton = document.getElementById('saveLinkButton');
         const cancelLinkButton = document.getElementById('cancelLinkButton');
         const embedModal = document.getElementById('embedModal');
-        // START CHANGE: Get reference to the correct textarea ID
         const embedModalTextarea = document.getElementById('embedModalTextarea');
-        // END CHANGE
         const saveEmbedButton = document.getElementById('saveEmbedButton');
         const cancelEmbedButton = document.getElementById('cancelEmbedButton');
         let savedSelection;
@@ -516,9 +510,6 @@
             }
             savedSelection = selection.getRangeAt(0);
             embedModal.style.display = 'flex';
-            // START CHANGE: Removed the focus call that caused scrolling
-            // embedModalTextarea.focus();
-            // END CHANGE
         };
 
         const closeEmbedModal = () => {
@@ -527,14 +518,17 @@
         };
 
         const applyEmbed = () => {
-            // START CHANGE: Get code from the correct textarea
             const embedCode = embedModalTextarea.value.trim();
-            // END CHANGE
             if (embedCode && savedSelection) {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = embedCode;
+                
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedSelection);
-                document.execCommand('insertHTML', false, embedCode);
+                savedSelection.deleteContents();
+                savedSelection.insertNode(wrapper);
+
                 postContentSource.value = postContentEditor.innerHTML;
                 closeEmbedModal();
             }
