@@ -12,6 +12,7 @@
     <main>
         <section class="live-blog-posts">
             <div id="postsContainer">
+                <p>Loading live blog...</p>
             </div>
         </section>
         <div id="loadMoreContainer"></div>
@@ -24,13 +25,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, Timestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebase-storage.app",
+            storageBucket: "myliveblogapp-cf9df.appspot.com",
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
         };
@@ -38,53 +39,30 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // --- STATE MANAGEMENT ---
         let currentBlogId = null;
-        let allPosts = [];
+        let allPosts = []; // Local cache of all posts from the database
         let postsVisibleCount = 0;
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
         let unsubscribe = null; 
-        let latestPostTimestamp = null; 
+        let isInitialLoad = true; // Flag to handle the first data fetch
 
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
         
         function timeAgo(timestamp) {
+            if (!timestamp || typeof timestamp.toDate !== 'function') return '';
             const now = new Date();
-            const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
+            const postDate = timestamp.toDate();
             const seconds = Math.floor((now - postDate) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return `${Math.floor(interval)} years ago`;
-            interval = seconds / 2592000;
-            if (interval > 1) return `${Math.floor(interval)} months ago`;
-            interval = seconds / 86400;
-            if (interval > 1) return `${Math.floor(interval)} days ago`;
-            interval = seconds / 3600;
-            if (interval > 1) return `${Math.floor(interval)} hours ago`;
-            interval = seconds / 60;
-            if (interval > 1) return `${Math.floor(interval)} minutes ago`;
-            return `${Math.floor(seconds)} seconds ago`;
-        }
-
-        function processContentForEmbeds(content) {
-            if (!content) return '';
-            const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
-            const placeholders = [];
-            let processedContent = content.replace(embedRegex, (match) => {
-                placeholders.push(match);
-                return `__EMBED_PLACEHOLDER_${placeholders.length - 1}__`;
-            });
-
-            processedContent = processedContent.split(/\r?\n/).map(line => {
-                const trimmedLine = line.trim();
-                if (trimmedLine.startsWith('__EMBED_PLACEHOLDER_') || trimmedLine === '') return line;
-                return `<p>${line}</p>`;
-            }).join('');
-
-            placeholders.forEach((placeholder, index) => {
-                processedContent = processedContent.replace(`__EMBED_PLACEHOLDER_${index}__`, placeholder);
-            });
-            return processedContent;
+            if (seconds < 60) return `${seconds}s ago`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
         }
 
         function createPostCard(post) {
@@ -100,7 +78,7 @@
 
             const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
             const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-            const fullContentHtml = processContentForEmbeds(post.content);
+            const fullContentHtml = post.content || '';
             const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
             const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
 
@@ -139,131 +117,91 @@
             }
         }
 
-        function displayPosts(posts, prepend = false) {
-            if (posts.length === 0) return;
-
-            posts.forEach(post => {
+        function displayPosts(postsToRender) {
+            postsContainer.innerHTML = ''; // Clear previous content
+            if (postsToRender.length === 0) {
+                 postsContainer.innerHTML = '<p class="no-posts-message">No posts yet for this live blog.</p>';
+                 return;
+            }
+            postsToRender.forEach(post => {
                 const postCard = createPostCard(post);
-                if (prepend) {
-                    postsContainer.prepend(postCard);
-                } else {
-                    postsContainer.appendChild(postCard);
-                }
+                postsContainer.appendChild(postCard);
             });
-
             renderSocialEmbeds();
         }
 
         function updateLoadMoreButton() {
-            loadMoreContainer.innerHTML = '';
+            loadMoreContainer.innerHTML = ''; // Clear existing button
             if (postsVisibleCount < allPosts.length) {
                 const loadMoreButton = document.createElement('button');
                 loadMoreButton.textContent = 'Load More Posts';
                 loadMoreButton.className = 'load-more-button';
                 loadMoreButton.addEventListener('click', () => {
-                    const oldVisibleCount = postsVisibleCount;
                     postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
-                    const postsToAdd = allPosts.slice(oldVisibleCount, postsVisibleCount);
-                    displayPosts(postsToAdd);
-                    updateLoadMoreButton();
+                    const postsToDisplay = allPosts.slice(0, postsVisibleCount);
+                    displayPosts(postsToDisplay);
+                    updateLoadMoreButton(); // Re-check if the button is still needed
                 });
                 loadMoreContainer.appendChild(loadMoreButton);
             }
         }
         
-        function listenForNewPosts() {
-            if (!currentBlogId || !latestPostTimestamp) return;
+        /**
+         * The single, robust function to listen for ALL changes and re-render the visible posts.
+         * This handles new posts, edits (pinning), and deletions while preserving the "load more" state.
+         */
+        function initializeLiveBlogListener() {
+            if (unsubscribe) unsubscribe(); // Stop any previous listener.
 
-            const q = query(
-                collection(db, 'posts'),
-                where('blogId', '==', currentBlogId),
-                where('isPinned', '!=', true),
-                where('timestamp', '>', latestPostTimestamp)
-            );
+            const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
 
             unsubscribe = onSnapshot(q, (snapshot) => {
-                const newPosts = [];
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        newPosts.push({ id: change.doc.id, ...change.doc.data() });
-                    }
-                });
+                const previousPostCount = allPosts.length;
+                let freshPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                if (newPosts.length > 0) {
-                    // Sort new posts so the newest is first
-                    newPosts.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
-
-                    // Create the HTML elements for the new posts
-                    const newPostElements = newPosts.map(post => createPostCard(post));
-                    
-                    // Find the currently displayed pinned post in the container
-                    const pinnedPostElement = postsContainer.querySelector('.post-card.pinned');
-                    
-                    if (pinnedPostElement) {
-                        // If a pinned post exists, insert the new post elements immediately after it
-                        pinnedPostElement.after(...newPostElements);
-
-                        // Update the master list of posts, inserting the new ones at index 1
-                        allPosts.splice(1, 0, ...newPosts);
-                    } else {
-                        // If no pinned post, prepend the new posts to the top of the container
-                        postsContainer.prepend(...newPostElements);
-
-                        // Update the master list of posts by adding to the front
-                        allPosts.unshift(...newPosts);
-                    }
-                    
-                    // Ensure any social media embeds in the new posts are rendered
-                    renderSocialEmbeds();
-                    
-                    // Update the timestamp of the latest post we've received
-                    latestPostTimestamp = newPosts[0].timestamp;
-                    // Update the count of visible posts
-                    postsVisibleCount += newPosts.length;
+                // --- SORTING LOGIC ---
+                const pinnedPostIndex = freshPosts.findIndex(p => p.isPinned === true);
+                if (pinnedPostIndex > -1) {
+                    const [pinnedPost] = freshPosts.splice(pinnedPostIndex, 1);
+                    freshPosts.unshift(pinnedPost); // Put pinned post at the very top
                 }
+                
+                allPosts = freshPosts; // Update the global cache with the newly sorted list
+
+                // --- VISIBILITY LOGIC ---
+                if (isInitialLoad) {
+                    // On the very first load, set the initial visible count
+                    postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
+                    isInitialLoad = false;
+                } else {
+                    // On subsequent updates, check if new posts were added
+                    const newPostCount = allPosts.length - previousPostCount;
+                    if (newPostCount > 0) {
+                        // If new posts were added, increase the visible count so they appear automatically
+                        postsVisibleCount += newPostCount;
+                    }
+                }
+                
+                // --- RENDERING LOGIC ---
+                const postsToDisplay = allPosts.slice(0, postsVisibleCount);
+                displayPosts(postsToDisplay);
+                updateLoadMoreButton();
+
+            }, (error) => {
+                console.error("Error with real-time listener:", error);
+                postsContainer.innerHTML = '<p class="error-message">Could not load live updates. Please check the console for errors.</p>';
             });
         }
 
-        async function loadInitialPosts() {
+        document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentBlogId = urlParams.get('blogId');
             if (!currentBlogId) {
                 postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
                 return;
             }
-
-            if (unsubscribe) unsubscribe(); 
-
-            const postsCollectionRef = collection(db, 'posts');
-            const q = query(postsCollectionRef, where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
-            const snapshot = await getDocs(q);
-            
-            allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            const pinnedPostIndex = allPosts.findIndex(p => p.isPinned);
-            if (pinnedPostIndex > -1) {
-                const [pinnedPost] = allPosts.splice(pinnedPostIndex, 1);
-                allPosts.unshift(pinnedPost);
-            }
-
-            const firstNonPinnedPost = allPosts.find(p => !p.isPinned);
-            if (firstNonPinnedPost) {
-                latestPostTimestamp = firstNonPinnedPost.timestamp;
-            } else {
-                latestPostTimestamp = Timestamp.now();
-            }
-
-            postsContainer.innerHTML = '';
-            postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
-            const initialPosts = allPosts.slice(0, postsVisibleCount);
-            
-            displayPosts(initialPosts);
-            updateLoadMoreButton();
-            
-            listenForNewPosts();
-        }
-
-        document.addEventListener('DOMContentLoaded', loadInitialPosts);
+            initializeLiveBlogListener();
+        });
 
     </script>
 </body>
