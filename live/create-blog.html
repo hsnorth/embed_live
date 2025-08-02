@@ -432,29 +432,50 @@
         let savedSelection;
 
         postContentEditor.addEventListener('input', () => {
-            postContentSource.value = postContentEditor.innerHTML;
+            let sourceHtml = postContentEditor.innerHTML;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sourceHtml;
+            tempDiv.querySelectorAll('.embed-placeholder').forEach(placeholder => {
+                const decodedEmbed = placeholder.dataset.embedCode;
+                if (decodedEmbed) {
+                    placeholder.outerHTML = decodedEmbed;
+                }
+            });
+            postContentSource.value = tempDiv.innerHTML;
         });
+
         postContentSource.addEventListener('input', () => {
             postContentEditor.innerHTML = postContentSource.value;
         });
 
         formatBoldButton.addEventListener('click', () => {
             document.execCommand('bold', false, null);
-            postContentSource.value = postContentEditor.innerHTML;
+            postContentEditor.dispatchEvent(new Event('input'));
         });
 
         formatItalicButton.addEventListener('click', () => {
             document.execCommand('italic', false, null);
-            postContentSource.value = postContentEditor.innerHTML;
+            postContentEditor.dispatchEvent(new Event('input'));
         });
 
         formatCodeButton.addEventListener('click', () => {
             if (postContentEditor.style.display === 'none') {
-                postContentEditor.innerHTML = postContentSource.value;
+                const sourceHtml = postContentSource.value;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = sourceHtml;
+                tempDiv.querySelectorAll('.embedded-content-wrapper').forEach(embed => {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'embed-placeholder';
+                    placeholder.textContent = 'EMBED IS HERE';
+                    placeholder.setAttribute('contenteditable', 'false');
+                    placeholder.dataset.embedCode = embed.outerHTML;
+                    embed.parentNode.replaceChild(placeholder, embed);
+                });
+                postContentEditor.innerHTML = tempDiv.innerHTML;
                 postContentEditor.style.display = 'block';
                 postContentSource.style.display = 'none';
             } else {
-                postContentSource.value = postContentEditor.innerHTML;
+                postContentEditor.dispatchEvent(new Event('input'));
                 postContentEditor.style.display = 'none';
                 postContentSource.style.display = 'block';
             }
@@ -497,7 +518,7 @@
                     newLink.style.textDecorationStyle = 'dotted';
                 }
 
-                postContentSource.value = postContentEditor.innerHTML;
+                postContentEditor.dispatchEvent(new Event('input'));
                 closeLinkModal();
             }
         };
@@ -520,15 +541,23 @@
         const applyEmbed = () => {
             const embedCode = embedModalTextarea.value.trim();
             if (embedCode && savedSelection) {
-                const embedWrapperHtml = `<div class="embedded-content-wrapper" contenteditable="false">${embedCode}</div><div><br></div>`;
-                
+                const placeholder = document.createElement('div');
+                placeholder.className = 'embed-placeholder';
+                placeholder.textContent = 'EMBED IS HERE';
+                placeholder.setAttribute('contenteditable', 'false');
+                placeholder.dataset.embedCode = `<div class="embedded-content-wrapper">${embedCode}</div>`;
+
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedSelection);
+                savedSelection.deleteContents();
+                savedSelection.insertNode(placeholder);
                 
-                document.execCommand('insertHTML', false, embedWrapperHtml);
+                const lineBreak = document.createElement('div');
+                lineBreak.innerHTML = '<br>';
+                placeholder.after(lineBreak);
 
-                postContentSource.value = postContentEditor.innerHTML;
+                postContentEditor.dispatchEvent(new Event('input'));
                 closeEmbedModal();
             }
         };
@@ -542,6 +571,7 @@
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            postContentEditor.dispatchEvent(new Event('input'));
             const content = postContentSource.value.trim();
             if (!content || !currentBlogId) {
                 return showNotification("Missing content or blog ID.", "error");
@@ -721,8 +751,9 @@
                     editingPostId = postId;
                     authorSelect.value = postToEdit.authorId;
                     updateAuthorAvatarPreview();
-                    postContentEditor.innerHTML = postToEdit.content || '';
                     postContentSource.value = postToEdit.content || '';
+                    formatCodeButton.click(); 
+                    formatCodeButton.click();
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
                     hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
