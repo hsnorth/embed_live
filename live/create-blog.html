@@ -31,23 +31,6 @@
             color: #34495e;
             font-weight: bold;
         }
-        /* START CHANGE: CSS for the new author dropdown */
-        .author-select-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .author-avatar-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ddd;
-        }
-        #authorSelect {
-            flex-grow: 1;
-        }
-        /* END CHANGE */
     </style>
 </head>
 <body>
@@ -84,15 +67,13 @@
         <section class="new-post-form">
             <h2>Post an Update</h2>
             <form id="postForm">
-                <!-- START CHANGE: Replaced text input with a dropdown for author selection -->
                 <div class="form-group">
                     <label for="authorSelect">Author:</label>
                     <div class="author-select-wrapper">
-                        <img id="authorAvatarPreview" src="https://hsnorth.github.io/embed_live/live/harry.png" alt="Author Avatar">
-                        <select id="authorSelect" class="input-field" required></select>
+                        <img id="authorAvatarPreview" src="https://hsnorth.github.io/embed_live/live/harry.png" alt="Author Avatar" class="author-avatar-preview">
+                        <select id="authorSelect" required></select>
                     </div>
                 </div>
-                <!-- END CHANGE -->
 
                 <div class="form-group">
                     <label for="postSubtitleInput">Subtitle (Optional):</label>
@@ -202,13 +183,11 @@
         const defaultTab = "Live Reporting";
         let adminAllPostsCached = [];
         let editingPostId = null;
-        let allUsers = []; // START CHANGE: To store all users for the dropdown
+        let allUsers = []; 
 
         const blogHeader = document.getElementById('blogHeader');
-        // START CHANGE: Get references to new author elements
         const authorSelect = document.getElementById('authorSelect');
         const authorAvatarPreview = document.getElementById('authorAvatarPreview');
-        // END CHANGE
         const postSubtitleInput = document.getElementById('postSubtitleInput');
         const postContentInput = document.getElementById('postContentInput');
         const reportingFromInput = document.getElementById('reportingFromInput');
@@ -238,14 +217,13 @@
             }, 4000);
         };
         
-        // START CHANGE: Function to load all users and populate the author dropdown
         const loadAllUsersAndPopulateDropdown = async () => {
             try {
                 const usersCollectionRef = collection(db, 'users');
                 const querySnapshot = await getDocs(usersCollectionRef);
                 allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                authorSelect.innerHTML = ''; // Clear existing options
+                authorSelect.innerHTML = '';
                 allUsers.forEach(user => {
                     const option = document.createElement('option');
                     option.value = user.id;
@@ -254,7 +232,6 @@
                     authorSelect.appendChild(option);
                 });
 
-                // Set the dropdown to the current logged-in user by default
                 if (currentUser) {
                     authorSelect.value = currentUser.uid;
                 }
@@ -274,14 +251,13 @@
         };
 
         authorSelect.addEventListener('change', updateAuthorAvatarPreview);
-        // END CHANGE
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = 'index.html';
             } else {
                 currentUser = user;
-                await loadAllUsersAndPopulateDropdown(); // Load users for dropdown
+                await loadAllUsersAndPopulateDropdown(); 
 
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBlogId = urlParams.get('blogId');
@@ -418,7 +394,6 @@
             submitButton.textContent = "Posting...";
 
             try {
-                // START CHANGE: Get author details from the dropdown
                 const selectedOption = authorSelect.options[authorSelect.selectedIndex];
                 if (!selectedOption) {
                     throw new Error("No author selected.");
@@ -426,7 +401,6 @@
                 const authorId = selectedOption.value;
                 const authorName = selectedOption.textContent;
                 const authorAvatar = selectedOption.dataset.avatar;
-                // END CHANGE
 
                 const isPinned = pinPostCheckbox.checked;
                 if (isPinned) {
@@ -452,11 +426,9 @@
                 const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
                 
                 const postData = {
-                    // START CHANGE: Use selected author data
                     authorId: authorId,
                     authorName: authorName,
                     authorAvatar: authorAvatar,
-                    // END CHANGE
                     subtitle: postSubtitleInput.value.trim(),
                     content,
                     reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
@@ -477,7 +449,7 @@
                     postData.blogId = currentBlogId;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
-                    postData.mediaType = mediaType;
+                    postData.mediaType = mediaFile.type;
                     await addDoc(collection(db, 'posts'), postData);
                     showNotification("Post added!", "success");
                 }
@@ -490,7 +462,7 @@
                 hideReportingFromCheckbox.checked = false;
                 updateReportingFromVisibility();
                 renderPostTabAssignmentCheckboxes([]);
-                authorSelect.value = currentUser.uid; // Reset dropdown to current user
+                authorSelect.value = currentUser.uid;
                 updateAuthorAvatarPreview();
                 
                 editingPostId = null;
@@ -583,10 +555,8 @@
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
                     editingPostId = postId;
-                    // START CHANGE: Set author dropdown to the post's original author
                     authorSelect.value = postToEdit.authorId;
                     updateAuthorAvatarPreview();
-                    // END CHANGE
                     postContentInput.value = postToEdit.content || '';
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
