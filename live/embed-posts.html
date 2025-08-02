@@ -17,10 +17,6 @@
         <div id="loadMoreContainer"></div>
     </main>
 
-    <button id="newUpdatesButton">
-        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update(s)
-    </button>
-
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script async src="//www.instagram.com/embed.js"></script>
     <script async src="https://www.tiktok.com/embed.js"></script>
@@ -48,13 +44,11 @@
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
         let updateCheckerInterval = null;
-        let latestPostTimestamp = null; // To track the newest post
+        let latestPostTimestamp = null; 
 
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
-        const newUpdatesButton = document.getElementById('newUpdatesButton');
-        const newUpdatesCountSpan = document.getElementById('newUpdatesCount');
-
+        
         function timeAgo(timestamp) {
             const now = new Date();
             const postDate = timestamp && typeof timestamp.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
@@ -74,8 +68,6 @@
 
         function processContentForEmbeds(content) {
             if (!content) return '';
-            // This function correctly finds block-level embeds (like Reddit's <blockquote>)
-            // and separates them from regular text paragraphs. No changes needed here.
             const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
             const placeholders = [];
             let processedContent = content.replace(embedRegex, (match) => {
@@ -134,18 +126,16 @@
         }
 
         function renderSocialEmbeds() {
-            // Call all social media rendering functions
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
             if (typeof tiktok_embed === 'object') tiktok_embed.load();
             if (typeof redditEmbed === 'object' && typeof redditEmbed.render === 'function') redditEmbed.render();
             
-            // Adjust parent iframe height
             if (window.parent) {
                 setTimeout(() => {
                     const height = document.body.scrollHeight;
                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                }, 500); // Delay to allow embeds to fully render
+                }, 500);
             }
         }
 
@@ -181,25 +171,6 @@
             }
         }
         
-        async function checkForUpdates() {
-            if (!currentBlogId || !latestPostTimestamp) return;
-
-            const q = query(
-                collection(db, 'posts'), 
-                where('blogId', '==', currentBlogId),
-                where('isPinned', '!=', true), // Pinned posts don't count as 'new'
-                where('timestamp', '>', latestPostTimestamp)
-            );
-
-            const snapshot = await getDocs(q);
-            const newPostCount = snapshot.size;
-
-            if (newPostCount > 0) {
-                newUpdatesButton.style.display = 'block';
-                newUpdatesCountSpan.textContent = newPostCount;
-            }
-        }
-
         async function loadNewPosts() {
             if (!currentBlogId || !latestPostTimestamp) return;
             
@@ -215,12 +186,11 @@
             const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             if (newPosts.length > 0) {
-                displayPosts(newPosts, true); // Prepend new posts to the top
-                allPosts.unshift(...newPosts); // Add new posts to the main array
-                latestPostTimestamp = newPosts[0].timestamp; // Update the latest timestamp
+                displayPosts(newPosts, true); 
+                allPosts.unshift(...newPosts);
+                latestPostTimestamp = newPosts[0].timestamp;
+                postsVisibleCount += newPosts.length;
             }
-
-            newUpdatesButton.style.display = 'none';
         }
 
         async function loadInitialPosts() {
@@ -245,7 +215,6 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            // Store the timestamp of the newest non-pinned post for update checks
             const firstNonPinnedPost = allPosts.find(p => !p.isPinned);
             if (firstNonPinnedPost) {
                 latestPostTimestamp = firstNonPinnedPost.timestamp;
@@ -258,12 +227,11 @@
             displayPosts(initialPosts);
             updateLoadMoreButton();
             
-            updateCheckerInterval = setInterval(checkForUpdates, 30000); // Check every 30 seconds
+            // This now calls loadNewPosts directly every 30 seconds to automatically update the feed.
+            updateCheckerInterval = setInterval(loadNewPosts, 30000);
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
-        
-        newUpdatesButton.addEventListener('click', loadNewPosts);
 
     </script>
 </body>
