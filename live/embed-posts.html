@@ -24,10 +24,11 @@
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script async src="//www.instagram.com/embed.js"></script>
     <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -46,6 +47,7 @@
         let postsVisibleCount = 0;
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
+        let updateCheckerInterval = null;
 
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
@@ -135,26 +137,27 @@
             return postCard;
         }
 
-        // START CHANGE: This function now only appends posts, it doesn't clear the container.
-        function renderPosts(postsToRender) {
-            if (postsToRender.length === 0 && postsContainer.children.length === 0) {
-                postsContainer.innerHTML = '<p class="no-posts-message">No posts yet.</p>';
-                return;
-            }
+        // START CHANGE: This function now only appends new posts to the container
+        function appendPosts(postsToAppend) {
+            if (postsToAppend.length === 0) return;
 
-            postsToRender.forEach(post => {
+            postsToAppend.forEach(post => {
                 const postCard = createPostCard(post);
                 postsContainer.appendChild(postCard);
             });
 
+            // Process all social media embeds
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
+            if (typeof tiktok_embed === 'object') tiktok_embed.load();
+            if (typeof redditEmbed === 'object' && typeof redditEmbed.render === 'function') redditEmbed.render();
             
+            // Adjust parent iframe height
             if (window.parent) {
                 setTimeout(() => {
                     const height = document.body.scrollHeight;
                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                }, 500);
+                }, 500); // Delay to allow embeds to load
             }
         }
         // END CHANGE
@@ -166,15 +169,24 @@
                 loadMoreButton.textContent = 'Load More Posts';
                 loadMoreButton.className = 'load-more-button';
                 loadMoreButton.addEventListener('click', () => {
-                    // START CHANGE: Logic to append only the new posts
                     const oldVisibleCount = postsVisibleCount;
                     postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
                     const postsToAdd = allPosts.slice(oldVisibleCount, postsVisibleCount);
-                    renderPosts(postsToAdd);
+                    appendPosts(postsToAdd);
                     updateLoadMoreButton();
-                    // END CHANGE
                 });
                 loadMoreContainer.appendChild(loadMoreButton);
+            }
+        }
+
+        async function checkForUpdates() {
+            const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId));
+            const snapshot = await getDocs(q);
+            const newPostCount = snapshot.size;
+
+            if (newPostCount > allPosts.length && allPosts.length > 0) {
+                newUpdatesButton.style.display = 'block';
+                newUpdatesCountSpan.textContent = newPostCount - allPosts.length;
             }
         }
 
@@ -185,6 +197,8 @@
                 postsContainer.innerHTML = '<p class="error-message">Error: Blog ID not found in URL.</p>';
                 return;
             }
+
+            if (updateCheckerInterval) clearInterval(updateCheckerInterval);
 
             const postsCollectionRef = collection(db, 'posts');
             const q = query(postsCollectionRef, where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
@@ -197,24 +211,18 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            // START CHANGE: Clear container only on initial load and render the first batch
+            // START CHANGE: Clear container only once on initial load
             postsContainer.innerHTML = '';
             postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
             const initialPosts = allPosts.slice(0, postsVisibleCount);
-            renderPosts(initialPosts);
+            appendPosts(initialPosts);
             updateLoadMoreButton();
             // END CHANGE
+            
+            updateCheckerInterval = setInterval(checkForUpdates, 60000);
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
-
-        onSnapshot(query(collection(db, 'posts'), where('blogId', '==', currentBlogId)), (snapshot) => {
-            const newPostCount = snapshot.docs.length;
-            if (newPostCount > allPosts.length && allPosts.length > 0) {
-                 newUpdatesButton.style.display = 'block';
-                 newUpdatesCountSpan.textContent = newPostCount - allPosts.length;
-            }
-        });
         
         newUpdatesButton.addEventListener('click', () => {
             newUpdatesButton.style.display = 'none';
