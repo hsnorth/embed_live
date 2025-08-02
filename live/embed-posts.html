@@ -18,7 +18,7 @@
     </main>
 
     <button id="newUpdatesButton">
-        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update
+        <i class="fas fa-arrow-up"></i> <span id="newUpdatesCount"></span> New Update(s)
     </button>
 
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -48,6 +48,7 @@
         const INITIAL_POST_COUNT = 20;
         const LOAD_MORE_COUNT = 15;
         let updateCheckerInterval = null;
+        let latestPostTimestamp = null; // To track the newest post
 
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
@@ -73,6 +74,8 @@
 
         function processContentForEmbeds(content) {
             if (!content) return '';
+            // This function correctly finds block-level embeds (like Reddit's <blockquote>)
+            // and separates them from regular text paragraphs. No changes needed here.
             const embedRegex = /(<blockquote[^>]*>.*?<\/blockquote>|<div class="embedded-content-wrapper"[^>]*>.*?<\/div>)/gs;
             const placeholders = [];
             let processedContent = content.replace(embedRegex, (match) => {
@@ -98,32 +101,18 @@
             postCard.dataset.postId = post.id;
             postCard.id = `post-${post.id}`;
 
-            let pinnedHtml = '';
             if (post.isPinned) {
                 postCard.classList.add('pinned');
-                pinnedHtml = `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
-            }
-
-            let mediaHtml = '';
-            if (post.mediaUrl) {
-                if (post.mediaType && post.mediaType.startsWith('image')) {
-                    mediaHtml = `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
-                } else if (post.mediaType && post.mediaType.startsWith('video')) {
-                    mediaHtml = `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
-                }
+                postCard.innerHTML += `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i> PINNED</div>`;
             }
 
             const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
             const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
             const fullContentHtml = processContentForEmbeds(post.content);
-            let reportingFromDisplay = '';
-            if (post.reportingFrom && !post.hideReportingFrom) {
-                reportingFromDisplay = `<span>${post.reportingFrom}</span>`;
-            }
+            const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
             const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
 
-            postCard.innerHTML = `
-                ${pinnedHtml}
+            postCard.innerHTML += `
                 <div class="post-header-line">
                     <div class="author-avatar"><img src="${avatarUrl}" alt="Author Avatar" class="author-avatar-img"></div>
                     <div class="post-meta">
@@ -132,21 +121,20 @@
                     </div>
                 </div>
                 ${subtitleHtml}
-                <div class="post-text">${fullContentHtml}</div>
-                ${mediaHtml}`;
+                <div class="post-text">${fullContentHtml}</div>`;
+            
+            if (post.mediaUrl) {
+                if (post.mediaType?.startsWith('image')) {
+                    postCard.innerHTML += `<img src="${post.mediaUrl}" alt="Post Image" class="post-media">`;
+                } else if (post.mediaType?.startsWith('video')) {
+                    postCard.innerHTML += `<video src="${post.mediaUrl}" poster="${post.mediaUrl}#t=0.1" class="post-media post-video" controls playsinline disablePictureInPicture preload="metadata"></video>`;
+                }
+            }
             return postCard;
         }
 
-        // START CHANGE: This function now only appends new posts to the container
-        function appendPosts(postsToAppend) {
-            if (postsToAppend.length === 0) return;
-
-            postsToAppend.forEach(post => {
-                const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard);
-            });
-
-            // Process all social media embeds
+        function renderSocialEmbeds() {
+            // Call all social media rendering functions
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
             if (typeof tiktok_embed === 'object') tiktok_embed.load();
@@ -157,10 +145,24 @@
                 setTimeout(() => {
                     const height = document.body.scrollHeight;
                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                }, 500); // Delay to allow embeds to load
+                }, 500); // Delay to allow embeds to fully render
             }
         }
-        // END CHANGE
+
+        function displayPosts(posts, prepend = false) {
+            if (posts.length === 0) return;
+
+            posts.forEach(post => {
+                const postCard = createPostCard(post);
+                if (prepend) {
+                    postsContainer.prepend(postCard);
+                } else {
+                    postsContainer.appendChild(postCard);
+                }
+            });
+
+            renderSocialEmbeds();
+        }
 
         function updateLoadMoreButton() {
             loadMoreContainer.innerHTML = '';
@@ -172,22 +174,53 @@
                     const oldVisibleCount = postsVisibleCount;
                     postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
                     const postsToAdd = allPosts.slice(oldVisibleCount, postsVisibleCount);
-                    appendPosts(postsToAdd);
+                    displayPosts(postsToAdd);
                     updateLoadMoreButton();
                 });
                 loadMoreContainer.appendChild(loadMoreButton);
             }
         }
-
+        
         async function checkForUpdates() {
-            const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId));
+            if (!currentBlogId || !latestPostTimestamp) return;
+
+            const q = query(
+                collection(db, 'posts'), 
+                where('blogId', '==', currentBlogId),
+                where('isPinned', '!=', true), // Pinned posts don't count as 'new'
+                where('timestamp', '>', latestPostTimestamp)
+            );
+
             const snapshot = await getDocs(q);
             const newPostCount = snapshot.size;
 
-            if (newPostCount > allPosts.length && allPosts.length > 0) {
+            if (newPostCount > 0) {
                 newUpdatesButton.style.display = 'block';
-                newUpdatesCountSpan.textContent = newPostCount - allPosts.length;
+                newUpdatesCountSpan.textContent = newPostCount;
             }
+        }
+
+        async function loadNewPosts() {
+            if (!currentBlogId || !latestPostTimestamp) return;
+            
+            const q = query(
+                collection(db, 'posts'),
+                where('blogId', '==', currentBlogId),
+                where('isPinned', '!=', true),
+                where('timestamp', '>', latestPostTimestamp),
+                orderBy('timestamp', 'desc')
+            );
+            
+            const snapshot = await getDocs(q);
+            const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            if (newPosts.length > 0) {
+                displayPosts(newPosts, true); // Prepend new posts to the top
+                allPosts.unshift(...newPosts); // Add new posts to the main array
+                latestPostTimestamp = newPosts[0].timestamp; // Update the latest timestamp
+            }
+
+            newUpdatesButton.style.display = 'none';
         }
 
         async function loadInitialPosts() {
@@ -203,6 +236,7 @@
             const postsCollectionRef = collection(db, 'posts');
             const q = query(postsCollectionRef, where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
             const snapshot = await getDocs(q);
+            
             allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             const pinnedPostIndex = allPosts.findIndex(p => p.isPinned);
@@ -211,23 +245,25 @@
                 allPosts.unshift(pinnedPost);
             }
 
-            // START CHANGE: Clear container only once on initial load
+            // Store the timestamp of the newest non-pinned post for update checks
+            const firstNonPinnedPost = allPosts.find(p => !p.isPinned);
+            if (firstNonPinnedPost) {
+                latestPostTimestamp = firstNonPinnedPost.timestamp;
+            }
+
             postsContainer.innerHTML = '';
             postsVisibleCount = Math.min(INITIAL_POST_COUNT, allPosts.length);
             const initialPosts = allPosts.slice(0, postsVisibleCount);
-            appendPosts(initialPosts);
-            updateLoadMoreButton();
-            // END CHANGE
             
-            updateCheckerInterval = setInterval(checkForUpdates, 60000);
+            displayPosts(initialPosts);
+            updateLoadMoreButton();
+            
+            updateCheckerInterval = setInterval(checkForUpdates, 30000); // Check every 30 seconds
         }
 
         document.addEventListener('DOMContentLoaded', loadInitialPosts);
         
-        newUpdatesButton.addEventListener('click', () => {
-            newUpdatesButton.style.display = 'none';
-            loadInitialPosts();
-        });
+        newUpdatesButton.addEventListener('click', loadNewPosts);
 
     </script>
 </body>
