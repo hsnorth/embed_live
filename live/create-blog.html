@@ -449,7 +449,9 @@
                     postData.blogId = currentBlogId;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
-                    postData.mediaType = mediaFile.type;
+                    // START CHANGE: Fixed the typo causing the error
+                    postData.mediaType = mediaType;
+                    // END CHANGE
                     await addDoc(collection(db, 'posts'), postData);
                     showNotification("Post added!", "success");
                 }
