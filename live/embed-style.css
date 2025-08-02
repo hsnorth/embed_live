@@ -241,7 +241,7 @@ main {
 /* --- Responsive Adjustments for smaller screens --- */
 @media (max-width: 600px) {
     .post-text {
-        font-size: 18px;
+        font-size: 17px;
     }
     .post-subtitle {
         font-size: 1.4em;
