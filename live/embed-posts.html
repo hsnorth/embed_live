@@ -44,7 +44,7 @@
         let currentBlogId = null;
         let allPosts = [];
         let currentPage = 1;
-        const POSTS_PER_PAGE = 10; // Define a fixed number of posts per page
+        const POSTS_PER_PAGE = 15; // Define a fixed number of posts per page
 
         const postsContainer = document.getElementById('postsContainer');
         const paginationControls = document.getElementById('paginationControls');
@@ -159,12 +159,11 @@
             if (typeof twttr === 'object' && typeof twttr.widgets.load === 'function') twttr.widgets.load(postsContainer);
             if (typeof instgrm === 'object' && typeof instgrm.Embeds.process === 'function') instgrm.Embeds.process();
             
-            // Adjust parent iframe height after rendering
             if (window.parent) {
                 setTimeout(() => {
                     const height = document.body.scrollHeight;
                     window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
-                }, 500); // Delay to allow embeds to load
+                }, 500);
             }
         }
 
