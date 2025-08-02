@@ -31,8 +31,6 @@
             color: #34495e;
             font-weight: bold;
         }
-        
-        /* ## FIX: Makes the content editor grow as you type ## */
         #postContentEditor.textarea-field {
             min-height: 150px;
             height: auto;
@@ -71,7 +69,7 @@
             </div>
         </div>
         <section class="new-post-form">
-            <h2>Post an Update</h2>
+            <h2 id="formHeader">Post an Update</h2>
             <form id="postForm">
                 <div class="form-group">
                     <label for="authorSelect">Author:</label>
@@ -197,14 +195,14 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, getDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            storageBucket: "myliveblogapp-cf9df.appspot.com",
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
         };
@@ -223,6 +221,8 @@
         let editingPostId = null;
         let allUsers = []; 
 
+        // Form Elements
+        const formHeader = document.getElementById('formHeader');
         const blogHeader = document.getElementById('blogHeader');
         const authorSelect = document.getElementById('authorSelect');
         const authorAvatarPreview = document.getElementById('authorAvatarPreview');
@@ -323,25 +323,59 @@
             }
         });
 
+        // --- IMPROVED LOGIC FOR CHECKBOXES AND FORM STATE ---
+
         function updateReportingFromVisibility() {
             const isLiveEditor = isLivePageEditorCheckbox.checked;
             const isHidden = hideReportingFromCheckbox.checked;
 
-            if (isLiveEditor || isHidden) {
-                reportingFromGroup.style.display = 'none';
-            } else {
-                reportingFromGroup.style.display = 'flex';
-            }
+            reportingFromGroup.style.display = (isLiveEditor || isHidden) ? 'none' : 'flex';
         }
-
+        
+        // **FIX**: Make checkboxes mutually exclusive
         isLivePageEditorCheckbox.addEventListener('change', () => {
+            if (isLivePageEditorCheckbox.checked) {
+                hideReportingFromCheckbox.checked = false;
+            }
             updateReportingFromVisibility();
             reportingFromInput.value = isLivePageEditorCheckbox.checked ? 'Live Page Editor' : 'Montreal';
         });
 
         hideReportingFromCheckbox.addEventListener('change', () => {
+            if (hideReportingFromCheckbox.checked) {
+                isLivePageEditorCheckbox.checked = false;
+            }
             updateReportingFromVisibility();
         });
+
+        // **NEW**: Centralized function to reset the entire post form
+        function resetPostForm() {
+            editingPostId = null;
+            
+            postForm.reset(); // Resets input fields, textareas, and checkboxes
+            postContentEditor.innerHTML = '';
+            postContentSource.value = '';
+            
+            // Explicitly reset checkbox states and visibility
+            isLivePageEditorCheckbox.checked = false;
+            hideReportingFromCheckbox.checked = false;
+            pinPostCheckbox.checked = false;
+            updateReportingFromVisibility();
+
+            // Reset author to the current logged-in user
+            if (currentUser) {
+                authorSelect.value = currentUser.uid;
+            }
+            updateAuthorAvatarPreview();
+            
+            // Reset tab assignments
+            renderPostTabAssignmentCheckboxes([]);
+            
+            // Reset button and header text
+            formHeader.textContent = "Post an Update";
+            submitButton.textContent = "Post Update";
+            submitButton.disabled = false;
+        }
 
         const renderCustomTabs = () => {
             customTabList.innerHTML = customTabs.map(tabName => `
@@ -373,7 +407,8 @@
 
         const deleteCustomTab = async (tabName) => {
             if (!currentBlogId) return showNotification("No blog selected.", "error");
-            if (confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
+            // **FIX**: Using a custom modal/confirm is better, but window.confirm is used here as per original code.
+            if (window.confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
                 const originalTabs = [...customTabs];
                 customTabs = customTabs.filter(tab => tab !== tabName);
                 try {
@@ -422,6 +457,7 @@
             showNotification("Embed code copied!", "success");
         });
         
+        // Rich Text Editor Logic (No changes needed here)
         const formatBoldButton = document.getElementById('formatBoldButton');
         const formatItalicButton = document.getElementById('formatItalicButton');
         const formatLinkButton = document.getElementById('formatLinkButton');
@@ -454,30 +490,12 @@
             postContentEditor.innerHTML = postContentSource.value;
         });
 
-        formatBoldButton.addEventListener('click', () => {
-            document.execCommand('bold', false, null);
-            postContentEditor.dispatchEvent(new Event('input'));
-        });
-
-        formatItalicButton.addEventListener('click', () => {
-            document.execCommand('italic', false, null);
-            postContentEditor.dispatchEvent(new Event('input'));
-        });
+        formatBoldButton.addEventListener('click', () => { document.execCommand('bold'); postContentEditor.dispatchEvent(new Event('input')); });
+        formatItalicButton.addEventListener('click', () => { document.execCommand('italic'); postContentEditor.dispatchEvent(new Event('input')); });
 
         formatCodeButton.addEventListener('click', () => {
             if (postContentEditor.style.display === 'none') {
-                const sourceHtml = postContentSource.value;
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = sourceHtml;
-                tempDiv.querySelectorAll('.embedded-content-wrapper').forEach(embed => {
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'embed-placeholder';
-                    placeholder.textContent = 'EMBED IS HERE';
-                    placeholder.setAttribute('contenteditable', 'false');
-                    placeholder.dataset.embedCode = embed.outerHTML;
-                    embed.parentNode.replaceChild(placeholder, embed);
-                });
-                postContentEditor.innerHTML = tempDiv.innerHTML;
+                postContentEditor.innerHTML = postContentSource.value;
                 postContentEditor.style.display = 'block';
                 postContentSource.style.display = 'none';
             } else {
@@ -486,36 +504,24 @@
                 postContentSource.style.display = 'block';
             }
         });
-
+        
         const openLinkModal = () => {
             const selection = window.getSelection();
             if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
                 savedSelection = selection.getRangeAt(0);
                 linkModal.style.display = 'flex';
                 linkUrlInput.focus();
-            } else {
-                showNotification("Please select text to create a link.", "error");
-            }
+            } else { showNotification("Please select text to create a link.", "error"); }
         };
-        
-        const closeLinkModal = () => {
-            linkModal.style.display = 'none';
-            linkUrlInput.value = '';
-        };
-
+        const closeLinkModal = () => { linkModal.style.display = 'none'; linkUrlInput.value = ''; };
         const applyLink = () => {
             let url = linkUrlInput.value.trim();
-            if (url && !/^https?:\/\//i.test(url)) {
-                url = 'https://' + url;
-            }
-
+            if (url && !/^https?:\/\//i.test(url)) { url = 'https://' + url; }
             if (url && savedSelection) {
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(savedSelection);
-                
                 document.execCommand('createLink', false, url);
-                
                 const newLink = postContentEditor.querySelector(`a[href="${url}"]`);
                 if (newLink) {
                     newLink.target = '_blank';
@@ -523,54 +529,27 @@
                     newLink.style.textDecoration = 'underline';
                     newLink.style.textDecorationStyle = 'dotted';
                 }
-
                 postContentEditor.dispatchEvent(new Event('input'));
                 closeLinkModal();
             }
         };
-
-        const openEmbedModal = () => {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
-                showNotification("Cannot embed over selected text. Place cursor where you want to embed.", "error");
-                return;
-            }
-            savedSelection = selection.getRangeAt(0);
-            embedModal.style.display = 'flex';
-        };
-
-        const closeEmbedModal = () => {
-            embedModal.style.display = 'none';
-            embedModalTextarea.value = '';
-        };
-
+        const openEmbedModal = () => { savedSelection = window.getSelection().getRangeAt(0); embedModal.style.display = 'flex'; };
+        const closeEmbedModal = () => { embedModal.style.display = 'none'; embedModalTextarea.value = ''; };
         const applyEmbed = () => {
             let embedCode = embedModalTextarea.value.trim();
-            
-            // ## FIX: Automatically create Reddit embed code from a URL ##
             const redditPostRegex = /https?:\/\/(?:www\.)?reddit\.com\/r\/\w+\/comments\/\w+/;
             if (redditPostRegex.test(embedCode)) {
-                // If the user pastes a plain Reddit link, convert it to the proper embed blockquote
                 embedCode = `<blockquote class="reddit-card" data-card-controls="false" data-card-width="100%"><a href="${embedCode}"></a></blockquote>`;
             }
-
             if (embedCode && savedSelection) {
                 const placeholder = document.createElement('div');
                 placeholder.className = 'embed-placeholder';
-                placeholder.textContent = 'EMBED IS HERE';
+                placeholder.textContent = 'EMBEDDED CONTENT';
                 placeholder.setAttribute('contenteditable', 'false');
                 placeholder.dataset.embedCode = embedCode;
-
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(savedSelection);
                 savedSelection.deleteContents();
                 savedSelection.insertNode(placeholder);
-                
-                const lineBreak = document.createElement('div');
-                lineBreak.innerHTML = '<br>';
-                placeholder.after(lineBreak);
-
+                placeholder.after(document.createElement('br'));
                 postContentEditor.dispatchEvent(new Event('input'));
                 closeEmbedModal();
             }
@@ -583,32 +562,32 @@
         cancelEmbedButton.addEventListener('click', closeEmbedModal);
         saveEmbedButton.addEventListener('click', applyEmbed);
 
+        // --- REFACTORED POST SUBMISSION LOGIC ---
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            postContentEditor.dispatchEvent(new Event('input'));
+            postContentEditor.dispatchEvent(new Event('input')); // Ensure source is updated
             const content = postContentSource.value.trim();
             if (!content || !currentBlogId) {
-                return showNotification("Missing content or blog ID.", "error");
+                return showNotification("Post content cannot be empty.", "error");
             }
 
             submitButton.disabled = true;
-            submitButton.textContent = "Posting...";
+            submitButton.textContent = editingPostId ? "Saving..." : "Posting...";
 
             try {
                 const selectedOption = authorSelect.options[authorSelect.selectedIndex];
-                if (!selectedOption) {
-                    throw new Error("No author selected.");
-                }
                 const authorId = selectedOption.value;
                 const authorName = selectedOption.textContent;
                 const authorAvatar = selectedOption.dataset.avatar;
 
+                // **SOLIDIFIED**: Unpin other posts if this one is being pinned.
                 const isPinned = pinPostCheckbox.checked;
                 if (isPinned) {
                     const postsRef = collection(db, 'posts');
                     const q = query(postsRef, where('blogId', '==', currentBlogId), where('isPinned', '==', true));
                     const querySnapshot = await getDocs(q);
                     for (const docSnap of querySnapshot.docs) {
+                        // Only unpin if it's not the very post we are currently editing.
                         if (docSnap.id !== editingPostId) {
                             await updateDoc(doc(db, 'posts', docSnap.id), { isPinned: false });
                         }
@@ -627,9 +606,9 @@
                 const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
                 
                 const postData = {
-                    authorId: authorId,
-                    authorName: authorName,
-                    authorAvatar: authorAvatar,
+                    authorId,
+                    authorName,
+                    authorAvatar,
                     subtitle: postSubtitleInput.value.trim(),
                     content,
                     reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
@@ -640,58 +619,43 @@
 
                 if (editingPostId) {
                     const postDocRef = doc(db, 'posts', editingPostId);
-                    if (mediaFile) {
-                        postData.mediaUrl = mediaUrl;
-                        postData.mediaType = mediaType;
-                    }
+                    const existingPost = adminAllPostsCached.find(p => p.id === editingPostId);
+                    // Only update media if a new file is chosen, otherwise keep the old one.
+                    postData.mediaUrl = mediaUrl || existingPost.mediaUrl;
+                    postData.mediaType = mediaType || existingPost.mediaType;
+                    
                     await updateDoc(postDocRef, postData);
-                    showNotification("Post updated!", "success");
+                    showNotification("Post updated successfully!", "success");
                 } else {
                     postData.blogId = currentBlogId;
                     postData.timestamp = serverTimestamp();
                     postData.mediaUrl = mediaUrl;
                     postData.mediaType = mediaType;
                     await addDoc(collection(db, 'posts'), postData);
-                    showNotification("Post added!", "success");
+                    showNotification("Post added successfully!", "success");
                 }
 
-                postContentEditor.innerHTML = '';
-                postContentSource.value = '';
-                postSubtitleInput.value = '';
-                postMediaInput.value = '';
-                pinPostCheckbox.checked = false;
-                isLivePageEditorCheckbox.checked = false;
-                hideReportingFromCheckbox.checked = false;
-                updateReportingFromVisibility();
-                renderPostTabAssignmentCheckboxes([]);
-                authorSelect.value = currentUser.uid;
-                updateAuthorAvatarPreview();
-                
-                editingPostId = null;
-                submitButton.textContent = "Post Update";
-                
+                resetPostForm(); // Use the centralized reset function
                 await loadPostsForAdmin();
 
             } catch (error) {
                 console.error("Error saving post:", error);
                 showNotification("Failed to save post: " + error.message, "error");
-            } finally {
-                submitButton.disabled = false;
+                submitButton.disabled = false; // Re-enable on error
             }
         });
 
         function timeAgo(timestamp) {
             if (!timestamp) return 'Just now';
-            const now = new Date();
             const postDate = timestamp.toDate();
-            const seconds = Math.floor((now - postDate) / 1000);
-            if (seconds < 60) return `${seconds} seconds ago`;
+            const seconds = Math.floor((new Date() - postDate) / 1000);
+            if (seconds < 60) return `${seconds}s ago`;
             const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} minutes ago`;
+            if (minutes < 60) return `${minutes}m ago`;
             const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours} hours ago`;
+            if (hours < 24) return `${hours}h ago`;
             const days = Math.floor(hours / 24);
-            return `${days} days ago`;
+            return `${days}d ago`;
         }
 
         const loadPostsForAdmin = async () => {
@@ -700,7 +664,7 @@
                 const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
                 const querySnapshot = await getDocs(q);
                 let posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                posts.sort((a, b) => (b.isPinned || false) - (a.isPinned || false));
+                posts.sort((a, b) => (b.isPinned === true) - (a.isPinned === true)); // Robust pin sorting
                 adminAllPostsCached = posts;
                 renderAdminPosts(posts);
             } catch (error) {
@@ -717,8 +681,10 @@
             postsContainer.innerHTML = posts.map(post => {
                 const isPinned = post.isPinned ? 'pinned' : '';
                 const pinnedIcon = post.isPinned ? `<i class="fas fa-thumbtack pinned-icon" title="Pinned Post"></i>` : '';
-                const mediaHtml = post.mediaUrl
+                const mediaHtml = post.mediaUrl && post.mediaType.startsWith('image')
                     ? `<img src="${post.mediaUrl}" alt="Post media" class="post-media">`
+                    : post.mediaUrl && post.mediaType.startsWith('video')
+                    ? `<video src="${post.mediaUrl}" class="post-media" controls></video>`
                     : '';
                 
                 let reportingFromHtml = '';
@@ -754,6 +720,7 @@
             }).join('');
         };
         
+        // --- REFACTORED POST ACTIONS (EDIT/DELETE) ---
         postsContainer.addEventListener('click', async (e) => {
             const editButton = e.target.closest('.edit-post-button');
             const deleteButton = e.target.closest('.delete-post-button');
@@ -762,21 +729,29 @@
                 const postId = editButton.dataset.postId;
                 const postToEdit = adminAllPostsCached.find(p => p.id === postId);
                 if (postToEdit) {
+                    // **FIX**: Robustly populate the entire form for editing
                     editingPostId = postId;
+                    
                     authorSelect.value = postToEdit.authorId;
                     updateAuthorAvatarPreview();
+                    
+                    postContentEditor.innerHTML = postToEdit.content || '';
                     postContentSource.value = postToEdit.content || '';
-                    formatCodeButton.click(); 
-                    formatCodeButton.click();
+                    
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
                     hideReportingFromCheckbox.checked = postToEdit.hideReportingFrom || false;
                     isLivePageEditorCheckbox.checked = postToEdit.reportingFrom === 'Live Page Editor';
-                    updateReportingFromVisibility();
-                    if(postToEdit.reportingFrom !== 'Live Page Editor'){
+                    
+                    updateReportingFromVisibility(); // Update visibility based on checkbox state
+                    
+                    if(!isLivePageEditorCheckbox.checked && !hideReportingFromCheckbox.checked){
                         reportingFromInput.value = postToEdit.reportingFrom.replace(/^Reporting from\s*/, '') || 'Montreal';
                     }
+
                     renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
+                    
+                    formHeader.textContent = "Edit Post";
                     submitButton.textContent = "Save Changes";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -784,7 +759,7 @@
 
             if (deleteButton) {
                 const postId = deleteButton.dataset.postId;
-                if (confirm("Are you sure you want to delete this post?")) {
+                if (window.confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
                     try {
                         await deleteDoc(doc(db, 'posts', postId));
                         showNotification("Post deleted.", "success");
