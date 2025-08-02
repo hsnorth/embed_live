@@ -50,6 +50,29 @@
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
         
+        // --- NEW: Event listener for "Show More" / "Show Less" buttons ---
+        postsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('toggle-content-button')) {
+                const button = e.target;
+                const postCard = button.closest('.post-card');
+                const postText = postCard.querySelector('.post-text.expandable');
+
+                if (postText) {
+                    const isExpanded = postText.classList.toggle('expanded');
+                    button.textContent = isExpanded ? 'Show Less' : 'Show More';
+                    
+                    // After content size changes, we need to inform the parent iframe to resize
+                    if (window.parent) {
+                        // Wait for CSS transition to finish for accurate height
+                        setTimeout(() => {
+                            const height = document.body.scrollHeight;
+                            window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+                        }, 400); // Match the longest transition time in CSS
+                    }
+                }
+            }
+        });
+
         function timeAgo(timestamp) {
             if (!timestamp || typeof timestamp.toDate !== 'function') return '';
             const now = new Date();
@@ -91,6 +114,22 @@
                 }
             }
             
+            // --- NEW: Logic for "Show More" button ---
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = fullContentHtml;
+            const textLength = tempDiv.textContent.length;
+            const characterLimit = 450;
+
+            let postTextHtml;
+            let showMoreButtonHtml = '';
+
+            if (textLength > characterLimit) {
+                postTextHtml = `<div class="post-text expandable">${fullContentHtml}</div>`;
+                showMoreButtonHtml = `<button class="toggle-content-button">Show More</button>`;
+            } else {
+                postTextHtml = `<div class="post-text">${fullContentHtml}</div>`;
+            }
+
             postCard.innerHTML = `
                 ${pinnedIndicatorHtml}
                 <div class="post-header-line">
@@ -101,8 +140,9 @@
                     </div>
                 </div>
                 ${subtitleHtml}
-                <div class="post-text">${fullContentHtml}</div>
+                ${postTextHtml}
                 ${mediaHtml}
+                ${showMoreButtonHtml}
             `;
     
             return postCard;
