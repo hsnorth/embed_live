@@ -256,6 +256,12 @@ section {
     border-color: #bbb;
 }
 
+/* START CHANGE: Pushes the source code button to the far right */
+#formatCodeButton {
+    margin-left: auto;
+}
+/* END CHANGE */
+
 .source-view {
     font-family: monospace;
     background-color: #2d2d2d;
