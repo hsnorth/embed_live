@@ -189,6 +189,16 @@ section {
     font-size: 1rem;
 }
 
+/* START CHANGE: Increased height of textarea */
+.textarea-field {
+    height: 250px;
+    resize: vertical;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+/* END CHANGE */
+
+
 .input-field:focus,
 .textarea-field:focus {
     border-color: #e74c3c;
@@ -212,6 +222,39 @@ section {
     background-color: #c0392b;
     transform: translateY(-1px);
 }
+
+/* START CHANGE: Styles for formatting buttons */
+.textarea-wrapper {
+    position: relative;
+}
+
+.format-buttons-container {
+    display: flex;
+    gap: 5px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+}
+
+.format-button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.format-button:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}
+/* END CHANGE */
+
 
 /* --- Tab Management Section --- */
 .tab-management-controls {
@@ -441,7 +484,6 @@ footer {
     outline: none;
 }
 
-/* START CHANGE: Style for the options inside the dropdown */
 #authorSelect option {
     padding: 10px;
     background-color: #fff;
@@ -452,4 +494,3 @@ footer {
 #authorSelect option:hover {
     background-color: #f0f2f5;
 }
-/* END CHANGE */
