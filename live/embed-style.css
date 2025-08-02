@@ -146,6 +146,12 @@ main {
     width: auto;
 }
 
+/* START CHANGE: Added a black background to videos */
+.post-video {
+    background-color: #000;
+}
+/* END CHANGE */
+
 /* --- Show More Button --- */
 .show-more-button {
     display: block;
