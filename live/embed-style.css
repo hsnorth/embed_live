@@ -28,11 +28,11 @@ main {
     background-color: transparent;
 }
 
+/* START CHANGE: Removed border and border-radius */
 .posts-page {
-    border: 1px solid #ebeef0;
-    border-radius: 8px;
     min-height: 200px; /* Set a min-height to avoid collapse when empty */
 }
+/* END CHANGE */
 
 /* --- Individual Post Card Styling --- */
 .post-card {
