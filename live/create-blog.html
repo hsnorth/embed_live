@@ -509,6 +509,21 @@
         postContentSource.addEventListener('input', () => {
             postContentEditor.innerHTML = postContentSource.value;
         });
+
+        // Add a paste event listener to the content editor
+        postContentEditor.addEventListener('paste', function(e) {
+            // Prevent the default paste action
+            e.preventDefault();
+        
+            // Get the plain text from the clipboard
+            const text = e.clipboardData.getData('text/plain');
+        
+            // Insert the text at the current cursor position
+            document.execCommand('insertText', false, text);
+        
+            // Trigger the input event to update the source view and internal state
+            postContentEditor.dispatchEvent(new Event('input'));
+        });
     
         formatBoldButton.addEventListener('click', () => { document.execCommand('bold'); postContentEditor.dispatchEvent(new Event('input')); });
         formatItalicButton.addEventListener('click', () => { document.execCommand('italic'); postContentEditor.dispatchEvent(new Event('input')); });
