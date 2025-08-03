@@ -566,3 +566,17 @@ footer {
 #authorSelect option:hover {
     background-color: #f0f2f5;
 }
+
+/* Add padding to bullet lists within the post content to fix indentation */
+.post-text ul {
+    padding-inline-start: 20px;
+    margin-bottom: 1em;
+}
+
+.post-text li {
+    margin-bottom: 0.5em;
+}
+
+.post-text li:last-child {
+    margin-bottom: 0;
+}
