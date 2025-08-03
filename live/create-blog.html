@@ -145,13 +145,6 @@
                         Hide "Reporting From" line (shows author only)
                     </label>
                 </div>
-
-                
-                <div class="form-group">
-                    <label>Assign to Tabs:</label>
-                    <div id="postTabAssignment" class="tab-selection-group">
-                    </div>
-                </div>
                 
                 <div class="form-group">
                     <label class="checkbox-label" title="Pinning this post will unpin any other post in this blog.">
@@ -168,15 +161,6 @@
             </form>
         </section>
         
-        <section class="tab-management-section">
-            <h2>Manage Custom Tabs</h2>
-            <div class="tab-management-controls">
-                <input type="text" id="newTabNameInput" class="input-field" placeholder="New Tab Name">
-                <button id="addTabButton" class="submit-button">Add Tab</button>
-            </div>
-            <ul id="customTabList" class="tab-list">
-            </ul>
-        </section>
         <section class="embed-code-section">
             <h2>Only for CUE: Copy the code below</h2>
             <p>Copy the code below and paste it into your website's HTML where you want the live blog to appear.</p>
@@ -227,12 +211,11 @@
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
     
-        // --- CONFIGURATION FIX: Corrected storageBucket URL ---
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
             authDomain: "myliveblogapp-cf9df.firebaseapp.com",
             projectId: "myliveblogapp-cf9df",
-            storageBucket: "myliveblogapp-cf9df.firebasestorage.app", // CORRECTED
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
             messagingSenderId: "324824649312",
             appId: "1:324824649312:web:c0750693346091d853bd05",
         };
@@ -245,8 +228,6 @@
         let currentUser = null;
         let currentBlogId = null;
         let currentBlogName = '';
-        let customTabs = [];
-        const defaultTab = "Live Reporting";
         let adminAllPostsCached = [];
         let editingPostId = null;
         let allUsers = [];
@@ -269,10 +250,6 @@
         const submitButton = postForm.querySelector('.submit-button');
         const copyableEmbedCode = document.getElementById('copyableEmbedCode');
         const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
-        const newTabNameInput = document.getElementById('newTabNameInput');
-        const addTabButton = document.getElementById('addTabButton');
-        const customTabList = document.getElementById('customTabList');
-        const postTabAssignmentDiv = document.getElementById('postTabAssignment');
         const notificationMessage = document.getElementById('notificationMessage');
         const hideReportingFromCheckbox = document.getElementById('hideReportingFromCheckbox');
     
@@ -337,10 +314,7 @@
                     const blogDocRef = doc(db, 'blogs', currentBlogId);
                     const blogDocSnap = await getDoc(blogDocRef);
                     if (blogDocSnap.exists()) {
-                        customTabs = blogDocSnap.data().customTabs || [];
                         generateEmbedCode();
-                        renderCustomTabs();
-                        renderPostTabAssignmentCheckboxes([]);
                         await loadPostsForAdmin();
                     } else {
                         blogHeader.textContent = 'You are on a Live Blog that does not exist';
@@ -392,78 +366,10 @@
             }
             updateAuthorAvatarPreview();
             
-            renderPostTabAssignmentCheckboxes([]);
-            
             formHeader.textContent = "Post an Update";
             submitButton.textContent = "Post Update";
             submitButton.disabled = false;
         }
-    
-        const renderCustomTabs = () => {
-            customTabList.innerHTML = customTabs.map(tabName => `
-                <li>
-                    <span class="tab-name">${tabName}</span>
-                    <button class="delete-tab-button" data-tab-name="${tabName}">Delete</button>
-                </li>
-            `).join('');
-            renderPostTabAssignmentCheckboxes([]);
-        };
-    
-        const addCustomTab = async () => {
-            const newTabName = newTabNameInput.value.trim();
-            if (!currentBlogId) return showNotification("No blog selected.", "error");
-            if (newTabName && !customTabs.includes(newTabName) && newTabName !== defaultTab) {
-                customTabs.push(newTabName);
-                try {
-                    await updateBlogTabsInFirestore();
-                    newTabNameInput.value = '';
-                    renderCustomTabs();
-                } catch (error) {
-                    showNotification("Failed to add tab: " + error.message, "error");
-                    customTabs = customTabs.filter(tab => tab !== newTabName);
-                }
-            } else {
-                showNotification("Tab name is invalid or already exists.", "error");
-            }
-        };
-    
-        const deleteCustomTab = async (tabName) => {
-            if (!currentBlogId) return showNotification("No blog selected.", "error");
-            if (window.confirm(`Are you sure you want to delete the tab "${tabName}"?`)) {
-                const originalTabs = [...customTabs];
-                customTabs = customTabs.filter(tab => tab !== tabName);
-                try {
-                    await updateBlogTabsInFirestore();
-                    renderCustomTabs();
-                } catch (error) {
-                    showNotification("Failed to delete tab: " + error.message, "error");
-                    customTabs = originalTabs;
-                    renderCustomTabs();
-                }
-            }
-        };
-    
-        const updateBlogTabsInFirestore = () => {
-            if (!currentBlogId) throw new Error("No blog ID selected.");
-            const blogDocRef = doc(db, 'blogs', currentBlogId);
-            return updateDoc(blogDocRef, { customTabs });
-        };
-    
-        addTabButton.addEventListener('click', addCustomTab);
-        customTabList.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-tab-button')) {
-                deleteCustomTab(e.target.dataset.tabName);
-            }
-        });
-    
-        const renderPostTabAssignmentCheckboxes = (assignedPostTabs = []) => {
-            const defaultCheckbox = `<label><input type="checkbox" name="postTab" value="${defaultTab}" checked disabled> ${defaultTab}</label>`;
-            const customCheckboxes = customTabs.map(tabName => {
-                const isChecked = assignedPostTabs.includes(tabName);
-                return `<label><input type="checkbox" name="postTab" value="${tabName}" ${isChecked ? 'checked' : ''}> ${tabName}</label>`;
-            }).join('');
-            postTabAssignmentDiv.innerHTML = defaultCheckbox + customCheckboxes;
-        };
     
         const generateEmbedCode = () => {
             if (currentBlogId) {
@@ -665,7 +571,6 @@
                     const authorId = selectedOption.value;
                     const authorName = selectedOption.textContent;
                     const authorAvatar = selectedOption.dataset.avatar;
-                    const selectedTabs = Array.from(postTabAssignmentDiv.querySelectorAll('input[name="postTab"]:checked')).map(cb => cb.value);
     
                     if (editingPostId) {
                         const postDocRef = doc(db, 'posts', editingPostId);
@@ -677,7 +582,6 @@
                             content,
                             reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
                             hideReportingFrom: hideReportingFromCheckbox.checked,
-                            assignedTabs: selectedTabs,
                             isPinned,
                             mediaUrl: mediaUrl || (existingPost ? existingPost.mediaUrl : ''),
                             mediaType: mediaType || (existingPost ? existingPost.mediaType : '')
@@ -694,7 +598,6 @@
                             content,
                             reportingFrom: isLivePageEditorCheckbox.checked ? 'Live Page Editor' : `Reporting from ${reportingFromInput.value.trim()}`,
                             hideReportingFrom: hideReportingFromCheckbox.checked,
-                            assignedTabs: selectedTabs,
                             isPinned,
                             mediaUrl, mediaType
                         };
@@ -851,8 +754,6 @@
                         reportingFromInput.value = (postToEdit.reportingFrom || '').replace(/^Reporting from\s*/, '') || 'Montreal';
                     }
     
-                    renderPostTabAssignmentCheckboxes(postToEdit.assignedTabs || []);
-                    
                     formHeader.textContent = "Edit Post";
                     submitButton.textContent = "Save Changes";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
