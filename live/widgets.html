@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Widgets</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
+        <button id="signOutButtonHeader" class="sign-out-button">Sign Out</button>
+    </header>
+
+    <main>
+        <div class="main-back-button-container">
+            <a href="dashboard.html" class="back-arrow" aria-label="Back to Dashboard">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <span class="back-text">Return to Dashboard</span>
+        </div>
+
+        <h2>Manage Widgets</h2>
+
+        <div id="notificationMessage" class="notification-message" style="display: none;"></div>
+
+        <section class="create-widget-section">
+            <h2>Create a New Widget</h2>
+            <div class="form-group">
+                <label for="widgetTypeSelect">Widget Type:</label>
+                <select id="widgetTypeSelect" class="input-field">
+                    <option value="text">Text-based Widget</option>
+                    <!-- <option value="link" disabled>Link-based Widget (Coming Soon)</option> -->
+                </select>
+            </div>
+
+            <div id="textWidgetForm" style="display: block;">
+                <form id="widgetForm">
+                    <div class="form-group">
+                        <label for="widgetNameInput">Widget Name:</label>
+                        <input type="text" id="widgetNameInput" class="input-field" placeholder="e.g., Latest News, Important Update" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="widgetSubtitleInput">Subtitle (Optional):</label>
+                        <input type="text" id="widgetSubtitleInput" class="input-field" placeholder="Brief summary or sub-heading">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="widgetContentEditor">Widget Content:</label>
+                        <div class="editor-wrapper">
+                            <div id="widgetContentEditor" class="textarea-field" contenteditable="true"></div>
+                            <textarea id="widgetContentSource" class="textarea-field source-view" style="display: none;"></textarea>
+                            <div class="format-buttons-container">
+                                <button type="button" id="formatBoldButton" class="format-button" title="Bold"><i class="fas fa-bold"></i></button>
+                                <button type="button" id="formatItalicButton" class="format-button" title="Italic"><i class="fas fa-italic"></i></button>
+                                <button type="button" id="formatBulletButton" class="format-button" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                <button type="button" id="formatLinkButton" class="format-button" title="Link"><i class="fas fa-link"></i></button>
+                                <button type="button" id="formatEmbedButton" class="format-button" title="Embed">Embed</button>
+                                <button type="button" id="formatCodeButton" class="format-button" title="Source Code"><i class="fas fa-code"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="widgetFooterInput">Footer Text (Optional):</label>
+                        <input type="text" id="widgetFooterInput" class="input-field" placeholder="e.g., Powered by Gazette Live">
+                    </div>
+                    
+                    <button type="submit" class="submit-button" id="saveWidgetButton">Create Widget</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="find-widgets-section">
+            <h2>My Widgets</h2>
+            <div id="widgetsListContainer" class="blog-list">
+                <ul id="myWidgetsList">
+                    <!-- Widgets will be loaded here -->
+                </ul>
+                <p id="noWidgetsMessage" class="no-blogs-message" style="display: none;">No widgets created yet. Create one above!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Link Modal (copied from create-blog.html) -->
+    <div id="linkModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Add Link</h3>
+            <input type="url" id="linkUrlInput" placeholder="https://example.com" class="input-field">
+            <div class="modal-actions">
+                <button id="saveLinkButton" class="submit-button">Save</button>
+                <button id="cancelLinkButton" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embed Modal (copied from create-blog.html) -->
+    <div id="embedModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Paste Embed Code</h3>
+            <textarea id="embedModalTextarea" class="textarea-field" placeholder="Paste your embed code or a Reddit URL here..."></textarea>
+            <div class="modal-actions">
+                <button id="saveEmbedButton" class="submit-button">Done</button>
+                <button id="cancelEmbedButton" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+    
+        let currentUser = null;
+        let editingWidgetId = null;
+    
+        // Form Elements
+        const widgetTypeSelect = document.getElementById('widgetTypeSelect');
+        const textWidgetForm = document.getElementById('textWidgetForm');
+        const widgetNameInput = document.getElementById('widgetNameInput');
+        const widgetSubtitleInput = document.getElementById('widgetSubtitleInput');
+        const widgetContentEditor = document.getElementById('widgetContentEditor');
+        const widgetContentSource = document.getElementById('widgetContentSource');
+        const widgetFooterInput = document.getElementById('widgetFooterInput');
+        const widgetForm = document.getElementById('widgetForm');
+        const saveWidgetButton = document.getElementById('saveWidgetButton');
+        const myWidgetsList = document.getElementById('myWidgetsList');
+        const noWidgetsMessage = document.getElementById('noWidgetsMessage');
+        const notificationMessage = document.getElementById('notificationMessage');
+    
+        // Rich Text Editor Elements (copied from create-blog.html)
+        const formatBoldButton = document.getElementById('formatBoldButton');
+        const formatItalicButton = document.getElementById('formatItalicButton');
+        const formatBulletButton = document.getElementById('formatBulletButton');
+        const formatLinkButton = document.getElementById('formatLinkButton');
+        const formatCodeButton = document.getElementById('formatCodeButton');
+        const formatEmbedButton = document.getElementById('formatEmbedButton');
+        const linkModal = document.getElementById('linkModal');
+        const linkUrlInput = document.getElementById('linkUrlInput');
+        const saveLinkButtonModal = document.getElementById('saveLinkButton'); // Renamed to avoid conflict
+        const cancelLinkButtonModal = document.getElementById('cancelLinkButton'); // Renamed to avoid conflict
+        const embedModal = document.getElementById('embedModal');
+        const embedModalTextarea = document.getElementById('embedModalTextarea');
+        const saveEmbedButtonModal = document.getElementById('saveEmbedButton'); // Renamed to avoid conflict
+        const cancelEmbedButtonModal = document.getElementById('cancelEmbedButton'); // Renamed to avoid conflict
+        let savedSelection;
+    
+        const showNotification = (message, type) => {
+            notificationMessage.textContent = message;
+            notificationMessage.className = 'notification-message show ' + type;
+            notificationMessage.style.display = 'block';
+            setTimeout(() => {
+                notificationMessage.classList.remove('show');
+                setTimeout(() => { notificationMessage.style.display = 'none'; }, 300);
+            }, 4000);
+        };
+    
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                currentUser = user;
+                loadWidgets();
+            }
+        });
+    
+        document.getElementById('signOutButtonHeader').addEventListener('click', () => signOut(auth));
+    
+        // --- Rich Text Editor Logic (copied and adapted from create-blog.html) ---
+        widgetContentEditor.addEventListener('input', () => {
+            let sourceHtml = widgetContentEditor.innerHTML;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sourceHtml;
+            tempDiv.querySelectorAll('.embed-placeholder').forEach(placeholder => {
+                const decodedEmbed = placeholder.dataset.embedCode;
+                if (decodedEmbed) {
+                    placeholder.outerHTML = decodedEmbed;
+                }
+            });
+            widgetContentSource.value = tempDiv.innerHTML;
+        });
+    
+        widgetContentSource.addEventListener('input', () => {
+            widgetContentEditor.innerHTML = widgetContentSource.value;
+        });
+
+        widgetContentEditor.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
+            widgetContentEditor.dispatchEvent(new Event('input'));
+        });
+    
+        formatBoldButton.addEventListener('click', () => { document.execCommand('bold'); widgetContentEditor.dispatchEvent(new Event('input')); });
+        formatItalicButton.addEventListener('click', () => { document.execCommand('italic'); widgetContentEditor.dispatchEvent(new Event('input')); });
+        formatBulletButton.addEventListener('click', () => { document.execCommand('insertUnorderedList'); widgetContentEditor.dispatchEvent(new Event('input')); });
+    
+        formatCodeButton.addEventListener('click', () => {
+            if (widgetContentEditor.style.display === 'none') {
+                widgetContentEditor.innerHTML = widgetContentSource.value;
+                widgetContentEditor.style.display = 'block';
+                widgetContentSource.style.display = 'none';
+            } else {
+                widgetContentEditor.dispatchEvent(new Event('input'));
+                widgetContentEditor.style.display = 'none';
+                widgetContentSource.style.display = 'block';
+            }
+        });
+        
+        const openLinkModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && !selection.getRangeAt(0).collapsed) {
+                savedSelection = selection.getRangeAt(0);
+                linkModal.style.display = 'flex';
+                linkUrlInput.focus();
+            } else { showNotification("Please select text to create a link.", "error"); }
+        };
+        const closeLinkModal = () => { linkModal.style.display = 'none'; linkUrlInput.value = ''; };
+        const applyLink = () => {
+            let url = linkUrlInput.value.trim();
+            if (url && !/^https?:\/\//i.test(url)) { url = 'https://' + url; }
+            if (url && savedSelection) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                document.execCommand('createLink', false, url);
+                const newLink = widgetContentEditor.querySelector(`a[href="${url}"]`);
+                if (newLink) {
+                    newLink.target = '_blank';
+                    newLink.style.color = 'red';
+                    newLink.style.textDecoration = 'underline';
+                    newLink.style.textDecorationStyle = 'dotted';
+                }
+                widgetContentEditor.dispatchEvent(new Event('input'));
+                closeLinkModal();
+            }
+        };
+    
+        const openEmbedModal = () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                savedSelection = selection.getRangeAt(0).cloneRange();
+                embedModal.style.display = 'flex';
+                embedModalTextarea.focus();
+            } else {
+                showNotification("Place your cursor where you want to embed.", "error");
+            }
+        };
+        
+        const closeEmbedModal = () => { 
+            embedModal.style.display = 'none'; 
+            embedModalTextarea.value = ''; 
+        };
+        
+        const applyEmbed = () => {
+            let embedCode = embedModalTextarea.value.trim();
+            const redditPostRegex = /https?:\/\/(?:www\.)?reddit\.com\/r\/\w+\/comments\/\w+/;
+            if (redditPostRegex.test(embedCode)) {
+                embedCode = `<blockquote class="reddit-card" data-card-controls="false" data-card-width="100%"><a href="${embedCode}"></a></blockquote>`;
+            }
+            if (embedCode && savedSelection) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'embed-placeholder';
+                placeholder.textContent = 'EMBEDDED CONTENT';
+                placeholder.setAttribute('contenteditable', 'false');
+                placeholder.dataset.embedCode = embedCode;
+    
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedSelection);
+                
+                selection.getRangeAt(0).deleteContents();
+                selection.getRangeAt(0).insertNode(placeholder);
+    
+                const range = document.createRange();
+                range.setStartAfter(placeholder);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                const br = document.createElement('br');
+                placeholder.after(br);
+    
+                widgetContentEditor.dispatchEvent(new Event('input'));
+                closeEmbedModal();
+            }
+        };
+    
+        formatLinkButton.addEventListener('click', openLinkModal);
+        cancelLinkButtonModal.addEventListener('click', closeLinkModal);
+        saveLinkButtonModal.addEventListener('click', applyLink);
+        formatEmbedButton.addEventListener('click', openEmbedModal);
+        cancelEmbedButtonModal.addEventListener('click', closeEmbedModal);
+        saveEmbedButtonModal.addEventListener('click', applyEmbed);
+        // --- END Rich Text Editor Logic ---
+    
+        // --- Widget Form Submission ---
+        widgetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            widgetContentEditor.dispatchEvent(new Event('input')); // Ensure source is updated
+    
+            const widgetName = widgetNameInput.value.trim();
+            const widgetSubtitle = widgetSubtitleInput.value.trim();
+            const widgetContent = widgetContentSource.value.trim();
+            const widgetFooter = widgetFooterInput.value.trim();
+            const widgetType = widgetTypeSelect.value;
+    
+            if (!widgetName || !widgetContent) {
+                showNotification("Widget name and content cannot be empty.", "error");
+                return;
+            }
+    
+            saveWidgetButton.disabled = true;
+            saveWidgetButton.textContent = editingWidgetId ? "Saving Widget..." : "Creating Widget...";
+    
+            try {
+                const widgetData = {
+                    name: widgetName,
+                    type: widgetType,
+                    subtitle: widgetSubtitle,
+                    content: widgetContent,
+                    footer: widgetFooter,
+                    createdBy: currentUser.uid,
+                    createdAt: serverTimestamp()
+                };
+    
+                if (editingWidgetId) {
+                    await updateDoc(doc(db, 'widgets', editingWidgetId), widgetData);
+                    showNotification("Widget updated successfully!", "success");
+                } else {
+                    await addDoc(collection(db, 'widgets'), widgetData);
+                    showNotification("Widget created successfully!", "success");
+                }
+    
+                resetWidgetForm();
+                loadWidgets();
+    
+            } catch (error) {
+                console.error("Error saving widget:", error);
+                showNotification(`Failed to save widget: ${error.message}`, "error");
+            } finally {
+                saveWidgetButton.disabled = false;
+                saveWidgetButton.textContent = editingWidgetId ? "Save Changes" : "Create Widget";
+            }
+        });
+    
+        function resetWidgetForm() {
+            editingWidgetId = null;
+            widgetForm.reset();
+            widgetContentEditor.innerHTML = '';
+            widgetContentSource.value = '';
+            saveWidgetButton.textContent = "Create Widget";
+        }
+    
+        // --- Load and Display Widgets ---
+        const loadWidgets = async () => {
+            if (!currentUser) return;
+            try {
+                const q = query(collection(db, 'widgets'), where('createdBy', '==', currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                const widgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+                if (widgets.length === 0) {
+                    myWidgetsList.innerHTML = '';
+                    noWidgetsMessage.style.display = 'block';
+                } else {
+                    myWidgetsList.innerHTML = '';
+                    widgets.forEach(widget => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <span><strong>${widget.name}</strong> (${widget.type})</span>
+                            <div>
+                                <button class="edit-widget-button submit-button" data-widget-id="${widget.id}">Edit</button>
+                                <button class="delete-widget-button cancel-button" data-widget-id="${widget.id}">Delete</button>
+                            </div>
+                        `;
+                        myWidgetsList.appendChild(listItem);
+                    });
+                    noWidgetsMessage.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error loading widgets:", error);
+                showNotification("Error loading widgets.", "error");
+            }
+        };
+    
+        // --- Edit and Delete Widget Actions ---
+        myWidgetsList.addEventListener('click', async (e) => {
+            const editButton = e.target.closest('.edit-widget-button');
+            const deleteButton = e.target.closest('.delete-widget-button');
+    
+            if (editButton) {
+                const widgetId = editButton.dataset.widgetId;
+                const widgetDoc = await getDoc(doc(db, 'widgets', widgetId));
+                if (widgetDoc.exists()) {
+                    const widgetData = widgetDoc.data();
+                    editingWidgetId = widgetId;
+    
+                    widgetNameInput.value = widgetData.name || '';
+                    widgetTypeSelect.value = widgetData.type || 'text'; // Set type
+                    widgetSubtitleInput.value = widgetData.subtitle || '';
+                    widgetContentEditor.innerHTML = widgetData.content || '';
+                    widgetContentSource.value = widgetData.content || ''; // Sync source view
+                    widgetFooterInput.value = widgetData.footer || '';
+    
+                    saveWidgetButton.textContent = "Save Changes";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (deleteButton) {
+                const widgetId = deleteButton.dataset.widgetId;
+                if (confirm("Are you sure you want to delete this widget? This action cannot be undone.")) {
+                    try {
+                        await deleteDoc(doc(db, 'widgets', widgetId));
+                        showNotification("Widget deleted successfully!", "success");
+                        loadWidgets();
+                    } catch (error) {
+                        showNotification("Error deleting widget: " + error.message, "error");
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
