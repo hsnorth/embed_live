@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 
@@ -42,11 +43,19 @@
             <button id="startNewBlogBtn" class="submit-button">Start New Blog</button>
         </section>
 
+        <!-- NEW WIDGETS SECTION -->
+        <section class="widgets-section">
+            <h2>Create a Widget / See my Widgets</h2>
+            <p>Design and manage interactive add-ons for your live blogs.</p>
+            <button id="manageWidgetsBtn" class="submit-button">Go to Widgets Page</button>
+        </section>
+        <!-- END NEW WIDGETS SECTION -->
+
         <section class="view-blogs-container">
             <h2>Find a Live Blog</h2>
             <div class="blog-list" id="blogListContainer">
                 <ul id="liveBlogsList">
-                    </ul>
+                </ul>
                 <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No blogs created yet. Create one above!</p>
             </div>
         </section>
@@ -111,10 +120,12 @@
                         window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
                     } catch (e) {
                         console.error("Error adding document: ", e);
-                        alert("Error creating blog. Please try again.");
+                        // Using a custom notification instead of alert
+                        showNotification("Error creating blog. Please try again.", "error");
                     }
                 } else {
-                    alert('Please enter a name for your new blog.');
+                    // Using a custom notification instead of alert
+                    showNotification('Please enter a name for your new blog.', "error");
                 }
             });
 
@@ -125,9 +136,31 @@
                     // onAuthStateChanged will handle the redirect to the login page.
                 } catch (error) {
                     console.error("Error signing out:", error);
-                    alert("Could not sign out. Please try again.");
+                    // Using a custom notification instead of alert
+                    showNotification("Could not sign out. Please try again.", "error");
                 }
             });
+
+            // NEW: Event listener for the "Go to Widgets Page" button
+            document.getElementById('manageWidgetsBtn').addEventListener('click', () => {
+                window.location.href = 'widgets.html'; // This will be the new page
+            });
+
+            // Re-adding the showNotification function for consistency
+            const notificationMessage = document.createElement('div');
+            notificationMessage.id = 'dashboardNotificationMessage';
+            notificationMessage.className = 'notification-message';
+            document.body.appendChild(notificationMessage); // Append to body or a suitable container
+
+            const showNotification = (message, type) => {
+                notificationMessage.textContent = message;
+                notificationMessage.className = 'notification-message show ' + type;
+                notificationMessage.style.display = 'block';
+                setTimeout(() => {
+                    notificationMessage.classList.remove('show');
+                    setTimeout(() => { notificationMessage.style.display = 'none'; }, 300);
+                }, 4000);
+            };
         }
 
         // --- Function to load and display ALL blogs ---
