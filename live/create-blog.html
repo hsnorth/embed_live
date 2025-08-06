@@ -64,6 +64,20 @@
             min-height: 150px;
             height: auto;
         }
+        /* Widget placeholder styling */
+        .widget-placeholder {
+            background-color: #f0f8ff; /* Light blue background */
+            border: 1px dashed #aed6f1; /* Dashed blue border */
+            padding: 10px 15px;
+            margin: 10px 0;
+            text-align: center;
+            color: #2e86c1; /* Darker blue text */
+            font-family: monospace;
+            font-size: 0.9em;
+            cursor: default;
+            user-select: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +175,24 @@
                 <button type="submit" class="submit-button">Post Update</button>
             </form>
         </section>
+
+        <!-- NEW WIDGET INSERTION SECTION -->
+        <section class="use-widget-section">
+            <h2>Use a Widget</h2>
+            <p>Insert a pre-designed widget into your post content.</p>
+            <div class="form-group">
+                <label for="widgetSelect">Select Widget:</label>
+                <select id="widgetSelect" class="input-field">
+                    <option value="">-- Select a Widget --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="widgetPositionInput">Insert After Post Number (e.g., 3 for after 3rd post, leave empty for end):</label>
+                <input type="number" id="widgetPositionInput" class="input-field" min="0" placeholder="e.g., 3 or leave empty for end">
+            </div>
+            <button type="button" id="insertWidgetButton" class="submit-button">Insert Widget Placeholder</button>
+        </section>
+        <!-- END NEW WIDGET INSERTION SECTION -->
         
         <section class="embed-code-section">
             <h2>Only for CUE: Copy the code below</h2>
@@ -232,6 +264,7 @@
         let adminAllPostsCached = [];
         let editingPostId = null;
         let allUsers = [];
+        let allWidgets = []; // To store fetched widgets
     
         // Form Elements
         const formHeader = document.getElementById('formHeader');
@@ -253,6 +286,11 @@
         const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
         const notificationMessage = document.getElementById('notificationMessage');
         const hideReportingFromCheckbox = document.getElementById('hideReportingFromCheckbox');
+
+        // NEW Widget Elements
+        const widgetSelect = document.getElementById('widgetSelect');
+        const widgetPositionInput = document.getElementById('widgetPositionInput');
+        const insertWidgetButton = document.getElementById('insertWidgetButton');
     
         const showNotification = (message, type) => {
             notificationMessage.textContent = message;
@@ -289,6 +327,27 @@
                 showNotification("Could not load author list.", "error");
             }
         };
+
+        // NEW: Function to load widgets and populate the dropdown
+        const loadWidgetsForSelection = async () => {
+            if (!currentUser) return;
+            try {
+                const q = query(collection(db, 'widgets'), where('createdBy', '==', currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                allWidgets = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                widgetSelect.innerHTML = '<option value="">-- Select a Widget --</option>'; // Reset and add default
+                allWidgets.forEach(widget => {
+                    const option = document.createElement('option');
+                    option.value = widget.id;
+                    option.textContent = widget.name;
+                    widgetSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error loading widgets for selection:", error);
+                showNotification("Could not load widgets for selection.", "error");
+            }
+        };
     
         const updateAuthorAvatarPreview = () => {
             const selectedOption = authorSelect.options[authorSelect.selectedIndex];
@@ -305,6 +364,7 @@
             } else {
                 currentUser = user;
                 await loadAllUsersAndPopulateDropdown(); 
+                await loadWidgetsForSelection(); // NEW: Load widgets on auth state change
     
                 const urlParams = new URLSearchParams(window.location.search);
                 currentBlogId = urlParams.get('blogId');
@@ -370,6 +430,10 @@
             formHeader.textContent = "Post an Update";
             submitButton.textContent = "Post Update";
             submitButton.disabled = false;
+
+            // NEW: Reset widget selection
+            widgetSelect.value = '';
+            widgetPositionInput.value = '';
         }
     
         const generateEmbedCode = () => {
@@ -411,11 +475,25 @@
                     placeholder.outerHTML = decodedEmbed;
                 }
             });
+            // NEW: Handle widget placeholders when converting to source
+            tempDiv.querySelectorAll('.widget-placeholder').forEach(placeholder => {
+                const widgetId = placeholder.dataset.widgetId;
+                const widgetPosition = placeholder.dataset.widgetPosition;
+                // Reconstruct a unique string for the source view that can be parsed back
+                placeholder.outerHTML = `<!--WIDGET::${widgetId}::${widgetPosition}-->`;
+            });
             postContentSource.value = tempDiv.innerHTML;
         });
     
         postContentSource.addEventListener('input', () => {
-            postContentEditor.innerHTML = postContentSource.value;
+            // When source view is edited, convert widget markers back to placeholders
+            let editorHtml = postContentSource.value;
+            const widgetRegex = /<!--WIDGET::([^:]+)::([^:]+)-->/g;
+            editorHtml = editorHtml.replace(widgetRegex, (match, widgetId, widgetPosition) => {
+                const widgetName = (allWidgets.find(w => w.id === widgetId)?.name || 'Unknown Widget');
+                return `<div class="widget-placeholder" data-widget-id="${widgetId}" data-widget-position="${widgetPosition}" contenteditable="false">WIDGET: ${widgetName} (Position: ${widgetPosition || 'End'})</div>`;
+            });
+            postContentEditor.innerHTML = editorHtml;
         });
 
         // Add a paste event listener to the content editor
@@ -537,6 +615,46 @@
         formatEmbedButton.addEventListener('click', openEmbedModal);
         cancelEmbedButton.addEventListener('click', closeEmbedModal);
         saveEmbedButton.addEventListener('click', applyEmbed);
+
+        // NEW: Insert Widget Button Logic
+        insertWidgetButton.addEventListener('click', () => {
+            const selectedWidgetId = widgetSelect.value;
+            const selectedWidgetName = widgetSelect.options[widgetSelect.selectedIndex]?.textContent;
+            const widgetPosition = widgetPositionInput.value.trim();
+
+            if (!selectedWidgetId) {
+                showNotification("Please select a widget to insert.", "error");
+                return;
+            }
+
+            const placeholder = document.createElement('div');
+            placeholder.className = 'widget-placeholder';
+            placeholder.textContent = `WIDGET: ${selectedWidgetName || 'Unknown Widget'} (Position: ${widgetPosition || 'End'})`;
+            placeholder.setAttribute('contenteditable', 'false');
+            placeholder.dataset.widgetId = selectedWidgetId;
+            placeholder.dataset.widgetPosition = widgetPosition;
+
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(placeholder);
+
+                const newRange = document.createRange();
+                newRange.setStartAfter(placeholder);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+
+                const br = document.createElement('br');
+                placeholder.after(br);
+
+                postContentEditor.dispatchEvent(new Event('input'));
+                showNotification("Widget placeholder inserted!", "success");
+            } else {
+                showNotification("Please place your cursor where you want to insert the widget.", "error");
+            }
+        });
     
         // --- REWRITTEN: Form submission logic with upload progress ---
         postForm.addEventListener('submit', (e) => {
@@ -701,6 +819,15 @@
                 if (post.reportingFrom && !post.hideReportingFrom) {
                     reportingFromHtml = `<span class="reporting-from">${post.reportingFrom}</span>`;
                 }
+
+                // Render widget placeholders for admin view
+                let contentToDisplay = post.content || '';
+                const widgetRegex = /<!--WIDGET::([^:]+)::([^:]+)-->/g;
+                contentToDisplay = contentToDisplay.replace(widgetRegex, (match, widgetId, widgetPosition) => {
+                    const widget = allWidgets.find(w => w.id === widgetId);
+                    const widgetName = widget ? widget.name : 'Unknown Widget';
+                    return `<div class="widget-placeholder">WIDGET: ${widgetName} (Position: ${widgetPosition || 'End'})</div>`;
+                });
     
                 return `
                     <div class="post-card ${isPinned}" data-post-id="${post.id}">
@@ -719,7 +846,7 @@
                             </div>
                         </div>
                         <p class="post-subtitle">${post.subtitle || ''}</p>
-                        <div class="post-text">${post.content || ''}</div>
+                        <div class="post-text">${contentToDisplay}</div>
                         ${mediaHtml}
                         <div class="post-actions">
                             <button class="edit-post-button" data-post-id="${post.id}"><i class="fas fa-edit"></i> Edit</button>
@@ -743,8 +870,17 @@
                     authorSelect.value = postToEdit.authorId;
                     updateAuthorAvatarPreview();
                     
-                    postContentEditor.innerHTML = postToEdit.content || '';
-                    postContentSource.value = postToEdit.content || '';
+                    // Convert widget markers back to placeholders for editing
+                    let editableContent = postToEdit.content || '';
+                    const widgetRegex = /<!--WIDGET::([^:]+)::([^:]+)-->/g;
+                    editableContent = editableContent.replace(widgetRegex, (match, widgetId, widgetPosition) => {
+                        const widget = allWidgets.find(w => w.id === widgetId);
+                        const widgetName = widget ? widget.name : 'Unknown Widget';
+                        return `<div class="widget-placeholder" data-widget-id="${widgetId}" data-widget-position="${widgetPosition}" contenteditable="false">WIDGET: ${widgetName} (Position: ${widgetPosition || 'End'})</div>`;
+                    });
+
+                    postContentEditor.innerHTML = editableContent;
+                    postContentSource.value = postToEdit.content || ''; // Keep original source for consistency
                     
                     postSubtitleInput.value = postToEdit.subtitle || '';
                     pinPostCheckbox.checked = postToEdit.isPinned || false;
