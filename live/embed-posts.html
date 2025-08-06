@@ -24,7 +24,7 @@
     <script async src="https://embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getFirestore, collection, query, orderBy, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getFirestore, collection, query, orderBy, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
     
         const firebaseConfig = {
             apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
@@ -46,6 +46,7 @@
         const LOAD_MORE_COUNT = 15;
         let unsubscribe = null; 
         let isInitialLoad = true; // Flag to handle the first data fetch
+        let allWidgets = {}; // Cache for widgets, keyed by ID for quick lookup
     
         const postsContainer = document.getElementById('postsContainer');
         const loadMoreContainer = document.getElementById('loadMoreContainer');
@@ -87,6 +88,26 @@
             return `${days}d ago`;
         }
     
+        // NEW: Function to render widget HTML
+        function renderWidget(widget) {
+            if (!widget) return '';
+            let widgetHtml = `<div class="embedded-widget widget-type-${widget.type}">`;
+            if (widget.name) {
+                widgetHtml += `<h3 class="widget-title">${widget.name}</h3>`;
+            }
+            if (widget.subtitle) {
+                widgetHtml += `<p class="widget-subtitle">${widget.subtitle}</p>`;
+            }
+            if (widget.content) {
+                widgetHtml += `<div class="widget-content">${widget.content}</div>`;
+            }
+            if (widget.footer) {
+                widgetHtml += `<p class="widget-footer">${widget.footer}</p>`;
+            }
+            widgetHtml += `</div>`;
+            return widgetHtml;
+        }
+
         function createPostCard(post) {
             const postCard = document.createElement('div');
             postCard.className = 'post-card';
@@ -101,7 +122,7 @@
     
             const avatarUrl = post.authorAvatar || 'https://hsnorth.github.io/embed_live/live/harry.png';
             const subtitleHtml = post.subtitle ? `<p class="post-subtitle">${post.subtitle}</p>` : '';
-            const fullContentHtml = post.content || ''; 
+            let fullContentHtml = post.content || ''; 
             const reportingFromDisplay = (post.reportingFrom && !post.hideReportingFrom) ? `<span>${post.reportingFrom}</span>` : '';
             const timeAgoHtml = post.isPinned ? '' : `<span class="bullet">•</span> <span class="time-ago">${timeAgo(post.timestamp)}</span>`;
     
@@ -114,6 +135,15 @@
                 }
             }
             
+            // NEW: Process widget placeholders in post content
+            const widgetRegex = /<!--WIDGET::([^:]+)::([^:]+)-->/g;
+            fullContentHtml = fullContentHtml.replace(widgetRegex, (match, widgetId, widgetPosition) => {
+                const widget = allWidgets[widgetId];
+                // Widget position is handled by the overall rendering logic, not within the post content itself
+                // So, we just return the widget HTML if it's found.
+                return widget ? renderWidget(widget) : '';
+            });
+
             // --- NEW: Logic for "Show More" button ---
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = fullContentHtml;
@@ -162,28 +192,89 @@
             }
         }
     
-        // This function now only handles the initial display and full refreshes
+        // This function now handles the initial display and full refreshes,
+        // including dynamic widget insertion based on position.
         function displayPosts(postsToRender) {
             postsContainer.innerHTML = ''; // Clear previous content
             if (postsToRender.length === 0) {
                  postsContainer.innerHTML = '<p class="no-posts-message">No posts yet for this live blog.</p>';
                  return;
             }
+
+            let renderedPostsCount = 0;
+            const postsAndWidgets = []; // Array to hold interleaved posts and widgets
+
+            // First, add all posts to the interleaved array
             postsToRender.forEach(post => {
-                const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard);
+                postsAndWidgets.push({ type: 'post', data: post });
             });
+
+            // Now, iterate through all posts (including those not yet rendered) to find widget positions
+            allPosts.forEach((post, index) => {
+                const widgetRegex = /<!--WIDGET::([^:]+)::([^:]+)-->/g;
+                let match;
+                while ((match = widgetRegex.exec(post.content)) !== null) {
+                    const widgetId = match[1];
+                    const widgetPosition = match[2];
+                    const widget = allWidgets[widgetId];
+
+                    if (widget) {
+                        let insertIndex;
+                        if (widgetPosition === '' || isNaN(parseInt(widgetPosition))) {
+                            // If position is empty or not a number, insert at the end of all *currently loaded* posts
+                            insertIndex = postsToRender.length; 
+                        } else {
+                            // Insert after the specified post number (1-indexed)
+                            insertIndex = parseInt(widgetPosition);
+                        }
+                        
+                        // Ensure insertIndex is within bounds of currently displayed posts
+                        insertIndex = Math.min(insertIndex, postsToRender.length);
+                        insertIndex = Math.max(0, insertIndex);
+
+                        // Add widget to the interleaved array. 
+                        // We need to be careful about duplicates if a post is edited and re-saved.
+                        // For simplicity, we'll just add it, but in a more complex app, you might
+                        // want to track which widgets have already been added to avoid duplicates.
+                        postsAndWidgets.splice(insertIndex, 0, { type: 'widget', data: widget, originalPostId: post.id });
+                    }
+                }
+            });
+
+            // Filter out duplicate widgets if they were inserted multiple times from different posts
+            // This is a simple deduplication based on widget ID and position.
+            const uniquePostsAndWidgets = [];
+            const addedWidgets = new Set(); // Stores 'widgetId-position'
+            const addedPosts = new Set(); // Stores 'postId'
+
+            postsAndWidgets.forEach(item => {
+                if (item.type === 'post') {
+                    if (!addedPosts.has(item.data.id)) {
+                        uniquePostsAndWidgets.push(item);
+                        addedPosts.add(item.data.id);
+                    }
+                } else if (item.type === 'widget') {
+                    const widgetKey = `${item.data.id}-${item.data.position || 'end'}`;
+                    if (!addedWidgets.has(widgetKey)) {
+                        uniquePostsAndWidgets.push(item);
+                        addedWidgets.add(widgetKey);
+                    }
+                }
+            });
+
+            // Render the interleaved content
+            uniquePostsAndWidgets.forEach(item => {
+                if (item.type === 'post') {
+                    const postCard = createPostCard(item.data);
+                    postsContainer.appendChild(postCard);
+                } else if (item.type === 'widget') {
+                    const widgetElement = document.createElement('div');
+                    widgetElement.innerHTML = renderWidget(item.data);
+                    postsContainer.appendChild(widgetElement);
+                }
+            });
+
             renderSocialEmbeds();
-        }
-    
-        // --- NEW FUNCTION ---
-        // This new function appends posts to the container without clearing it.
-        function appendPosts(postsToAppend) {
-            postsToAppend.forEach(post => {
-                const postCard = createPostCard(post);
-                postsContainer.appendChild(postCard);
-            });
-            renderSocialEmbeds(); // Process embeds in the newly added posts
         }
     
         // --- MODIFIED FUNCTION ---
@@ -199,16 +290,34 @@
                     postsVisibleCount = Math.min(postsVisibleCount + LOAD_MORE_COUNT, allPosts.length);
                     const postsToAppend = allPosts.slice(startIndex, postsVisibleCount);
     
-                    // Use the new append function instead of the old display function
-                    appendPosts(postsToAppend); 
+                    // Use the new display function for a full re-render including widgets
+                    displayPosts(postsToAppend); 
                     updateLoadMoreButton(); // Check if the button is still needed
                 });
                 loadMoreContainer.appendChild(loadMoreButton);
             }
         }
+
+        // NEW: Function to load all widgets initially
+        const loadAllWidgets = async () => {
+            try {
+                const q = query(collection(db, 'widgets')); // Fetch all widgets
+                const querySnapshot = await getDocs(q);
+                allWidgets = {}; // Reset cache
+                querySnapshot.forEach(doc => {
+                    allWidgets[doc.id] = doc.data();
+                });
+                console.log("Loaded widgets:", allWidgets);
+            } catch (error) {
+                console.error("Error loading all widgets:", error);
+            }
+        };
         
-        function initializeLiveBlogListener() {
+        async function initializeLiveBlogListener() {
             if (unsubscribe) unsubscribe(); 
+
+            // Load all widgets before setting up the post listener
+            await loadAllWidgets();
     
             const q = query(collection(db, 'posts'), where('blogId', '==', currentBlogId), orderBy('timestamp', 'desc'));
     
