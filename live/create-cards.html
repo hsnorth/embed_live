@@ -6,27 +6,37 @@
     <title>Manage Vertical Profile Cards</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
         .main-back-button-container { display: flex; align-items: center; margin-bottom: 25px; }
         .back-arrow { color: #e74c3c; font-size: 1.5em; margin-right: 10px; text-decoration: none; transition: transform 0.2s ease; }
         .back-arrow:hover { transform: translateX(-5px); }
         .back-text { font-size: 1em; color: #34495e; font-weight: bold; }
-        .cards-container { display: grid; gap: 20px; }
+        .cards-container { display: grid; gap: 25px; }
         
-        /* New styles for the live-preview card editor */
         .profile-card-editor {
             background-color: #fff;
-            border: 1px solid #e1e8ed;
             border-radius: 12px;
             padding: 20px;
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
-            gap: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 10px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e1e8ed;
+        }
+        .card-header-editor {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            width: 100%;
         }
         .image-preview { 
-            width: 80px; 
-            height: 80px; 
+            width: 60px; 
+            height: 60px; 
             border-radius: 50%; 
             object-fit: cover; 
             background-color: #f0f2f5; 
@@ -40,7 +50,7 @@
             outline: 2px solid transparent;
             transition: outline 0.2s ease;
             padding: 5px;
-            margin: -5px; /* Offset padding for better focus appearance */
+            margin: -5px;
             border-radius: 4px;
         }
         [contenteditable="true"]:focus {
@@ -53,21 +63,23 @@
             font-style: italic;
         }
         .card-name {
-            font-size: 1.2em;
+            font-size: 1.15em;
             font-weight: 700;
-            color: #333;
-            margin: 0 0 4px 0;
+            color: #222;
+            margin: 0 0 2px 0;
         }
         .card-subtitle {
             font-size: 1em;
             font-weight: 400;
             color: #555;
-            margin: 0 0 15px 0;
+            margin: 0;
         }
         .card-description {
-            font-size: 1em;
-            line-height: 1.5;
+            font-family: 'Lora', 'Georgia', serif;
+            font-size: 1.1em;
+            line-height: 1.6;
             color: #333;
+            width: 100%;
         }
 
         .delete-card-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2em; color: #999; cursor: pointer; }
@@ -75,14 +87,6 @@
         .add-card-btn { display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; background-color: #e74c3c; color: white; font-size: 2em; border: none; cursor: pointer; margin: 20px auto; }
         .add-card-btn:hover { background-color: #c0392b; }
         .main-action-button-container { text-align: center; margin-top: 30px; }
-
-        @media (max-width: 600px) {
-            .profile-card-editor {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-        }
     </style>
 </head>
 <body>
@@ -188,21 +192,22 @@
             editorWrapper.dataset.cardId = cardId;
 
             editorWrapper.innerHTML = `
-                <div class="image-upload-area">
-                    <img src="${cardData.imageUrl || 'https://via.placeholder.com/80'}" class="image-preview" alt="Profile image preview">
-                    <input type="file" class="image-input" accept="image/*" style="display: none;">
+                <div class="card-header-editor">
+                    <div class="image-upload-area">
+                        <img src="${cardData.imageUrl || 'https://via.placeholder.com/60'}" class="image-preview" alt="Profile image preview">
+                        <input type="file" class="image-input" accept="image/*" style="display: none;">
+                    </div>
+                    <div class="card-text-content">
+                        <h4 class="card-name" contenteditable="true" data-placeholder="Enter name...">${cardData.name || ''}</h4>
+                        <h5 class="card-subtitle" contenteditable="true" data-placeholder="Enter subtitle...">${cardData.subtitle || ''}</h5>
+                    </div>
                 </div>
-                <div class="card-text-content">
-                    <h4 class="card-name" contenteditable="true" data-placeholder="Enter name...">${cardData.name || ''}</h4>
-                    <h5 class="card-subtitle" contenteditable="true" data-placeholder="Enter subtitle...">${cardData.subtitle || ''}</h5>
-                    <div class="card-description" contenteditable="true" data-placeholder="Enter description...">${cardData.description || ''}</div>
-                </div>
+                <div class="card-description" contenteditable="true" data-placeholder="Enter description...">${cardData.description || ''}</div>
                 <button class="delete-card-btn" title="Delete Card">&times;</button>
             `;
 
             cardsContainer.appendChild(editorWrapper);
 
-            // Event Listeners for the new card editor
             const imagePreview = editorWrapper.querySelector('.image-preview');
             const imageInput = editorWrapper.querySelector('.image-input');
             imagePreview.addEventListener('click', () => imageInput.click());
@@ -234,12 +239,12 @@
                 if (cards.length > 0) {
                     cards.forEach(card => createCardEditor(card));
                 } else {
-                    createCardEditor(); // Start with one empty card if none exist
+                    createCardEditor();
                 }
                 isDataLoaded = true;
                 saveChangesBtn.textContent = "Post Update";
             } else {
-                createCardEditor(); // Start with one empty card for a new set
+                createCardEditor();
             }
         };
 
@@ -261,7 +266,6 @@
                 const imageInput = cardEl.querySelector('.image-input');
                 let imageUrl = cardEl.querySelector('.image-preview').src;
 
-                // Upload new image if one is selected
                 if (imageInput.files[0]) {
                     const file = imageInput.files[0];
                     const storageRef = ref(storage, `card-images/${currentCardSetId}/${Date.now()}-${file.name}`);
@@ -281,8 +285,8 @@
                     id: cardEl.dataset.cardId,
                     name: cardEl.querySelector('.card-name').textContent.trim(),
                     subtitle: cardEl.querySelector('.card-subtitle').textContent.trim(),
-                    description: cardEl.querySelector('.card-description').innerHTML.trim(), // Use innerHTML for description to keep line breaks
-                    imageUrl: imageUrl.startsWith('https://') ? imageUrl : '', // Don't save placeholder or data URLs
+                    description: cardEl.querySelector('.card-description').innerHTML.trim(),
+                    imageUrl: imageUrl.startsWith('https://') ? imageUrl : '',
                 });
             }
 
