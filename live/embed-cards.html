@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertical Profile Cards Embed</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <style>
         /* Basic Reset */
         body, html {
@@ -13,64 +16,66 @@
             background-color: transparent;
         }
         main {
-            max-width: 800px;
+            max-width: 650px;
             margin: 0 auto;
             padding: 10px;
         }
         .cards-container {
             display: grid;
-            gap: 20px;
+            gap: 25px;
         }
         .profile-card {
             background-color: #fff;
             border-radius: 12px;
             padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
-            gap: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 10px 20px rgba(0,0,0,0.05);
             border: 1px solid #e1e8ed;
         }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
         .profile-image {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
         }
-        .card-text-content {
+        .card-name-subtitle {
             flex-grow: 1;
         }
         .card-name {
-            font-size: 1.2em;
+            font-size: 1.15em;
             font-weight: 700;
-            color: #333;
-            margin: 0 0 4px 0;
+            color: #222;
+            margin: 0 0 2px 0;
         }
         .card-subtitle {
             font-size: 1em;
             font-weight: 400;
             color: #555;
-            margin: 0 0 15px 0;
+            margin: 0;
         }
         .card-description {
-            font-size: 1em;
-            line-height: 1.5;
+            font-family: 'Lora', 'Georgia', serif;
+            font-size: 1.1em;
+            line-height: 1.6;
             color: #333;
             word-wrap: break-word;
+            width: 100%;
         }
         .card-description p {
             margin: 0 0 1em 0;
         }
         .card-description p:last-child {
             margin-bottom: 0;
-        }
-
-        @media (max-width: 600px) {
-            .profile-card {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
         }
     </style>
 </head>
@@ -111,12 +116,14 @@
                 const cardElement = document.createElement('div');
                 cardElement.className = 'profile-card';
                 cardElement.innerHTML = `
-                    <img src="${card.imageUrl || 'https://via.placeholder.com/80'}" class="profile-image" alt="Profile image for ${card.name}">
-                    <div class="card-text-content">
-                        <h4 class="card-name">${card.name || ''}</h4>
-                        <h5 class="card-subtitle">${card.subtitle || ''}</h5>
-                        <div class="card-description">${card.description || ''}</div>
+                    <div class="card-header">
+                        <img src="${card.imageUrl || 'https://via.placeholder.com/60'}" class="profile-image" alt="Profile image for ${card.name}">
+                        <div class="card-name-subtitle">
+                            <h4 class="card-name">${card.name || ''}</h4>
+                            <h5 class="card-subtitle">${card.subtitle || ''}</h5>
+                        </div>
                     </div>
+                    <div class="card-description">${card.description || ''}</div>
                 `;
                 cardsContainer.appendChild(cardElement);
             });
