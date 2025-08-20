@@ -270,7 +270,9 @@
 
                 if (imageInput.files[0]) {
                     const file = imageInput.files[0];
-                    const storageRef = ref(storage, `card-images/${currentCardSetId}/${Date.now()}-${file.name}`);
+                    // Create a stable file name
+                    const fileName = `${Date.now()}-${file.name}`;
+                    const storageRef = ref(storage, `card-images/${currentCardSetId}/${fileName}`);
                     try {
                         const snapshot = await uploadBytes(storageRef, file);
                         imageUrl = await getDownloadURL(snapshot.ref);
