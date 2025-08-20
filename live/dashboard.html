@@ -199,8 +199,12 @@
                     allTools.push({ id: doc.id, type: 'verticalProfileCards', ...doc.data() });
                 });
 
-                // Sort all tools together by creation date
-                allTools.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+                // Sort all tools together by creation date safely
+                allTools.sort((a, b) => {
+                    const timeA = a.created ? a.created.toMillis() : 0;
+                    const timeB = b.created ? b.created.toMillis() : 0;
+                    return timeB - timeA;
+                });
 
                 if (allTools.length > 0) {
                     toolsList.innerHTML = '';
