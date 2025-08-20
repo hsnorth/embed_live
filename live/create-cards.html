@@ -12,41 +12,76 @@
         .back-arrow:hover { transform: translateX(-5px); }
         .back-text { font-size: 1em; color: #34495e; font-weight: bold; }
         .cards-container { display: grid; gap: 20px; }
+        
+        /* New styles for the live-preview card editor */
         .profile-card-editor {
             background-color: #fff;
             border: 1px solid #e1e8ed;
             border-radius: 12px;
             padding: 20px;
-            display: grid;
-            grid-template-areas:
-                "image name"
-                "image subtitle"
-                "description description";
-            grid-template-columns: 100px 1fr;
-            gap: 15px 20px;
             position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
         }
-        .profile-card-editor .image-upload-area { grid-area: image; }
-        .profile-card-editor .name-input-group { grid-area: name; }
-        .profile-card-editor .subtitle-input-group { grid-area: subtitle; }
-        .profile-card-editor .description-input-group { grid-area: description; }
-        .image-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background-color: #f0f2f5; margin-bottom: 10px; cursor: pointer; }
+        .image-preview { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            background-color: #f0f2f5; 
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .card-text-content {
+            flex-grow: 1;
+        }
+        [contenteditable="true"] {
+            outline: 2px solid transparent;
+            transition: outline 0.2s ease;
+            padding: 5px;
+            margin: -5px; /* Offset padding for better focus appearance */
+            border-radius: 4px;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #e74c3c;
+            background-color: #fef2f2;
+        }
+        [contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+            font-style: italic;
+        }
+        .card-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 4px 0;
+        }
+        .card-subtitle {
+            font-size: 1em;
+            font-weight: 400;
+            color: #555;
+            margin: 0 0 15px 0;
+        }
+        .card-description {
+            font-size: 1em;
+            line-height: 1.5;
+            color: #333;
+        }
+
         .delete-card-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2em; color: #999; cursor: pointer; }
         .delete-card-btn:hover { color: #e74c3c; }
         .add-card-btn { display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; background-color: #e74c3c; color: white; font-size: 2em; border: none; cursor: pointer; margin: 20px auto; }
         .add-card-btn:hover { background-color: #c0392b; }
         .main-action-button-container { text-align: center; margin-top: 30px; }
+
         @media (max-width: 600px) {
             .profile-card-editor {
-                grid-template-areas:
-                    "image"
-                    "name"
-                    "subtitle"
-                    "description";
-                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: center;
                 text-align: center;
             }
-            .profile-card-editor .image-upload-area { display: flex; flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -154,20 +189,13 @@
 
             editorWrapper.innerHTML = `
                 <div class="image-upload-area">
-                    <img src="${cardData.imageUrl || 'https://via.placeholder.com/100'}" class="image-preview" alt="Profile image preview">
+                    <img src="${cardData.imageUrl || 'https://via.placeholder.com/80'}" class="image-preview" alt="Profile image preview">
                     <input type="file" class="image-input" accept="image/*" style="display: none;">
                 </div>
-                <div class="name-input-group form-group">
-                    <label>Name</label>
-                    <input type="text" class="name-input input-field" value="${cardData.name || ''}" placeholder="e.g., Zohran Mamdani">
-                </div>
-                <div class="subtitle-input-group form-group">
-                    <label>Subtitle</label>
-                    <input type="text" class="subtitle-input input-field" value="${cardData.subtitle || ''}" placeholder="e.g., State assemblyman">
-                </div>
-                <div class="description-input-group form-group">
-                    <label>Description</label>
-                    <textarea class="description-input textarea-field" rows="4" placeholder="Enter paragraph text...">${cardData.description || ''}</textarea>
+                <div class="card-text-content">
+                    <h4 class="card-name" contenteditable="true" data-placeholder="Enter name...">${cardData.name || ''}</h4>
+                    <h5 class="card-subtitle" contenteditable="true" data-placeholder="Enter subtitle...">${cardData.subtitle || ''}</h5>
+                    <div class="card-description" contenteditable="true" data-placeholder="Enter description...">${cardData.description || ''}</div>
                 </div>
                 <button class="delete-card-btn" title="Delete Card">&times;</button>
             `;
@@ -251,9 +279,9 @@
 
                 cardsData.push({
                     id: cardEl.dataset.cardId,
-                    name: cardEl.querySelector('.name-input').value.trim(),
-                    subtitle: cardEl.querySelector('.subtitle-input').value.trim(),
-                    description: cardEl.querySelector('.description-input').value.trim(),
+                    name: cardEl.querySelector('.card-name').textContent.trim(),
+                    subtitle: cardEl.querySelector('.card-subtitle').textContent.trim(),
+                    description: cardEl.querySelector('.card-description').innerHTML.trim(), // Use innerHTML for description to keep line breaks
                     imageUrl: imageUrl.startsWith('https://') ? imageUrl : '', // Don't save placeholder or data URLs
                 });
             }
