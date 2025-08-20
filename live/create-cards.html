@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Vertical Profile Cards</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .main-back-button-container { display: flex; align-items: center; margin-bottom: 25px; }
+        .back-arrow { color: #e74c3c; font-size: 1.5em; margin-right: 10px; text-decoration: none; transition: transform 0.2s ease; }
+        .back-arrow:hover { transform: translateX(-5px); }
+        .back-text { font-size: 1em; color: #34495e; font-weight: bold; }
+        .cards-container { display: grid; gap: 20px; }
+        .profile-card-editor {
+            background-color: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 20px;
+            display: grid;
+            grid-template-areas:
+                "image name"
+                "image subtitle"
+                "description description";
+            grid-template-columns: 100px 1fr;
+            gap: 15px 20px;
+            position: relative;
+        }
+        .profile-card-editor .image-upload-area { grid-area: image; }
+        .profile-card-editor .name-input-group { grid-area: name; }
+        .profile-card-editor .subtitle-input-group { grid-area: subtitle; }
+        .profile-card-editor .description-input-group { grid-area: description; }
+        .image-preview { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background-color: #f0f2f5; margin-bottom: 10px; cursor: pointer; }
+        .delete-card-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2em; color: #999; cursor: pointer; }
+        .delete-card-btn:hover { color: #e74c3c; }
+        .add-card-btn { display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; background-color: #e74c3c; color: white; font-size: 2em; border: none; cursor: pointer; margin: 20px auto; }
+        .add-card-btn:hover { background-color: #c0392b; }
+        .main-action-button-container { text-align: center; margin-top: 30px; }
+        @media (max-width: 600px) {
+            .profile-card-editor {
+                grid-template-areas:
+                    "image"
+                    "name"
+                    "subtitle"
+                    "description";
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .profile-card-editor .image-upload-area { display: flex; flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
+        <button id="signOutButtonHeader" class="sign-out-button">Sign Out</button>
+    </header>
+
+    <main>
+        <div class="main-back-button-container">
+            <a href="dashboard.html" class="back-arrow" aria-label="Back to Dashboard"><i class="fas fa-arrow-left"></i></a>
+            <span class="back-text">Return to Dashboard</span>
+        </div>
+
+        <h2 id="cardSetHeader">You're on Card Set: </h2>
+        <div id="notificationMessage" class="notification-message" style="display: none;"></div>
+
+        <section>
+            <h2>Manage Cards</h2>
+            <div id="cardsContainer" class="cards-container">
+                <!-- Card editors will be dynamically inserted here -->
+            </div>
+            <button id="addCardBtn" class="add-card-btn" title="Add New Card">+</button>
+        </section>
+
+        <div class="main-action-button-container">
+            <button id="saveChangesBtn" class="submit-button">Post</button>
+        </div>
+
+        <section class="embed-code-section">
+            <h2>Only for CUE: Copy the code below</h2>
+            <p>Copy the code below and paste it into your website's HTML where you want the cards to appear.</p>
+            <div class="embed-code-container">
+                <input type="text" id="embedCodeInput" class="input-field" readonly>
+                <button id="copyEmbedCodeButton" class="submit-button">Copy Code</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const auth = getAuth(app);
+
+        let currentCardSetId = null;
+        let isDataLoaded = false;
+
+        const cardSetHeader = document.getElementById('cardSetHeader');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const addCardBtn = document.getElementById('addCardBtn');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const embedCodeInput = document.getElementById('embedCodeInput');
+        const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
+        const notificationMessage = document.getElementById('notificationMessage');
+
+        const showNotification = (message, type) => {
+            notificationMessage.textContent = message;
+            notificationMessage.className = 'notification-message show ' + type;
+            setTimeout(() => { notificationMessage.classList.remove('show'); }, 4000);
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                const urlParams = new URLSearchParams(window.location.search);
+                currentCardSetId = urlParams.get('cardSetId');
+                const cardSetName = urlParams.get('cardSetName');
+
+                if (currentCardSetId && cardSetName) {
+                    cardSetHeader.textContent = `You're on Card Set: ${decodeURIComponent(cardSetName)}`;
+                    generateEmbedCode(decodeURIComponent(cardSetName));
+                    loadCards();
+                } else {
+                    cardSetHeader.textContent = 'No Card Set Selected';
+                }
+            }
+        });
+
+        const createCardEditor = (cardData = {}) => {
+            const cardId = cardData.id || `card-${Date.now()}`;
+            const editorWrapper = document.createElement('div');
+            editorWrapper.className = 'profile-card-editor';
+            editorWrapper.dataset.cardId = cardId;
+
+            editorWrapper.innerHTML = `
+                <div class="image-upload-area">
+                    <img src="${cardData.imageUrl || 'https://via.placeholder.com/100'}" class="image-preview" alt="Profile image preview">
+                    <input type="file" class="image-input" accept="image/*" style="display: none;">
+                </div>
+                <div class="name-input-group form-group">
+                    <label>Name</label>
+                    <input type="text" class="name-input input-field" value="${cardData.name || ''}" placeholder="e.g., Zohran Mamdani">
+                </div>
+                <div class="subtitle-input-group form-group">
+                    <label>Subtitle</label>
+                    <input type="text" class="subtitle-input input-field" value="${cardData.subtitle || ''}" placeholder="e.g., State assemblyman">
+                </div>
+                <div class="description-input-group form-group">
+                    <label>Description</label>
+                    <textarea class="description-input textarea-field" rows="4" placeholder="Enter paragraph text...">${cardData.description || ''}</textarea>
+                </div>
+                <button class="delete-card-btn" title="Delete Card">&times;</button>
+            `;
+
+            cardsContainer.appendChild(editorWrapper);
+
+            // Event Listeners for the new card editor
+            const imagePreview = editorWrapper.querySelector('.image-preview');
+            const imageInput = editorWrapper.querySelector('.image-input');
+            imagePreview.addEventListener('click', () => imageInput.click());
+            imageInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        imagePreview.src = event.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            editorWrapper.querySelector('.delete-card-btn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete this card?')) {
+                    editorWrapper.remove();
+                }
+            });
+        };
+
+        const loadCards = async () => {
+            if (!currentCardSetId) return;
+            const docRef = doc(db, 'verticalProfileCards', currentCardSetId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const cards = data.cards || [];
+                if (cards.length > 0) {
+                    cards.forEach(card => createCardEditor(card));
+                } else {
+                    createCardEditor(); // Start with one empty card if none exist
+                }
+                isDataLoaded = true;
+                saveChangesBtn.textContent = "Post Update";
+            } else {
+                createCardEditor(); // Start with one empty card for a new set
+            }
+        };
+
+        addCardBtn.addEventListener('click', () => createCardEditor());
+
+        saveChangesBtn.addEventListener('click', async () => {
+            if (!currentCardSetId) {
+                showNotification("No card set selected.", "error");
+                return;
+            }
+
+            saveChangesBtn.disabled = true;
+            saveChangesBtn.textContent = "Saving...";
+
+            const cardElements = cardsContainer.querySelectorAll('.profile-card-editor');
+            const cardsData = [];
+
+            for (const cardEl of cardElements) {
+                const imageInput = cardEl.querySelector('.image-input');
+                let imageUrl = cardEl.querySelector('.image-preview').src;
+
+                // Upload new image if one is selected
+                if (imageInput.files[0]) {
+                    const file = imageInput.files[0];
+                    const storageRef = ref(storage, `card-images/${currentCardSetId}/${Date.now()}-${file.name}`);
+                    try {
+                        const snapshot = await uploadBytes(storageRef, file);
+                        imageUrl = await getDownloadURL(snapshot.ref);
+                    } catch (error) {
+                        console.error("Error uploading image:", error);
+                        showNotification("Error uploading an image.", "error");
+                        saveChangesBtn.disabled = false;
+                        saveChangesBtn.textContent = isDataLoaded ? "Post Update" : "Post";
+                        return;
+                    }
+                }
+
+                cardsData.push({
+                    id: cardEl.dataset.cardId,
+                    name: cardEl.querySelector('.name-input').value.trim(),
+                    subtitle: cardEl.querySelector('.subtitle-input').value.trim(),
+                    description: cardEl.querySelector('.description-input').value.trim(),
+                    imageUrl: imageUrl.startsWith('https://') ? imageUrl : '', // Don't save placeholder or data URLs
+                });
+            }
+
+            try {
+                const docRef = doc(db, 'verticalProfileCards', currentCardSetId);
+                const docSnap = await getDoc(docRef);
+                const currentData = docSnap.exists() ? docSnap.data() : {};
+                
+                await setDoc(docRef, {
+                    ...currentData,
+                    cards: cardsData,
+                    updatedAt: new Date()
+                });
+
+                showNotification("Card set saved successfully!", "success");
+                isDataLoaded = true;
+                saveChangesBtn.textContent = "Post Update";
+
+            } catch (error) {
+                console.error("Error saving card set:", error);
+                showNotification("Failed to save card set.", "error");
+            } finally {
+                saveChangesBtn.disabled = false;
+            }
+        });
+
+        const generateEmbedCode = (cardSetName) => {
+            if (currentCardSetId) {
+                const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-cards.html', 'embed-cards.html')}?cardSetId=${currentCardSetId}`;
+                embedCodeInput.value = `<iframe src="${embedUrl}" style="width:100%; height:800px; border:none;" title="${cardSetName} Profile Cards"></iframe>`;
+            }
+        };
+
+        copyEmbedCodeButton.addEventListener('click', () => {
+            embedCodeInput.select();
+            document.execCommand("copy");
+            showNotification("Embed code copied!", "success");
+        });
+
+        document.getElementById('signOutButtonHeader').addEventListener('click', () => signOut(auth));
+
+    </script>
+</body>
+</html>
