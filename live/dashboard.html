@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Blog Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="https://hsnorth.github.io/embed_live/live/gazette-admin-icon-192.png">
@@ -11,7 +11,7 @@
 <body>
 
     <header>
-        <h1><a href="dashboard.html">Gazette Plus</a></h1>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
         <nav>
             <button id="signOutButton" class="submit-button">Sign Out</button>
         </nav>
@@ -20,50 +20,38 @@
     <main>
         <h2>Dashboard</h2>
 
-        <div id="a2hsCollapsibleContainer">
-            <div id="a2hsToggle">
-                <span>Add page as app on phone</span>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div id="a2hsContent">
-                <ol>
-                    <li><span class="step-number">1</span> Click on Share button <i class="fas fa-share-square share-icon-placeholder"></i></li>
-                    <li><span class="step-number">2</span> Scroll down and click: "Add to home screen"</li>
-                    <li><span class="step-number">3</span> Write: "Gazette Live" and press "Add".</li>
-                </ol>
-            </div>
-        </div>
-
-        <section class="create-blog-section">
+        <section class="create-tool-section">
             <h2>Create</h2>
             <div class="form-group">
                 <label for="createToolSelect" style="margin-bottom: 8px; display: block;">Select a tool to create:</label>
                 <select id="createToolSelect" class="input-field">
                     <option value="">-- Select a tool --</option>
                     <option value="liveBlog">Live Blog</option>
+                    <option value="verticalProfileCards">Vertical Profile Cards</option>
                 </select>
             </div>
-            <div id="newBlogNameContainer" style="display: none;">
+            <div id="toolNameContainer" style="display: none;">
                 <div class="form-group">
-                    <input type="text" id="newBlogName" class="input-field" placeholder="Enter blog title">
+                    <input type="text" id="newToolName" class="input-field" placeholder="Enter a title">
                 </div>
-                <button id="startNewBlogBtn" class="submit-button">Start New Blog</button>
+                <button id="startNewToolBtn" class="submit-button">Start</button>
             </div>
         </section>
 
-        <section class="view-blogs-container">
+        <section class="find-tools-container">
             <h2>Find tools</h2>
             <div class="filter-controls" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                 <label for="filterByType">Filter by type:</label>
                 <select id="filterByType" class="input-field" style="width: auto;">
                     <option value="all">All</option>
                     <option value="liveBlog">Live Blog</option>
+                    <option value="verticalProfileCards">Vertical Profile Cards</option>
                 </select>
             </div>
-            <div class="blog-list" id="blogListContainer">
-                <ul id="liveBlogsList">
+            <div class="tool-list" id="toolListContainer">
+                <ul id="toolsList">
                     </ul>
-                <p id="noBlogsMessage" class="no-blogs-message" style="display: none;">No tools found. Create one above!</p>
+                <p id="noToolsMessage" class="no-blogs-message" style="display: none;">No tools found. Create one above!</p>
             </div>
         </section>
     </main>
@@ -90,70 +78,90 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // This flag ensures we only attach event listeners once.
         let isDashboardSetup = false;
 
-        // --- Authentication Guard ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in, set up the dashboard functionality.
                 setupDashboard(user);
             } else {
-                // No user is signed in, redirect to the login page.
                 window.location.href = 'index.html';
             }
         });
 
         function setupDashboard(user) {
-            // Prevent re-running this setup if the auth state changes multiple times.
             if (isDashboardSetup) return;
             isDashboardSetup = true;
 
-            // Load all blogs.
-            loadAllBlogs();
+            loadAllTools();
 
-            // --- Event Listeners ---
-
-            // Listener for the "Create" dropdown
             const createToolSelect = document.getElementById('createToolSelect');
-            const newBlogNameContainer = document.getElementById('newBlogNameContainer');
+            const toolNameContainer = document.getElementById('toolNameContainer');
+            const newToolNameInput = document.getElementById('newToolName');
+            const startNewToolBtn = document.getElementById('startNewToolBtn');
+
             createToolSelect.addEventListener('change', () => {
-                if (createToolSelect.value === 'liveBlog') {
-                    newBlogNameContainer.style.display = 'block';
+                const selectedTool = createToolSelect.value;
+                if (selectedTool === 'liveBlog') {
+                    newToolNameInput.placeholder = "Enter blog title";
+                    startNewToolBtn.textContent = "Start New Blog";
+                    toolNameContainer.style.display = 'block';
+                } else if (selectedTool === 'verticalProfileCards') {
+                    newToolNameInput.placeholder = "Enter card set title";
+                    startNewToolBtn.textContent = "Create Card Set";
+                    toolNameContainer.style.display = 'block';
                 } else {
-                    newBlogNameContainer.style.display = 'none';
+                    toolNameContainer.style.display = 'none';
                 }
             });
 
-            // Listener for creating a new blog.
-            document.getElementById('startNewBlogBtn').addEventListener('click', async () => {
-                const blogName = document.getElementById('newBlogName').value.trim();
-                if (blogName) {
-                    try {
-                        const docRef = await addDoc(collection(db, "blogs"), {
-                            name: blogName,
-                            created: serverTimestamp(),
-                            createdBy: user.uid // Still track who created it.
-                        });
-                        const blogId = docRef.id;
-                        // Redirect to the create-blog page for the new blog.
-                        window.location.href = `create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blogName)}`;
-                    } catch (e) {
-                        console.error("Error adding document: ", e);
-                        alert("Error creating blog. Please try again.");
-                    }
+            startNewToolBtn.addEventListener('click', async () => {
+                const toolName = newToolNameInput.value.trim();
+                const selectedTool = createToolSelect.value;
+
+                if (!toolName) {
+                    alert('Please enter a title.');
+                    return;
+                }
+
+                let collectionName = '';
+                let redirectPage = '';
+                let idParam = '';
+                let nameParam = '';
+
+                if (selectedTool === 'liveBlog') {
+                    collectionName = 'blogs';
+                    redirectPage = 'create-blog.html';
+                    idParam = 'blogId';
+                    nameParam = 'blogName';
+                } else if (selectedTool === 'verticalProfileCards') {
+                    collectionName = 'verticalProfileCards';
+                    redirectPage = 'create-cards.html'; // This page needs to be created
+                    idParam = 'cardSetId';
+                    nameParam = 'cardSetName';
                 } else {
-                    alert('Please enter a name for your new blog.');
+                    return; // Should not happen
+                }
+
+                try {
+                    const docRef = await addDoc(collection(db, collectionName), {
+                        name: toolName,
+                        created: serverTimestamp(),
+                        createdBy: user.uid
+                    });
+                    const toolId = docRef.id;
+                    window.location.href = `${redirectPage}?${idParam}=${toolId}&${nameParam}=${encodeURIComponent(toolName)}`;
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    alert("Error creating tool. Please try again.");
                 }
             });
             
-            // Listener for the type filter
             document.getElementById('filterByType').addEventListener('change', () => {
                 const selectedType = document.getElementById('filterByType').value;
-                const blogItems = document.querySelectorAll('#liveBlogsList li');
+                const toolItems = document.querySelectorAll('#toolsList li');
                 let visibleCount = 0;
 
-                blogItems.forEach(item => {
+                toolItems.forEach(item => {
                     if (selectedType === 'all' || item.dataset.type === selectedType) {
                         item.style.display = 'flex';
                         visibleCount++;
@@ -161,74 +169,71 @@
                         item.style.display = 'none';
                     }
                 });
-
-                // Show or hide the "No tools found" message based on filter results
-                const noBlogsMessage = document.getElementById('noBlogsMessage');
-                noBlogsMessage.style.display = visibleCount > 0 ? 'none' : 'block';
+                document.getElementById('noToolsMessage').style.display = visibleCount > 0 ? 'none' : 'block';
             });
 
-            // Listener for the sign-out button.
-            document.getElementById('signOutButton').addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    // onAuthStateChanged will handle the redirect to the login page.
-                } catch (error) {
-                    console.error("Error signing out:", error);
-                    alert("Could not sign out. Please try again.");
-                }
-            });
+            document.getElementById('signOutButton').addEventListener('click', () => signOut(auth));
         }
 
-        // --- Function to load and display ALL blogs ---
-        const loadAllBlogs = async () => {
-            const liveBlogsList = document.getElementById('liveBlogsList');
-            const noBlogsMessage = document.getElementById('noBlogsMessage');
-
+        const loadAllTools = async () => {
+            const toolsList = document.getElementById('toolsList');
+            const noToolsMessage = document.getElementById('noToolsMessage');
+            
             try {
-                // Query for all blogs, ordered by creation date.
-                const q = query(collection(db, "blogs"), orderBy("created", "desc"));
-                const querySnapshot = await getDocs(q);
+                // Fetch from both collections
+                const blogsQuery = query(collection(db, "blogs"), orderBy("created", "desc"));
+                const cardsQuery = query(collection(db, "verticalProfileCards"), orderBy("created", "desc"));
 
-                if (!querySnapshot.empty) {
-                    liveBlogsList.innerHTML = '';
-                    querySnapshot.forEach(doc => {
-                        const blog = doc.data();
-                        const blogId = doc.id;
+                const [blogsSnapshot, cardsSnapshot] = await Promise.all([
+                    getDocs(blogsQuery),
+                    getDocs(cardsQuery)
+                ]);
+
+                let allTools = [];
+
+                blogsSnapshot.forEach(doc => {
+                    allTools.push({ id: doc.id, type: 'liveBlog', ...doc.data() });
+                });
+
+                cardsSnapshot.forEach(doc => {
+                    allTools.push({ id: doc.id, type: 'verticalProfileCards', ...doc.data() });
+                });
+
+                // Sort all tools together by creation date
+                allTools.sort((a, b) => b.created.toMillis() - a.created.toMillis());
+
+                if (allTools.length > 0) {
+                    toolsList.innerHTML = '';
+                    allTools.forEach(tool => {
                         const listItem = document.createElement('li');
-                        // For future-proofing, we assume everything is a 'liveBlog' for now.
-                        listItem.dataset.type = 'liveBlog';
-                        const createdDate = blog.created ? blog.created.toDate().toLocaleString() : 'N/A';
+                        listItem.dataset.type = tool.type;
+                        const createdDate = tool.created ? tool.created.toDate().toLocaleString() : 'N/A';
+                        
+                        let link = '';
+                        if (tool.type === 'liveBlog') {
+                            link = `create-blog.html?blogId=${tool.id}&blogName=${encodeURIComponent(tool.name)}`;
+                        } else if (tool.type === 'verticalProfileCards') {
+                            link = `create-cards.html?cardSetId=${tool.id}&cardSetName=${encodeURIComponent(tool.name)}`;
+                        }
 
                         listItem.innerHTML = `
-                            <a href="create-blog.html?blogId=${blogId}&blogName=${encodeURIComponent(blog.name)}">${blog.name}</a>
+                            <a href="${link}">${tool.name} <span style="font-size: 0.8em; color: #777; margin-left: 8px;">(${tool.type === 'liveBlog' ? 'Live Blog' : 'Profile Cards'})</span></a>
                             <span>Created: ${createdDate}</span>
                         `;
-                        liveBlogsList.appendChild(listItem);
+                        toolsList.appendChild(listItem);
                     });
-                    noBlogsMessage.style.display = 'none';
+                    noToolsMessage.style.display = 'none';
                 } else {
-                    liveBlogsList.innerHTML = '';
-                    noBlogsMessage.style.display = 'block';
-                    noBlogsMessage.textContent = 'No tools created yet. Create one above!';
+                    toolsList.innerHTML = '';
+                    noToolsMessage.style.display = 'block';
+                    noToolsMessage.textContent = 'No tools created yet. Create one above!';
                 }
             } catch (error) {
-                console.error("Error fetching blogs: ", error);
-                noBlogsMessage.textContent = "Error loading tools. Check console for details.";
-                noBlogsMessage.style.display = 'block';
+                console.error("Error fetching tools: ", error);
+                noToolsMessage.textContent = "Error loading tools. Check console for details.";
+                noToolsMessage.style.display = 'block';
             }
         };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const a2hsToggle = document.getElementById('a2hsToggle');
-            const a2hsContent = document.getElementById('a2hsContent');
-            if (a2hsToggle) {
-                a2hsToggle.addEventListener('click', () => {
-                    a2hsToggle.classList.toggle('active');
-                    a2hsContent.classList.toggle('show');
-                });
-            }
-        });
     </script>
 </body>
 </html>
-```
