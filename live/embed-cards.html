@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Profile Cards Embed</title>
+    <style>
+        /* Basic Reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: transparent;
+        }
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .cards-container {
+            display: grid;
+            gap: 20px;
+        }
+        .profile-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            border: 1px solid #e1e8ed;
+        }
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .card-text-content {
+            flex-grow: 1;
+        }
+        .card-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 4px 0;
+        }
+        .card-subtitle {
+            font-size: 1em;
+            font-weight: 400;
+            color: #555;
+            margin: 0 0 15px 0;
+        }
+        .card-description {
+            font-size: 1em;
+            line-height: 1.5;
+            color: #333;
+            word-wrap: break-word;
+        }
+        .card-description p {
+            margin: 0 0 1em 0;
+        }
+        .card-description p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            .profile-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div id="cardsContainer" class="cards-container">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const cardsContainer = document.getElementById('cardsContainer');
+        let unsubscribe = null;
+
+        const renderCards = (cards = []) => {
+            cardsContainer.innerHTML = ''; // Clear existing cards
+            if (cards.length === 0) {
+                cardsContainer.innerHTML = '<p>No cards have been added yet.</p>';
+                return;
+            }
+
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'profile-card';
+                cardElement.innerHTML = `
+                    <img src="${card.imageUrl || 'https://via.placeholder.com/80'}" class="profile-image" alt="Profile image for ${card.name}">
+                    <div class="card-text-content">
+                        <h4 class="card-name">${card.name || ''}</h4>
+                        <h5 class="card-subtitle">${card.subtitle || ''}</h5>
+                        <div class="card-description">${card.description || ''}</div>
+                    </div>
+                `;
+                cardsContainer.appendChild(cardElement);
+            });
+
+            // Adjust iframe height after rendering
+            if (window.parent) {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iframeHeight', height: height + 20 }, '*');
+            }
+        };
+
+        const setupRealtimeListener = (cardSetId) => {
+            if (unsubscribe) unsubscribe(); // Stop any previous listener
+
+            const docRef = doc(db, 'verticalProfileCards', cardSetId);
+            unsubscribe = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    renderCards(data.cards);
+                } else {
+                    cardsContainer.innerHTML = '<p>This card set could not be found.</p>';
+                    console.error("Card set not found for ID:", cardSetId);
+                }
+            }, (error) => {
+                console.error("Error listening to card set:", error);
+                cardsContainer.innerHTML = '<p>Error loading cards. Please check the console.</p>';
+            });
+        };
+
+        const init = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardSetId = urlParams.get('cardSetId');
+
+            if (cardSetId) {
+                setupRealtimeListener(cardSetId);
+            } else {
+                cardsContainer.innerHTML = '<p>Error: Card Set ID not found in URL.</p>';
+                console.error("Card Set ID not found in URL.");
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
