@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         .main-back-button-container { display: flex; align-items: center; margin-bottom: 25px; }
         .back-arrow { color: #e74c3c; font-size: 1.5em; margin-right: 10px; text-decoration: none; transition: transform 0.2s ease; }
@@ -35,8 +35,8 @@
             width: 100%;
         }
         .image-preview { 
-            width: 60px; 
-            height: 60px; 
+            width: 70px; 
+            height: 70px; 
             border-radius: 50%; 
             object-fit: cover; 
             background-color: #f0f2f5; 
@@ -63,12 +63,14 @@
             font-style: italic;
         }
         .card-name {
-            font-size: 1.15em;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.2em;
             font-weight: 700;
             color: #222;
             margin: 0 0 2px 0;
         }
         .card-subtitle {
+            font-family: 'Roboto', sans-serif;
             font-size: 1em;
             font-weight: 400;
             color: #555;
@@ -194,7 +196,7 @@
             editorWrapper.innerHTML = `
                 <div class="card-header-editor">
                     <div class="image-upload-area">
-                        <img src="${cardData.imageUrl || 'https://via.placeholder.com/60'}" class="image-preview" alt="Profile image preview">
+                        <img src="${cardData.imageUrl || 'https://via.placeholder.com/70'}" class="image-preview" alt="Profile image preview">
                         <input type="file" class="image-input" accept="image/*" style="display: none;">
                     </div>
                     <div class="card-text-content">
