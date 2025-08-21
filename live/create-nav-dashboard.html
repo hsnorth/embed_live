@@ -171,7 +171,7 @@
 
             cardElement.innerHTML = `
                 <div class="meta-info">
-                    <i class="fas fa-clock"></i> <span>${createdDate}</span>
+                    <i class="fas fa-clock"></i> <span class="created-date">${createdDate}</span>
                 </div>
                 <div class="card-content">
                     <div class="text-content">
@@ -210,7 +210,7 @@
             };
             
             verdictSelect.addEventListener('change', updateVerdictColor);
-            updateVerdictColor(); // Set initial color
+            updateVerdictColor(); 
 
             cardElement.querySelector('.delete-card-btn').addEventListener('click', (e) => {
                 e.target.closest('.fact-check-card-editor').remove();
@@ -249,20 +249,24 @@
 
             const cardsData = [];
             const cardElements = document.querySelectorAll('.fact-check-card-editor');
-            const categoryTags = document.querySelectorAll('.category-tag-editor');
+            const now = new Date(); // Use a client-side timestamp
 
-            for (let i = 0; i < cardElements.length; i++) {
-                const cardEl = cardElements[i];
+            for (const cardEl of cardElements) {
+                const categoryTags = cardEl.querySelectorAll('.category-tag-editor');
+                // Preserve original creation date if it exists
+                const existingDateText = cardEl.querySelector('.created-date').textContent;
+                const createdAt = new Date(existingDateText).toString() !== 'Invalid Date' ? new Date(existingDateText) : now;
+
                 cardsData.push({
                     id: cardEl.dataset.cardId,
-                    createdAt: serverTimestamp(),
+                    createdAt: createdAt,
                     title: cardEl.querySelector('.title').textContent.trim(),
                     subtitle: cardEl.querySelector('.subtitle').textContent.trim(),
                     verdict: cardEl.querySelector('.verdict-select').value,
                     analysisLink: cardEl.querySelector('.analysis-link-input').value.trim(),
-                    category1: categoryTags[i * 3].textContent.trim(),
-                    category2: categoryTags[i * 3 + 1].textContent.trim(),
-                    category3: categoryTags[i * 3 + 2].textContent.trim(),
+                    category1: categoryTags[0].textContent.trim(),
+                    category2: categoryTags[1].textContent.trim(),
+                    category3: categoryTags[2].textContent.trim(),
                 });
             }
 
@@ -272,7 +276,7 @@
                 category2Name: category2NameInput.value.trim(),
                 category3Name: category3NameInput.value.trim(),
                 cards: cardsData,
-                lastUpdated: serverTimestamp()
+                lastUpdated: serverTimestamp() // This is allowed as it's not in an array
             };
 
             try {
