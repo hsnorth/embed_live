@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Navigation Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Styles for the editor page, mirroring nav-dashboard.css */
+        .main-back-button-container { display: flex; align-items: center; margin-bottom: 25px; }
+        .back-arrow { color: #e74c3c; font-size: 1.5em; margin-right: 10px; text-decoration: none; }
+        .back-text { font-size: 1em; color: #34495e; font-weight: bold; }
+
+        .category-management { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        
+        .fact-check-card-editor {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 5px solid transparent; /* For verdict color preview */
+            transition: border-color 0.3s ease;
+        }
+        .fact-check-card-editor .meta-info { display: flex; align-items: center; gap: 8px; color: #6c757d; font-size: 0.85em; margin-bottom: 12px; }
+        .fact-check-card-editor .card-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+        .fact-check-card-editor .text-content { flex-grow: 1; }
+        .fact-check-card-editor .title { font-size: 1.3em; font-weight: bold; color: #212529; margin: 0 0 5px 0; }
+        .fact-check-card-editor .subtitle { font-size: 1em; color: #495057; margin: 0; line-height: 1.5; }
+        .fact-check-card-editor .tags-and-verdict { margin-top: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        .fact-check-card-editor .verdict-select { min-width: 150px; }
+        .fact-check-card-editor .category-tag-editor { display: inline-block; background-color: #f8f9fa; color: #6c757d; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; }
+        
+        [contenteditable="true"] {
+            outline: 2px solid transparent;
+            transition: outline 0.2s ease;
+            padding: 5px;
+            margin: -5px;
+            border-radius: 4px;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #e74c3c;
+            background-color: #fef2f2;
+        }
+        [contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+            font-style: italic;
+        }
+
+        .delete-card-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2em; color: #999; cursor: pointer; }
+        .add-card-btn { display: block; width: 100%; padding: 15px; background-color: #f9f9f9; border: 2px dashed #ddd; border-radius: 8px; cursor: pointer; text-align: center; font-size: 1.2em; color: #555; }
+        .main-action-button-container { text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="dashboard.html">Gazette Live</a></h1>
+        <button id="signOutButtonHeader" class="sign-out-button">Sign Out</button>
+    </header>
+
+    <main>
+        <div class="main-back-button-container">
+            <a href="dashboard.html" class="back-arrow"><i class="fas fa-arrow-left"></i></a>
+            <span class="back-text">Return to Dashboard</span>
+        </div>
+
+        <h2 id="navDashboardHeader">Navigation Dashboard: </h2>
+        <div id="notificationMessage" class="notification-message" style="display: none;"></div>
+
+        <section class="category-management-section">
+            <h2>Manage Filter Categories</h2>
+            <p>Name your filter categories. Leave blank to hide a filter.</p>
+            <div class="category-management form-group">
+                <input type="text" id="category1Name" class="input-field" placeholder="Category 1 Name (e.g., Candidates)">
+                <input type="text" id="category2Name" class="input-field" placeholder="Category 2 Name (e.g., Topics)">
+                <input type="text" id="category3Name" class="input-field" placeholder="Category 3 Name (e.g., Location)">
+            </div>
+        </section>
+
+        <section>
+            <h2>Manage Fact-Check Cards</h2>
+            <div id="cardsContainer">
+                <!-- Fact-check cards will be inserted here -->
+            </div>
+            <button id="addCardBtn" class="add-card-btn">+ Add Card</button>
+        </section>
+
+        <div class="main-action-button-container">
+            <button id="saveChangesBtn" class="submit-button">Save Dashboard</button>
+        </div>
+
+        <section class="embed-code-section">
+            <h2>For CUE: Copy Embed Code</h2>
+            <div class="embed-code-container">
+                <input type="text" id="embedCodeInput" class="input-field" readonly>
+                <button id="copyEmbedCodeButton" class="submit-button">Copy Code</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Gazette Live. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrJsFAJDU4EMficerN2TvOJlio6SYh6lk",
+            authDomain: "myliveblogapp-cf9df.firebaseapp.com",
+            projectId: "myliveblogapp-cf9df",
+            storageBucket: "myliveblogapp-cf9df.firebasestorage.app",
+            messagingSenderId: "324824649312",
+            appId: "1:324824649312:web:c0750693346091d853bd05",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentNavId = null;
+
+        const navDashboardHeader = document.getElementById('navDashboardHeader');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const addCardBtn = document.getElementById('addCardBtn');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const embedCodeInput = document.getElementById('embedCodeInput');
+        const copyEmbedCodeButton = document.getElementById('copyEmbedCodeButton');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const category1NameInput = document.getElementById('category1Name');
+        const category2NameInput = document.getElementById('category2Name');
+        const category3NameInput = document.getElementById('category3Name');
+
+        const showNotification = (message, type) => {
+            notificationMessage.textContent = message;
+            notificationMessage.className = 'notification-message show ' + type;
+            setTimeout(() => { notificationMessage.classList.remove('show'); }, 4000);
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                const urlParams = new URLSearchParams(window.location.search);
+                currentNavId = urlParams.get('navId');
+                const navName = urlParams.get('navName');
+
+                if (currentNavId && navName) {
+                    navDashboardHeader.textContent = `Navigation Dashboard: ${decodeURIComponent(navName)}`;
+                    generateEmbedCode(decodeURIComponent(navName));
+                    loadDashboardData();
+                } else {
+                    navDashboardHeader.textContent = 'No Dashboard Selected';
+                }
+            }
+        });
+
+        const createCardEditor = (cardData = {}) => {
+            const cardId = cardData.id || `card-${Date.now()}`;
+            const cardElement = document.createElement('div');
+            cardElement.className = 'fact-check-card-editor';
+            cardElement.dataset.cardId = cardId;
+            const createdDate = (cardData.createdAt && cardData.createdAt.toDate) ? cardData.createdAt.toDate().toLocaleString() : new Date().toLocaleString();
+
+            cardElement.innerHTML = `
+                <div class="meta-info">
+                    <i class="fas fa-clock"></i> <span>${createdDate}</span>
+                </div>
+                <div class="card-content">
+                    <div class="text-content">
+                        <h3 class="title" contenteditable="true" data-placeholder="Title of the claim...">${cardData.title || ''}</h3>
+                        <p class="subtitle" contenteditable="true" data-placeholder="Subtitle or context...">${cardData.subtitle || ''}</p>
+                        <div class="tags-and-verdict">
+                            <select class="verdict-select input-field">
+                                <option value="">-- Select a Verdict --</option>
+                                <option value="True" ${cardData.verdict === 'True' ? 'selected' : ''}>True</option>
+                                <option value="Half true" ${cardData.verdict === 'Half true' ? 'selected' : ''}>Half true</option>
+                                <option value="Needs context" ${cardData.verdict === 'Needs context' ? 'selected' : ''}>Needs context</option>
+                                <option value="Misleading" ${cardData.verdict === 'Misleading' ? 'selected' : ''}>Misleading</option>
+                                <option value="False" ${cardData.verdict === 'False' ? 'selected' : ''}>False</option>
+                            </select>
+                            <span class="category-tag-editor" contenteditable="true" data-placeholder="Category 1">${cardData.category1 || ''}</span>
+                            <span class="category-tag-editor" contenteditable="true" data-placeholder="Category 2">${cardData.category2 || ''}</span>
+                            <span class="category-tag-editor" contenteditable="true" data-placeholder="Category 3">${cardData.category3 || ''}</span>
+                        </div>
+                    </div>
+                    <input type="text" class="analysis-link-input input-field" placeholder="https://link-to-analysis" value="${cardData.analysisLink || ''}" title="Link to analysis">
+                </div>
+                <button class="delete-card-btn" title="Delete Card">&times;</button>
+            `;
+            cardsContainer.appendChild(cardElement);
+
+            const verdictSelect = cardElement.querySelector('.verdict-select');
+            const updateVerdictColor = () => {
+                const verdict = verdictSelect.value;
+                let color = 'transparent';
+                if (verdict === 'True') color = '#27ae60';
+                else if (verdict === 'Half true') color = '#f39c12';
+                else if (verdict === 'Needs context') color = '#3498db';
+                else if (verdict === 'Misleading') color = '#e67e22';
+                else if (verdict === 'False') color = '#c0392b';
+                cardElement.style.borderColor = color;
+            };
+            
+            verdictSelect.addEventListener('change', updateVerdictColor);
+            updateVerdictColor(); // Set initial color
+
+            cardElement.querySelector('.delete-card-btn').addEventListener('click', (e) => {
+                e.target.closest('.fact-check-card-editor').remove();
+            });
+        };
+
+        const loadDashboardData = async () => {
+            if (!currentNavId) return;
+            const docRef = doc(db, 'navigationDashboards', currentNavId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                category1NameInput.value = data.category1Name || '';
+                category2NameInput.value = data.category2Name || '';
+                category3NameInput.value = data.category3Name || '';
+                
+                cardsContainer.innerHTML = '';
+                if (data.cards && data.cards.length > 0) {
+                    data.cards.forEach(card => createCardEditor(card));
+                } else {
+                    createCardEditor();
+                }
+                saveChangesBtn.textContent = "Update Dashboard";
+            } else {
+                createCardEditor();
+            }
+        };
+
+        addCardBtn.addEventListener('click', () => createCardEditor());
+
+        saveChangesBtn.addEventListener('click', async () => {
+            if (!currentNavId) return;
+            saveChangesBtn.disabled = true;
+            saveChangesBtn.textContent = "Saving...";
+
+            const cardsData = [];
+            const cardElements = document.querySelectorAll('.fact-check-card-editor');
+            const categoryTags = document.querySelectorAll('.category-tag-editor');
+
+            for (let i = 0; i < cardElements.length; i++) {
+                const cardEl = cardElements[i];
+                cardsData.push({
+                    id: cardEl.dataset.cardId,
+                    createdAt: serverTimestamp(),
+                    title: cardEl.querySelector('.title').textContent.trim(),
+                    subtitle: cardEl.querySelector('.subtitle').textContent.trim(),
+                    verdict: cardEl.querySelector('.verdict-select').value,
+                    analysisLink: cardEl.querySelector('.analysis-link-input').value.trim(),
+                    category1: categoryTags[i * 3].textContent.trim(),
+                    category2: categoryTags[i * 3 + 1].textContent.trim(),
+                    category3: categoryTags[i * 3 + 2].textContent.trim(),
+                });
+            }
+
+            const dashboardData = {
+                name: document.getElementById('navDashboardHeader').textContent.replace('Navigation Dashboard: ', ''),
+                category1Name: category1NameInput.value.trim(),
+                category2Name: category2NameInput.value.trim(),
+                category3Name: category3NameInput.value.trim(),
+                cards: cardsData,
+                lastUpdated: serverTimestamp()
+            };
+
+            try {
+                await setDoc(doc(db, 'navigationDashboards', currentNavId), dashboardData, { merge: true });
+                showNotification("Dashboard saved successfully!", "success");
+                saveChangesBtn.textContent = "Update Dashboard";
+            } catch (error) {
+                console.error("Error saving dashboard: ", error);
+                showNotification("Error saving dashboard.", "error");
+            } finally {
+                saveChangesBtn.disabled = false;
+            }
+        });
+
+        const generateEmbedCode = (navName) => {
+            const embedUrl = `${window.location.origin}${window.location.pathname.replace('create-nav-dashboard.html', 'embed-nav-dashboard.html')}?navId=${currentNavId}`;
+            embedCodeInput.value = `<iframe src="${embedUrl}" style="width:100%; height:1200px; border:none;" title="${navName}"></iframe>`;
+        };
+
+        copyEmbedCodeButton.addEventListener('click', () => {
+            embedCodeInput.select();
+            document.execCommand("copy");
+            showNotification("Embed code copied!", "success");
+        });
+
+        document.getElementById('signOutButtonHeader').addEventListener('click', () => signOut(auth));
+    </script>
+</body>
+</html>
