@@ -28,6 +28,7 @@
                     <option value="">-- Select a tool --</option>
                     <option value="liveBlog">Live Blog</option>
                     <option value="verticalProfileCards">Vertical Profile Cards</option>
+                    <option value="navigationDashboard">Navigation Dashboard</option>
                 </select>
             </div>
             <div id="toolNameContainer" style="display: none;">
@@ -46,6 +47,7 @@
                     <option value="all">All</option>
                     <option value="liveBlog">Live Blog</option>
                     <option value="verticalProfileCards">Vertical Profile Cards</option>
+                    <option value="navigationDashboard">Navigation Dashboard</option>
                 </select>
             </div>
             <div class="blog-list" id="toolListContainer">
@@ -101,14 +103,18 @@
 
             createToolSelect.addEventListener('change', () => {
                 const selectedTool = createToolSelect.value;
-                if (selectedTool === 'liveBlog') {
-                    newToolNameInput.placeholder = "Enter blog title";
-                    startNewToolBtn.textContent = "Start New Blog";
+                if (selectedTool) {
                     toolNameContainer.style.display = 'block';
-                } else if (selectedTool === 'verticalProfileCards') {
-                    newToolNameInput.placeholder = "Enter card set title";
-                    startNewToolBtn.textContent = "Create Card Set";
-                    toolNameContainer.style.display = 'block';
+                    if (selectedTool === 'liveBlog') {
+                        newToolNameInput.placeholder = "Enter blog title";
+                        startNewToolBtn.textContent = "Start New Blog";
+                    } else if (selectedTool === 'verticalProfileCards') {
+                        newToolNameInput.placeholder = "Enter card set title";
+                        startNewToolBtn.textContent = "Create Card Set";
+                    } else if (selectedTool === 'navigationDashboard') {
+                        newToolNameInput.placeholder = "Enter dashboard title";
+                        startNewToolBtn.textContent = "Create Dashboard";
+                    }
                 } else {
                     toolNameContainer.style.display = 'none';
                 }
@@ -123,23 +129,29 @@
                     return;
                 }
 
-                let collectionName = '';
-                let redirectPage = '';
-                let idParam = '';
-                let nameParam = '';
+                let collectionName, redirectPage, idParam, nameParam;
 
-                if (selectedTool === 'liveBlog') {
-                    collectionName = 'blogs';
-                    redirectPage = 'create-blog.html';
-                    idParam = 'blogId';
-                    nameParam = 'blogName';
-                } else if (selectedTool === 'verticalProfileCards') {
-                    collectionName = 'verticalProfileCards';
-                    redirectPage = 'create-cards.html'; // This page needs to be created
-                    idParam = 'cardSetId';
-                    nameParam = 'cardSetName';
-                } else {
-                    return; // Should not happen
+                switch (selectedTool) {
+                    case 'liveBlog':
+                        collectionName = 'blogs';
+                        redirectPage = 'create-blog.html';
+                        idParam = 'blogId';
+                        nameParam = 'blogName';
+                        break;
+                    case 'verticalProfileCards':
+                        collectionName = 'verticalProfileCards';
+                        redirectPage = 'create-cards.html';
+                        idParam = 'cardSetId';
+                        nameParam = 'cardSetName';
+                        break;
+                    case 'navigationDashboard':
+                        collectionName = 'navigationDashboards';
+                        redirectPage = 'create-nav-dashboard.html'; // This page needs to be created
+                        idParam = 'navId';
+                        nameParam = 'navName';
+                        break;
+                    default:
+                        return;
                 }
 
                 try {
@@ -180,26 +192,23 @@
             const noToolsMessage = document.getElementById('noToolsMessage');
             
             try {
-                // Fetch from both collections
-                const blogsQuery = query(collection(db, "blogs"), orderBy("created", "desc"));
-                const cardsQuery = query(collection(db, "verticalProfileCards"), orderBy("created", "desc"));
+                const toolCollections = [
+                    { name: 'blogs', type: 'liveBlog' },
+                    { name: 'verticalProfileCards', type: 'verticalProfileCards' },
+                    { name: 'navigationDashboards', type: 'navigationDashboard' }
+                ];
 
-                const [blogsSnapshot, cardsSnapshot] = await Promise.all([
-                    getDocs(blogsQuery),
-                    getDocs(cardsQuery)
-                ]);
+                const promises = toolCollections.map(c => getDocs(query(collection(db, c.name), orderBy("created", "desc"))));
+                const snapshots = await Promise.all(promises);
 
                 let allTools = [];
-
-                blogsSnapshot.forEach(doc => {
-                    allTools.push({ id: doc.id, type: 'liveBlog', ...doc.data() });
+                snapshots.forEach((snapshot, index) => {
+                    const type = toolCollections[index].type;
+                    snapshot.forEach(doc => {
+                        allTools.push({ id: doc.id, type, ...doc.data() });
+                    });
                 });
 
-                cardsSnapshot.forEach(doc => {
-                    allTools.push({ id: doc.id, type: 'verticalProfileCards', ...doc.data() });
-                });
-
-                // Sort all tools together by creation date safely
                 allTools.sort((a, b) => {
                     const timeA = a.created ? a.created.toMillis() : 0;
                     const timeB = b.created ? b.created.toMillis() : 0;
@@ -213,15 +222,24 @@
                         listItem.dataset.type = tool.type;
                         const createdDate = tool.created ? tool.created.toDate().toLocaleString() : 'N/A';
                         
-                        let link = '';
-                        if (tool.type === 'liveBlog') {
-                            link = `create-blog.html?blogId=${tool.id}&blogName=${encodeURIComponent(tool.name)}`;
-                        } else if (tool.type === 'verticalProfileCards') {
-                            link = `create-cards.html?cardSetId=${tool.id}&cardSetName=${encodeURIComponent(tool.name)}`;
+                        let link, typeLabel;
+                        switch(tool.type) {
+                            case 'liveBlog':
+                                link = `create-blog.html?blogId=${tool.id}&blogName=${encodeURIComponent(tool.name)}`;
+                                typeLabel = 'Live Blog';
+                                break;
+                            case 'verticalProfileCards':
+                                link = `create-cards.html?cardSetId=${tool.id}&cardSetName=${encodeURIComponent(tool.name)}`;
+                                typeLabel = 'Profile Cards';
+                                break;
+                            case 'navigationDashboard':
+                                link = `create-nav-dashboard.html?navId=${tool.id}&navName=${encodeURIComponent(tool.name)}`;
+                                typeLabel = 'Nav Dashboard';
+                                break;
                         }
 
                         listItem.innerHTML = `
-                            <a href="${link}">${tool.name} <span style="font-size: 0.8em; color: #777; margin-left: 8px;">(${tool.type === 'liveBlog' ? 'Live Blog' : 'Profile Cards'})</span></a>
+                            <a href="${link}">${tool.name} <span style="font-size: 0.8em; color: #777; margin-left: 8px;">(${typeLabel})</span></a>
                             <span>Created: ${createdDate}</span>
                         `;
                         toolsList.appendChild(listItem);
