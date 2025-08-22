@@ -4,42 +4,49 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
 }
 
 main {
     max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
 }
 
 /* --- Filter & Search --- */
 .filters-container {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 .search-bar {
     flex-grow: 1;
     position: relative;
+    min-width: 200px;
 }
 .search-bar input, .filter-dropdown {
+    width: 100%;
     background-color: #f7f7f7;
     border: 1px solid #f7f7f7;
     border-radius: 8px;
-    padding: 10px;
+    padding: 12px;
     font-size: 1em;
+    box-sizing: border-box;
 }
 .search-bar input {
-    padding-left: 35px;
+    padding-left: 40px;
 }
 .search-bar .fa-search {
     position: absolute;
-    left: 12px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
     color: #999;
 }
 .filter-dropdown {
-    min-width: 150px;
+    min-width: 160px;
 }
 
 /* --- Fact Check Card --- */
@@ -149,4 +156,22 @@ main {
     color: #6c757d;
     margin-bottom: 10px;
     padding-bottom: 10px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 600px) {
+    .filters-container {
+        flex-direction: column;
+    }
+    .fact-check-card-embed .card-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .fact-check-card-embed .read-analysis-btn {
+        margin-top: 15px;
+        text-align: center;
+    }
+    .fact-check-card-embed .title {
+        font-size: 1.3em;
+    }
 }
