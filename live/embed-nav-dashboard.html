@@ -39,6 +39,9 @@
         <div id="cardsContainer">
             <!-- Fact-check cards will be rendered here -->
         </div>
+        <div id="paginationContainer" class="pagination-container">
+            <!-- Pagination buttons will be rendered here -->
+        </div>
     </main>
 
     <script type="module">
@@ -59,8 +62,11 @@
 
         let allCards = [];
         let currentNavId = null;
+        let currentPage = 1;
+        const cardsPerPage = 3;
 
         const cardsContainer = document.getElementById('cardsContainer');
+        const paginationContainer = document.getElementById('paginationContainer');
         const searchInput = document.getElementById('searchInput');
         const cat1Filter = document.getElementById('category1Filter');
         const cat2Filter = document.getElementById('category2Filter');
@@ -91,19 +97,37 @@
 
                 cardElement.innerHTML = `
                     <div class="meta-info">${metaInfoHTML}</div>
-                    <div class="card-content">
-                        <div class="text-content">
-                            <h3 class="title">${card.title}</h3>
-                            <p class="subtitle">${card.subtitle}</p>
-                            <div class="actions-container">
-                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : '<div></div>'}
-                                ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
-                            </div>
+                    <div class="text-content">
+                        <h3 class="title">${card.title}</h3>
+                        <p class="subtitle">${card.subtitle}</p>
+                        <div class="actions-container">
+                            ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : '<div></div>'}
+                            ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
                         </div>
                     </div>
                 `;
                 cardsContainer.appendChild(cardElement);
             });
+        };
+
+        const renderPagination = (totalCards) => {
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalCards / cardsPerPage);
+            if (totalPages <= 1) return;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = 'page-btn';
+                pageBtn.textContent = i;
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    filterAndRender();
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
         };
 
         const filterAndRender = () => {
@@ -125,7 +149,10 @@
 
                 return matchesSearch && matchesCat1 && matchesCat2 && matchesVerdict;
             });
-            renderCards(filteredCards);
+            
+            renderPagination(filteredCards.length);
+            const paginatedCards = filteredCards.slice((currentPage - 1) * cardsPerPage, currentPage * cardsPerPage);
+            renderCards(paginatedCards);
         };
 
         const populateFilters = (cards, cat1Name, cat2Name) => {
@@ -157,6 +184,7 @@
                     lastUpdatedText.textContent = `Last updated ${updatedDate} · ${allCards.length} checks`;
 
                     populateFilters(allCards, data.category1Name, data.category2Name);
+                    currentPage = 1; // Reset to first page on data change
                     filterAndRender();
                 } else {
                     cardsContainer.innerHTML = '<p>Dashboard not found.</p>';
@@ -169,10 +197,10 @@
             currentNavId = urlParams.get('navId');
             if (currentNavId) {
                 setupRealtimeListener();
-                searchInput.addEventListener('input', filterAndRender);
-                cat1Filter.addEventListener('change', filterAndRender);
-                cat2Filter.addEventListener('change', filterAndRender);
-                verdictFilter.addEventListener('change', filterAndRender);
+                searchInput.addEventListener('input', () => { currentPage = 1; filterAndRender(); });
+                cat1Filter.addEventListener('change', () => { currentPage = 1; filterAndRender(); });
+                cat2Filter.addEventListener('change', () => { currentPage = 1; filterAndRender(); });
+                verdictFilter.addEventListener('change', () => { currentPage = 1; filterAndRender(); });
 
                 filterBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
