@@ -48,7 +48,7 @@ main {
 
 .filter-button-wrapper {
     position: relative;
-    flex: 1 1 auto;
+    flex: 0 0 auto; /* Don't grow or shrink */
 }
 
 #filterBtn {
@@ -204,28 +204,28 @@ main {
 /* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
     .filters-container {
-        flex-direction: column;
+        flex-wrap: nowrap; /* Prevent wrapping */
     }
     #filterBtn .filter-btn-text {
         display: none;
     }
     #filterBtn {
         min-width: 50px;
+        padding: 14px;
     }
     .filter-button-wrapper {
-        align-self: flex-end;
-        margin-top: -62px;
-        width: 50px;
+       flex-basis: 50px; /* fixed width for button */
+       flex-shrink: 0;
     }
 
     .fact-check-card-embed .actions-container {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: auto 1fr;
         width: 100%;
     }
     .fact-check-card-embed .verdict-badge,
     .fact-check-card-embed .read-analysis-btn {
-        font-size: 1em;
+        font-size: 0.95em;
         padding: 10px;
         justify-content: center;
         text-align: center;
