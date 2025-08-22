@@ -157,7 +157,7 @@ main {
 .verdict-badge.False { background-color: #fae5e3; color: #c0392b; }
 
 .fact-check-card-embed .read-analysis-btn {
-    background-color: #f8f9fa;
+    background-color: transparent;
     border: 1px solid #dee2e6;
     color: #343a40;
     padding: 10px 20px;
@@ -169,7 +169,7 @@ main {
     transition: background-color 0.2s;
 }
 .fact-check-card-embed .read-analysis-btn:hover {
-    background-color: #e9ecef;
+    background-color: #f8f9fa;
 }
 
 /* --- Last Updated --- */
@@ -177,6 +177,28 @@ main {
     font-size: 0.9em;
     color: #6c757d;
     margin-bottom: 20px;
+}
+
+/* --- Pagination --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+.page-btn {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.page-btn.active {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
 }
 
 /* --- Responsive Adjustments --- */
@@ -206,6 +228,7 @@ main {
         font-size: 1em;
         padding: 10px;
         justify-content: center;
+        text-align: center;
     }
     .fact-check-card-embed .title {
         font-size: 1.3em;
