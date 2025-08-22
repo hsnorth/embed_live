@@ -17,7 +17,7 @@
             <div class="filter-button-wrapper">
                 <button id="filterBtn">
                     <i class="fas fa-filter"></i>
-                    <span>Filters</span>
+                    <span class="filter-btn-text">Filters</span>
                 </button>
                 <div id="dropdownPanel" class="dropdown-panel">
                     <select id="category1Filter" class="input-field filter-dropdown" style="display: none;"></select>
@@ -95,11 +95,11 @@
                         <div class="text-content">
                             <h3 class="title">${card.title}</h3>
                             <p class="subtitle">${card.subtitle}</p>
-                            <div class="tags-and-verdict">
-                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : ''}
+                            <div class="actions-container">
+                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : '<div></div>'}
+                                ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
                             </div>
                         </div>
-                        ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
                     </div>
                 `;
                 cardsContainer.appendChild(cardElement);
@@ -151,7 +151,7 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     allCards = data.cards || [];
-                    allCards.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+                    allCards.sort((a, b) => (b.createdAt.toMillis() - a.createdAt.toMillis()));
                     
                     const updatedDate = data.lastUpdated ? data.lastUpdated.toDate().toLocaleString() : 'N/A';
                     lastUpdatedText.textContent = `Last updated ${updatedDate} · ${allCards.length} checks`;
