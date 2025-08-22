@@ -160,7 +160,7 @@ main {
     background-color: transparent;
     border: 1px solid #dee2e6;
     color: #343a40;
-    padding: 10px 20px;
+    padding: 5px 15px;
     border-radius: 25px;
     text-decoration: none;
     font-weight: bold;
@@ -179,12 +179,17 @@ main {
     margin-bottom: 20px;
 }
 
-/* --- Pagination --- */
+/* --- Pagination & Footer --- */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
 .pagination-container {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 20px;
 }
 .page-btn {
     background-color: #fff;
@@ -200,6 +205,10 @@ main {
     color: white;
     border-color: #343a40;
 }
+.credit-text {
+    font-size: 0.8em;
+    color: #6c757d;
+}
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
@@ -213,19 +222,6 @@ main {
     .filter-button-wrapper {
        flex-basis: 50px;
        flex-shrink: 0;
-    }
-
-    .fact-check-card-embed .actions-container {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        width: 100%;
-    }
-    .fact-check-card-embed .verdict-badge,
-    .fact-check-card-embed .read-analysis-btn {
-        font-size: 0.95em;
-        padding: 10px;
-        justify-content: center;
-        text-align: center;
     }
     .fact-check-card-embed .title {
         font-size: 1.3em;
