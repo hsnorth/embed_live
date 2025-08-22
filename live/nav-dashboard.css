@@ -1,11 +1,14 @@
 /* nav-dashboard.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;700&display=swap');
 
-/* --- Verdict Colors --- */
-.verdict-True { border-left: 5px solid #27ae60; } /* Green */
-.verdict-Half.true { border-left: 5px solid #f39c12; } /* Orange */
-.verdict-Needs.context { border-left: 5px solid #3498db; } /* Blue */
-.verdict-Misleading { border-left: 5px solid #e67e22; } /* Darker Orange */
-.verdict-False { border-left: 5px solid #c0392b; } /* Red */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #FFFFFF;
+}
+
+main {
+    max-width: 800px;
+}
 
 /* --- Filter & Search --- */
 .filters-container {
@@ -18,8 +21,14 @@
     flex-grow: 1;
     position: relative;
 }
+.search-bar input, .filter-dropdown {
+    background-color: #f7f7f7;
+    border: 1px solid #f7f7f7;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1em;
+}
 .search-bar input {
-    width: 100%;
     padding-left: 35px;
 }
 .search-bar .fa-search {
@@ -36,12 +45,14 @@
 /* --- Fact Check Card --- */
 .fact-check-card-embed {
     background: #fff;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 25px 10px;
     display: flex;
     flex-direction: column;
+}
+.fact-check-card-embed:last-child {
+    border-bottom: none;
 }
 
 .fact-check-card-embed .meta-info {
@@ -49,8 +60,13 @@
     align-items: center;
     gap: 8px;
     color: #6c757d;
-    font-size: 0.85em;
-    margin-bottom: 12px;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.meta-info .meta-dot {
+    font-size: 0.5em;
+    color: #adb5bd;
 }
 
 .fact-check-card-embed .card-content {
@@ -65,21 +81,22 @@
 }
 
 .fact-check-card-embed .title {
-    font-size: 1.3em;
-    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
     color: #212529;
-    margin: 0 0 5px 0;
+    margin: 0 0 8px 0;
 }
 
 .fact-check-card-embed .subtitle {
-    font-size: 1em;
+    font-size: 1.05em;
     color: #495057;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .fact-check-card-embed .tags-and-verdict {
-    margin-top: 15px;
+    margin-top: 12px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -89,24 +106,25 @@
 .fact-check-card-embed .verdict-badge {
     padding: 5px 12px;
     border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.8em;
+    font-weight: 500;
+    font-size: 0.85em;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
+.verdict-badge i { font-size: 0.8em; }
 .verdict-badge.True { background-color: #e9f7ef; color: #27ae60; }
-.verdict-badge.Half.true { background-color: #fef5e7; color: #f39c12; }
-.verdict-badge.Needs.context { background-color: #ebf5fb; color: #3498db; }
+.verdict-badge.Half\.true { background-color: #fef5e7; color: #f39c12; }
+.verdict-badge.Needs\.context { background-color: #ebf5fb; color: #3498db; }
 .verdict-badge.Misleading { background-color: #fdf3e6; color: #e67e22; }
 .verdict-badge.False { background-color: #fae5e3; color: #c0392b; }
 
 .fact-check-card-embed .category-tag {
-    background-color: #f8f9fa;
-    color: #6c757d;
+    background-color: #f1f3f5;
+    color: #495057;
     padding: 5px 12px;
     border-radius: 20px;
-    font-size: 0.8em;
+    font-size: 0.85em;
 }
 
 .fact-check-card-embed .read-analysis-btn {
@@ -129,7 +147,6 @@
 .last-updated {
     font-size: 0.9em;
     color: #6c757d;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #e9ecef;
 }
