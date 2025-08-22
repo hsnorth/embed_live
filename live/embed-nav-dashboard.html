@@ -14,16 +14,24 @@
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" class="input-field" placeholder="Search claims, topics, names">
             </div>
-            <select id="category1Filter" class="input-field filter-dropdown" style="display: none;"></select>
-            <select id="category2Filter" class="input-field filter-dropdown" style="display: none;"></select>
-            <select id="verdictFilter" class="input-field filter-dropdown">
-                <option value="">All Verdicts</option>
-                <option value="True">True</option>
-                <option value="Half true">Half true</option>
-                <option value="Needs context">Needs context</option>
-                <option value="Misleading">Misleading</option>
-                <option value="False">False</option>
-            </select>
+            <div class="filter-button-wrapper">
+                <button id="filterBtn">
+                    <i class="fas fa-filter"></i>
+                    <span>Filters</span>
+                </button>
+                <div id="dropdownPanel" class="dropdown-panel">
+                    <select id="category1Filter" class="input-field filter-dropdown" style="display: none;"></select>
+                    <select id="category2Filter" class="input-field filter-dropdown" style="display: none;"></select>
+                    <select id="verdictFilter" class="input-field filter-dropdown">
+                        <option value="">All Verdicts</option>
+                        <option value="True">True</option>
+                        <option value="Half true">Half true</option>
+                        <option value="Needs context">Needs context</option>
+                        <option value="Misleading">Misleading</option>
+                        <option value="False">False</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <p class="last-updated" id="lastUpdatedText"></p>
@@ -58,6 +66,8 @@
         const cat2Filter = document.getElementById('category2Filter');
         const verdictFilter = document.getElementById('verdictFilter');
         const lastUpdatedText = document.getElementById('lastUpdatedText');
+        const filterBtn = document.getElementById('filterBtn');
+        const dropdownPanel = document.getElementById('dropdownPanel');
 
         const renderCards = (cardsToRender) => {
             cardsContainer.innerHTML = '';
@@ -73,7 +83,6 @@
                 let metaInfoHTML = `<i class="fas fa-clock"></i> <span>${(card.createdAt && card.createdAt.toDate) ? card.createdAt.toDate().toLocaleDateString() : 'N/A'}</span>`;
                 if (card.category1) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category1}</span>`;
                 if (card.category2) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category2}</span>`;
-                if (card.category3) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category3}</span>`;
                 
                 let verdictIcon = '';
                 if (verdictClass === 'True') verdictIcon = '<i class="fas fa-check-circle"></i>';
@@ -107,9 +116,8 @@
                 const matchesSearch = !searchTerm || 
                     card.title.toLowerCase().includes(searchTerm) ||
                     card.subtitle.toLowerCase().includes(searchTerm) ||
-                    card.category1.toLowerCase().includes(searchTerm) ||
-                    card.category2.toLowerCase().includes(searchTerm) ||
-                    card.category3.toLowerCase().includes(searchTerm);
+                    (card.category1 && card.category1.toLowerCase().includes(searchTerm)) ||
+                    (card.category2 && card.category2.toLowerCase().includes(searchTerm));
                 
                 const matchesCat1 = !cat1Value || card.category1 === cat1Value;
                 const matchesCat2 = !cat2Value || card.category2 === cat2Value;
@@ -165,6 +173,19 @@
                 cat1Filter.addEventListener('change', filterAndRender);
                 cat2Filter.addEventListener('change', filterAndRender);
                 verdictFilter.addEventListener('change', filterAndRender);
+
+                filterBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isHidden = dropdownPanel.style.display === 'none' || dropdownPanel.style.display === '';
+                    dropdownPanel.style.display = isHidden ? 'flex' : 'none';
+                });
+
+                window.addEventListener('click', (event) => {
+                    if (!filterBtn.contains(event.target) && !dropdownPanel.contains(event.target)) {
+                        dropdownPanel.style.display = 'none';
+                    }
+                });
+
             } else {
                 cardsContainer.innerHTML = '<p>Error: Dashboard ID not found in URL.</p>';
             }
