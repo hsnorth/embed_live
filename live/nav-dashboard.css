@@ -3,7 +3,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #FFFFFF;
+    background-color: #f8f9fa; /* Light grey background */
     margin: 0;
     padding: 0;
 }
@@ -19,21 +19,23 @@ main {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
 }
 .search-bar {
-    flex-grow: 1;
+    flex: 1 1 300px;
     position: relative;
 }
-.search-bar input {
+.search-bar input, .filter-dropdown, #filterBtn {
     width: 100%;
-    background-color: #f7f7f7;
-    border: 1px solid #f7f7f7;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
     border-radius: 8px;
     padding: 14px;
     font-size: 1em;
     box-sizing: border-box;
+}
+.search-bar input {
     padding-left: 40px;
 }
 .search-bar .fa-search {
@@ -46,22 +48,19 @@ main {
 
 .filter-button-wrapper {
     position: relative;
+    flex: 1 1 auto;
 }
 
 #filterBtn {
-    background-color: #f7f7f7;
-    border: 1px solid #f7f7f7;
-    border-radius: 8px;
-    padding: 14px;
-    font-size: 1em;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
 }
 
 .dropdown-panel {
-    display: none; /* Hidden by default */
+    display: none;
     position: absolute;
     top: 100%;
     right: 0;
@@ -76,29 +75,21 @@ main {
     flex-direction: column;
     gap: 10px;
 }
-
 .filter-dropdown {
     width: 100%;
-    background-color: #f7f7f7;
-    border: 1px solid #f7f7f7;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 1em;
-    box-sizing: border-box;
 }
 
 
 /* --- Fact Check Card --- */
 .fact-check-card-embed {
     background: #fff;
-    border: none;
-    border-bottom: 1px solid #e9ecef;
-    padding: 25px 10px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
-}
-.fact-check-card-embed:last-child {
-    border-bottom: none;
 }
 
 .fact-check-card-embed .meta-info {
@@ -141,8 +132,8 @@ main {
     line-height: 1.6;
 }
 
-.fact-check-card-embed .tags-and-verdict {
-    margin-top: 12px;
+.fact-check-card-embed .actions-container {
+    margin-top: 15px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -150,10 +141,10 @@ main {
 }
 
 .fact-check-card-embed .verdict-badge {
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
     font-weight: 500;
-    font-size: 0.85em;
+    font-size: 0.9em;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -164,14 +155,6 @@ main {
 .verdict-badge.Needs\.context { background-color: #ebf5fb; color: #3498db; }
 .verdict-badge.Misleading { background-color: #fdf3e6; color: #e67e22; }
 .verdict-badge.False { background-color: #fae5e3; color: #c0392b; }
-
-.fact-check-card-embed .category-tag {
-    background-color: #f1f3f5;
-    color: #495057;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.85em;
-}
 
 .fact-check-card-embed .read-analysis-btn {
     background-color: #f8f9fa;
@@ -198,13 +181,31 @@ main {
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
-    .fact-check-card-embed .card-content {
+    .filters-container {
         flex-direction: column;
-        align-items: stretch;
     }
+    #filterBtn .filter-btn-text {
+        display: none;
+    }
+    #filterBtn {
+        min-width: 50px;
+    }
+    .filter-button-wrapper {
+        align-self: flex-end;
+        margin-top: -62px;
+        width: 50px;
+    }
+
+    .fact-check-card-embed .actions-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+    .fact-check-card-embed .verdict-badge,
     .fact-check-card-embed .read-analysis-btn {
-        margin-top: 15px;
-        text-align: center;
+        font-size: 1em;
+        padding: 10px;
+        justify-content: center;
     }
     .fact-check-card-embed .title {
         font-size: 1.3em;
