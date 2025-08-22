@@ -19,11 +19,11 @@ main {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Prevents wrapping on small screens */
     align-items: center;
 }
 .search-bar {
-    flex: 1 1 300px;
+    flex-grow: 1; /* Allows search bar to take up available space */
     position: relative;
 }
 .search-bar input, .filter-dropdown, #filterBtn {
@@ -48,7 +48,7 @@ main {
 
 .filter-button-wrapper {
     position: relative;
-    flex: 0 0 auto; /* Don't grow or shrink */
+    flex-shrink: 0; /* Prevents the button from shrinking */
 }
 
 #filterBtn {
@@ -196,16 +196,13 @@ main {
     font-weight: 500;
 }
 .page-btn.active {
-    background-color: #e74c3c;
+    background-color: #343a40;
     color: white;
-    border-color: #e74c3c;
+    border-color: #343a40;
 }
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
-    .filters-container {
-        flex-wrap: nowrap; /* Prevent wrapping */
-    }
     #filterBtn .filter-btn-text {
         display: none;
     }
@@ -214,7 +211,7 @@ main {
         padding: 14px;
     }
     .filter-button-wrapper {
-       flex-basis: 50px; /* fixed width for button */
+       flex-basis: 50px;
        flex-shrink: 0;
     }
 
