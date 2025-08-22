@@ -39,8 +39,11 @@
         <div id="cardsContainer">
             <!-- Fact-check cards will be rendered here -->
         </div>
-        <div id="paginationContainer" class="pagination-container">
-            <!-- Pagination buttons will be rendered here -->
+        <div class="footer-container">
+            <div id="paginationContainer" class="pagination-container">
+                <!-- Pagination buttons will be rendered here -->
+            </div>
+            <span class="credit-text">Made by Harry North</span>
         </div>
     </main>
 
@@ -102,7 +105,7 @@
                             <h3 class="title">${card.title}</h3>
                             <p class="subtitle">${card.subtitle}</p>
                             <div class="actions-container">
-                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : '<div></div>'}
+                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : ''}
                                 ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
                             </div>
                         </div>
