@@ -16,7 +16,14 @@
             </div>
             <select id="category1Filter" class="input-field filter-dropdown" style="display: none;"></select>
             <select id="category2Filter" class="input-field filter-dropdown" style="display: none;"></select>
-            <select id="category3Filter" class="input-field filter-dropdown" style="display: none;"></select>
+            <select id="verdictFilter" class="input-field filter-dropdown">
+                <option value="">All Verdicts</option>
+                <option value="True">True</option>
+                <option value="Half true">Half true</option>
+                <option value="Needs context">Needs context</option>
+                <option value="Misleading">Misleading</option>
+                <option value="False">False</option>
+            </select>
         </div>
 
         <p class="last-updated" id="lastUpdatedText"></p>
@@ -49,7 +56,7 @@
         const searchInput = document.getElementById('searchInput');
         const cat1Filter = document.getElementById('category1Filter');
         const cat2Filter = document.getElementById('category2Filter');
-        const cat3Filter = document.getElementById('category3Filter');
+        const verdictFilter = document.getElementById('verdictFilter');
         const lastUpdatedText = document.getElementById('lastUpdatedText');
 
         const renderCards = (cardsToRender) => {
@@ -61,26 +68,26 @@
             cardsToRender.forEach(card => {
                 const cardElement = document.createElement('div');
                 const verdictClass = card.verdict ? card.verdict.replace(/\s+/g, '.') : '';
-                cardElement.className = `fact-check-card-embed verdict-${verdictClass}`;
+                cardElement.className = `fact-check-card-embed`;
                 
-                let categoriesHTML = '';
-                if (card.category1) categoriesHTML += `<span class="category-tag">${card.category1}</span>`;
-                if (card.category2) categoriesHTML += `<span class="category-tag">${card.category2}</span>`;
-                if (card.category3) categoriesHTML += `<span class="category-tag">${card.category3}</span>`;
-
-                const createdDate = (card.createdAt && card.createdAt.toDate) ? card.createdAt.toDate().toLocaleDateString() : 'N/A';
+                let metaInfoHTML = `<i class="fas fa-clock"></i> <span>${(card.createdAt && card.createdAt.toDate) ? card.createdAt.toDate().toLocaleDateString() : 'N/A'}</span>`;
+                if (card.category1) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category1}</span>`;
+                if (card.category2) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category2}</span>`;
+                if (card.category3) metaInfoHTML += ` <span class="meta-dot">●</span> <span>${card.category3}</span>`;
+                
+                let verdictIcon = '';
+                if (verdictClass === 'True') verdictIcon = '<i class="fas fa-check-circle"></i>';
+                if (verdictClass === 'False' || verdictClass === 'Misleading') verdictIcon = '<i class="fas fa-times-circle"></i>';
+                if (verdictClass === 'Half.true' || verdictClass === 'Needs.context') verdictIcon = '<i class="fas fa-exclamation-circle"></i>';
 
                 cardElement.innerHTML = `
-                    <div class="meta-info">
-                        <i class="fas fa-clock"></i> <span>${createdDate}</span>
-                    </div>
+                    <div class="meta-info">${metaInfoHTML}</div>
                     <div class="card-content">
                         <div class="text-content">
                             <h3 class="title">${card.title}</h3>
                             <p class="subtitle">${card.subtitle}</p>
                             <div class="tags-and-verdict">
-                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${card.verdict}</span>` : ''}
-                                ${categoriesHTML}
+                                ${card.verdict ? `<span class="verdict-badge ${verdictClass}">${verdictIcon} ${card.verdict}</span>` : ''}
                             </div>
                         </div>
                         ${card.analysisLink ? `<a href="${card.analysisLink}" target="_blank" class="read-analysis-btn">Read analysis</a>` : ''}
@@ -94,7 +101,7 @@
             const searchTerm = searchInput.value.toLowerCase();
             const cat1Value = cat1Filter.value;
             const cat2Value = cat2Filter.value;
-            const cat3Value = cat3Filter.value;
+            const verdictValue = verdictFilter.value;
 
             const filteredCards = allCards.filter(card => {
                 const matchesSearch = !searchTerm || 
@@ -106,14 +113,14 @@
                 
                 const matchesCat1 = !cat1Value || card.category1 === cat1Value;
                 const matchesCat2 = !cat2Value || card.category2 === cat2Value;
-                const matchesCat3 = !cat3Value || card.category3 === cat3Value;
+                const matchesVerdict = !verdictValue || card.verdict === verdictValue;
 
-                return matchesSearch && matchesCat1 && matchesCat2 && matchesCat3;
+                return matchesSearch && matchesCat1 && matchesCat2 && matchesVerdict;
             });
             renderCards(filteredCards);
         };
 
-        const populateFilters = (cards, cat1Name, cat2Name, cat3Name) => {
+        const populateFilters = (cards, cat1Name, cat2Name) => {
             const populate = (filterEl, categoryKey, categoryName) => {
                 if (!categoryName) {
                     filterEl.style.display = 'none';
@@ -128,7 +135,6 @@
             };
             populate(cat1Filter, 'category1', cat1Name);
             populate(cat2Filter, 'category2', cat2Name);
-            populate(cat3Filter, 'category3', cat3Name);
         };
 
         const setupRealtimeListener = () => {
@@ -142,7 +148,7 @@
                     const updatedDate = data.lastUpdated ? data.lastUpdated.toDate().toLocaleString() : 'N/A';
                     lastUpdatedText.textContent = `Last updated ${updatedDate} · ${allCards.length} checks`;
 
-                    populateFilters(allCards, data.category1Name, data.category2Name, data.category3Name);
+                    populateFilters(allCards, data.category1Name, data.category2Name);
                     filterAndRender();
                 } else {
                     cardsContainer.innerHTML = '<p>Dashboard not found.</p>';
@@ -158,7 +164,7 @@
                 searchInput.addEventListener('input', filterAndRender);
                 cat1Filter.addEventListener('change', filterAndRender);
                 cat2Filter.addEventListener('change', filterAndRender);
-                cat3Filter.addEventListener('change', filterAndRender);
+                verdictFilter.addEventListener('change', filterAndRender);
             } else {
                 cardsContainer.innerHTML = '<p>Error: Dashboard ID not found in URL.</p>';
             }
