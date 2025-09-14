@@ -12,7 +12,7 @@
             --color-text: #111111;
             --color-background: #ffffff;
             --color-border: #e0e0e0;
-            --color-accent: #ffde3f; /* A yellow accent similar to the screenshot */
+            --color-accent: #ffde3f;
         }
 
         body {
@@ -24,9 +24,19 @@
 
         /* --- Header & Navigation --- */
         .main-header {
-            border-bottom: 1px solid var(--color-border);
-            padding: 1rem 2rem;
+            /* STICKY BEHAVIOR */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            
             background-color: var(--color-background);
+            border-bottom: 1px solid var(--color-border);
+            
+            /* Initial large padding */
+            padding: 2rem 2rem; 
+            
+            /* SMOOTH TRANSITION for shrinking effect */
+            transition: padding 0.3s ease-in-out;
         }
 
         .main-nav {
@@ -34,15 +44,15 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 1600px; /* Max width for large screens */
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* --- Navigation Sections (Left, Center, Right) --- */
+        /* --- Navigation Sections --- */
         .nav-left, .nav-right {
             display: flex;
             align-items: center;
-            flex: 1 0 0; /* Grow, Shrink, Basis */
+            flex: 1 0 0;
         }
 
         .nav-right {
@@ -53,116 +63,73 @@
         .nav-center {
             text-align: center;
         }
-
+        
         /* --- Logo / Title --- */
         .logo {
             font-family: var(--font-serif);
-            font-size: 2.8rem;
             font-weight: 500;
             margin: 0;
-            letter-spacing: 0.5px;
             color: #000;
+            line-height: 1;
+
+            /* Initial HUGE font size */
+            font-size: 7rem; 
+
+            /* SMOOTH TRANSITION for font shrinking */
+            transition: font-size 0.3s ease-in-out;
         }
 
-        /* --- Menu Toggle (Hamburger Icon) --- */
+        /* --- NEW: The Scrolled State --- */
+        /* This class is added by JavaScript when you scroll down */
+        .main-header.scrolled {
+            /* Reduced padding when shrunk */
+            padding: 0.8rem 2rem; 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-header.scrolled .logo {
+            /* Reduced font size when shrunk */
+            font-size: 2rem; 
+        }
+
+        /* --- Menu Toggle, Links & Buttons --- */
         .menu-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 5px; /* Space between lines */
+            background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px;
         }
-
         .hamburger-line {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background-color: var(--color-text);
-            transition: transform 0.3s ease;
+            display: block; width: 24px; height: 2px; background-color: var(--color-text);
         }
-
-        /* --- Right-side Links & Button --- */
         .nav-link {
-            text-decoration: none;
-            color: var(--color-text);
-            font-size: 0.95rem;
-            font-weight: 500;
+            text-decoration: none; color: var(--color-text); font-size: 0.95rem; font-weight: 500;
         }
-
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-
         .btn {
-            text-decoration: none;
-            padding: 0.7rem 1.2rem;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
+            text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid transparent; cursor: pointer; transition: background-color 0.2s ease;
         }
-
         .btn-primary {
-            background-color: var(--color-accent);
-            color: #000;
-            border-color: var(--color-accent);
-        }
-
-        .btn-primary:hover {
-            background-color: #f0cf3a; /* Darker yellow on hover */
+            background-color: var(--color-accent); color: #000; border-color: var(--color-accent);
         }
 
         /* --- Main Content Placeholder --- */
-        .main-content {
-            text-align: center;
-            padding: 6rem 2rem;
-        }
-
-        .main-content h2 {
-            font-family: var(--font-serif);
-            font-size: 2.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .main-content p {
+        /* Added more height to demonstrate the scroll effect */
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            height: 200vh; /* This makes the page long enough to scroll */
             font-size: 1.2rem;
-            color: #555;
+            line-height: 1.8;
         }
 
         /* --- Responsive Design --- */
-        @media (max-width: 768px) {
-            .main-header {
-                padding: 1rem 1.5rem;
-            }
-
-            .logo {
-                font-size: 2rem;
-            }
-
-            .nav-right .nav-link {
-                /* On smaller screens, hide the "Sign in" text to reduce clutter */
-                display: none; 
-            }
-
-            .nav-right {
-                gap: 1rem;
-            }
-
-            .btn {
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
+        @media (max-width: 1024px) {
+            .logo { font-size: 5rem; }
         }
 
-        @media (max-width: 480px) {
-            .logo {
-                font-size: 1.6rem;
-            }
+        @media (max-width: 768px) {
+            .main-header { padding: 1.5rem 1.5rem; }
+            .logo { font-size: 3.5rem; }
+            .main-header.scrolled .logo { font-size: 1.8rem; }
+            .nav-right .nav-link { display: none; }
         }
     </style>
 </head>
@@ -178,7 +145,7 @@
                 </button>
             </div>
             <div class="nav-center">
-                <h1 class="logo">The News Haul.</h1>
+                <h1 class="logo">The News Haul</h1>
             </div>
             <div class="nav-right">
                 <a href="#" class="nav-link">Sign in</a>
@@ -187,10 +154,29 @@
         </nav>
     </header>
 
-    <main class="main-content">
-        <h2>Your Curated News Awaits.</h2>
-        <p>Our first issue is coming soon.</p>
+    <main class="content-wrapper">
+        <h2>Scroll Down to See the Magic ✨</h2>
+        <p>As you scroll down this page, you'll notice the header at the top becomes smaller and sticks to the top of the window. When you scroll back to the very top, it will grow back to its original, larger size. This is achieved using a combination of CSS for styling and a small amount of JavaScript to detect the scroll action.</p>
+        <p>This technique is popular on modern websites because it keeps navigation accessible without taking up too much screen space once the user starts reading the main content. The large, impactful title at the top makes a strong first impression, while the smaller, sticky version is purely functional.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
     </main>
+
+    <script>
+        // Select the header element from the page
+        const header = document.querySelector('.main-header');
+
+        // Listen for the scroll event on the window
+        window.addEventListener('scroll', () => {
+            // Check if the user has scrolled more than 50 pixels down
+            if (window.scrollY > 50) {
+                // If yes, add the 'scrolled' class to the header
+                header.classList.add('scrolled');
+            } else {
+                // If no (they are at the top), remove the 'scrolled' class
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
 
 </body>
 </html>
