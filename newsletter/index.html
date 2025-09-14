@@ -51,6 +51,15 @@
             padding: 1rem 2rem 2rem 2rem;
             transition: padding 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
+
+        /* NEW: Container for the image and text title */
+        .branding-content {
+            display: flex;
+            align-items: center; /* Vertically align image and text */
+            justify-content: center; /* Center the entire block */
+            gap: 20px; /* Space between image and text */
+        }
+        
         .logo {
             font-family: var(--font-serif);
             font-weight: 500;
@@ -59,6 +68,13 @@
             line-height: 1;
             font-size: 7rem;
             transition: font-size 0.3s ease-in-out;
+        }
+
+        /* NEW: Image specific styles */
+        .logo-additional-image {
+            height: 100px; /* Adjust size as needed for the large header state */
+            object-fit: contain;
+            transition: height 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
         /* --- DYNAMIC SCROLLED STATE --- */
@@ -76,10 +92,16 @@
             grid-column: 2;
             padding: 0;
         }
+        /* NEW: Hide the additional image when scrolled */
+        .main-header.scrolled .logo-additional-image {
+            height: 0;
+            opacity: 0;
+            width: 0; /* Also reduce width to fully hide */
+            overflow: hidden; /* Prevent it from taking up space */
+        }
         .main-header.scrolled .logo {
             font-size: 2rem;
-            /* 👇 THE FIX IS HERE 👇 */
-            margin: 0; /* Remove default h1 margin for perfect vertical alignment */
+            margin: 0;
         }
         .main-header.scrolled .user-actions {
             grid-column: 3;
@@ -94,13 +116,22 @@
         .btn { text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid transparent; cursor: pointer; transition: background-color 0.2s ease; }
         .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
         .content-wrapper { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; height: 200vh; font-size: 1.2rem; line-height: 1.8; }
-        @media (max-width: 1024px) { .logo { font-size: 5rem; } }
+        @media (max-width: 1024px) { 
+            .logo { font-size: 5rem; } 
+            .logo-additional-image { height: 80px; }
+        }
         @media (max-width: 768px) {
             .logo { font-size: 3.5rem; }
             .header-top-bar, .header-branding { padding-left: 1.5rem; padding-right: 1.5rem; }
             .main-header.scrolled { padding: 0.8rem 1.5rem; }
             .main-header.scrolled .logo { font-size: 1.8rem; }
             .user-actions .nav-link { display: none; }
+            .logo-additional-image { height: 60px; gap: 10px; }
+            .branding-content { flex-direction: column; gap: 5px;} /* Stack on small screens if desired */
+        }
+        @media (max-width: 480px) {
+            .logo { font-size: 2.5rem; }
+            .logo-additional-image { height: 40px; }
         }
     </style>
 </head>
@@ -119,13 +150,16 @@
             </div>
         </div>
         <div class="header-branding">
-            <h1 class="logo">The News Haul.</h1>
+            <div class="branding-content">
+                <img src="Gemini_Generated_Image_gp34w0gp34w0gp34.png" alt="The News Haul Logo" class="logo-additional-image">
+                <h1 class="logo">The News Haul.</h1>
+            </div>
         </div>
     </header>
 
     <main class="content-wrapper">
-        <h2>Layout Fixed!</h2>
-        <p>This version now features a two-tier header. Scroll down to see how it cleanly collapses into a single, compact navigation bar that sticks to the top. This approach provides a strong brand impact on page load while prioritizing screen space for content as the user begins to read.</p>
+        <h2>Looks like Monocle!</h2>
+        <p>This header now closely mimics the Monocle layout with an additional image beside the main title. Scroll down to see it collapse. The image will disappear to make the shrunk header concise, just like in the Monocle example.</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
     </main>
     
