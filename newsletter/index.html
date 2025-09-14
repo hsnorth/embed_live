@@ -14,165 +14,134 @@
             --color-border: #e0e0e0;
             --color-accent: #ffde3f;
         }
-
         body {
             margin: 0;
             font-family: var(--font-sans);
             color: var(--color-text);
-            background-color: var(--color-background);
         }
 
-        /* --- Header & Navigation --- */
+        /* --- Main Header Container --- */
         .main-header {
-            /* STICKY BEHAVIOR */
             position: sticky;
             top: 0;
             z-index: 1000;
-            
             background-color: var(--color-background);
             border-bottom: 1px solid var(--color-border);
-            
-            /* Initial large padding */
-            padding: 2rem 2rem; 
-            
-            /* SMOOTH TRANSITION for shrinking effect */
-            transition: padding 0.3s ease-in-out;
+            /* Smooth transition for when we add flexbox on scroll */
+            transition: padding 0.3s ease-in-out; 
         }
 
-        .main-nav {
+        /* --- 1. TOP BAR --- */
+        .header-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
             max-width: 1600px;
             margin: 0 auto;
+            padding: 0.75rem 2rem;
         }
-
-        /* --- Navigation Sections --- */
-        .nav-left, .nav-right {
+        .user-actions {
             display: flex;
             align-items: center;
-            flex: 1 0 0;
-        }
-
-        .nav-right {
-            justify-content: flex-end;
             gap: 1.5rem;
         }
 
-        .nav-center {
+        /* --- 2. BRANDING AREA --- */
+        .header-branding {
             text-align: center;
+            /* Vertical space for the big title */
+            padding: 1rem 2rem 2rem 2rem;
+            /* Smooth transition for padding removal */
+            transition: padding 0.3s ease-in-out;
         }
-        
-        /* --- Logo / Title --- */
         .logo {
             font-family: var(--font-serif);
             font-weight: 500;
             margin: 0;
             color: #000;
             line-height: 1;
-
-            /* Initial HUGE font size */
-            font-size: 7rem; 
-
-            /* SMOOTH TRANSITION for font shrinking */
+            font-size: 7rem;
+            /* Smooth transition for font shrinking */
             transition: font-size 0.3s ease-in-out;
         }
 
-        /* --- NEW: The Scrolled State --- */
-        /* This class is added by JavaScript when you scroll down */
+        /* --- DYNAMIC SCROLLED STATE --- */
         .main-header.scrolled {
-            /* Reduced padding when shrunk */
-            padding: 0.8rem 2rem; 
+            /* RE-ARRANGE HEADER INTO A SINGLE ROW */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 2rem; /* Becomes the padding for the single bar */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
-
+        .main-header.scrolled .header-branding {
+            padding: 0; /* Remove padding to fit in the row */
+        }
         .main-header.scrolled .logo {
-            /* Reduced font size when shrunk */
-            font-size: 2rem; 
+            font-size: 2rem; /* Shrink the logo */
+        }
+        /* We need to re-define the top bar for flex layout */
+        .main-header.scrolled .header-top-bar {
+            padding: 0;
+            /* This makes the menu and user actions take up space */
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* --- Menu Toggle, Links & Buttons --- */
-        .menu-toggle {
-            background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px;
-        }
-        .hamburger-line {
-            display: block; width: 24px; height: 2px; background-color: var(--color-text);
-        }
-        .nav-link {
-            text-decoration: none; color: var(--color-text); font-size: 0.95rem; font-weight: 500;
-        }
-        .btn {
-            text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid transparent; cursor: pointer; transition: background-color 0.2s ease;
-        }
-        .btn-primary {
-            background-color: var(--color-accent); color: #000; border-color: var(--color-accent);
-        }
+        /* --- Helper Styles for Links, Buttons, etc. --- */
+        .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
+        .hamburger-line { display: block; width: 24px; height: 2px; background-color: var(--color-text); }
+        .nav-link { text-decoration: none; color: var(--color-text); font-size: 0.95rem; font-weight: 500; }
+        .btn { text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid transparent; cursor: pointer; transition: background-color 0.2s ease; }
+        .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
 
         /* --- Main Content Placeholder --- */
-        /* Added more height to demonstrate the scroll effect */
-        .content-wrapper {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-            height: 200vh; /* This makes the page long enough to scroll */
-            font-size: 1.2rem;
-            line-height: 1.8;
-        }
+        .content-wrapper { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; height: 200vh; font-size: 1.2rem; line-height: 1.8; }
 
         /* --- Responsive Design --- */
-        @media (max-width: 1024px) {
-            .logo { font-size: 5rem; }
-        }
-
+        @media (max-width: 1024px) { .logo { font-size: 5rem; } }
         @media (max-width: 768px) {
-            .main-header { padding: 1.5rem 1.5rem; }
             .logo { font-size: 3.5rem; }
+            .header-top-bar, .header-branding { padding-left: 1.5rem; padding-right: 1.5rem; }
+            .main-header.scrolled { padding: 0.8rem 1.5rem; }
             .main-header.scrolled .logo { font-size: 1.8rem; }
-            .nav-right .nav-link { display: none; }
+            .user-actions .nav-link { display: none; }
         }
     </style>
 </head>
 <body>
 
     <header class="main-header">
-        <nav class="main-nav">
-            <div class="nav-left">
-                <button class="menu-toggle" aria-label="Open menu">
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                </button>
-            </div>
-            <div class="nav-center">
-                <h1 class="logo">The News Haul.</h1>
-            </div>
-            <div class="nav-right">
+        <div class="header-top-bar">
+            <button class="menu-toggle" aria-label="Open menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="user-actions">
                 <a href="#" class="nav-link">Sign in</a>
                 <a href="#" class="btn btn-primary">Join Community</a>
             </div>
-        </nav>
+        </div>
+
+        <div class="header-branding">
+            <h1 class="logo">The News Haul</h1>
+        </div>
     </header>
 
     <main class="content-wrapper">
-        <h2>Scroll Down to See the Magic ✨</h2>
-        <p>As you scroll down this page, you'll notice the header at the top becomes smaller and sticks to the top of the window. When you scroll back to the very top, it will grow back to its original, larger size. This is achieved using a combination of CSS for styling and a small amount of JavaScript to detect the scroll action.</p>
-        <p>This technique is popular on modern websites because it keeps navigation accessible without taking up too much screen space once the user starts reading the main content. The large, impactful title at the top makes a strong first impression, while the smaller, sticky version is purely functional.</p>
+        <h2>A New, More Professional Layout</h2>
+        <p>This version now features a two-tier header. Scroll down to see how it cleanly collapses into a single, compact navigation bar that sticks to the top. This approach provides a strong brand impact on page load while prioritizing screen space for content as the user begins to read.</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
     </main>
 
     <script>
-        // Select the header element from the page
         const header = document.querySelector('.main-header');
-
-        // Listen for the scroll event on the window
         window.addEventListener('scroll', () => {
-            // Check if the user has scrolled more than 50 pixels down
             if (window.scrollY > 50) {
-                // If yes, add the 'scrolled' class to the header
                 header.classList.add('scrolled');
             } else {
-                // If no (they are at the top), remove the 'scrolled' class
                 header.classList.remove('scrolled');
             }
         });
