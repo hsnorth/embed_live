@@ -61,29 +61,29 @@
             transition: font-size 0.3s ease-in-out;
         }
 
-        /* --- 👇 CSS GRID FIX FOR THE SCROLLED STATE 👇 --- */
+        /* --- DYNAMIC SCROLLED STATE --- */
         .main-header.scrolled {
             display: grid;
-            grid-template-columns: 1fr auto 1fr; /* Left col, Center col, Right col */
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             padding: 0.8rem 2rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
         .main-header.scrolled .header-top-bar {
-            /* This makes the menu-toggle and user-actions act as direct grid children */
             display: contents; 
         }
         .main-header.scrolled .header-branding {
-            grid-column: 2; /* Place the branding area in the center column */
+            grid-column: 2;
             padding: 0;
         }
         .main-header.scrolled .logo {
-            font-size: 2rem; /* Shrink the logo */
+            font-size: 2rem;
+            /* 👇 THE FIX IS HERE 👇 */
+            margin: 0; /* Remove default h1 margin for perfect vertical alignment */
         }
-        /* Explicitly place the user actions in the right-most column */
         .main-header.scrolled .user-actions {
             grid-column: 3;
-            justify-self: end; /* Align to the right edge of the column */
+            justify-self: end;
         }
 
 
