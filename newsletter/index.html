@@ -28,7 +28,6 @@
         /* --- HEADER --- */
         .main-header {
             position: sticky; top: 0; z-index: 1000; background-color: var(--color-background);
-            /* UPDATE: Max width changed */
             max-width: 1200px;
             margin: 0 auto;
             border-bottom: 1px solid var(--color-text);
@@ -68,13 +67,14 @@
         }
         .logo {
             font-family: var(--font-serif);
-            /* UPDATE: Thinner font weight */
             font-weight: 400;
-            font-size: 5.5rem;
+            /* UPDATE: Increased font size and added nowrap to force single line */
+            font-size: 7rem; /* Adjusted to fit the wider header */
             text-transform: uppercase;
             margin: 0; 
             color: var(--color-text); 
-            line-height: 1; 
+            line-height: 1; /* Ensure minimal vertical spacing */
+            white-space: nowrap; /* Force onto a single line */
             transition: font-size 0.3s ease-in-out;
         }
         
@@ -107,7 +107,6 @@
         /* --- MAIN CONTENT LAYOUT --- */
         .content-wrapper {
             display: grid; grid-template-columns: 2fr 1fr; gap: 45px;
-            /* UPDATE: Max width is 1000px */
             max-width: 1000px;
             margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
         }
@@ -160,7 +159,7 @@
             .main-header { padding: 0 1rem; }
             .header-top-bar, .header-branding { padding-left: 0; padding-right: 0; }
             .content-wrapper { padding: 0 1rem; }
-            .logo { font-size: 3.5rem; text-align: center;}
+            .logo { font-size: 3.5rem; text-align: center; white-space: normal;} /* Allow wrapping on small screens */
             .user-actions .nav-link { display: none; }
             .article-title { font-size: 2.5rem; }
         }
