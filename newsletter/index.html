@@ -27,24 +27,20 @@
 
         /* --- HEADER --- */
         .main-header {
-            position: sticky; top: 0; z-index: 1000; background-color: var(--color-background); border-bottom: 1px solid var(--color-text); transition: padding 0.3s ease-in-out; 
-        }
-        /* NEW: Container to constrain the header width */
-        .header-container {
-            max-width: 1200px; /* Matches content-wrapper */
+            position: sticky; top: 0; z-index: 1000; background-color: var(--color-background);
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            border-bottom: 1px solid var(--color-text);
         }
         .header-top-bar {
-            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;
+            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 2rem;
         }
         
         .header-branding {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            padding: 2rem 0;
-            /* REMOVED: Top border is gone */
+            padding: 2rem 2rem;
             transition: all 0.3s ease-in-out;
         }
         .branding-col {
@@ -57,10 +53,19 @@
             align-items: flex-end; text-align: right;
         }
         .branding-icon {
-            height: 105px; margin-bottom: 0.75rem;
+            /* UPDATE: Increased icon size again */
+            height: 120px;
+            margin-bottom: 0.75rem;
         }
         .caption {
-            font-family: var(--font-serif); font-size: 1rem; line-height: 1.4; margin: 0;
+            font-family: var(--font-serif);
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+            margin: 0;
+            /* UPDATE: Constrain width and allow wrapping */
+            max-width: 120px; /* Adjust as needed */
+            white-space: normal;
         }
         .logo {
             font-family: var(--font-serif); font-weight: 700; margin: 0; color: var(--color-text); line-height: 1; font-size: 5.5rem; transition: font-size 0.3s ease-in-out;
@@ -69,6 +74,10 @@
         /* DYNAMIC SCROLLED HEADER */
         .scrolled-logo-link {
             display: none; font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--color-text); text-decoration: none;
+        }
+        .main-header.scrolled {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom-color: var(--color-border);
         }
         .main-header.scrolled .header-branding {
             display: none;
@@ -88,10 +97,11 @@
             justify-self: start;
         }
 
-
         /* --- MAIN CONTENT LAYOUT --- */
         .content-wrapper {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 45px; max-width: 1000px; margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 45px;
+            max-width: 1200px;
+            margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
         }
         .main-article { background: var(--color-background); }
         .eyebrow-container { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
@@ -128,15 +138,19 @@
         .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
         
         /* Responsive */
+        @media (max-width: 1240px) { /* Adjust padding on screens slightly wider than the content */
+            .main-header { padding: 0 2rem; }
+        }
         @media (max-width: 1024px) {
             .branding-col-left, .branding-col-right { display: none; }
-            .header-branding { grid-template-columns: 1fr; padding-top: 1.5rem; }
+            .header-branding { grid-template-columns: 1fr; padding: 1.5rem 0; }
             .logo { font-size: 4rem; }
             .content-wrapper { grid-template-columns: 1fr; max-width: 680px; }
             .sidebar-sticky-container { position: static; }
         }
         @media (max-width: 768px) {
-            .header-container { padding: 0 1rem; }
+            .main-header { padding: 0 1rem; }
+            .header-top-bar, .header-branding { padding-left: 0; padding-right: 0; }
             .content-wrapper { padding: 0 1rem; }
             .logo { font-size: 3rem; }
             .user-actions .nav-link { display: none; }
@@ -147,31 +161,29 @@
 <body>
 
     <header class="main-header">
-        <div class="header-container">
-            <div class="header-top-bar">
-                <button class="menu-toggle" aria-label="Open menu">
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                </button>
-                <a href="#" class="scrolled-logo-link">The News Haul</a>
-                <div class="user-actions">
-                    <a href="#" class="nav-link">Sign in</a>
-                    <a href="#" class="btn btn-primary">Join Community</a>
-                </div>
+        <div class="header-top-bar">
+            <button class="menu-toggle" aria-label="Open menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <a href="#" class="scrolled-logo-link">The News Haul</a>
+            <div class="user-actions">
+                <a href="#" class="nav-link">Sign in</a>
+                <a href="#" class="btn btn-primary">Join Community</a>
             </div>
-            <div class="header-branding">
-                <div class="branding-col branding-col-left">
-                    <img src="bag.png" alt="Bag icon" class="branding-icon">
-                    <p class="caption">Reported from Montreal</p>
-                </div>
-                <div class="branding-col branding-col-center">
-                    <h1 class="logo">The News Haul</h1>
-                </div>
-                <div class="branding-col branding-col-right">
-                    <img src="env.png" alt="Envelope icon" class="branding-icon">
-                    <p class="caption">Delivered neatly to your inbox<br>Every Saturday</p>
-                </div>
+        </div>
+        <div class="header-branding">
+            <div class="branding-col branding-col-left">
+                <img src="bag.png" alt="Bag icon" class="branding-icon">
+                <p class="caption">Reported from Montreal</p>
+            </div>
+            <div class="branding-col branding-col-center">
+                <h1 class="logo">The News Haul</h1>
+            </div>
+            <div class="branding-col branding-col-right">
+                <img src="env.png" alt="Envelope icon" class="branding-icon">
+                <p class="caption">Delivered neatly to your inbox<br>Every Saturday</p>
             </div>
         </div>
     </header>
