@@ -29,43 +29,38 @@
         .main-header {
             position: sticky; top: 0; z-index: 1000; background-color: var(--color-background); border-bottom: 1px solid var(--color-text); transition: padding 0.3s ease-in-out; 
         }
+        /* NEW: Container to constrain the header width */
+        .header-container {
+            max-width: 1000px; /* Matches content-wrapper */
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
         .header-top-bar {
-            display: flex; justify-content: space-between; align-items: center; max-width: 1600px; margin: 0 auto; padding: 0.75rem 2rem;
+            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0;
         }
         
         .header-branding {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            padding: 2rem 2rem;
-            border-top: 1px solid var(--color-text);
+            padding: 2rem 0;
+            /* REMOVED: Top border is gone */
             transition: all 0.3s ease-in-out;
         }
         .branding-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center by default */
-            text-align: center;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
         }
         .branding-col-left {
-            align-items: flex-start;
-            text-align: left;
+            align-items: flex-start; text-align: left;
         }
         .branding-col-right {
-            align-items: flex-end;
-            text-align: right;
+            align-items: flex-end; text-align: right;
         }
         .branding-icon {
-            /* UPDATE: Increased icon size */
-            height: 105px;
-            margin-bottom: 0.75rem;
+            height: 105px; margin-bottom: 0.75rem;
         }
         .caption {
-            font-family: var(--font-serif);
-            font-size: 0.9rem;
-            color: #555;
-            line-height: 1.4;
-            margin: 0;
+            font-family: var(--font-serif); font-size: 0.9rem; color: #555; line-height: 1.4; margin: 0;
         }
         .logo {
             font-family: var(--font-serif); font-weight: 700; margin: 0; color: var(--color-text); line-height: 1; font-size: 5.5rem; transition: font-size 0.3s ease-in-out;
@@ -135,12 +130,14 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .branding-col-left, .branding-col-right { display: none; }
-            .header-branding { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
+            .header-branding { grid-template-columns: 1fr; padding-top: 1.5rem; }
             .logo { font-size: 4rem; }
-            .content-wrapper { grid-template-columns: 1fr; max-width: 680px; padding: 0 1rem; }
+            .content-wrapper { grid-template-columns: 1fr; max-width: 680px; }
             .sidebar-sticky-container { position: static; }
         }
         @media (max-width: 768px) {
+            .header-container { padding: 0 1rem; }
+            .content-wrapper { padding: 0 1rem; }
             .logo { font-size: 3rem; }
             .user-actions .nav-link { display: none; }
             .article-title { font-size: 2.5rem; }
@@ -150,29 +147,31 @@
 <body>
 
     <header class="main-header">
-        <div class="header-top-bar">
-            <button class="menu-toggle" aria-label="Open menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-            <a href="#" class="scrolled-logo-link">The News Haul</a>
-            <div class="user-actions">
-                <a href="#" class="nav-link">Sign in</a>
-                <a href="#" class="btn btn-primary">Join Community</a>
+        <div class="header-container">
+            <div class="header-top-bar">
+                <button class="menu-toggle" aria-label="Open menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <a href="#" class="scrolled-logo-link">The News Haul</a>
+                <div class="user-actions">
+                    <a href="#" class="nav-link">Sign in</a>
+                    <a href="#" class="btn btn-primary">Join Community</a>
+                </div>
             </div>
-        </div>
-        <div class="header-branding">
-            <div class="branding-col branding-col-left">
-                <img src="bag.png" alt="Bag icon" class="branding-icon">
-                <p class="caption">Reported from Montreal</p>
-            </div>
-            <div class="branding-col branding-col-center">
-                <h1 class="logo">The News Haul.</h1>
-            </div>
-            <div class="branding-col branding-col-right">
-                <img src="env.png" alt="Envelope icon" class="branding-icon">
-                <p class="caption">Delivered neatly to your inbox<br>every Saturday</p>
+            <div class="header-branding">
+                <div class="branding-col branding-col-left">
+                    <img src="bag.png" alt="Bag icon" class="branding-icon">
+                    <p class="caption">Reported from Montreal</p>
+                </div>
+                <div class="branding-col branding-col-center">
+                    <h1 class="logo">The News Haul</h1>
+                </div>
+                <div class="branding-col branding-col-right">
+                    <img src="env.png" alt="Envelope icon" class="branding-icon">
+                    <p class="caption">Delivered neatly to your inbox<br>Every Saturday</p>
+                </div>
             </div>
         </div>
     </header>
@@ -187,8 +186,6 @@
             <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
             <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
-            <p>Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Faucibus a pellentesque sit amet porttitor eget dolor morbi non. Faucibus et molestie ac feugiat sed lectus vestibulum. At auctor urna nunc id cursus metus aliquam eleifend mi. Scelerisque felis imperdiet proin fermentum. At in tellus integer feugiat scelerisque varius morbi. Et netus et malesuada fames ac turpis egestas. Non curabitur gravida arcu ac tortor dignissim. Cursus risus at ultrices mi tempus imperdiet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat. Neque laoreet suspendisse interdum consectetur. Erat nam at lectus urna duis convallis convallis tellus. Eget magna fermentum iaculis eu non diam phasellus vestibulum.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
         </article>
 
         <aside class="sidebar-sticky-container">
