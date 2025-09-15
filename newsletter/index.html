@@ -53,12 +53,18 @@
             align-items: flex-end; text-align: right;
         }
         .branding-icon {
+            /* General size for icons, will be overridden for envelope */
             height: 120px;
             margin-bottom: 0.75rem;
+        }
+        /* NEW: Specific style for the envelope icon */
+        .env-icon {
+            height: 100px; /* Smaller size for the envelope */
         }
         .caption {
             font-family: var(--font-serif);
             font-size: 0.9rem;
+            color: #555;
             line-height: 1.4;
             margin: 0;
             max-width: 120px;
@@ -66,14 +72,13 @@
         }
         .logo {
             font-family: var(--font-serif);
-            font-weight: 700;
-            /* UPDATE: Increased font size and added nowrap to force single line */
-            font-size: 6rem; /* Adjusted to fit the wider header */
+            font-weight: 400;
+            font-size: 7rem;
             text-transform: uppercase;
             margin: 0; 
             color: var(--color-text); 
-            line-height: 1; /* Ensure minimal vertical spacing */
-            white-space: nowrap; /* Force onto a single line */
+            line-height: 1; 
+            white-space: nowrap; 
             transition: font-size 0.3s ease-in-out;
         }
         
@@ -188,8 +193,8 @@
                 <h1 class="logo">THE NEWS HAUL.</h1>
             </div>
             <div class="branding-col branding-col-right">
-                <img src="env.png" alt="Envelope icon" class="branding-icon">
-                <p class="caption">Every Saturday neatly into your inbox</p>
+                <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
+                <p class="caption">Delivered neatly to your inbox<br>Every Saturday</p>
             </div>
         </div>
     </header>
