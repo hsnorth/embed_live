@@ -55,11 +55,21 @@
         .main-article {
             background: var(--color-background);
         }
+        .eyebrow-container { /* NEW container for image and text */
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between image and text */
+            margin-bottom: 0.5rem;
+        }
+        .harry-icon { /* NEW image styling */
+            width: 30px; /* Adjust size as needed */
+            height: 30px;
+            object-fit: contain;
+        }
         .eyebrow {
-            font-family: var(--font-sans); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 0.5rem;
+            font-family: var(--font-sans); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin: 0; /* Remove default margin */
         }
         .article-title {
-            /* UPDATE: Bigger and thinner font */
             font-family: var(--font-serif); font-size: 3.2rem; font-weight: 400; line-height: 1.15; margin-top: 0; margin-bottom: 1rem;
         }
         .main-article p {
@@ -112,7 +122,7 @@
             border: 1px solid #ccc;
             padding: 0.8rem;
             font-family: var(--font-serif);
-            font-size: 1rem;
+            font-size: 1.05rem; /* Slightly larger to match overall text */
             min-width: 0; /* Important for flex items */
         }
         .newsletter-signup button {
@@ -162,13 +172,16 @@
             </div>
         </div>
         <div class="header-branding">
-            <h1 class="logo">THE NEWS HAUL.</h1>
+            <h1 class="logo">The News Haul</h1>
         </div>
     </header>
 
     <main class="content-wrapper">
         <article class="main-article">
-            <span class="eyebrow">Harry's Note</span>
+            <div class="eyebrow-container">
+                <img src="harrygraphic.png" alt="Harry's Icon" class="harry-icon">
+                <span class="eyebrow">Harry's Note</span>
+            </div>
             <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
             <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
