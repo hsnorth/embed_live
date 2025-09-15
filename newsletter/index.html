@@ -33,14 +33,14 @@
             border-bottom: 1px solid var(--color-text);
         }
         .header-top-bar {
-            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0rem;
+            display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 2rem;
         }
         
         .header-branding {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            padding: 0.1rem 0rem 0.5rem 0rem;
+            padding: 1rem 2rem 2rem 2rem;
             transition: all 0.3s ease-in-out;
         }
         .branding-col {
@@ -53,32 +53,33 @@
             align-items: flex-end; text-align: right;
         }
         .branding-icon {
-            /* General size for icons, will be overridden for envelope */
             height: 120px;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.75rem;
         }
-        /* NEW: Specific style for the envelope icon */
         .env-icon {
-            height: 90px; /* Smaller size for the envelope */
+            height: 100px; /* Smaller size for the envelope */
         }
         .caption {
             font-family: var(--font-serif);
             font-size: 0.9rem;
+            color: #555;
             line-height: 1.4;
             margin: 0;
-            max-width: 110px;
+            max-width: 120px;
             white-space: normal;
         }
         .logo {
             font-family: var(--font-serif);
-            font-weight: 500;
-            font-size: 5.75rem;
+            font-weight: 400;
+            font-size: 7rem;
             text-transform: uppercase;
+            /* UPDATE: Negative letter-spacing for tighter text */
+            letter-spacing: -0.08em;
             margin: 0; 
             color: var(--color-text); 
             line-height: 1; 
             white-space: nowrap; 
-            transition: font-size 0.1s ease-in-out;
+            transition: font-size 0.3s ease-in-out;
         }
         
         /* DYNAMIC SCROLLED HEADER */
@@ -193,7 +194,7 @@
             </div>
             <div class="branding-col branding-col-right">
                 <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
-                <p class="caption">Every Saturday</p>
+                <p class="caption">Delivered neatly to your inbox<br>Every Saturday</p>
             </div>
         </div>
     </header>
