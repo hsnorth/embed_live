@@ -28,7 +28,8 @@
         /* --- HEADER --- */
         .main-header {
             position: sticky; top: 0; z-index: 1000; background-color: var(--color-background);
-            max-width: 1000px;
+            /* UPDATE: Max width changed */
+            max-width: 1200px;
             margin: 0 auto;
             border-bottom: 1px solid var(--color-text);
         }
@@ -40,7 +41,6 @@
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            /* UPDATE: Reduced top padding to bring sections closer */
             padding: 1rem 2rem 2rem 2rem;
             transition: all 0.3s ease-in-out;
         }
@@ -68,8 +68,9 @@
         }
         .logo {
             font-family: var(--font-serif);
-            font-weight: 600;
-            font-size: 6.5rem;
+            /* UPDATE: Thinner font weight */
+            font-weight: 400;
+            font-size: 5.5rem;
             text-transform: uppercase;
             margin: 0; 
             color: var(--color-text); 
@@ -106,6 +107,7 @@
         /* --- MAIN CONTENT LAYOUT --- */
         .content-wrapper {
             display: grid; grid-template-columns: 2fr 1fr; gap: 45px;
+            /* UPDATE: Max width is 1000px */
             max-width: 1000px;
             margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
         }
@@ -144,10 +146,12 @@
         .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
         
         /* Responsive */
+        @media (max-width: 1240px) { /* Adjust padding on screens slightly wider than the content */
+            .main-header { padding: 0 2rem; }
+        }
         @media (max-width: 1024px) {
-            .header-branding { padding-left: 0; padding-right: 0; }
             .branding-col-left, .branding-col-right { display: none; }
-            .header-branding { grid-template-columns: 1fr; padding-top: 1.5rem; }
+            .header-branding { grid-template-columns: 1fr; padding: 1.5rem 0; }
             .logo { font-size: 4rem; }
             .content-wrapper { grid-template-columns: 1fr; max-width: 680px; }
             .sidebar-sticky-container { position: static; }
