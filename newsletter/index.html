@@ -18,20 +18,16 @@
         }
         body {
             margin: 0;
-            /* FONT UPDATE: Using serif font for all text */
             font-family: var(--font-serif);
+            font-weight: 400; /* Setting a lighter base font weight */
             color: var(--color-text);
-            background-color: #f4f4f4;
+            /* UPDATE: Background is now pure white */
+            background-color: var(--color-background);
         }
 
         /* --- HEADER --- */
         .main-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background-color: var(--color-background);
-            border-bottom: 1px solid var(--color-text);
-            transition: padding 0.3s ease-in-out; 
+            position: sticky; top: 0; z-index: 1000; background-color: var(--color-background); border-bottom: 1px solid var(--color-text); transition: padding 0.3s ease-in-out; 
         }
         .header-top-bar {
             display: flex; justify-content: space-between; align-items: center; max-width: 1600px; margin: 0 auto; padding: 0.75rem 2rem;
@@ -55,28 +51,28 @@
         /* --- MAIN CONTENT LAYOUT --- */
         .content-wrapper {
             display: grid;
-            /* LAYOUT UPDATE: Thinner sidebar (3 parts article, 1 part sidebar) */
-            grid-template-columns: 3fr 1fr;
-            gap: 60px;
-            /* LAYOUT UPDATE: Fixed width for readability */
-            max-width: 1200px;
+            /* LAYOUT UPDATE: Adjusted column ratio */
+            grid-template-columns: 2fr 1fr;
+            gap: 45px;
+            /* LAYOUT UPDATE: Narrower max-width */
+            max-width: 1000px;
             margin: 3rem auto;
             padding: 0 2rem;
             align-items: flex-start;
         }
         .main-article {
             background: var(--color-background);
-            padding: 2.5rem;
+            /* Removed padding to let the content breathe more naturally in the column */
         }
         .eyebrow {
-            font-family: var(--font-sans); /* Using sans-serif for this UI element is a nice contrast */
-            font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 0.5rem;
+            font-family: var(--font-sans);
+            font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 0.5rem;
         }
         .article-title {
-            font-family: var(--font-serif); font-size: 3rem; font-weight: 700; line-height: 1.1; margin-top: 0; margin-bottom: 1rem;
+            font-family: var(--font-serif); font-size: 2.8rem; font-weight: 700; line-height: 1.15; margin-top: 0; margin-bottom: 1rem;
         }
         .main-article p {
-            font-size: 1.1rem; line-height: 1.9; color: #333;
+            font-size: 1.05rem; line-height: 1.8; color: #333;
         }
 
         /* --- STICKY SIDEBAR --- */
@@ -84,27 +80,19 @@
             position: sticky; top: 100px; 
         }
         .sidebar {
-            /* STYLE UPDATE: New color and curved corners */
-            background-color: #2a2a2a;
-            border-radius: 8px;
-            color: #fff;
-            padding: 1.5rem;
-            overflow: hidden; /* Ensures background respects the border-radius */
+            background-color: #2a2a2a; border-radius: 8px; color: #fff; padding: 1.5rem; overflow: hidden;
         }
         .sidebar-title {
-            font-family: var(--font-sans); font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin: 0;
-            /* STYLE UPDATE: Thick yellow underline */
-            padding-bottom: 0.75rem;
-            border-bottom: 4px solid var(--color-accent);
+            font-family: var(--font-sans); font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; padding-bottom: 0.75rem; border-bottom: 4px solid var(--color-accent);
         }
         .sidebar-content {
-            margin-top: 1.5rem; /* Space between title and first item */
+            margin-top: 1.5rem;
         }
         .sidebar-item {
             display: flex; gap: 1rem;
         }
         .sidebar-item + .sidebar-item {
-            margin-top: 1.5rem; /* Space between items */
+            margin-top: 1.5rem;
         }
         .item-thumbnail {
             width: 70px; height: 70px; background-color: #444; flex-shrink: 0; border-radius: 4px;
@@ -129,7 +117,7 @@
         
         /* Responsive */
         @media (max-width: 1024px) {
-            .content-wrapper { grid-template-columns: 1fr; }
+            .content-wrapper { grid-template-columns: 1fr; max-width: 680px; padding: 0 1rem; }
             .sidebar-sticky-container { position: static; }
         }
         @media (max-width: 768px) {
@@ -137,7 +125,6 @@
             .main-header.scrolled .logo { font-size: 1.8rem; }
             .user-actions .nav-link { display: none; }
             .article-title { font-size: 2.5rem; }
-            .main-article { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -156,7 +143,7 @@
             </div>
         </div>
         <div class="header-branding">
-            <h1 class="logo">THE NEWS HAUL.</h1>
+            <h1 class="logo">The News Haul</h1>
         </div>
     </header>
 
@@ -166,11 +153,7 @@
             <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
             <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales.</p>
-            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales.</p>
-
+            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus.</p>
         </article>
 
         <aside class="sidebar-sticky-container">
@@ -184,18 +167,12 @@
                             <p>A weekly roundup of must-have items and gear.</p>
                         </div>
                     </div>
+                    <button class="btn-listen">Listen Live</button>
                     <div class="sidebar-item">
                         <div class="item-thumbnail"></div>
                         <div class="item-text">
                             <h4>The Imports</h4>
                             <p>Discover new finds from around the globe.</p>
-                        </div>
-                    </div>
-                    <div class="sidebar-item">
-                        <div class="item-thumbnail"></div>
-                        <div class="item-text">
-                            <h4>Next Deliveries</h4>
-                            <p>What's new and what's coming to our shop next.</p>
                         </div>
                     </div>
                 </div>
