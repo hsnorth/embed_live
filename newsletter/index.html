@@ -6,34 +6,32 @@
     <title>The News Haul</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- Basic Reset & Global Styles --- */
         :root {
             --font-serif: 'Lora', 'Georgia', serif;
             --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --color-text: #111111; /* Black for text and borders */
+            --color-text: #111111;
             --color-background: #ffffff;
-            --color-border: #e0e0e0; /* Kept for potential future use, but not for nav */
-            --color-accent: #ffde3f;
+            --color-border: #e0e0e0;
+            --color-accent: #ffde3f; /* Using the same yellow from before */
         }
         body {
             margin: 0;
             font-family: var(--font-sans);
             color: var(--color-text);
+            background-color: #f9f9f9; /* A very light grey for the page background */
         }
 
-        /* --- Main Header Container --- */
+        /* --- HEADER --- */
         .main-header {
             position: sticky;
             top: 0;
             z-index: 1000;
             background-color: var(--color-background);
-            border-bottom: none;
+            border-bottom: 1px solid var(--color-text); /* Single black line */
             transition: padding 0.3s ease-in-out; 
         }
-
-        /* --- 1. TOP BAR --- */
         .header-top-bar {
             display: flex;
             justify-content: space-between;
@@ -42,13 +40,6 @@
             margin: 0 auto;
             padding: 0.75rem 2rem;
         }
-        .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        /* --- 2. BRANDING AREA --- */
         .header-branding {
             text-align: center;
             padding: 1rem 2rem 2rem 2rem;
@@ -63,27 +54,8 @@
             font-size: 7rem;
             transition: font-size 0.3s ease-in-out;
         }
-
-        /* --- SECONDARY NAVIGATION BAR --- */
-        .secondary-nav {
-            text-align: center;
-            padding: 1rem 2rem;
-            /* FIX: Changed divider color to black */
-            border-top: 1px solid var(--color-text);
-            border-bottom: 1px solid var(--color-text);
-            color: var(--color-text);
-            /* FIX: Font styling for cohesive, premium look */
-            font-family: var(--font-sans);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: all 0.3s ease-in-out;
-            overflow: hidden;
-        }
-
-
-        /* --- DYNAMIC SCROLLED STATE --- */
+        
+        /* --- DYNAMIC SCROLLED HEADER --- */
         .main-header.scrolled {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -96,12 +68,86 @@
         .main-header.scrolled .header-branding { grid-column: 2; padding: 0; }
         .main-header.scrolled .logo { font-size: 2rem; margin: 0; }
         .main-header.scrolled .user-actions { grid-column: 3; justify-self: end; }
-        .main-header.scrolled .secondary-nav {
-            height: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            opacity: 0;
-            border: none;
+
+        /* --- NEW: MAIN CONTENT LAYOUT --- */
+        .content-wrapper {
+            display: grid;
+            /* Create a 65% / 35% split with a gap */
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+            gap: 50px;
+            max-width: 1400px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            align-items: flex-start; /* Align items to the top */
+        }
+        .main-article {
+            background: var(--color-background);
+            padding: 2.5rem;
+        }
+        .eyebrow {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .article-title {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .main-article p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* --- NEW: STICKY SIDEBAR --- */
+        .sidebar-sticky-container {
+            position: sticky;
+            /* Stick 20px below the shrunken header */
+            top: 100px; 
+        }
+        .sidebar {
+            background-color: #1c1c1c;
+            color: #fff;
+            padding: 1.5rem;
+            border-top: 5px solid var(--color-accent);
+        }
+        .sidebar-title {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 1.5rem 0;
+        }
+        .sidebar-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .item-thumbnail {
+            width: 70px;
+            height: 70px;
+            background-color: #333;
+            flex-shrink: 0;
+        }
+        .item-text h4 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .item-text p {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
+            margin: 0;
         }
 
         /* Helper Styles */
@@ -110,16 +156,23 @@
         .nav-link { text-decoration: none; color: var(--color-text); font-size: 0.95rem; font-weight: 500; }
         .btn { text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 4px; font-weight: bold; font-size: 0.95rem; border: 1px solid transparent; cursor: pointer; }
         .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
-        .content-wrapper { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; height: 200vh; font-size: 1.2rem; line-height: 1.8; }
         
         /* Responsive */
-        @media (max-width: 1024px) { .logo { font-size: 5rem; } }
+        @media (max-width: 1024px) {
+            .logo { font-size: 5rem; }
+            .content-wrapper {
+                grid-template-columns: 1fr; /* Stack columns on smaller screens */
+            }
+            .sidebar-sticky-container {
+                position: static; /* Un-stick the sidebar */
+            }
+        }
         @media (max-width: 768px) {
             .logo { font-size: 3.5rem; }
-            .header-top-bar, .header-branding { padding-left: 1.5rem; padding-right: 1.5rem; }
-            .main-header.scrolled { padding: 0.8rem 1.5rem; }
             .main-header.scrolled .logo { font-size: 1.8rem; }
             .user-actions .nav-link { display: none; }
+            .article-title { font-size: 2.5rem; }
+            .main-article { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -137,17 +190,47 @@
                 <a href="#" class="btn btn-primary">Join Community</a>
             </div>
         </div>
-
         <div class="header-branding">
-            <h1 class="logo">THE NEWS HAUL.</h1>
+            <h1 class="logo">The News Haul</h1>
         </div>
-        
     </header>
 
     <main class="content-wrapper">
-        <h2>Final Touches</h2>
-        <p>This version now features a new font family and includes the secondary navigation bar below the main title. When you scroll, this new bar will disappear, and the header will collapse into its compact form.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <article class="main-article">
+            <span class="eyebrow">Harry's Note</span>
+            <h2 class="article-title">How is Montreal doing? Don't ask.</h2>
+            <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
+            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
+            <p>Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Faucibus a pellentesque sit amet porttitor eget dolor morbi non. Faucibus et molestie ac feugiat sed lectus vestibulum. At auctor urna nunc id cursus metus aliquam eleifend mi. Scelerisque felis imperdiet proin fermentum. At in tellus integer feugiat scelerisque varius morbi. Et netus et malesuada fames ac turpis egestas. Non curabitur gravida arcu ac tortor dignissim. Cursus risus at ultrices mi tempus imperdiet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat. Neque laoreet suspendisse interdum consectetur. Erat nam at lectus urna duis convallis convallis tellus. Eget magna fermentum iaculis eu non diam phasellus vestibulum.</p>
+        </article>
+
+        <aside class="sidebar-sticky-container">
+            <div class="sidebar">
+                <h3 class="sidebar-title">Montreal Issue#3</h3>
+                <div class="sidebar-item">
+                    <div class="item-thumbnail"></div>
+                    <div class="item-text">
+                        <h4>The Essentials</h4>
+                        <p>A weekly roundup of must-have items and gear.</p>
+                    </div>
+                </div>
+                <div class="sidebar-item">
+                    <div class="item-thumbnail"></div>
+                    <div class="item-text">
+                        <h4>The Imports</h4>
+                        <p>Discover new finds from around the globe.</p>
+                    </div>
+                </div>
+                <div class="sidebar-item">
+                    <div class="item-thumbnail"></div>
+                    <div class="item-text">
+                        <h4>Next Deliveries</h4>
+                        <p>What's new and what's coming to our shop next.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </main>
     
     <script>
