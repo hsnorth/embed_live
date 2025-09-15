@@ -62,6 +62,7 @@
         .caption {
             font-family: var(--font-serif);
             font-size: 0.9rem;
+            color: #555;
             line-height: 1.4;
             margin: 0;
             max-width: 120px;
@@ -71,7 +72,7 @@
             font-family: var(--font-serif);
             font-weight: 500;
             font-size: 6rem;
-            /* UPDATE: Negative letter-spacing for tighter text */
+            text-transform: uppercase;
             letter-spacing: -0.08em;
             margin: 0; 
             color: var(--color-text); 
@@ -108,7 +109,10 @@
 
         /* --- MAIN CONTENT LAYOUT --- */
         .content-wrapper {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 45px;
+            display: grid; 
+            /* UPDATE: Flipped column order */
+            grid-template-columns: 1fr 2fr; 
+            gap: 45px;
             max-width: 1000px;
             margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
         }
@@ -185,28 +189,19 @@
         <div class="header-branding">
             <div class="branding-col branding-col-left">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
+                <p class="caption">From Montreal</p>
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
+                <p class="caption"><br>Every Saturday</p>
             </div>
         </div>
     </header>
 
     <main class="content-wrapper">
-        <article class="main-article">
-            <div class="eyebrow-container">
-                <img src="harrygraphic2.png" alt="Harry's Icon" class="harry-icon">
-                <span class="eyebrow">Harry's Note</span>
-            </div>
-            <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
-            <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
-            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
-        </article>
-
         <aside class="sidebar-sticky-container">
             <div class="sidebar">
                 <h3 class="sidebar-title">Montreal Issue #3</h3>
@@ -244,6 +239,17 @@
                 </form>
             </div>
         </aside>
+
+        <article class="main-article">
+            <div class="eyebrow-container">
+                <img src="harrygraphic2.png" alt="Harry's Icon" class="harry-icon">
+                <span class="eyebrow">Harry's Note</span>
+            </div>
+            <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
+            <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
+            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
+        </article>
     </main>
     
     <script>
