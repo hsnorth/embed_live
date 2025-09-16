@@ -18,7 +18,7 @@ body {
 /* --- HEADER --- */
 .main-header {
     position: sticky; top: 0; z-index: 1000; background-color: var(--color-background);
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     border-bottom: 1px solid var(--color-text);
 }
@@ -99,12 +99,14 @@ body {
 /* --- MAIN CONTENT LAYOUT --- */
 .content-wrapper {
     display: grid; 
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr; /* Mobile-first: single column */
     gap: 45px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 3rem auto; padding: 0 2rem; align-items: flex-start;
 }
-.main-article { background: var(--color-background); }
+.main-article { 
+    background: var(--color-background); 
+}
 .eyebrow-container { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
 .harry-icon { width: 38px; height: 38px; object-fit: contain; }
 .eyebrow { font-family: var(--font-sans); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin: 0; }
@@ -121,35 +123,10 @@ body {
 .item-thumbnail { width: 70px; height: 70px; background-color: #444; flex-shrink: 0; border-radius: 4px; }
 .item-text h4 { margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700; }
 .item-text p { font-family: var(--font-sans); font-size: 0.9rem; color: #ccc; line-height: 1.5; margin: 0; }
-.newsletter-signup { background-color: var(--color-signup-bg); padding: 1.5rem; border: 1px solid #f0e6c6; }
-.newsletter-signup h2 { font-family: var(--font-serif); font-weight: 400; font-size: 1.8rem; margin: 0 0 0.5rem 0; }
-.newsletter-signup p { margin: 0 0 1.5rem 0; line-height: 1.6; font-size: 1rem; }
-
-/* UPDATE: Added flex-wrap to prevent the form from stretching its parent column */
-.newsletter-signup form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-.newsletter-signup input[type="email"] {
-    flex-grow: 1;
-    border: 1px solid #ccc;
-    padding: 0.8rem;
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    min-width: 150px; /* Give it a reasonable minimum width */
-}
-.newsletter-signup button {
-    flex-grow: 1; /* Allow button to grow as well */
-    background-color: var(--color-accent);
-    border: 1px solid var(--color-accent);
-    color: var(--color-text);
-    font-family: var(--font-sans);
-    font-weight: 700;
-    padding: 0.8rem 1.5rem;
-    cursor: pointer;
-    text-transform: uppercase;
-}
+.issue-intel { background-color: var(--color-accent); color: var(--color-text); padding: 1.5rem; margin-top: 2rem; border-radius: 8px; font-family: var(--font-sans); }
+.issue-intel h4 { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 0.75rem 0; }
+.issue-intel p { font-size: 0.95rem; line-height: 1.5; margin: 0 0 0.25rem 0; color: var(--color-text); }
+.issue-intel p:last-of-type { margin-bottom: 0; }
 
 /* --- THIRD COLUMN STYLES --- */
 .third-column .eyebrow {
@@ -180,6 +157,15 @@ body {
     color: #555;
 }
 
+/* --- STICKY SIDE CONTENT --- */
+.sticky-side-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 45px;
+    align-items: start;
+}
+
+
 /* Helper Styles */
 .user-actions { display: flex; align-items: center; gap: 1.5rem; }
 .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
@@ -189,40 +175,16 @@ body {
 .btn-primary { background-color: var(--color-accent); color: #000; border-color: var(--color-accent); }
 
 /* --- Responsive Styles --- */
-@media (min-width: 775px) {
-    .content-wrapper {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
-    .main-article {
-        position: sticky;
-        top: 100px;
-    }
-}
-
 @media (min-width: 1024px) {
     .content-wrapper {
-        grid-template-columns: 2fr 1fr 1fr;
+        /* 50% / 50% split */
+        grid-template-columns: 2fr 2fr;
     }
     .branding-col-left, .branding-col-right {
         display: flex; /* Show the header side icons */
     }
-}
-
-@media (max-width: 1023px) { /* Header responsiveness for tablets */
-    .branding-col-left, .branding-col-right {
-        display: none; /* Hide header side icons */
-    }
-    .header-branding {
-        grid-template-columns: 1fr;
-        padding: 1.5rem 0;
-    }
-    .logo {
-        font-size: 4rem;
-    }
-}
-
-@media (max-width: 774px) { /* Header responsiveness for mobile */
-    .logo {
-        font-size: 3.5rem;
+    .sticky-side-content {
+        position: sticky; /* Make the right side sticky */
+        top: 100px;
     }
 }
