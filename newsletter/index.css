@@ -26,7 +26,7 @@ body {
 }
 .header-top-bar {
     display: grid;
-    grid-template-columns: auto 1fr auto; /* Left content | flexible space | Right content */
+    grid-template-columns: auto 1fr auto; /* Left | flexible space | Right */
     align-items: center;
     padding: 0.25rem 0rem;
     min-height: 55px;
@@ -49,7 +49,7 @@ body {
 .env-icon { height: 50px; }
 .logo {
     font-family: var(--font-serif);
-    font-weight: 400; /* Original font weight */
+    font-weight: 400;
     font-size: clamp(3.5rem, 10vw, 5rem);
     text-transform: uppercase;
     letter-spacing: -0.08em;
@@ -61,7 +61,7 @@ body {
     padding: 0 1rem;
 }
 
-/* --- MAIN NAVIGATION (STICKY) --- */
+/* --- MAIN NAVIGATION --- */
 .main-nav {
     border-top: 1px solid var(--color-text);
     position: sticky;
@@ -73,7 +73,7 @@ body {
     margin: 0 auto;
     padding: 0 1rem;
     box-sizing: border-box;
-    box-shadow: none; /* No shadow */
+    box-shadow: none;
 }
 .main-nav ul {
     display: flex; justify-content: center; align-items: center;
@@ -88,69 +88,59 @@ body {
 .main-nav a:hover { color: #888; }
 
 
+/* --- TOP BAR LINK STYLING --- */
+.top-bar-left .nav-link,
+.user-actions .nav-link,
+.user-actions .btn {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    color: var(--color-text);
+}
+.user-actions .btn {
+    padding: 0.7rem 1.2rem;
+    border-radius: 4px;
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+.user-actions .btn:hover {
+    background-color: #e6c938; /* A slightly darker hover for the button */
+}
+
 /* --- SCROLLED STATE FOR HEADER AND NAV --- */
 .scrolled-logo-link {
     display: none;
-    font-family: var(--font-sans); /* Monocle-style font */
-    font-size: 1.5rem; /* Smaller size */
-    font-weight: 700; /* Bold */
+    font-family: var(--font-serif); /* MATCHES ORIGINAL LOGO */
+    font-weight: 400; /* MATCHES ORIGINAL LOGO */
+    font-size: 2.5rem; /* Good smaller size */
+    letter-spacing: -0.08em; /* MATCHES ORIGINAL LOGO */
     color: var(--color-text);
     text-decoration: none;
     text-transform: uppercase;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    letter-spacing: 0.1em; /* Slight letter spacing */
 }
-
 .main-header.scrolled {
-    box-shadow: none; /* No shadow */
-    border-bottom: 1px solid var(--color-text); /* Ensure top bar has bottom border */
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-text);
 }
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
 
-/* Adjust top-bar layout when scrolled for Monocle look */
-.main-header.scrolled .header-top-bar {
-    grid-template-columns: auto 1fr auto; /* Monocle style: left | logo | right */
-}
-.main-header.scrolled .top-bar-left {
-    padding-left: 0; /* Align to the start */
-    gap: 1.5rem; /* Keep gap */
-}
-.main-header.scrolled .user-actions {
-    padding-right: 0; /* Align to the end */
-    gap: 1.5rem; /* Keep gap */
-}
-
-/* Scrolled Nav specific styles (Monocle-like) */
 .main-nav.scrolled-nav {
-    border-top: 1px solid var(--color-text); /* Add top border */
-    border-bottom: 1px solid var(--color-text); /* Add bottom border to nav */
-    box-shadow: none; /* No shadow */
-    padding: 0 1rem; /* Ensure padding is correct */
+    border-bottom: 1px solid var(--color-text);
+    box-shadow: none;
 }
 .main-nav.scrolled-nav ul {
-    justify-content: flex-start; /* Align links to left */
-    gap: 1.5rem; /* Monocle-like gap */
-    padding: 0; /* No padding on ul itself */
+    justify-content: center; /* CENTERED NAV */
+    gap: 2rem; /* Restore original gap for better centered spacing */
 }
 .main-nav.scrolled-nav li a {
-    padding: 0.5rem 0; /* Smaller padding */
-    font-size: 0.8rem; /* Consistent size */
-    font-weight: 700; /* Bold */
-}
-.nav-link.how-it-works {
-    text-transform: uppercase; /* All caps */
-    font-weight: 700; /* Bold */
-    font-family: var(--font-sans); /* Sans-serif font */
-    font-size: 0.95rem; /* Adjust size */
-}
-.user-actions .nav-link, .user-actions .btn {
-    text-transform: uppercase; /* All caps */
-    font-weight: 700; /* Bold */
-    font-family: var(--font-sans); /* Sans-serif font */
-    font-size: 0.95rem; /* Adjust size */
+    padding: 0.8rem 0; /* Restore original padding */
 }
 
 
@@ -193,8 +183,8 @@ body {
 /* Helper Styles */
 .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
 .hamburger-line { display: block; width: 24px; height: 2px; background-color: var(--color-text); }
-.search-icon { color: var(--color-text); display: flex; align-items: center; } /* Make search icon visible by default on large screens */
-.search-icon svg { width: 18px; height: 18px; } /* Smaller search icon */
+.search-icon { color: var(--color-text); display: flex; align-items: center; }
+.search-icon svg { width: 18px; height: 18px; }
 
 
 /* Visibility Helpers */
@@ -214,19 +204,11 @@ body {
     }
     .main-nav ul::-webkit-scrollbar { display: none; }
     .article-title { font-size: 2.5rem; }
-
-    /* Hide desktop elements on mobile */
     .desktop-only { display: none; }
     .mobile-only-icon { display: block; }
-
-    /* Stack sticky columns on mobile */
-    .third-column, .sidebar-container {
-        position: static;
-    }
-
-    /* Adjust scrolled logo on smaller screens to be full width */
+    .third-column, .sidebar-container { position: static; }
     .scrolled-logo-link {
-        font-size: 1.2rem;
+        font-size: 2rem; /* Adjust size for mobile */
         position: static;
         transform: none;
         text-align: center;
@@ -236,21 +218,12 @@ body {
 
 /* For Tablet */
 @media (min-width: 769px) and (max-width: 1023px) {
-    /* Show some desktop elements on tablet, but keep mobile layout for content */
     .how-it-works { display: block; }
     .desktop-only .user-auth-links { display: flex; }
     .mobile-only-icon { display: none; }
     .search-icon { display: block; }
-
-    /* Adjust top bar layout for tablet */
-    .header-top-bar {
-        grid-template-columns: auto 1fr auto;
-    }
-
-    /* Stack sticky columns on tablet */
-    .third-column, .sidebar-container {
-        position: static;
-    }
+    .header-top-bar { grid-template-columns: auto 1fr auto; }
+    .third-column, .sidebar-container { position: static; }
 }
 
 
@@ -260,22 +233,17 @@ body {
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
     .search-icon { display: flex; }
-
-    /* 3-Column Layout: Article | Previews | Sidebar */
-    .content-wrapper {
-        grid-template-columns: 2fr 1.2fr 1fr; /* Article | Previews | Sidebar */
-    }
-
+    .content-wrapper { grid-template-columns: 2fr 1.2fr 1fr; }
     .third-column {
-        grid-column: 2; /* Explicitly place in second column */
+        grid-column: 2;
         position: sticky;
-        top: 110px; /* Adjust based on the height of your sticky nav header */
-        align-self: start; /* Ensures it starts at the top of its grid area */
+        top: 110px;
+        align-self: start;
     }
     .sidebar-container {
-        grid-column: 3; /* Explicitly place in third column */
+        grid-column: 3;
         position: sticky;
-        top: 110px; /* Adjust based on the height of your sticky nav header */
+        top: 110px;
         align-self: start;
     }
 }
