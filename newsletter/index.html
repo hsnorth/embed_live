@@ -19,7 +19,7 @@
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
-                <a href="#" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
+                <a href="#" class="nav-link how-it-works">HOW THE WEEKLY HAUL WORKS?</a>
             </div>
 
             <a href="#" class="scrolled-logo-link">THE NEWS HAUL.</a>
@@ -44,6 +44,7 @@
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
+                <p class="header-date">Tuesday, Sept. 16, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -123,18 +124,15 @@
     
     <script>
         const header = document.querySelector('.main-header');
-        const mainNav = document.querySelector('.main-nav');
         const headerBranding = document.querySelector('.header-branding');
 
         window.addEventListener('scroll', () => {
             const scrollThreshold = headerBranding.offsetHeight;
-
+            // This script now ONLY handles showing the smaller logo on desktop scroll
             if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
-                mainNav.classList.add('scrolled-nav');
             } else {
                 header.classList.remove('scrolled');
-                mainNav.classList.remove('scrolled-nav');
             }
         });
     </script>
