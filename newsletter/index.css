@@ -65,9 +65,6 @@ body {
 /* --- MAIN NAVIGATION --- */
 .main-nav {
     border-top: 1px solid var(--color-text);
-    position: sticky;
-    top: 0;
-    z-index: 999;
     background-color: var(--color-background);
     width: 100%;
     max-width: 1200px;
@@ -121,7 +118,7 @@ body {
 }
 
 
-/* --- SCROLLED STATE FOR HEADER AND NAV --- */
+/* --- SCROLLED STATE FOR HEADER AND NAV (Desktop) --- */
 .scrolled-logo-link {
     display: none;
     font-family: var(--font-serif);
@@ -210,6 +207,18 @@ body {
 /* --- Responsive Styles --- */
 /* For Mobile */
 @media (max-width: 768px) {
+    /* Remove the bottom-most divider on mobile, keeping the one above the nav */
+    .main-header {
+        border-bottom: none;
+    }
+
+    /* Make the navigation bar sticky on mobile */
+    .main-nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
     .main-header, .main-nav { max-width: 100%; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
@@ -230,14 +239,8 @@ body {
         width: 100%;
     }
 
-    /* Remove the original divider line below the nav */
-    .main-nav {
-        border-top: none;
-    }
-
     /* Prepare all mobile nav links for the underline effect */
     .main-nav ul li a {
-        /* Adjust padding and add a transparent border to keep all links aligned */
         padding-bottom: calc(0.8rem - 4px); 
         border-bottom: 4px solid transparent;
     }
@@ -260,6 +263,12 @@ body {
 
 /* For Desktop */
 @media (min-width: 1024px) {
+    /* Apply sticky position only to the main nav on desktop */
+    .main-nav {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+    }
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
