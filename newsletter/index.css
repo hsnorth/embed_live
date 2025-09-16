@@ -14,8 +14,11 @@ body {
     color: var(--color-text);
     background-color: var(--color-background);
 }
+/* A helper class to prevent body scrolling when the menu is open */
+body.no-scroll {
+    overflow: hidden;
+}
 
-/* --- HEADER --- */
 /* --- HEADER --- */
 .main-header {
     position: sticky; /* This makes the entire header container sticky */
@@ -91,7 +94,6 @@ body {
     display: flex; justify-content: center; align-items: center;
     gap: 2rem; list-style: none; margin: 0; padding: 0;
 }
-/* Uniform underline effect for ALL screens */
 .main-nav ul li a {
     display: block;
     font-family: var(--font-sans);
@@ -204,12 +206,86 @@ body {
 .hamburger-line { display: block; width: 24px; height: 2px; background-color: var(--color-text); }
 .search-icon svg { width: 18px; height: 18px; }
 
-
 /* Visibility Helpers */
 .how-it-works, .desktop-only { display: none; }
 .mobile-only-icon { display: block; }
 .mobile-only-icon img { height: 30px; vertical-align: middle; }
 
+/* --- MOBILE NAVIGATION OVERLAY --- */
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--color-background);
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    text-align: left;
+}
+.mobile-nav.is-open {
+    transform: translateX(0);
+}
+.mobile-nav-header {
+    display: flex;
+    justify-content: flex-start;
+    min-height: 55px;
+    align-items: center;
+}
+.close-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 3rem;
+    line-height: 1;
+    padding: 0;
+    color: var(--color-text);
+}
+.mobile-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0 0;
+}
+.mobile-nav-links li a {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 0.5rem 0;
+}
+.mobile-nav-links li a:hover {
+    color: #888;
+}
+.mobile-nav-links .has-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mobile-nav-links .has-arrow svg {
+    width: 30px;
+    height: 30px;
+}
+.mobile-nav-links .sub-link {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: #888;
+    margin-top: 0.25rem;
+}
+.mobile-nav-divider {
+    border: 0;
+    border-top: 1px solid var(--color-text);
+    margin: 2rem 0;
+}
+.secondary-links li a {
+    font-size: 1.5rem;
+}
 
 /* --- Responsive Styles --- */
 /* For Mobile */
@@ -244,9 +320,11 @@ body {
     .third-column, .sidebar-container { position: static; }
 }
 
-
 /* For Desktop */
 @media (min-width: 1024px) {
+    .menu-toggle {
+        display: none;
+    }
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
