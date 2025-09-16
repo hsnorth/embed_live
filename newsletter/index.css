@@ -17,25 +17,25 @@ body {
 
 /* --- HEADER --- */
 .main-header {
-    position: relative; /* Changed to relative to allow for more flexible positioning */
+    position: relative;
     z-index: 1000;
     background-color: var(--color-background);
-    max-width: 1200px; /* Adjusted to 1200px as per your request */
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px; /* Added padding for the edges */
+    padding: 0 20px;
 }
 .header-top-bar {
-    display: none; /* Hide the top bar for the new header design */
+    display: none; /* Hidden by default on desktop */
 }
 
 .header-branding {
-    display: flex; /* Changed to flexbox for better control */
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 40px 0; /* Increased padding to match the reference image */
+    padding: 10px 0; /* Reduced padding */
     transition: all 0.3s ease-in-out;
 }
-.branding-col-left, .branding-col-right {
+.branding-col {
     flex-grow: 1;
     display: flex;
     justify-content: center;
@@ -52,54 +52,23 @@ body {
     text-align: center;
 }
 .branding-icon {
-    height: 100px; /* Increased size for a more prominent look */
+    height: 100px;
     margin: 0;
 }
 .env-icon {
-    height: 70px; /* Keep envelope a bit smaller for visual balance */
-}
-/* Removed .caption styling as you requested to get rid of the text */
-.caption {
-    display: none;
+    height: 70px;
 }
 .logo {
     font-family: var(--font-serif);
-    font-weight: 400; /* Adjusted to 400 to match the reference image */
-    font-size: 7rem; /* Adjusted for a larger look */
-    text-transform: none; /* Removed uppercase */
-    letter-spacing: -0.05em; /* Adjusted letter-spacing */
+    font-weight: 400;
+    font-size: 7rem;
+    text-transform: none;
+    letter-spacing: -0.05em;
     margin: 0;
     color: var(--color-text);
     line-height: 1;
     white-space: nowrap;
     transition: font-size 0.3s ease-in-out;
-}
-
-/* DYNAMIC SCROLLED HEADER - This part can be kept or removed if not needed */
-.scrolled-logo-link {
-    display: none;
-}
-.main-header.scrolled {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-bottom-color: var(--color-border);
-}
-.main-header.scrolled .header-branding {
-    display: none;
-}
-.main-header.scrolled .header-top-bar {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-}
-.main-header.scrolled .scrolled-logo-link {
-    display: block;
-    grid-column: 2;
-}
-.main-header.scrolled .user-actions {
-    justify-self: end;
-}
-.main-header.scrolled .menu-toggle {
-    justify-self: start;
 }
 
 /* NEW NAVIGATION STYLES */
@@ -110,7 +79,7 @@ body {
     border: 0;
     height: 1px;
     background-color: #000;
-    margin: 25px 0;
+    margin: 10px 0; /* Reduced margin for less whitespace */
 }
 .main-nav ul {
     list-style: none;
@@ -142,9 +111,9 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     gap: 45px;
-    max-width: 1200px; /* Adjusted to 1200px */
+    max-width: 1200px;
     margin: 3rem auto;
-    padding: 0 20px; /* Adjusted padding to match header */
+    padding: 0 20px;
     align-items: flex-start;
 }
 .main-article {
@@ -353,5 +322,102 @@ body {
     .sticky-side-content {
         position: sticky;
         top: 100px;
+    }
+}
+
+/* MOBILE-SPECIFIC STYLES */
+@media (max-width: 768px) {
+    .header-branding {
+        display: none;
+    }
+    .header-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+    }
+    .header-top-bar .scrolled-logo-link {
+        display: block;
+        font-size: 2rem;
+        text-align: center;
+    }
+    .header-top-bar .user-actions {
+        display: none; /* Hide Sign In and Join Community */
+    }
+    .header-top-bar .menu-toggle {
+        display: flex; /* Show menu toggle */
+    }
+    .header-nav {
+        margin-bottom: 20px;
+    }
+    .main-nav ul {
+        justify-content: flex-start; /* Align nav items to the left on mobile */
+        gap: 20px;
+    }
+    .header-top-bar .branding-icon {
+        display: block;
+        height: 40px;
+    }
+    .main-header .branding-col-right {
+        justify-content: flex-end;
+    }
+    .header-top-bar .scrolled-logo-link {
+        flex-grow: 1;
+        text-align: center;
+        margin: 0 10px;
+    }
+    .header-top-bar .bag-icon {
+        height: 40px;
+    }
+    .header-top-bar .env-icon {
+        display: none;
+    }
+    
+    /* New mobile header structure */
+    .mobile-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+    }
+    .mobile-header-row .logo {
+        font-size: 2rem;
+        margin: 0 auto;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .mobile-header-row .bag-icon {
+        height: 40px;
+    }
+    
+    /* Re-purposing HTML for mobile */
+    .header-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+    .header-top-bar .menu-toggle {
+        order: 1;
+        margin-right: 15px;
+    }
+    .header-top-bar .scrolled-logo-link {
+        order: 2;
+        flex-grow: 1;
+        text-align: center;
+        font-size: 2rem;
+    }
+    .header-top-bar .branding-col-right {
+        order: 3;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .header-top-bar .bag-icon {
+        height: 40px;
+        display: block;
+    }
+    .header-top-bar .user-actions {
+        display: none;
     }
 }
