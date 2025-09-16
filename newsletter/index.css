@@ -16,7 +16,11 @@ body {
 }
 
 /* --- HEADER --- */
+/* --- HEADER --- */
 .main-header {
+    position: sticky; /* This makes the entire header container sticky */
+    top: 0; /* Sticks it to the top of the viewport */
+    z-index: 1001; /* Ensures it stays above the nav and other content */
     background-color: var(--color-background);
     max-width: 1200px;
     margin: 0 auto;
