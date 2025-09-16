@@ -103,12 +103,12 @@ body {
 }
 .user-auth-links {
     display: flex;
-    align-items: center; /* This is the key fix for vertical alignment */
+    align-items: center;
     gap: 1.5rem;
 }
 .user-actions .btn {
     padding: 0.7rem 1.2rem;
-    border-radius: 0; /* Sharp corners */
+    border-radius: 0;
     background-color: var(--color-accent);
     border-color: var(--color-accent);
 }
@@ -138,7 +138,7 @@ body {
 }
 .main-header.scrolled {
     box-shadow: none;
-    border-bottom: none; /* Removed double line: nav will provide the bottom border */
+    border-bottom: none;
 }
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
@@ -175,7 +175,7 @@ body {
 
 /* --- SIDEBARS --- */
 .sidebar { background-color: #2a2a2a; border-radius: 8px; color: #fff; padding: 1.5rem; overflow: hidden; }
-.sidebar-title { font-family: var(--font-serif); font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; padding-bottom: 0.75rem; border-bottom: 4px solid var(--color-accent); }
+.sidebar-title { font-family: var(--font-sans); font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; padding-bottom: 0.75rem; border-bottom: 4px solid var(--color-accent); }
 .sidebar-content { margin-top: 1.5rem; }
 .sidebar-item { display: flex; gap: 1rem; }
 .sidebar-item + .sidebar-item { margin-top: 1.5rem; }
@@ -229,12 +229,29 @@ body {
         text-align: center;
         width: 100%;
     }
+
+    /* Remove the original divider line below the nav */
+    .main-nav {
+        border-top: none;
+    }
+
+    /* Prepare all mobile nav links for the underline effect */
+    .main-nav ul li a {
+        /* Adjust padding and add a transparent border to keep all links aligned */
+        padding-bottom: calc(0.8rem - 4px); 
+        border-bottom: 4px solid transparent;
+    }
+
+    /* Add the yellow underline ONLY to the active link */
+    .main-nav ul li a.active-link {
+        border-bottom-color: var(--color-accent); 
+    }
 }
 
 /* For Tablet */
 @media (min-width: 769px) and (max-width: 1023px) {
     .main-header, .main-nav { max-width: 100%; }
-    .desktop-only { display: flex; } /* Show auth links but not "how it works" */
+    .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
     .header-top-bar { grid-template-columns: auto 1fr auto; }
     .third-column, .sidebar-container { position: static; }
@@ -243,7 +260,7 @@ body {
 
 /* For Desktop */
 @media (min-width: 1024px) {
-    .how-it-works { display: block; } /* "How it works" ONLY appears on desktop */
+    .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
     .content-wrapper { grid-template-columns: 2fr 1.2fr 1fr; }
