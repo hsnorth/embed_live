@@ -19,7 +19,7 @@
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
-                <a href="#" class="nav-link how-it-works">How the weekly Haul works?</a>
+                <a href="#" class="nav-link how-it-works">HOW THE WEEKLY HAUL WORKS?</a>
             </div>
 
             <a href="#" class="scrolled-logo-link">THE NEWS HAUL.</a>
@@ -29,8 +29,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
                 <div class="desktop-only user-auth-links">
-                    <a href="#" class="nav-link">Sign in</a>
-                    <a href="#" class="btn btn-primary">Join Community</a>
+                    <a href="#" class="nav-link">SIGN IN</a>
+                    <a href="#" class="btn btn-primary">JOIN COMMUNITY</a>
                 </div>
                 <a href="#" class="mobile-only-icon" aria-label="Cart">
                     <img src="bag.png" alt="Shopping bag icon">
@@ -40,13 +40,13 @@
 
         <div class="header-branding">
             <div class="branding-col branding-col-left">
-                <img src="bag.png" alt="Bag icon" class="branding-icon">
+                <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
             </div>
             <div class="branding-col branding-col-right">
-                <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
+                <img src="bag.png" alt="Bag icon" class="branding-icon">
             </div>
         </div>
         
@@ -123,20 +123,18 @@
     
     <script>
         const header = document.querySelector('.main-header');
-        const mainNav = document.querySelector('.main-nav'); // Select the nav bar
+        const mainNav = document.querySelector('.main-nav');
         const headerBranding = document.querySelector('.header-branding');
 
         window.addEventListener('scroll', () => {
-            // Calculate when the header branding leaves the viewport
-            // This threshold ensures the entire branding section is gone before the scrolled state kicks in
             const scrollThreshold = headerBranding.offsetHeight;
 
             if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
-                mainNav.classList.add('scrolled-nav'); // Add class to nav
+                mainNav.classList.add('scrolled-nav');
             } else {
                 header.classList.remove('scrolled');
-                mainNav.classList.remove('scrolled-nav'); // Remove class from nav
+                mainNav.classList.remove('scrolled-nav');
             }
         });
     </script>
