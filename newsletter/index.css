@@ -1,203 +1,125 @@
-:root {
-    --font-serif: 'Lora', 'Georgia', serif;
-    --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --color-text: #111111;
-    --color-background: #ffffff;
-    --color-border: #e0e0e0;
-    --color-accent: #ffde3f;
-    --color-signup-bg: #fefae0;
-}
-body {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-weight: 400;
-    color: var(--color-text);
-    background-color: var(--color-background);
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The News Haul</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
 
-/* --- MAIN HEADER CONTAINER --- */
-.main-header {
-    position: relative;
-    z-index: 1000;
-    background-color: var(--color-background);
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+    <header class="main-header">
+        <div class="header-top-bar">
+            <button class="menu-toggle" aria-label="Open menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <a href="#" class="scrolled-logo-link">THE NEWS HAUL.</a>
+            <div class="user-actions">
+                <a href="#" class="nav-link">Sign in</a>
+                <a href="#" class="btn btn-primary">Join Community</a>
+            </div>
+        </div>
+        <div class="header-branding">
+            <div class="branding-col branding-col-left">
+                <img src="bag.png" alt="Bag icon" class="branding-icon">
+            </div>
+            <div class="branding-col branding-col-center">
+                <h1 class="logo">The News Haul</h1>
+            </div>
+            <div class="branding-col branding-col-right">
+                <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
+            </div>
+        </div>
+        
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Welcome</a></li>
+                <li><a href="#">Essentials</a></li>
+                <li><a href="#">Imports</a></li>
+                <li><a href="#">Next deliveries</a></li>
+                <li><a href="#">Cannoli</a></li>
+                <li><a href="#">Coffee Review</a></li>
+                <li><a href="#">Games</a></li>
+            </ul>
+        </nav>
+    </header>
 
-/* --- DESKTOP TOP BAR (HIDDEN ON MOBILE) --- */
-.header-top-bar {
-    display: none; /* Default hidden */
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-}
-.header-top-bar .header-top-left,
-.header-top-bar .header-top-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-.header-top-bar .search-icon {
-    font-size: 1.25rem;
-    color: var(--color-text);
-    cursor: pointer;
-}
+    <main class="content-wrapper">
+        <article class="main-article">
+            <div class="eyebrow-container">
+                <img src="harrygraphic2.png" alt="Harry's Icon" class="harry-icon">
+                <span class="eyebrow">Harry's Note</span>
+            </div>
+            <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
+            <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
+            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
+        </article>
 
-/* --- MAIN BRANDING BAR (ADJUSTS) --- */
-.header-branding {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    transition: all 0.3s ease-in-out;
-}
-.branding-col {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.branding-col-left {
-    justify-content: flex-start;
-}
-.branding-col-right {
-    justify-content: flex-end;
-}
-.branding-col-center {
-    flex-grow: 2;
-    text-align: center;
-}
-.branding-icon {
-    height: 100px;
-    margin: 0;
-}
-.env-icon {
-    height: 70px;
-}
-.logo {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: 7rem;
-    text-transform: none;
-    letter-spacing: -0.05em;
-    margin: 0;
-    color: var(--color-text);
-    line-height: 1;
-    white-space: nowrap;
-    transition: font-size 0.3s ease-in-out;
-}
-
-/* --- NAVIGATION BAR --- */
-.header-nav {
-    margin-bottom: 20px;
-}
-.nav-divider {
-    border: 0;
-    height: 1px;
-    background-color: #000;
-    margin: 10px 0;
-}
-.main-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-.main-nav a {
-    text-decoration: none;
-    color: #000;
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 0.95rem;
-    padding: 10px 0;
-    transition: color 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.main-nav a:hover {
-    color: #666;
-}
-
-/* ... existing CSS for main content ... */
-
-/* --- RESPONSIVE STYLES --- */
-
-/* MOBILE VIEW */
-@media (max-width: 1023px) {
-    .header-top-bar, .logo-mobile, .header-icons-mobile {
-        display: none;
-    }
-    .header-branding {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-    }
-    .branding-col-left {
-        order: 1;
-    }
-    .branding-col-center {
-        order: 2;
-        flex-grow: 1;
-        text-align: center;
-    }
-    .branding-col-right {
-        order: 3;
-    }
-    .branding-col-right .env-icon {
-        display: none;
-    }
-    .branding-col-left .bag-icon {
-        height: 40px;
-    }
-    .logo {
-        font-size: 2.5rem; /* Responsive font size for mobile */
-    }
+        <div class="sticky-side-content">
+            <aside class="sidebar-container">
+                <div class="sidebar">
+                    <h3 class="sidebar-title">Montreal Issue #3</h3>
+                    <div class="sidebar-content">
+                        <div class="sidebar-item">
+                            <div class="item-thumbnail"></div>
+                            <div class="item-text">
+                                <h4>The Essentials</h4>
+                                <p>A weekly roundup of must-have items and gear.</p>
+                            </div>
+                        </div>
+                        <div class="sidebar-item">
+                            <div class="item-thumbnail"></div>
+                            <div class="item-text">
+                                <h4>The Imports</h4>
+                                <p>Discover new finds from around the globe.</p>
+                            </div>
+                        </div>
+                        <div class="sidebar-item">
+                            <div class="item-thumbnail"></div>
+                            <div class="item-text">
+                                <h4>Next Deliveries</h4>
+                                <p>What's new and what's coming to our shop next.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="issue-intel">
+                        <h4>Issue Intel</h4>
+                        <p>7 min read</p>
+                        <p>1,300 words</p>
+                    </div>
+                </div>
+            </aside>
     
-    .main-nav ul {
-        justify-content: flex-start;
-        gap: 20px;
-    }
-    .main-nav {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+            <div class="third-column">
+                <div class="article-preview">
+                    <img src="sweet.png" alt="A sweet cannoli" class="preview-image">
+                    <span class="eyebrow">The Cannoli</span>
+                    <h3 class="preview-title"><a href="#">Arrow error: When resurfacing crews sent traffic into itself</a></h3>
+                </div>
+                <div class="article-preview">
+                    <span class="eyebrow">The Coffee</span>
+                    <h3 class="preview-title"><a href="#">In the Plateau, Café Tere</a></h3>
+                </div>
+            </div>
+        </div>
+    </main>
     
-    .desktop-only {
-        display: none;
-    }
-    .mobile-only {
-        display: flex;
-    }
-}
+    <script>
+        const header = document.querySelector('.main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
 
-/* DESKTOP VIEW */
-@media (min-width: 1024px) {
-    .header-top-bar {
-        display: flex; /* Display desktop top bar */
-    }
-    .header-branding {
-        display: flex;
-        padding: 40px 0;
-    }
-    .branding-col-left, .branding-col-right {
-        display: flex;
-    }
-    .mobile-only {
-        display: none;
-    }
-    
-    /* Ensure all desktop elements are visible */
-    .menu-toggle {
-        display: block;
-    }
-    .nav-link.how-it-works, .search-icon, .nav-link, .btn {
-        display: inline-block;
-    }
-}
+</body>
+</html>
