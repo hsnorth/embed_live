@@ -17,11 +17,10 @@ body {
 
 /* --- HEADER --- */
 .main-header {
-    position: sticky; top: 0; z-index: 1000; background-color: var(--color-background);
+    background-color: var(--color-background);
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
-    border-bottom: 1px solid var(--color-text);
     box-shadow: none;
     box-sizing: border-box;
 }
@@ -61,10 +60,21 @@ body {
     transition: font-size 0.3s ease-in-out;
     padding: 0 1rem;
 }
+.header-date {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0.5rem 0 0 0;
+    text-align: center;
+}
 
-/* --- MAIN NAVIGATION --- */
+/* --- MAIN NAVIGATION (STICKY BY DEFAULT) --- */
 .main-nav {
-    border-top: 1px solid var(--color-text);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background-color: var(--color-background);
     width: 100%;
     max-width: 1200px;
@@ -77,11 +87,23 @@ body {
     display: flex; justify-content: center; align-items: center;
     gap: 2rem; list-style: none; margin: 0; padding: 0;
 }
-.main-nav a {
-    display: block; padding: 0.8rem 0; font-family: var(--font-sans);
-    font-weight: 700; font-size: 0.8rem; color: var(--color-text);
-    text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;
+/* Uniform underline effect for ALL screens */
+.main-nav ul li a {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     transition: color 0.2s ease;
+    padding: 0.8rem 0;
+    padding-bottom: calc(0.8rem - 4px); 
+    border-bottom: 4px solid transparent;
+}
+.main-nav ul li a.active-link {
+    border-bottom-color: var(--color-accent); 
 }
 .main-nav a:hover { color: #888; }
 
@@ -118,7 +140,7 @@ body {
 }
 
 
-/* --- SCROLLED STATE FOR HEADER AND NAV (Desktop) --- */
+/* --- SCROLLED STATE (Desktop Only) --- */
 .scrolled-logo-link {
     display: none;
     font-family: var(--font-serif);
@@ -133,27 +155,8 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
 }
-.main-header.scrolled {
-    box-shadow: none;
-    border-bottom: none;
-}
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
-
-.main-nav.scrolled-nav {
-    border-top: 1px solid var(--color-text);
-    border-bottom: 1px solid var(--color-text);
-    box-shadow: none;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.main-nav.scrolled-nav ul {
-    justify-content: center;
-    gap: 2rem;
-}
-.main-nav.scrolled-nav li a {
-    padding: 0.8rem 0;
-}
 
 
 /* --- MAIN CONTENT LAYOUT --- */
@@ -207,18 +210,6 @@ body {
 /* --- Responsive Styles --- */
 /* For Mobile */
 @media (max-width: 768px) {
-    /* Remove the bottom-most divider on mobile, keeping the one above the nav */
-    .main-header {
-        border-bottom: none;
-    }
-
-    /* Make the navigation bar sticky on mobile */
-    .main-nav {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
-    
     .main-header, .main-nav { max-width: 100%; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
@@ -238,17 +229,6 @@ body {
         text-align: center;
         width: 100%;
     }
-
-    /* Prepare all mobile nav links for the underline effect */
-    .main-nav ul li a {
-        padding-bottom: calc(0.8rem - 4px); 
-        border-bottom: 4px solid transparent;
-    }
-
-    /* Add the yellow underline ONLY to the active link */
-    .main-nav ul li a.active-link {
-        border-bottom-color: var(--color-accent); 
-    }
 }
 
 /* For Tablet */
@@ -263,12 +243,6 @@ body {
 
 /* For Desktop */
 @media (min-width: 1024px) {
-    /* Apply sticky position only to the main nav on desktop */
-    .main-nav {
-        position: sticky;
-        top: 0;
-        z-index: 999;
-    }
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
