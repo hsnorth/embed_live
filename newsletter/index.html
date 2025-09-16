@@ -13,17 +13,31 @@
 
     <header class="main-header">
         <div class="header-top-bar">
-            <button class="menu-toggle" aria-label="Open menu">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
+            <div class="top-bar-left">
+                <button class="menu-toggle" aria-label="Open menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <a href="#" class="nav-link how-it-works">How the weekly Haul works?</a>
+            </div>
+
             <a href="#" class="scrolled-logo-link">THE NEWS HAUL.</a>
+
             <div class="user-actions">
-                <a href="#" class="nav-link">Sign in</a>
-                <a href="#" class="btn btn-primary">Join Community</a>
+                <a href="#" class="search-icon desktop-only" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </a>
+                <div class="desktop-only user-auth-links">
+                    <a href="#" class="nav-link">Sign in</a>
+                    <a href="#" class="btn btn-primary">Join Community</a>
+                </div>
+                <a href="#" class="mobile-only-icon" aria-label="Cart">
+                    <img src="bag.png" alt="Shopping bag icon">
+                </a>
             </div>
         </div>
+
         <div class="header-branding">
             <div class="branding-col branding-col-left">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -58,62 +72,61 @@
             <h2 class="article-title">How is Montreal doing this week? Don't bloody ask.</h2>
             <p>It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
-            <p>Egestas erat imperdiet sed euismod nisi. Consequat nisl vel pretium lectus quam id leo. Faucibus purus in massa tempor nec feugiat nisl pretium. Amet consectetur adipiscing elit duis tristique. Ac odio tempor orci dapibus ultrices in. Volutpat commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. In ante metus dictum at tempor commodo. Nunc sed velit dignissim sodales ut eu sem integer. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nisl tincidunt eget nullam non nisi est sit. Amet nisl purus in mollis nunc sed. Eu feugiat pretium nibh ipsum consequat nisl vel pretium. Eu ultrices vitae auctor eu augue ut lectus. Sed vulputate mi sit amet mauris commodo quis imperdiet massa.</p>
         </article>
 
-        <div class="sticky-side-content">
-            <aside class="sidebar-container">
-                <div class="sidebar">
-                    <h3 class="sidebar-title">Montreal Issue #3</h3>
-                    <div class="sidebar-content">
-                        <div class="sidebar-item">
-                            <div class="item-thumbnail"></div>
-                            <div class="item-text">
-                                <h4>The Essentials</h4>
-                                <p>A weekly roundup of must-have items and gear.</p>
-                            </div>
-                        </div>
-                        <div class="sidebar-item">
-                            <div class="item-thumbnail"></div>
-                            <div class="item-text">
-                                <h4>The Imports</h4>
-                                <p>Discover new finds from around the globe.</p>
-                            </div>
-                        </div>
-                        <div class="sidebar-item">
-                            <div class="item-thumbnail"></div>
-                            <div class="item-text">
-                                <h4>Next Deliveries</h4>
-                                <p>What's new and what's coming to our shop next.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="issue-intel">
-                        <h4>Issue Intel</h4>
-                        <p>7 min read</p>
-                        <p>1,300 words</p>
-                    </div>
-                </div>
-            </aside>
-    
-            <div class="third-column">
-                <div class="article-preview">
-                    <img src="sweet.png" alt="A sweet cannoli" class="preview-image">
-                    <span class="eyebrow">The Cannoli</span>
-                    <h3 class="preview-title"><a href="#">Arrow error: When resurfacing crews sent traffic into itself</a></h3>
-                </div>
-                <div class="article-preview">
-                    <span class="eyebrow">The Coffee</span>
-                    <h3 class="preview-title"><a href="#">In the Plateau, Café Tere</a></h3>
-                </div>
+        <div class="third-column">
+            <div class="article-preview">
+                <img src="sweet.png" alt="A sweet cannoli" class="preview-image">
+                <span class="eyebrow">The Cannoli</span>
+                <h3 class="preview-title"><a href="#">Arrow error: When resurfacing crews sent traffic into itself</a></h3>
+            </div>
+            <div class="article-preview">
+                <span class="eyebrow">The Coffee</span>
+                <h3 class="preview-title"><a href="#">In the Plateau, Café Tere</a></h3>
             </div>
         </div>
+
+        <aside class="sidebar-container">
+            <div class="sidebar">
+                <h3 class="sidebar-title">Montreal Issue #3</h3>
+                <div class="sidebar-content">
+                    <div class="sidebar-item">
+                        <div class="item-thumbnail"></div>
+                        <div class="item-text">
+                            <h4>The Essentials</h4>
+                            <p>A weekly roundup of must-have items and gear.</p>
+                        </div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="item-thumbnail"></div>
+                        <div class="item-text">
+                            <h4>The Imports</h4>
+                            <p>Discover new finds from around the globe.</p>
+                        </div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="item-thumbnail"></div>
+                        <div class="item-text">
+                            <h4>Next Deliveries</h4>
+                            <p>What's new and what's coming to our shop next.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="issue-intel">
+                    <h4>Issue Intel</h4>
+                    <p>7 min read</p>
+                    <p>1,300 words</p>
+                </div>
+            </div>
+        </aside>
     </main>
     
     <script>
         const header = document.querySelector('.main-header');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
+            // A higher scroll value ensures the large header is fully out of view
+            // before the scrolled state activates.
+            if (window.scrollY > header.offsetHeight - 80) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
