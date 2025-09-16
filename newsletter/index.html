@@ -11,6 +11,33 @@
 </head>
 <body>
 
+    <nav class="mobile-nav" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <button class="close-menu-btn" aria-label="Close menu">
+                &times; </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li>
+                <a href="#">
+                    Latest Issue
+                    <span class="sub-link">Montreal #3</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="has-arrow">
+                    Past Issues
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </a>
+            </li>
+        </ul>
+        <hr class="mobile-nav-divider">
+        <ul class="mobile-nav-links secondary-links">
+            <li><a href="#">How the Haul works</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </nav>
+
     <header class="main-header">
         <div class="header-top-bar">
             <div class="top-bar-left">
@@ -123,18 +150,32 @@
     </main>
     
     <script>
+        // --- Setup constants for DOM elements ---
         const header = document.querySelector('.main-header');
         const headerBranding = document.querySelector('.header-branding');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+        const closeMenuBtn = document.querySelector('.close-menu-btn');
 
+        // --- Script for header scrolling effect ---
         window.addEventListener('scroll', () => {
             const scrollThreshold = headerBranding.offsetHeight;
-            // This script now ONLY handles showing the smaller logo on desktop scroll
             if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
         });
+
+        // --- Script for mobile menu toggle ---
+        function toggleMenu() {
+            const isOpen = mobileNav.classList.toggle('is-open');
+            mobileNav.setAttribute('aria-hidden', !isOpen);
+            document.body.classList.toggle('no-scroll', isOpen);
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
     </script>
 
 </body>
