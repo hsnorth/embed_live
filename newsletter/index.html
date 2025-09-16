@@ -123,13 +123,20 @@
     
     <script>
         const header = document.querySelector('.main-header');
+        const mainNav = document.querySelector('.main-nav'); // Select the nav bar
+        const headerBranding = document.querySelector('.header-branding');
+
         window.addEventListener('scroll', () => {
-            // A higher scroll value ensures the large header is fully out of view
-            // before the scrolled state activates.
-            if (window.scrollY > header.offsetHeight - 80) {
+            // Calculate when the header branding leaves the viewport
+            // This threshold ensures the entire branding section is gone before the scrolled state kicks in
+            const scrollThreshold = headerBranding.offsetHeight;
+
+            if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
+                mainNav.classList.add('scrolled-nav'); // Add class to nav
             } else {
                 header.classList.remove('scrolled');
+                mainNav.classList.remove('scrolled-nav'); // Remove class from nav
             }
         });
     </script>
