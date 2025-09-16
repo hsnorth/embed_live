@@ -232,7 +232,9 @@ body.no-scroll {
 }
 .mobile-nav-header {
     display: flex;
-    justify-content: flex-start;
+    /* THIS WAS CHANGED to position the X and Logo */
+    justify-content: space-between;
+    width: 100%;
     min-height: 55px;
     align-items: center;
 }
@@ -244,6 +246,16 @@ body.no-scroll {
     line-height: 1;
     padding: 0;
     color: var(--color-text);
+}
+/* NEW STYLES for the logo in the menu */
+.mobile-nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--color-text);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: -0.06em;
 }
 .mobile-nav-links {
     list-style: none;
@@ -322,9 +334,7 @@ body.no-scroll {
 
 /* For Desktop */
 @media (min-width: 1024px) {
-    .menu-toggle {
-        display: none;
-    }
+    /* The rule to hide the menu toggle was REMOVED from here */
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
