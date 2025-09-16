@@ -15,7 +15,7 @@ body {
     background-color: var(--color-background);
 }
 
-/* --- HEADER --- */
+/* --- MAIN HEADER CONTAINER --- */
 .main-header {
     position: relative;
     z-index: 1000;
@@ -24,47 +24,35 @@ body {
     margin: 0 auto;
     padding: 0 20px;
 }
-/* Desktop secondary bar with nav links and icons */
-.header-secondary-bar {
-    display: none; /* Hidden by default, shown on large screens */
+
+/* --- DESKTOP TOP BAR (HIDDEN ON MOBILE) --- */
+.header-top-bar {
+    display: none; /* Default hidden */
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
 }
-.header-secondary-bar .left-section,
-.header-secondary-bar .right-section {
+.header-top-bar .header-top-left,
+.header-top-bar .header-top-right {
     display: flex;
     align-items: center;
     gap: 15px;
 }
-.header-secondary-bar .search-icon {
+.header-top-bar .search-icon {
     font-size: 1.25rem;
     color: var(--color-text);
     cursor: pointer;
 }
-/* Mobile-first top bar */
-.header-top-bar {
+
+/* --- MAIN BRANDING BAR (ADJUSTS) --- */
+.header-branding {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
+    padding: 10px 0;
+    transition: all 0.3s ease-in-out;
 }
-.logo-mobile {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: 2.5rem; /* Responsive font size */
-    text-align: center;
-    flex-grow: 1;
-    margin: 0 10px;
-}
-.header-icons-mobile .bag-icon {
-    height: 40px;
-}
-
-.header-branding {
-    display: none; /* Hidden on mobile */
-}
-.branding-col-left, .branding-col-right {
+.branding-col {
     flex-grow: 1;
     display: flex;
     justify-content: center;
@@ -100,7 +88,7 @@ body {
     transition: font-size 0.3s ease-in-out;
 }
 
-/* NEW NAVIGATION STYLES */
+/* --- NAVIGATION BAR --- */
 .header-nav {
     margin-bottom: 20px;
 }
@@ -135,65 +123,81 @@ body {
     color: #666;
 }
 
-/* --- MAIN CONTENT LAYOUT --- */
-.content-wrapper {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 45px;
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 20px;
-    align-items: flex-start;
-}
-/* ... rest of your existing CSS for main content ... */
+/* ... existing CSS for main content ... */
 
-/* --- Responsive Styles --- */
-@media (min-width: 1024px) {
-    .header-secondary-bar {
-        display: flex; /* Show desktop-only bar */
-    }
-    .header-top-bar, .logo-mobile, .header-icons-mobile {
-        display: none; /* Hide mobile-specific elements */
-    }
-    .header-branding {
-        display: flex; /* Show main branding section */
-        padding: 40px 0; /* Adjust padding for desktop */
-    }
-    .content-wrapper {
-        grid-template-columns: 2fr 2fr;
-    }
-    .branding-col-left, .branding-col-right {
-        display: flex;
-    }
-    .sticky-side-content {
-        position: sticky;
-        top: 100px;
-    }
-    .main-header {
-        position: sticky; top: 0; border-bottom: 1px solid var(--color-text);
-    }
-    .menu-toggle-mobile, .scrolled-logo-link {
-        display: none;
-    }
-}
-/* MOBILE-SPECIFIC STYLES */
+/* --- RESPONSIVE STYLES --- */
+
+/* MOBILE VIEW */
 @media (max-width: 1023px) {
-    .header-secondary-bar {
+    .header-top-bar, .logo-mobile, .header-icons-mobile {
         display: none;
-    }
-    .header-top-bar {
-        display: flex;
     }
     .header-branding {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+    .branding-col-left {
+        order: 1;
+    }
+    .branding-col-center {
+        order: 2;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .branding-col-right {
+        order: 3;
+    }
+    .branding-col-right .env-icon {
         display: none;
     }
+    .branding-col-left .bag-icon {
+        height: 40px;
+    }
+    .logo {
+        font-size: 2.5rem; /* Responsive font size for mobile */
+    }
+    
     .main-nav ul {
         justify-content: flex-start;
         gap: 20px;
     }
     .main-nav {
-        overflow-x: auto; /* Ensure horizontal scroll on mobile */
-        -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+    .mobile-only {
+        display: flex;
     }
 }
-/* ... rest of your existing CSS for mobile ... */
+
+/* DESKTOP VIEW */
+@media (min-width: 1024px) {
+    .header-top-bar {
+        display: flex; /* Display desktop top bar */
+    }
+    .header-branding {
+        display: flex;
+        padding: 40px 0;
+    }
+    .branding-col-left, .branding-col-right {
+        display: flex;
+    }
+    .mobile-only {
+        display: none;
+    }
+    
+    /* Ensure all desktop elements are visible */
+    .menu-toggle {
+        display: block;
+    }
+    .nav-link.how-it-works, .search-icon, .nav-link, .btn {
+        display: inline-block;
+    }
+}
