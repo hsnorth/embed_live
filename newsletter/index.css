@@ -22,12 +22,12 @@ body {
     margin: 0 auto;
     padding: 0 1rem;
     border-bottom: 1px solid var(--color-text);
-    box-shadow: none; /* No shadow */
-    box-sizing: border-box; /* Ensures padding is included in max-width */
+    box-shadow: none;
+    box-sizing: border-box;
 }
 .header-top-bar {
     display: grid;
-    grid-template-columns: auto 1fr auto; /* Left | flexible space | Right */
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     padding: 0.25rem 0rem;
     min-height: 55px;
@@ -44,10 +44,10 @@ body {
     transition: all 0.3s ease-in-out;
 }
 .branding-col { display: flex; flex-direction: column; align-items: center; text-align: center; }
-.branding-col-left { align-items: flex-start; } /* Envelope on left */
-.branding-col-right { align-items: flex-end; } /* Bag on right */
+.branding-col-left { align-items: flex-start; }
+.branding-col-right { align-items: flex-end; }
 .branding-icon { height: 60px; }
-.env-icon { height: 50px; } /* Specific sizing for envelope if needed */
+.env-icon { height: 50px; }
 .logo {
     font-family: var(--font-serif);
     font-weight: 400;
@@ -70,7 +70,7 @@ body {
     z-index: 999;
     background-color: var(--color-background);
     width: 100%;
-    max-width: 1200px; /* Match main header width */
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
     box-sizing: border-box;
@@ -100,21 +100,21 @@ body {
     text-decoration: none;
     letter-spacing: 0.5px;
     color: var(--color-text);
-    /* Correct vertical alignment */
-    display: flex; /* Use flex to align items if needed within link */
-    align-items: center; /* Vertically center content */
-    height: 100%; /* Take full height of parent for easier alignment */
+}
+.user-auth-links {
+    display: flex;
+    align-items: center; /* This is the key fix for vertical alignment */
+    gap: 1.5rem;
 }
 .user-actions .btn {
     padding: 0.7rem 1.2rem;
-    border-radius: 0; /* SHARP CORNERS */
+    border-radius: 0; /* Sharp corners */
     background-color: var(--color-accent);
     border-color: var(--color-accent);
 }
 .user-actions .btn:hover {
-    background-color: #e6c938; /* A slightly darker hover for the button */
+    background-color: #e6c938;
 }
-/* Ensure search icon is vertically aligned */
 .search-icon {
     display: flex;
     align-items: center;
@@ -124,19 +124,17 @@ body {
 /* --- SCROLLED STATE FOR HEADER AND NAV --- */
 .scrolled-logo-link {
     display: none;
-    font-family: var(--font-serif); /* MATCHES ORIGINAL LOGO */
-    font-weight: 400; /* MATCHES ORIGINAL LOGO */
-    font-size: 2.5rem; /* Good smaller size */
-    letter-spacing: -0.08em; /* MATCHES ORIGINAL LOGO */
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 2.5rem;
+    letter-spacing: -0.08em;
     color: var(--color-text);
     text-decoration: none;
     text-transform: uppercase;
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    top: 50%; /* Center vertically within top-bar */
-    transform: translate(-50%, -50%); /* Adjust for both horizontal and vertical */
-    height: auto; /* Allow content to dictate height */
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 .main-header.scrolled {
     box-shadow: none;
@@ -145,20 +143,19 @@ body {
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
 
-/* Scrolled Nav specific styles */
 .main-nav.scrolled-nav {
-    border-top: 1px solid var(--color-text); /* Nav provides the top border */
-    border-bottom: 1px solid var(--color-text); /* Nav provides the bottom border */
+    border-top: 1px solid var(--color-text);
+    border-bottom: 1px solid var(--color-text);
     box-shadow: none;
-    max-width: 1200px; /* Ensure consistent width */
-    margin: 0 auto; /* Ensure centered */
+    max-width: 1200px;
+    margin: 0 auto;
 }
 .main-nav.scrolled-nav ul {
-    justify-content: center; /* CENTERED NAV */
-    gap: 2rem; /* Restore original gap for better centered spacing */
+    justify-content: center;
+    gap: 2rem;
 }
 .main-nav.scrolled-nav li a {
-    padding: 0.8rem 0; /* Restore original padding */
+    padding: 0.8rem 0;
 }
 
 
@@ -201,7 +198,6 @@ body {
 /* Helper Styles */
 .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
 .hamburger-line { display: block; width: 24px; height: 2px; background-color: var(--color-text); }
-.search-icon { color: var(--color-text); display: flex; align-items: center; }
 .search-icon svg { width: 18px; height: 18px; }
 
 
@@ -214,7 +210,7 @@ body {
 /* --- Responsive Styles --- */
 /* For Mobile */
 @media (max-width: 768px) {
-    .main-header, .main-nav { max-width: 100%; } /* Full width on mobile */
+    .main-header, .main-nav { max-width: 100%; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
     .main-nav ul {
@@ -227,7 +223,7 @@ body {
     .mobile-only-icon { display: block; }
     .third-column, .sidebar-container { position: static; }
     .scrolled-logo-link {
-        font-size: 2rem; /* Adjust size for mobile */
+        font-size: 2rem;
         position: static;
         transform: none;
         text-align: center;
@@ -237,11 +233,9 @@ body {
 
 /* For Tablet */
 @media (min-width: 769px) and (max-width: 1023px) {
-    .main-header, .main-nav { max-width: 100%; } /* Full width on tablet */
-    .how-it-works { display: block; }
-    .desktop-only .user-auth-links { display: flex; }
+    .main-header, .main-nav { max-width: 100%; }
+    .desktop-only { display: flex; } /* Show auth links but not "how it works" */
     .mobile-only-icon { display: none; }
-    .search-icon { display: block; }
     .header-top-bar { grid-template-columns: auto 1fr auto; }
     .third-column, .sidebar-container { position: static; }
 }
@@ -249,10 +243,9 @@ body {
 
 /* For Desktop */
 @media (min-width: 1024px) {
-    .how-it-works { display: block; }
+    .how-it-works { display: block; } /* "How it works" ONLY appears on desktop */
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
-    .search-icon { display: flex; }
     .content-wrapper { grid-template-columns: 2fr 1.2fr 1fr; }
     .third-column {
         grid-column: 2;
