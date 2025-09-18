@@ -180,5 +180,123 @@
         closeMenuBtn.addEventListener('click', toggleMenu);
     </script>
 
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgCds3FfTRZtZaAQ0Ej6hfgPPMqeRy54s",
+            authDomain: "newsletter-496de.firebaseapp.com",
+            projectId: "newsletter-496de",
+            storageBucket: "newsletter-496de.appspot.com",
+            messagingSenderId: "524546319756",
+            appId: "1:524546319756:web:947abcff220aec51aa22a9",
+            measurementId: "G-B8LSKDYS99"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        console.log("Firebase v9 is connected!");
+
+        // --- AUTHENTICATION FUNCTIONS ---
+
+        // Function to handle new user sign-ups
+        // TODO: Call this function when your "Join" form is submitted
+        const signUp = async (email, password) => {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log('Successfully signed up!', user);
+
+                // Save user info to a 'users' collection in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    createdAt: serverTimestamp()
+                });
+                console.log('User data saved to Firestore.');
+                
+            } catch (error) {
+                console.error('Error during sign up:', error.message);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Function to handle user sign-ins
+        // TODO: Call this function when your "Sign In" form is submitted
+        const signIn = async (email, password) => {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Successfully signed in!', userCredential.user);
+
+            } catch (error) {
+                console.error('Error during sign in:', error.message);
+                alert('Error: ' + error.message);
+            }
+        };
+
+        // Function to handle user sign-outs
+        const handleSignOut = async () => {
+            try {
+                await signOut(auth);
+                console.log('User signed out.');
+            } catch (error) {
+                console.error('Sign out error:', error);
+            }
+        };
+
+        // --- AUTH STATE LISTENER ---
+        // This runs automatically when the page loads and whenever the user's login state changes
+        onAuthStateChanged(auth, (user) => {
+            const userAuthLinks = document.querySelector('.user-auth-links');
+            if (!userAuthLinks) return;
+
+            if (user) {
+                // User is signed in.
+                console.log('User is logged in:', user);
+                // Update the UI to show a "Sign Out" button
+                userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
+                document.getElementById('signOutBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleSignOut();
+                });
+                
+                // Optional: Fetch and log the user's profile data
+                getUserProfile(user.uid);
+
+            } else {
+                // User is signed out.
+                console.log('User is logged out.');
+                // Revert UI back to the original Sign In / Join buttons
+                userAuthLinks.innerHTML = `
+                    <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
+                    <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
+                `;
+                // TODO: Add event listeners to signInLink and joinLink to open your modals/forms
+            }
+        });
+
+        // --- FIRESTORE DATA EXAMPLE ---
+        // Example of how to read a user's profile data
+        const getUserProfile = async (userId) => {
+            if (!userId) return null;
+
+            const userDocRef = doc(db, 'users', userId);
+            const docSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists()) {
+                console.log("User profile data:", docSnap.data());
+                return docSnap.data();
+            } else {
+                console.log("No such user document!");
+                return null;
+            }
+        };
+    </script>
+
 </body>
 </html>
