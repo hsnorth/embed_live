@@ -11,6 +11,10 @@
 </head>
 <body>
 
+    <div class="mobile-top-bar">
+        <a href="#" id="mobileJoinLink">Subscribe</a> | <a href="#" id="mobileSignInLink">Log in</a>
+    </div>
+
     <nav class="mobile-nav" aria-hidden="true">
         <div class="mobile-nav-header">
             <button class="close-menu-btn" aria-label="Close menu">
@@ -267,22 +271,20 @@
         const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
         const modalTagline = document.getElementById('modalTagline');
         const toastContainer = document.getElementById('toast-container');
+        const mobileJoinLink = document.getElementById('mobileJoinLink');
+        const mobileSignInLink = document.getElementById('mobileSignInLink');
         let typeInterval;
         let joinEmailValue = '';
 
-        // --- NEW: CUSTOM NOTIFICATION FUNCTION ---
+        // --- CUSTOM NOTIFICATION FUNCTION ---
         function showToast(message, type = 'info', duration = 4000) {
             const toast = document.createElement('div');
             toast.classList.add('toast', `toast-${type}`);
             toast.textContent = message;
-
             toastContainer.appendChild(toast);
-
             setTimeout(() => {
                 toast.classList.add('toast-exit');
-                toast.addEventListener('animationend', () => {
-                    toast.remove();
-                });
+                toast.addEventListener('animationend', () => toast.remove());
             }, duration);
         }
 
@@ -310,7 +312,7 @@
             modal.classList.add('is-open');
             document.body.classList.add('no-scroll');
             if (modal.id === 'joinModal') {
-                const textToType = "For stories to tell at supper";
+                const textToType = "For stories to tell at the supper";
                 setTimeout(() => {
                     typewriterEffect(modalTagline, textToType, 80, () => {
                         joinFormStep1.classList.add('form-visible');
@@ -336,39 +338,19 @@
         }
 
         // --- EVENT LISTENERS ---
-        modalCloseBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modalToClose = e.target.closest('.modal-overlay');
-                if (modalToClose) closeModal(modalToClose);
-            });
-        });
-        signInModal.addEventListener('click', (e) => {
-            if (e.target === signInModal) closeModal(signInModal);
-        });
-        joinModal.addEventListener('click', (e) => {
-            if (e.target === joinModal) closeModal(joinModal);
-        });
-        goToJoinBtnFromSignIn.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeModal(signInModal);
-            openModal(joinModal);
-        });
-        goToSignInBtnFromJoin.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeModal(joinModal);
-            openModal(signInModal);
-        });
+        modalCloseBtns.forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal-overlay'))));
+        signInModal.addEventListener('click', (e) => { if (e.target === signInModal) closeModal(signInModal) });
+        joinModal.addEventListener('click', (e) => { if (e.target === joinModal) closeModal(joinModal) });
+        goToJoinBtnFromSignIn.addEventListener('click', (e) => { e.preventDefault(); closeModal(signInModal); openModal(joinModal); });
+        goToSignInBtnFromJoin.addEventListener('click', (e) => { e.preventDefault(); closeModal(joinModal); openModal(signInModal); });
+        mobileJoinLink.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
+        mobileSignInLink.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
 
-        // --- AUTHENTICATION FUNCTIONS (UPDATED with showToast) ---
+        // --- AUTHENTICATION FUNCTIONS ---
         const signUp = async (email, password, name) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    name: name,
-                    createdAt: serverTimestamp()
-                });
+                await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp() });
                 showToast('Welcome to the community!', 'success');
                 closeModal(joinModal);
             } catch (error) {
@@ -411,14 +393,11 @@
         // --- FORM SUBMISSION HANDLERS ---
         signInForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = signInForm.elements['signInEmail'].value;
-            const password = signInForm.elements['signInPassword'].value;
-            signIn(email, password);
+            signIn(signInForm.elements['signInEmail'].value, signInForm.elements['signInPassword'].value);
         });
         forgotPasswordBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const email = signInForm.elements['signInEmail'].value;
-            handleForgotPassword(email);
+            handleForgotPassword(signInForm.elements['signInEmail'].value);
         });
         joinFormStep1.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -442,31 +421,25 @@
         // --- AUTH STATE LISTENER ---
         onAuthStateChanged(auth, (user) => {
             const userAuthLinks = document.querySelector('.user-auth-links');
-            if (!userAuthLinks) return;
             if (user) {
-                userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
-                document.getElementById('signOutBtn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    handleSignOut();
-                });
+                document.body.classList.add('logged-in'); // Hide mobile bar
+                if (userAuthLinks) {
+                    userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
+                    document.getElementById('signOutBtn').addEventListener('click', (e) => { e.preventDefault(); handleSignOut(); });
+                }
                 getUserProfile(user.uid);
                 closeModal(signInModal);
                 closeModal(joinModal);
             } else {
-                userAuthLinks.innerHTML = `
-                    <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
-                    <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
-                `;
-                document.getElementById('signInLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    closeModal(joinModal);
-                    openModal(signInModal);
-                });
-                document.getElementById('joinLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    closeModal(signInModal);
-                    openModal(joinModal);
-                });
+                document.body.classList.remove('logged-in'); // Show mobile bar
+                if (userAuthLinks) {
+                    userAuthLinks.innerHTML = `
+                        <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
+                        <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
+                    `;
+                    document.getElementById('signInLink').addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
+                    document.getElementById('joinLink').addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
+                }
             }
         });
 
@@ -477,10 +450,8 @@
             const docSnap = await getDoc(userDocRef);
             if (docSnap.exists()) {
                 console.log("User profile data:", docSnap.data());
-                return docSnap.data();
             } else {
                 console.log("No such user document!");
-                return null;
             }
         };
     </script>
