@@ -57,10 +57,12 @@
                 <a href="#" class="search-icon desktop-only" aria-label="Search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
+                
                 <div class="desktop-only user-auth-links">
                     <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
                     <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
                 </div>
+
                 <a href="#" class="mobile-only-icon" aria-label="Cart">
                     <img src="bag.png" alt="Shopping bag icon">
                 </a>
@@ -73,7 +75,7 @@
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
-                <p class="header-date">Tuesday, Sept. 16, 2025</p>
+                <p class="header-date">Tuesday, Sept. 19, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -199,6 +201,8 @@
         </div>
     </div>
 
+    <div id="toast-container"></div>
+
     <script>
         // --- Setup constants for DOM elements ---
         const header = document.querySelector('.main-header');
@@ -251,11 +255,10 @@
         const db = getFirestore(app);
         console.log("Firebase v9 is connected!");
 
-        // --- MODAL HANDLING & DOM ELEMENTS ---
+        // --- DOM ELEMENTS ---
         const signInModal = document.getElementById('signInModal');
         const joinModal = document.getElementById('joinModal');
         const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
-
         const joinFormStep1 = document.getElementById('joinFormStep1');
         const joinFormStep2 = document.getElementById('joinFormStep2');
         const signInForm = document.getElementById('signInForm');
@@ -263,18 +266,32 @@
         const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
         const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
         const modalTagline = document.getElementById('modalTagline');
+        const toastContainer = document.getElementById('toast-container');
         let typeInterval;
-
         let joinEmailValue = '';
+
+        // --- NEW: CUSTOM NOTIFICATION FUNCTION ---
+        function showToast(message, type = 'info', duration = 4000) {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', `toast-${type}`);
+            toast.textContent = message;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('toast-exit');
+                toast.addEventListener('animationend', () => {
+                    toast.remove();
+                });
+            }, duration);
+        }
 
         // --- TYPEWRITER EFFECT FUNCTION ---
         function typewriterEffect(element, text, speed, callback) {
             let i = 0;
             element.innerHTML = '';
             element.classList.add('typing-active');
-
             if (typeInterval) clearInterval(typeInterval);
-
             typeInterval = setInterval(() => {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
@@ -292,13 +309,10 @@
             modal.setAttribute('aria-hidden', 'false');
             modal.classList.add('is-open');
             document.body.classList.add('no-scroll');
-
             if (modal.id === 'joinModal') {
-                const textToType = "For stories to tell at supper";
-                // Delay typing to sync with modal opening animation
+                const textToType = "For stories to tell at the supper";
                 setTimeout(() => {
                     typewriterEffect(modalTagline, textToType, 80, () => {
-                        // When typing is done, fade in the form
                         joinFormStep1.classList.add('form-visible');
                     });
                 }, 300);
@@ -309,17 +323,15 @@
             modal.setAttribute('aria-hidden', 'true');
             modal.classList.remove('is-open');
             document.body.classList.remove('no-scroll');
-
-            // Reset Join modal to its initial state
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
             joinFormStep1.reset();
             joinFormStep2.reset();
-            
-            // Stop animation and reset visibility
             if (typeInterval) clearInterval(typeInterval);
-            modalTagline.innerHTML = '';
-            modalTagline.classList.remove('typing-active');
+            if (modalTagline) {
+                modalTagline.innerHTML = '';
+                modalTagline.classList.remove('typing-active');
+            }
             joinFormStep1.classList.remove('form-visible');
         }
 
@@ -330,27 +342,24 @@
                 if (modalToClose) closeModal(modalToClose);
             });
         });
-
         signInModal.addEventListener('click', (e) => {
             if (e.target === signInModal) closeModal(signInModal);
         });
         joinModal.addEventListener('click', (e) => {
             if (e.target === joinModal) closeModal(joinModal);
         });
-
         goToJoinBtnFromSignIn.addEventListener('click', (e) => {
             e.preventDefault();
             closeModal(signInModal);
             openModal(joinModal);
         });
-
         goToSignInBtnFromJoin.addEventListener('click', (e) => {
             e.preventDefault();
             closeModal(joinModal);
             openModal(signInModal);
         });
 
-        // --- AUTHENTICATION FUNCTIONS ---
+        // --- AUTHENTICATION FUNCTIONS (UPDATED with showToast) ---
         const signUp = async (email, password, name) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -360,45 +369,42 @@
                     name: name,
                     createdAt: serverTimestamp()
                 });
-                alert('Welcome to the community! You are now logged in.');
+                showToast('Welcome to the community!', 'success');
                 closeModal(joinModal);
             } catch (error) {
-                console.error('Error during sign up:', error.message);
-                alert('Error: ' + error.message);
+                showToast(error.message, 'error');
             }
         };
 
         const signIn = async (email, password) => {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                alert('You are successfully signed in!');
+                showToast('Successfully signed in!', 'success');
                 closeModal(signInModal);
             } catch (error) {
-                console.error('Error during sign in:', error.message);
-                alert('Error: ' + error.message);
+                showToast(error.message, 'error');
             }
         };
 
         const handleSignOut = async () => {
             try {
                 await signOut(auth);
-                alert('You have been signed out.');
+                showToast('You have been signed out.', 'info');
             } catch (error) {
-                console.error('Sign out error:', error);
+                showToast(error.message, 'error');
             }
         };
 
         const handleForgotPassword = async (email) => {
             if (!email) {
-                alert("Please enter your email to reset your password.");
+                showToast("Please enter an email to reset password.", 'error');
                 return;
             }
             try {
                 await sendPasswordResetEmail(auth, email);
-                alert("Password reset email sent! Check your inbox.");
+                showToast("Password reset email sent! Check your inbox.", 'info');
             } catch (error) {
-                console.error("Error sending password reset email:", error.message);
-                alert("Error sending password reset email: " + error.message);
+                showToast(error.message, 'error');
             }
         };
 
@@ -409,13 +415,11 @@
             const password = signInForm.elements['signInPassword'].value;
             signIn(email, password);
         });
-
         forgotPasswordBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const email = signInForm.elements['signInEmail'].value;
             handleForgotPassword(email);
         });
-
         joinFormStep1.addEventListener('submit', (e) => {
             e.preventDefault();
             joinEmailValue = joinFormStep1.elements['joinEmail'].value;
@@ -424,7 +428,6 @@
                 joinFormStep2.classList.remove('hidden');
             }
         });
-
         joinFormStep2.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = joinFormStep2.elements['joinName'].value;
@@ -432,7 +435,7 @@
             if (joinEmailValue && name && password) {
                 signUp(joinEmailValue, password, name);
             } else {
-                alert('Please go back and enter your email, name, and password.');
+                showToast('Missing name or password.', 'error');
             }
         });
 
