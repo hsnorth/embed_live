@@ -175,10 +175,7 @@
         <div class="modal-content subscription-card">
             <button class="modal-close-btn">&times;</button>
             
-            <div class="modal-subtitle">
-                <p id="typing-line-1" class="typing-header"></p>
-                <p id="typing-line-2" class="typing-header"></p>
-            </div>
+            <h2 class="modal-tagline">For stories to tell at the supper</h2>
             
             <form id="joinFormStep1" class="modal-form" data-step="1">
                 <label for="joinEmail" class="form-label">EMAIL</label>
@@ -266,31 +263,7 @@
         const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
         const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
 
-        const typingLine1 = document.getElementById('typing-line-1');
-        const typingLine2 = document.getElementById('typing-line-2');
-        let typeInterval;
-
         let joinEmailValue = '';
-
-        // --- TYPEWRITER EFFECT FUNCTION ---
-        function typewriterEffect(element, text, speed, callback) {
-            let i = 0;
-            element.innerHTML = '';
-            element.classList.add('typing-active');
-
-            if (typeInterval) clearInterval(typeInterval);
-
-            typeInterval = setInterval(() => {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typeInterval);
-                    element.classList.remove('typing-active');
-                    if (callback) callback();
-                }
-            }, speed);
-        }
 
         // --- MODAL FUNCTIONS ---
         function openModal(modal) {
@@ -299,17 +272,10 @@
             document.body.classList.add('no-scroll');
 
             if (modal.id === 'joinModal') {
-                const line1Text = "The quiet luxury of knowing what matters.";
-                
-                typingLine1.innerHTML = '';
-                
+                // After a short delay, fade in the form for a smooth transition
                 setTimeout(() => {
-                    typewriterEffect(typingLine1, line1Text, 80, () => {
-                        setTimeout(() => {
-                            typewriterEffect(typingLine2, line2Text, 80);
-                        }, 400);
-                    });
-                }, 300);
+                    joinFormStep1.classList.add('form-visible');
+                }, 200);
             }
         }
 
@@ -318,16 +284,12 @@
             modal.classList.remove('is-open');
             document.body.classList.remove('no-scroll');
 
+            // Reset Join modal to its initial state
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
             joinFormStep1.reset();
             joinFormStep2.reset();
-
-            if (typeInterval) clearInterval(typeInterval);
-            typingLine1.innerHTML = '';
-            typingLine2.innerHTML = '';
-            typingLine1.classList.remove('typing-active');
-            typingLine2.classList.remove('typing-active');
+            joinFormStep1.classList.remove('form-visible'); // Reset for transition
         }
 
         // --- EVENT LISTENERS ---
