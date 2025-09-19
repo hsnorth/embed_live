@@ -151,6 +151,58 @@
         </aside>
     </main>
     
+    <div id="signInModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content subscription-card">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="modal-header-text">SIGN IN</h3>
+            <form id="signInForm" class="modal-form">
+                <label for="signInEmail" class="form-label">EMAIL</label>
+                <input type="email" id="signInEmail" class="form-input" placeholder="Enter your email" required>
+
+                <label for="signInPassword" class="form-label">PASSWORD</label>
+                <input type="password" id="signInPassword" class="form-input" placeholder="Enter your password" required>
+
+                <button type="submit" class="modal-btn">SIGN IN</button>
+            </form>
+            <div class="modal-links">
+                <button id="forgotPasswordBtn" class="modal-link-btn">Forgot password?</button>
+                <button id="goToJoinBtnFromSignIn" class="modal-link-btn">Don't have an account? Join Community</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="joinModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content subscription-card">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="modal-header-text">JOIN COMMUNITY</h3>
+            
+            <div class="modal-subtitle">
+                <p id="typing-text" class="typing-line"></p>
+                <p class="subtitle-secondary hidden">Know what matters.</p>
+            </div>
+            
+            <form id="joinFormStep1" class="modal-form" data-step="1">
+                <label for="joinEmail" class="form-label">EMAIL</label>
+                <input type="email" id="joinEmail" class="form-input" placeholder="Enter your email" required>
+                <button type="submit" class="modal-btn">NEXT</button>
+            </form>
+
+            <form id="joinFormStep2" class="modal-form hidden" data-step="2">
+                <label for="joinName" class="form-label">NAME</label>
+                <input type="text" id="joinName" class="form-input" placeholder="Enter your name" required>
+
+                <label for="joinPassword" class="form-label">PASSWORD</label>
+                <input type="password" id="joinPassword" class="form-input" placeholder="Create a password" required>
+
+                <button type="submit" class="modal-btn">JOIN</button>
+            </form>
+
+            <div class="modal-links">
+                <button id="goToSignInBtnFromJoin" class="modal-link-btn">Already have an account? Sign In</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- Setup constants for DOM elements ---
         const header = document.querySelector('.main-header');
@@ -180,54 +232,6 @@
         closeMenuBtn.addEventListener('click', toggleMenu);
     </script>
 
-    <div id="signInModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content subscription-card">
-            <button class="modal-close-btn">&times;</button>
-            <h3 class="modal-header-text">SIGN IN</h3>
-            <form id="signInForm" class="modal-form">
-                <label for="signInEmail" class="form-label">EMAIL</label>
-                <input type="email" id="signInEmail" class="form-input" placeholder="Enter your email" required>
-
-                <label for="signInPassword" class="form-label">PASSWORD</label>
-                <input type="password" id="signInPassword" class="form-input" placeholder="Enter your password" required>
-
-                <button type="submit" class="modal-btn">SIGN IN</button>
-            </form>
-            <div class="modal-links">
-                <button id="forgotPasswordBtn" class="modal-link-btn">Forgot password?</button>
-                <button id="goToJoinBtnFromSignIn" class="modal-link-btn">Don't have an account? Join Community</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="joinModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content subscription-card">
-            <button class="modal-close-btn">&times;</button>
-            <h3 class="modal-header-text">JOIN COMMUNITY</h3>
-            
-            <form id="joinFormStep1" class="modal-form" data-step="1">
-                <label for="joinEmail" class="form-label">EMAIL</label>
-                <input type="email" id="joinEmail" class="form-input" placeholder="Enter your email" required>
-                <button type="submit" class="modal-btn">NEXT</button>
-            </form>
-
-            <form id="joinFormStep2" class="modal-form hidden" data-step="2">
-                <label for="joinName" class="form-label">NAME</label>
-                <input type="text" id="joinName" class="form-input" placeholder="Enter your name" required>
-
-                <label for="joinPassword" class="form-label">PASSWORD</label>
-                <input type="password" id="joinPassword" class="form-input" placeholder="Create a password" required>
-
-                <button type="submit" class="modal-btn">JOIN</button>
-            </form>
-
-            <div class="modal-links">
-                <button id="goToSignInBtnFromJoin" class="modal-link-btn">Already have an account? Sign In</button>
-            </div>
-        </div>
-    </div>
-
-
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
@@ -251,74 +255,94 @@
         const db = getFirestore(app);
         console.log("Firebase v9 is connected!");
 
-        // --- MODAL HANDLING ---
+        // --- MODAL HANDLING & DOM ELEMENTS ---
         const signInModal = document.getElementById('signInModal');
         const joinModal = document.getElementById('joinModal');
-        const signInLink = document.getElementById('signInLink');
-        const joinLink = document.getElementById('joinLink');
+        const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
+
+        // Form and navigation elements
+        const joinFormStep1 = document.getElementById('joinFormStep1');
+        const joinFormStep2 = document.getElementById('joinFormStep2');
+        const signInForm = document.getElementById('signInForm');
         const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
         const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
         const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
-        const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
 
-        const joinFormStep1 = document.getElementById('joinFormStep1');
-        const joinFormStep2 = document.getElementById('joinFormStep2');
+        // Typing effect elements
+        const typingElement = document.getElementById('typing-text');
+        const secondarySubtitle = document.querySelector('#joinModal .subtitle-secondary');
+        let typingInterval; // To control the typing animation
 
         let joinEmailValue = ''; // To store email between join steps
+
+        // --- TYPEWRITER EFFECT FUNCTION ---
+        function typewriterEffect(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = '';
+            element.style.visibility = 'visible'; // Ensure it's visible before typing
+
+            if (typingInterval) clearInterval(typingInterval);
+
+            typingInterval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                    if (callback) callback();
+                }
+            }, speed);
+        }
 
         function openModal(modal) {
             modal.setAttribute('aria-hidden', 'false');
             modal.classList.add('is-open');
             document.body.classList.add('no-scroll');
+
+            if (modal.id === 'joinModal') {
+                const textToType = "The luxury of clarity and anecdotes to keep.";
+                secondarySubtitle.classList.add('hidden');
+                typingElement.innerHTML = '';
+                
+                setTimeout(() => {
+                    typewriterEffect(typingElement, textToType, 60, () => {
+                        setTimeout(() => {
+                           secondarySubtitle.classList.remove('hidden');
+                        }, 300);
+                    });
+                }, 300);
+            }
         }
 
         function closeModal(modal) {
             modal.setAttribute('aria-hidden', 'true');
             modal.classList.remove('is-open');
             document.body.classList.remove('no-scroll');
-            // Reset join form to step 1 when closed
+
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
             joinFormStep1.reset();
             joinFormStep2.reset();
+
+            if (typingInterval) clearInterval(typingInterval);
+            typingElement.innerHTML = '';
+            secondarySubtitle.classList.add('hidden');
         }
 
-        // Event Listeners for opening modals
-        signInLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeModal(joinModal); // Close join if open
-            openModal(signInModal);
-        });
-
-        joinLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeModal(signInModal); // Close sign in if open
-            openModal(joinModal);
-        });
-
-        // Event Listeners for closing modals
         modalCloseBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const modalToClose = e.target.closest('.modal-overlay');
-                if (modalToClose) {
-                    closeModal(modalToClose);
-                }
+                if (modalToClose) closeModal(modalToClose);
             });
         });
 
-        // Close modal when clicking outside content
         signInModal.addEventListener('click', (e) => {
-            if (e.target === signInModal) {
-                closeModal(signInModal);
-            }
+            if (e.target === signInModal) closeModal(signInModal);
         });
         joinModal.addEventListener('click', (e) => {
-            if (e.target === joinModal) {
-                closeModal(joinModal);
-            }
+            if (e.target === joinModal) closeModal(joinModal);
         });
 
-        // Switch between modals
         goToJoinBtnFromSignIn.addEventListener('click', (e) => {
             e.preventDefault();
             closeModal(signInModal);
@@ -331,57 +355,44 @@
             openModal(signInModal);
         });
 
-        // --- AUTHENTICATION FUNCTIONS (Modified to handle forms) ---
-
-        // Function to handle new user sign-ups
+        // --- AUTHENTICATION FUNCTIONS ---
         const signUp = async (email, password, name) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log('Successfully signed up!', user);
-
-                // Save user info to a 'users' collection in Firestore
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
-                    name: name, // Store the user's name
+                    name: name,
                     createdAt: serverTimestamp()
                 });
-                console.log('User data saved to Firestore.');
                 alert('Welcome to the community! You are now logged in.');
-                closeModal(joinModal); // Close modal on success
-                
+                closeModal(joinModal);
             } catch (error) {
                 console.error('Error during sign up:', error.message);
                 alert('Error: ' + error.message);
             }
         };
 
-        // Function to handle user sign-ins
         const signIn = async (email, password) => {
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Successfully signed in!', userCredential.user);
                 alert('You are successfully signed in!');
-                closeModal(signInModal); // Close modal on success
-
+                closeModal(signInModal);
             } catch (error) {
                 console.error('Error during sign in:', error.message);
                 alert('Error: ' + error.message);
             }
         };
 
-        // Function to handle user sign-outs
         const handleSignOut = async () => {
             try {
                 await signOut(auth);
-                console.log('User signed out.');
                 alert('You have been signed out.');
             } catch (error) {
                 console.error('Sign out error:', error);
             }
         };
 
-        // Function to handle password reset
         const handleForgotPassword = async (email) => {
             if (!email) {
                 alert("Please enter your email to reset your password.");
@@ -396,9 +407,7 @@
             }
         };
 
-
         // --- FORM SUBMISSION HANDLERS ---
-        const signInForm = document.getElementById('signInForm');
         signInForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = signInForm.elements['signInEmail'].value;
@@ -408,7 +417,7 @@
 
         forgotPasswordBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const email = signInForm.elements['signInEmail'].value; // Use the email already entered
+            const email = signInForm.elements['signInEmail'].value;
             handleForgotPassword(email);
         });
 
@@ -432,33 +441,24 @@
             }
         });
 
-
         // --- AUTH STATE LISTENER ---
         onAuthStateChanged(auth, (user) => {
             const userAuthLinks = document.querySelector('.user-auth-links');
             if (!userAuthLinks) return;
-
             if (user) {
-                // User is signed in.
-                console.log('User is logged in:', user);
                 userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
                 document.getElementById('signOutBtn').addEventListener('click', (e) => {
                     e.preventDefault();
                     handleSignOut();
                 });
-                
-                getUserProfile(user.uid); // Fetch user profile
-                closeModal(signInModal); // Close modals if user logs in while they're open
+                getUserProfile(user.uid);
+                closeModal(signInModal);
                 closeModal(joinModal);
-
             } else {
-                // User is signed out.
-                console.log('User is logged out.');
                 userAuthLinks.innerHTML = `
                     <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
                     <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
                 `;
-                // Re-attach event listeners as the HTML was re-rendered
                 document.getElementById('signInLink').addEventListener('click', (e) => {
                     e.preventDefault();
                     closeModal(joinModal);
@@ -475,10 +475,8 @@
         // --- FIRESTORE DATA EXAMPLE ---
         const getUserProfile = async (userId) => {
             if (!userId) return null;
-
             const userDocRef = doc(db, 'users', userId);
             const docSnap = await getDoc(userDocRef);
-
             if (docSnap.exists()) {
                 console.log("User profile data:", docSnap.data());
                 return docSnap.data();
@@ -488,6 +486,5 @@
             }
         };
     </script>
-
 </body>
 </html>
