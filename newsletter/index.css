@@ -18,6 +18,33 @@ body.no-scroll {
     overflow: hidden;
 }
 
+/* NEW: Mobile Top Bar */
+.mobile-top-bar {
+    display: none; /* Hidden by default */
+    background-color: var(--color-accent);
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 1002; /* Above main header */
+}
+.mobile-top-bar a {
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 0 0.5rem;
+}
+.mobile-top-bar a:hover {
+    text-decoration: underline;
+}
+/* Hide bar when user is logged in */
+body.logged-in .mobile-top-bar {
+    display: none;
+}
+
+
 /* --- HEADER --- */
 .main-header {
     position: sticky;
@@ -516,6 +543,17 @@ body.no-scroll {
 
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
+    .mobile-top-bar {
+        display: block; /* Show the mobile bar */
+    }
+    .main-header {
+        top: 38px; /* Push header down to make space for mobile bar */
+    }
+    /* Reset header position if the bar is hidden (i.e. user is logged in) */
+    body.logged-in .main-header {
+        top: 0;
+    }
+
     .main-header, .main-nav { max-width: 100%; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
