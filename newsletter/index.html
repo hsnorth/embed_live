@@ -174,11 +174,10 @@
     <div id="joinModal" class="modal-overlay" aria-hidden="true">
         <div class="modal-content subscription-card">
             <button class="modal-close-btn">&times;</button>
-            <h3 class="modal-header-text">JOIN COMMUNITY</h3>
             
             <div class="modal-subtitle">
-                <p id="typing-text" class="typing-line"></p>
-                <p class="subtitle-secondary hidden">Know what matters.</p>
+                <p id="typing-line-1" class="typing-header"></p>
+                <p id="typing-line-2" class="typing-header"></p>
             </div>
             
             <form id="joinFormStep1" class="modal-form" data-step="1">
@@ -260,7 +259,6 @@
         const joinModal = document.getElementById('joinModal');
         const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
 
-        // Form and navigation elements
         const joinFormStep1 = document.getElementById('joinFormStep1');
         const joinFormStep2 = document.getElementById('joinFormStep2');
         const signInForm = document.getElementById('signInForm');
@@ -268,47 +266,50 @@
         const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
         const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
 
-        // Typing effect elements
-        const typingElement = document.getElementById('typing-text');
-        const secondarySubtitle = document.querySelector('#joinModal .subtitle-secondary');
-        let typingInterval; // To control the typing animation
+        const typingLine1 = document.getElementById('typing-line-1');
+        const typingLine2 = document.getElementById('typing-line-2');
+        let typeInterval;
 
-        let joinEmailValue = ''; // To store email between join steps
+        let joinEmailValue = '';
 
         // --- TYPEWRITER EFFECT FUNCTION ---
         function typewriterEffect(element, text, speed, callback) {
             let i = 0;
             element.innerHTML = '';
-            element.style.visibility = 'visible'; // Ensure it's visible before typing
+            element.classList.add('typing-active');
 
-            if (typingInterval) clearInterval(typingInterval);
+            if (typeInterval) clearInterval(typeInterval);
 
-            typingInterval = setInterval(() => {
+            typeInterval = setInterval(() => {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
                 } else {
-                    clearInterval(typingInterval);
+                    clearInterval(typeInterval);
+                    element.classList.remove('typing-active');
                     if (callback) callback();
                 }
             }, speed);
         }
 
+        // --- MODAL FUNCTIONS ---
         function openModal(modal) {
             modal.setAttribute('aria-hidden', 'false');
             modal.classList.add('is-open');
             document.body.classList.add('no-scroll');
 
             if (modal.id === 'joinModal') {
-                const textToType = "The luxury of clarity and anecdotes to keep.";
-                secondarySubtitle.classList.add('hidden');
-                typingElement.innerHTML = '';
+                const line1Text = "The luxury of clarity.";
+                const line2Text = "Know what matters.";
+                
+                typingLine1.innerHTML = '';
+                typingLine2.innerHTML = '';
                 
                 setTimeout(() => {
-                    typewriterEffect(typingElement, textToType, 60, () => {
+                    typewriterEffect(typingLine1, line1Text, 80, () => {
                         setTimeout(() => {
-                           secondarySubtitle.classList.remove('hidden');
-                        }, 300);
+                            typewriterEffect(typingLine2, line2Text, 80);
+                        }, 400);
                     });
                 }, 300);
             }
@@ -324,11 +325,14 @@
             joinFormStep1.reset();
             joinFormStep2.reset();
 
-            if (typingInterval) clearInterval(typingInterval);
-            typingElement.innerHTML = '';
-            secondarySubtitle.classList.add('hidden');
+            if (typeInterval) clearInterval(typeInterval);
+            typingLine1.innerHTML = '';
+            typingLine2.innerHTML = '';
+            typingLine1.classList.remove('typing-active');
+            typingLine2.classList.remove('typing-active');
         }
 
+        // --- EVENT LISTENERS ---
         modalCloseBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const modalToClose = e.target.closest('.modal-overlay');
@@ -375,7 +379,7 @@
 
         const signIn = async (email, password) => {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(auth, email, password);
                 alert('You are successfully signed in!');
                 closeModal(signInModal);
             } catch (error) {
