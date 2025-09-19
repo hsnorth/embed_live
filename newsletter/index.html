@@ -58,8 +58,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
                 <div class="desktop-only user-auth-links">
-                    <a href="#" class="nav-link">SIGN IN</a>
-                    <a href="#" class="btn btn-primary">JOIN COMMUNITY</a>
+                    <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
+                    <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
                 </div>
                 <a href="#" class="mobile-only-icon" aria-label="Cart">
                     <img src="bag.png" alt="Shopping bag icon">
@@ -180,10 +180,58 @@
         closeMenuBtn.addEventListener('click', toggleMenu);
     </script>
 
+    <div id="signInModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content subscription-card">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="modal-header-text">SIGN IN</h3>
+            <form id="signInForm" class="modal-form">
+                <label for="signInEmail" class="form-label">EMAIL</label>
+                <input type="email" id="signInEmail" class="form-input" placeholder="Enter your email" required>
+
+                <label for="signInPassword" class="form-label">PASSWORD</label>
+                <input type="password" id="signInPassword" class="form-input" placeholder="Enter your password" required>
+
+                <button type="submit" class="modal-btn">SIGN IN</button>
+            </form>
+            <div class="modal-links">
+                <button id="forgotPasswordBtn" class="modal-link-btn">Forgot password?</button>
+                <button id="goToJoinBtnFromSignIn" class="modal-link-btn">Don't have an account? Join Community</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="joinModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content subscription-card">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="modal-header-text">JOIN COMMUNITY</h3>
+            
+            <form id="joinFormStep1" class="modal-form" data-step="1">
+                <label for="joinEmail" class="form-label">EMAIL</label>
+                <input type="email" id="joinEmail" class="form-input" placeholder="Enter your email" required>
+                <button type="submit" class="modal-btn">NEXT</button>
+            </form>
+
+            <form id="joinFormStep2" class="modal-form hidden" data-step="2">
+                <label for="joinName" class="form-label">NAME</label>
+                <input type="text" id="joinName" class="form-input" placeholder="Enter your name" required>
+
+                <label for="joinPassword" class="form-label">PASSWORD</label>
+                <input type="password" id="joinPassword" class="form-input" placeholder="Create a password" required>
+
+                <button type="submit" class="modal-btn">JOIN</button>
+            </form>
+
+            <div class="modal-links">
+                <button id="goToSignInBtnFromJoin" class="modal-link-btn">Already have an account? Sign In</button>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         // Your web app's Firebase configuration
@@ -203,11 +251,90 @@
         const db = getFirestore(app);
         console.log("Firebase v9 is connected!");
 
-        // --- AUTHENTICATION FUNCTIONS ---
+        // --- MODAL HANDLING ---
+        const signInModal = document.getElementById('signInModal');
+        const joinModal = document.getElementById('joinModal');
+        const signInLink = document.getElementById('signInLink');
+        const joinLink = document.getElementById('joinLink');
+        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+        const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
+        const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
+        const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
+
+        const joinFormStep1 = document.getElementById('joinFormStep1');
+        const joinFormStep2 = document.getElementById('joinFormStep2');
+
+        let joinEmailValue = ''; // To store email between join steps
+
+        function openModal(modal) {
+            modal.setAttribute('aria-hidden', 'false');
+            modal.classList.add('is-open');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeModal(modal) {
+            modal.setAttribute('aria-hidden', 'true');
+            modal.classList.remove('is-open');
+            document.body.classList.remove('no-scroll');
+            // Reset join form to step 1 when closed
+            joinFormStep1.classList.remove('hidden');
+            joinFormStep2.classList.add('hidden');
+            joinFormStep1.reset();
+            joinFormStep2.reset();
+        }
+
+        // Event Listeners for opening modals
+        signInLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(joinModal); // Close join if open
+            openModal(signInModal);
+        });
+
+        joinLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(signInModal); // Close sign in if open
+            openModal(joinModal);
+        });
+
+        // Event Listeners for closing modals
+        modalCloseBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modalToClose = e.target.closest('.modal-overlay');
+                if (modalToClose) {
+                    closeModal(modalToClose);
+                }
+            });
+        });
+
+        // Close modal when clicking outside content
+        signInModal.addEventListener('click', (e) => {
+            if (e.target === signInModal) {
+                closeModal(signInModal);
+            }
+        });
+        joinModal.addEventListener('click', (e) => {
+            if (e.target === joinModal) {
+                closeModal(joinModal);
+            }
+        });
+
+        // Switch between modals
+        goToJoinBtnFromSignIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(signInModal);
+            openModal(joinModal);
+        });
+
+        goToSignInBtnFromJoin.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeModal(joinModal);
+            openModal(signInModal);
+        });
+
+        // --- AUTHENTICATION FUNCTIONS (Modified to handle forms) ---
 
         // Function to handle new user sign-ups
-        // TODO: Call this function when your "Join" form is submitted
-        const signUp = async (email, password) => {
+        const signUp = async (email, password, name) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
@@ -216,9 +343,12 @@
                 // Save user info to a 'users' collection in Firestore
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
+                    name: name, // Store the user's name
                     createdAt: serverTimestamp()
                 });
                 console.log('User data saved to Firestore.');
+                alert('Welcome to the community! You are now logged in.');
+                closeModal(joinModal); // Close modal on success
                 
             } catch (error) {
                 console.error('Error during sign up:', error.message);
@@ -227,11 +357,12 @@
         };
 
         // Function to handle user sign-ins
-        // TODO: Call this function when your "Sign In" form is submitted
         const signIn = async (email, password) => {
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log('Successfully signed in!', userCredential.user);
+                alert('You are successfully signed in!');
+                closeModal(signInModal); // Close modal on success
 
             } catch (error) {
                 console.error('Error during sign in:', error.message);
@@ -244,13 +375,65 @@
             try {
                 await signOut(auth);
                 console.log('User signed out.');
+                alert('You have been signed out.');
             } catch (error) {
                 console.error('Sign out error:', error);
             }
         };
 
+        // Function to handle password reset
+        const handleForgotPassword = async (email) => {
+            if (!email) {
+                alert("Please enter your email to reset your password.");
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert("Password reset email sent! Check your inbox.");
+            } catch (error) {
+                console.error("Error sending password reset email:", error.message);
+                alert("Error sending password reset email: " + error.message);
+            }
+        };
+
+
+        // --- FORM SUBMISSION HANDLERS ---
+        const signInForm = document.getElementById('signInForm');
+        signInForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = signInForm.elements['signInEmail'].value;
+            const password = signInForm.elements['signInPassword'].value;
+            signIn(email, password);
+        });
+
+        forgotPasswordBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = signInForm.elements['signInEmail'].value; // Use the email already entered
+            handleForgotPassword(email);
+        });
+
+        joinFormStep1.addEventListener('submit', (e) => {
+            e.preventDefault();
+            joinEmailValue = joinFormStep1.elements['joinEmail'].value;
+            if (joinEmailValue) {
+                joinFormStep1.classList.add('hidden');
+                joinFormStep2.classList.remove('hidden');
+            }
+        });
+
+        joinFormStep2.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = joinFormStep2.elements['joinName'].value;
+            const password = joinFormStep2.elements['joinPassword'].value;
+            if (joinEmailValue && name && password) {
+                signUp(joinEmailValue, password, name);
+            } else {
+                alert('Please go back and enter your email, name, and password.');
+            }
+        });
+
+
         // --- AUTH STATE LISTENER ---
-        // This runs automatically when the page loads and whenever the user's login state changes
         onAuthStateChanged(auth, (user) => {
             const userAuthLinks = document.querySelector('.user-auth-links');
             if (!userAuthLinks) return;
@@ -258,30 +441,38 @@
             if (user) {
                 // User is signed in.
                 console.log('User is logged in:', user);
-                // Update the UI to show a "Sign Out" button
                 userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
                 document.getElementById('signOutBtn').addEventListener('click', (e) => {
                     e.preventDefault();
                     handleSignOut();
                 });
                 
-                // Optional: Fetch and log the user's profile data
-                getUserProfile(user.uid);
+                getUserProfile(user.uid); // Fetch user profile
+                closeModal(signInModal); // Close modals if user logs in while they're open
+                closeModal(joinModal);
 
             } else {
                 // User is signed out.
                 console.log('User is logged out.');
-                // Revert UI back to the original Sign In / Join buttons
                 userAuthLinks.innerHTML = `
                     <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
                     <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
                 `;
-                // TODO: Add event listeners to signInLink and joinLink to open your modals/forms
+                // Re-attach event listeners as the HTML was re-rendered
+                document.getElementById('signInLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeModal(joinModal);
+                    openModal(signInModal);
+                });
+                document.getElementById('joinLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeModal(signInModal);
+                    openModal(joinModal);
+                });
             }
         });
 
         // --- FIRESTORE DATA EXAMPLE ---
-        // Example of how to read a user's profile data
         const getUserProfile = async (userId) => {
             if (!userId) return null;
 
