@@ -14,16 +14,15 @@ body {
     color: var(--color-text);
     background-color: var(--color-background);
 }
-/* A helper class to prevent body scrolling when the menu is open */
 body.no-scroll {
     overflow: hidden;
 }
 
 /* --- HEADER --- */
 .main-header {
-    position: sticky; /* This makes the entire header container sticky */
-    top: 0; /* Sticks it to the top of the viewport */
-    z-index: 1001; /* Ensures it stays above the nav and other content */
+    position: sticky;
+    top: 0;
+    z-index: 1001;
     background-color: var(--color-background);
     max-width: 1200px;
     margin: 0 auto;
@@ -77,7 +76,7 @@ body.no-scroll {
     text-align: center;
 }
 
-/* --- MAIN NAVIGATION (STICKY BY DEFAULT) --- */
+/* --- MAIN NAVIGATION --- */
 .main-nav {
     position: sticky;
     top: 0;
@@ -145,7 +144,6 @@ body.no-scroll {
     align-items: center;
 }
 
-
 /* --- SCROLLED STATE (Desktop Only) --- */
 .scrolled-logo-link {
     display: none;
@@ -163,7 +161,6 @@ body.no-scroll {
 }
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
-
 
 /* --- MAIN CONTENT LAYOUT --- */
 .content-wrapper {
@@ -210,6 +207,7 @@ body.no-scroll {
 .how-it-works, .desktop-only { display: none; }
 .mobile-only-icon { display: block; }
 .mobile-only-icon img { height: 30px; vertical-align: middle; }
+.hidden { display: none !important; }
 
 /* --- MOBILE NAVIGATION OVERLAY --- */
 .mobile-nav {
@@ -232,7 +230,6 @@ body.no-scroll {
 }
 .mobile-nav-header {
     display: flex;
-    /* THIS WAS CHANGED to position the X and Logo */
     justify-content: space-between;
     width: 100%;
     min-height: 55px;
@@ -247,7 +244,6 @@ body.no-scroll {
     padding: 0;
     color: var(--color-text);
 }
-/* NEW STYLES for the logo in the menu */
 .mobile-nav-logo {
     font-family: var(--font-serif);
     font-size: 1.8rem;
@@ -271,18 +267,13 @@ body.no-scroll {
     text-decoration: none;
     padding: 0.5rem 0;
 }
-.mobile-nav-links li a:hover {
-    color: #888;
-}
+.mobile-nav-links li a:hover { color: #888; }
 .mobile-nav-links .has-arrow {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.mobile-nav-links .has-arrow svg {
-    width: 30px;
-    height: 30px;
-}
+.mobile-nav-links .has-arrow svg { width: 30px; height: 30px; }
 .mobile-nav-links .sub-link {
     display: block;
     font-family: var(--font-sans);
@@ -299,8 +290,184 @@ body.no-scroll {
     font-size: 1.5rem;
 }
 
+/* --- MODAL OVERLAY --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background-color: var(--color-background);
+    padding: 2rem;
+    border-radius: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+}
+.modal-overlay.is-open .modal-content {
+    transform: translateY(0);
+}
+.subscription-card {
+    border: 1px solid var(--color-border);
+    background-color: #fcfcfc;
+}
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-text);
+    line-height: 1;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+.modal-close-btn:hover {
+    opacity: 1;
+}
+.modal-header-text {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    color: var(--color-text);
+}
+.modal-subtitle {
+    text-align: center;
+    margin: -1rem 0 2rem 0;
+    min-height: 5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.modal-subtitle p {
+    font-family: var(--font-sans);
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
+}
+.typing-line {
+    font-weight: 400;
+}
+.typing-line::after {
+    content: '|';
+    display: inline-block;
+    animation: blink 0.7s infinite;
+    font-weight: 300;
+    position: relative;
+    top: -1px;
+}
+.subtitle-secondary {
+    font-weight: 700;
+    margin-top: 0.25rem;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.form-label {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: -0.5rem;
+}
+.form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-text);
+    box-sizing: border-box;
+    background-color: var(--color-background);
+    transition: border-color 0.2s ease;
+}
+.form-input::placeholder { color: #aaa; }
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+.modal-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    border: none;
+    border-radius: 0;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+}
+.modal-btn:hover {
+    background-color: #e6c938;
+}
+.modal-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+.modal-link-btn {
+    background: none;
+    border: none;
+    color: #555;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+.modal-link-btn:hover {
+    color: var(--color-text);
+    opacity: 1;
+}
+
 /* --- Responsive Styles --- */
-/* For Mobile */
 @media (max-width: 768px) {
     .main-header, .main-nav { max-width: 100%; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
@@ -323,7 +490,6 @@ body.no-scroll {
     }
 }
 
-/* For Tablet */
 @media (min-width: 769px) and (max-width: 1023px) {
     .main-header, .main-nav { max-width: 100%; }
     .desktop-only { display: flex; }
@@ -332,9 +498,7 @@ body.no-scroll {
     .third-column, .sidebar-container { position: static; }
 }
 
-/* For Desktop */
 @media (min-width: 1024px) {
-    /* The rule to hide the menu toggle was REMOVED from here */
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
@@ -353,182 +517,6 @@ body.no-scroll {
     }
 }
 
-/* --- MODAL OVERLAY --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3000; /* Higher than other elements */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.modal-overlay.is-open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-content {
-    background-color: var(--color-background); /* White background for the content */
-    padding: 2rem;
-    border-radius: 0; /* Keep sharp edges like the image */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 400px; /* Max width to mimic the card in your image */
-    position: relative;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-    box-sizing: border-box; /* Include padding in width calculation */
-}
-
-.modal-overlay.is-open .modal-content {
-    transform: translateY(0);
-}
-
-/* Specific styling for the subscription card look */
-.subscription-card {
-    border: 1px solid var(--color-border); /* Subtle border */
-    background-color: #fcfcfc; /* Slightly off-white to stand out */
-}
-
-.modal-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--color-text);
-    line-height: 1;
-    padding: 0;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-.modal-close-btn:hover {
-    opacity: 1;
-}
-
-.modal-header-text {
-    font-family: var(--font-serif);
-    font-size: 2.2rem;
-    font-weight: 400;
-    text-align: center;
-    margin-top: 0.5rem;
-    margin-bottom: 2rem;
-    color: var(--color-text);
-}
-
-.modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: -0.5rem; /* Reduce space between label and input */
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0; /* Sharp edges */
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    color: var(--color-text);
-    box-sizing: border-box;
-    background-color: var(--color-background); /* Ensure white background */
-    transition: border-color 0.2s ease;
-}
-.form-input::placeholder {
-    color: #aaa;
-}
-.form-input:focus {
-    outline: none;
-    border-color: var(--color-accent);
-}
-
-.modal-btn {
-    display: block;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    background-color: var(--color-accent); /* Match the image's button */
-    color: var(--color-text); /* Black text on yellow */
-    border: none;
-    border-radius: 0;
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    margin-top: 1rem;
-}
-.modal-btn:hover {
-    background-color: #e6c938; /* Slightly darker yellow on hover */
-}
-
-.modal-links {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-}
-
-.modal-link-btn {
-    background: none;
-    border: none;
-    color: #555; /* Subtle grey for links */
-    font-family: var(--font-sans);
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    opacity: 0.8;
-    transition: opacity 0.2s ease, color 0.2s ease;
-}
-.modal-link-btn:hover {
-    color: var(--color-text);
-    opacity: 1;
-}
-
-/* Utility to hide elements dynamically */
-.hidden {
-    display: none !important;
-}
-
-/* Style for the "MOST POPULAR" banner */
-.subscription-card .modal-header-banner {
-    background-color: var(--color-accent);
-    color: var(--color-text);
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    text-align: center;
-    padding: 0.75rem 0;
-    margin: -2rem -2rem 2rem -2rem; /* Pull to edges */
-    letter-spacing: 1px;
-}
-
-/* Media query for smaller screens */
 @media (max-width: 480px) {
     .modal-content {
         padding: 1.5rem;
