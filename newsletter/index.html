@@ -38,8 +38,8 @@
         </ul>
         <hr class="mobile-nav-divider">
         <ul class="mobile-nav-links secondary-links">
-            <li><a href="how-the-haul-works.html">How the Haul works</a></li>
-            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="how-it-works.html">How the Haul works</a></li>
+            <li><a href="about.html">About Us</a></li>
             <li><a href="contact.html">Contact Us</a></li>
         </ul>
     </nav>
@@ -52,7 +52,7 @@
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
-                <a href="how-the-haul-works.html" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
+                <a href="how-it-works.html" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
             </div>
 
             <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL.</a>
@@ -254,6 +254,12 @@
                 <input type="text" id="joinName" class="form-input" placeholder="Enter your name" required>
                 <label for="joinPassword" class="form-label">PASSWORD</label>
                 <input type="password" id="joinPassword" class="form-input" placeholder="Create a password" required>
+                
+                <div class="form-checkbox-group">
+                    <input type="checkbox" id="joinNewsletter" name="newsletter" checked>
+                    <label for="joinNewsletter">Yes, I want to receive the weekly newsletter.</label>
+                </div>
+
                 <button type="submit" class="modal-btn">JOIN</button>
             </form>
             <div class="modal-links">
@@ -352,7 +358,7 @@
             modal.classList.add('is-open');
             document.body.classList.add('no-scroll');
             if (modal.id === 'joinModal') {
-                const textToType = "For stories to tell at supper";
+                const textToType = "For stories to tell at the supper";
                 setTimeout(() => {
                     typewriterEffect(modalTagline, textToType, 80, () => {
                         joinFormStep1.classList.add('form-visible');
@@ -385,13 +391,21 @@
         mobileJoinLink.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
         mobileSignInLink.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
         
-        const signUp = async (email, password, name) => {
+        const signUp = async (email, password, name, wantsNewsletter) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp() });
+                const user = userCredential.user;
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    name: name,
+                    createdAt: serverTimestamp(),
+                    newsletter: wantsNewsletter
+                });
                 showToast('Welcome to the community!', 'success');
                 closeModal(joinModal);
-            } catch (error) { showToast(error.message, 'error'); }
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
         };
         const signIn = async (email, password) => {
             try {
@@ -428,8 +442,9 @@
             e.preventDefault();
             const name = joinFormStep2.elements['joinName'].value;
             const password = joinFormStep2.elements['joinPassword'].value;
+            const wantsNewsletter = joinFormStep2.elements['joinNewsletter'].checked;
             if (joinEmailValue && name && password) {
-                signUp(joinEmailValue, password, name);
+                signUp(joinEmailValue, password, name, wantsNewsletter);
             } else {
                 showToast('Missing name or password.', 'error');
             }
