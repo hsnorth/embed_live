@@ -21,6 +21,8 @@ const db = getFirestore(app);
 console.log("Firebase v9 is connected!");
 
 // --- DOM ELEMENTS ---
+const header = document.querySelector('.main-header');
+const headerBranding = document.querySelector('.header-branding');
 const signInModal = document.getElementById('signInModal');
 const joinModal = document.getElementById('joinModal');
 const modalCloseBtns = document.querySelectorAll('.modal-close-btn');
@@ -36,6 +38,20 @@ const mobileJoinLink = document.getElementById('mobileJoinLink');
 const mobileSignInLink = document.getElementById('mobileSignInLink');
 let typeInterval;
 let joinEmailValue = '';
+
+// --- HEADER SCROLL EFFECT ---
+if (header && headerBranding) {
+    window.addEventListener('scroll', () => {
+        // Use the offsetHeight of the branding section as the trigger point
+        const scrollThreshold = headerBranding.offsetHeight;
+        if (window.scrollY > scrollThreshold) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+}
+
 
 // --- CUSTOM NOTIFICATION FUNCTION ---
 function showToast(message, type = 'info', duration = 4000) {
@@ -211,3 +227,4 @@ if (menuToggle && closeMenuBtn) {
     menuToggle.addEventListener('click', toggleMenu);
     closeMenuBtn.addEventListener('click', toggleMenu);
 }
+
