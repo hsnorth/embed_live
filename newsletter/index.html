@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -20,7 +20,7 @@
             <button class="close-menu-btn" aria-label="Close menu">
                 &times;
             </button>
-            <a href="#" class="mobile-nav-logo">THE NEWS HAUL.</a>
+            <a href="index.html" class="mobile-nav-logo">THE NEWS HAUL.</a>
         </div>
         <ul class="mobile-nav-links">
             <li>
@@ -38,9 +38,9 @@
         </ul>
         <hr class="mobile-nav-divider">
         <ul class="mobile-nav-links secondary-links">
-            <li><a href="#">How the Haul works</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Contact Us</a></li>
+            <li><a href="how-it-works.html">How the Haul works</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
         </ul>
     </nav>
 
@@ -52,10 +52,10 @@
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
-                <a href="#" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
+                <a href="how-it-works.html" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
             </div>
 
-            <a href="#" class="scrolled-logo-link">THE NEWS HAUL.</a>
+            <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL.</a>
 
             <div class="user-actions">
                 <a href="#" class="search-icon desktop-only" aria-label="Search">
@@ -157,39 +157,33 @@
         </aside>
     </main>
     
-    <!-- NEW SECTIONS START HERE -->
     <section id="essentials" class="content-section">
         <h2 class="section-title">Five essentials</h2>
         <div class="item-grid">
-            <!-- Item 1 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/EEE/333?text=Essential+1" alt="Essential Item 1" class="item-image">
                 <span class="eyebrow">Category</span>
                 <h3 class="item-title">A Really Good Pen</h3>
                 <p class="item-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
             </div>
-            <!-- Item 2 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/EEE/333?text=Essential+2" alt="Essential Item 2" class="item-image">
                 <span class="eyebrow">Category</span>
                 <h3 class="item-title">Comfortable Shoes</h3>
                 <p class="item-description">Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna.</p>
             </div>
-            <!-- Item 3 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/EEE/333?text=Essential+3" alt="Essential Item 3" class="item-image">
                 <span class="eyebrow">Category</span>
                 <h3 class="item-title">A Durable Tote Bag</h3>
                 <p class="item-description">Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in.</p>
             </div>
-            <!-- Item 4 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/EEE/333?text=Essential+4" alt="Essential Item 4" class="item-image">
                 <span class="eyebrow">Category</span>
                 <h3 class="item-title">Quality Sunglasses</h3>
                 <p class="item-description">Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis.</p>
             </div>
-            <!-- Item 5 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/EEE/333?text=Essential+5" alt="Essential Item 5" class="item-image">
                 <span class="eyebrow">Category</span>
@@ -202,21 +196,18 @@
     <section id="imports" class="content-section">
         <h2 class="section-title">The Imports</h2>
         <div class="item-grid">
-             <!-- Item 1 -->
              <div class="grid-item">
                 <img src="https://placehold.co/600x400/DDD/333?text=Import+1" alt="Import Item 1" class="item-image">
                 <span class="eyebrow">From Japan</span>
                 <h3 class="item-title">Artisanal Ceramics</h3>
                 <p class="item-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
             </div>
-            <!-- Item 2 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/DDD/333?text=Import+2" alt="Import Item 2" class="item-image">
                 <span class="eyebrow">From Italy</span>
                 <h3 class="item-title">Leather Notebook</h3>
                 <p class="item-description">Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna.</p>
             </div>
-            <!-- Item 3 -->
             <div class="grid-item">
                 <img src="https://placehold.co/600x400/DDD/333?text=Import+3" alt="Import Item 3" class="item-image">
                 <span class="eyebrow">From Sweden</span>
@@ -226,7 +217,6 @@
         </div>
     </section>
 
-    <!-- Placeholder sections for scrolling -->
     <section id="deliveries" class="content-section placeholder-section"><h2 class="section-title">Next Deliveries</h2></section>
     <section id="cannoli" class="content-section placeholder-section"><h2 class="section-title">Cannoli</h2></section>
     <section id="coffee" class="content-section placeholder-section"><h2 class="section-title">Coffee Review</h2></section>
@@ -473,16 +463,13 @@
             else { console.log("No such user document!"); }
         };
 
-        // --- SCROLL-SPY NAVIGATION ---
         const navLinks = document.querySelectorAll('.main-nav a');
         const sections = document.querySelectorAll('main, .content-section');
-
         const observerOptions = {
-            root: null, // relative to the viewport
-            rootMargin: '-40% 0px -60% 0px', // trigger when the section is in the middle of the screen
+            root: null,
+            rootMargin: '-40% 0px -60% 0px',
             threshold: 0
         };
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -496,11 +483,8 @@
                 }
             });
         }, observerOptions);
-
-        sections.forEach(section => {
-            observer.observe(section);
-        });
-
+        sections.forEach(section => observer.observe(section));
     </script>
 </body>
 </html>
+
