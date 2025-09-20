@@ -127,17 +127,5 @@
         </div>
     </main>
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const mobileNav = document.querySelector('.mobile-nav');
-        const closeMenuBtn = document.querySelector('.close-menu-btn');
-        function toggleMenu() {
-            const isOpen = mobileNav.classList.toggle('is-open');
-            mobileNav.setAttribute('aria-hidden', !isOpen);
-            document.body.classList.toggle('no-scroll', isOpen);
-        }
-        menuToggle.addEventListener('click', toggleMenu);
-        closeMenuBtn.addEventListener('click', toggleMenu);
-    </script>
 </body>
 </html>
