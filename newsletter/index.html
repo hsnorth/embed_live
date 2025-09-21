@@ -36,78 +36,56 @@
             color: #333;
         }
 
-        /* --- FINAL, CORRECTED 3D SLICED GLOBE --- */
-        .globe-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem 0;
-            margin-bottom: 1.5rem;
-        }
-        .globe {
-            width: clamp(200px, 40vw, 350px);
-            height: clamp(200px, 40vw, 350px);
+        /* --- New styles for the Flat World Map --- */
+        .map-container {
+            max-width: 900px;
+            margin: 2rem auto 3.5rem auto;
             position: relative;
-            transform-style: preserve-3d;
-            animation: rotate-globe 40s linear infinite;
-             /* Use a mask to ensure a perfect circle */
-            mask-image: radial-gradient(circle, black 50%, transparent 50.5%);
         }
-        @keyframes rotate-globe {
-            to { transform: rotateY(360deg); }
-        }
-
-        /* The slices that form the globe */
-        .slice {
-            position: absolute;
+        .map-image {
             width: 100%;
-            height: 100%;
-            background: url('https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg');
-            background-size: 200% 100%; /* Texture is twice the width of the container */
-            /* Rotate each slice into position to form the sphere */
-            transform: rotateY(calc(var(--i) * 18deg));
-            /* Position the background image differently for each slice */
-            background-position-x: calc(var(--i) * -5.26%); /* (100% / 19 slices) */
+            height: auto;
+            display: block;
         }
-        /* Atmospheric glow and shadow */
-        .globe::after {
-            content: '';
+        .map-pin {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            width: 14px;
+            height: 14px;
+            background-color: var(--color-text);
+            border: 2px solid var(--color-background);
             border-radius: 50%;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
-            z-index: 10;
+            transform: translate(-50%, -50%);
+            top: var(--top);
+            left: var(--left);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            animation: pulse 2.5s infinite;
+            cursor: pointer;
         }
-
-        /* Location Pins */
-        .globe-pin {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 12px; height: 12px;
-            margin: -6px;
-            background: var(--color-accent);
-            border-radius: 50%;
-            box-shadow: 0 0 15px 3px #ffde3f;
-            transform: rotateY(var(--lon)) rotateX(var(--lat)) translateZ(clamp(100px, 20vw, 175px));
-            animation: pulse 2s ease-in-out infinite;
-            z-index: 5;
-        }
-        .globe-pin::before {
+        .map-pin::before {
             content: attr(data-label);
             position: absolute;
-            bottom: 150%; left: 50%;
-            transform: translateX(-50%) rotateX(calc(-1 * var(--lat))) rotateY(calc(-1 * var(--lon)));
-            background: #2a2a2a; color: white;
-            padding: 5px 10px; border-radius: 4px;
-            font-size: 0.9rem; white-space: nowrap;
-            opacity: 0; transition: opacity 0.2s;
+            bottom: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-text);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
             pointer-events: none;
         }
-        .globe-pin:hover::before { opacity: 1; }
+        .map-pin:hover::before {
+            opacity: 1;
+        }
         @keyframes pulse {
-            0%, 100% { transform: rotateY(var(--lon)) rotateX(var(--lat)) translateZ(clamp(100px, 20vw, 175px)) scale(1); }
-            50% { transform: rotateY(var(--lon)) rotateX(var(--lat)) translateZ(clamp(100px, 20vw, 175px)) scale(1.2); }
+            0% { box-shadow: 0 0 0 0 rgba(17, 17, 17, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(17, 17, 17, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(17, 17, 17, 0); }
         }
     </style>
 </head>
@@ -289,13 +267,11 @@
 
     <section id="imports" class="content-section">
         <h2 class="section-title">The Imports</h2>
-        <div class="globe-container">
-            <div class="globe">
-                <div class="slice" style="--i:0;"></div><div class="slice" style="--i:1;"></div><div class="slice" style="--i:2;"></div><div class="slice" style="--i:3;"></div><div class="slice" style="--i:4;"></div><div class="slice" style="--i:5;"></div><div class="slice" style="--i:6;"></div><div class="slice" style="--i:7;"></div><div class="slice" style="--i:8;"></div><div class="slice" style="--i:9;"></div><div class="slice" style="--i:10;"></div><div class="slice" style="--i:11;"></div><div class="slice" style="--i:12;"></div><div class="slice" style="--i:13;"></div><div class="slice" style="--i:14;"></div><div class="slice" style="--i:15;"></div><div class="slice" style="--i:16;"></div><div class="slice" style="--i:17;"></div><div class="slice" style="--i:18;"></div><div class="slice" style="--i:19;"></div>
-                <div class="globe-pin" data-label="Artisanal Ceramics" style="--lat: 36deg; --lon: 138deg;"></div>
-                <div class="globe-pin" data-label="Leather Notebook" style="--lat: 42deg; --lon: 12deg;"></div>
-                <div class="globe-pin" data-label="Minimalist Desk Lamp" style="--lat: 60deg; --lon: 18deg;"></div>
-            </div>
+        <div class="map-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution._svg" alt="World map of imports" class="map-image">
+            <div class="map-pin" data-label="Artisanal Ceramics" style="--top: 43%; --left: 85%;"></div>
+            <div class="map-pin" data-label="Leather Notebook" style="--top: 41%; --left: 53%;"></div>
+            <div class="map-pin" data-label="Minimalist Desk Lamp" style="--top: 28%; --left: 55%;"></div>
         </div>
         <div class="essentials-container">
             <div class="essential-item">
