@@ -36,7 +36,7 @@
             color: #333;
         }
 
-        /* New styles for the BIG, RESPONSIVE globe with PINS */
+        /* --- CORRECTED 3D GLOBE STYLES --- */
         .globe-container {
             display: flex;
             justify-content: center;
@@ -49,8 +49,15 @@
             width: clamp(200px, 40vw, 350px);
             height: clamp(200px, 40vw, 350px);
             position: relative;
+            transform-style: preserve-3d; /* This establishes the 3D space */
+        }
+        /* This new wrapper will contain all rotating parts (map + pins) */
+        .globe-sphere {
+            width: 100%;
+            height: 100%;
+            position: absolute;
             transform-style: preserve-3d;
-            animation: rotate-scene 40s linear infinite;
+            animation: rotate-sphere 30s linear infinite; /* The animation is now on the sphere itself */
         }
         .globe-map {
             position: absolute;
@@ -59,8 +66,7 @@
             border-radius: 50%;
             background: url('https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg');
             background-size: cover;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-            transform-style: preserve-3d;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.7);
         }
         /* Cloud Layer */
         .globe-map::after {
@@ -71,10 +77,10 @@
             border-radius: 50%;
             background: url('https://www.solarsystemscope.com/textures/download/2k_earth_clouds.jpg');
             background-size: cover;
-            animation: rotate-scene 30s linear infinite reverse;
-            opacity: 0.25;
+            animation: rotate-sphere 25s linear infinite reverse; /* Clouds spin independently */
+            opacity: 0.3;
         }
-        @keyframes rotate-scene {
+        @keyframes rotate-sphere {
             to { transform: rotateY(360deg); }
         }
 
@@ -87,8 +93,7 @@
             background: var(--color-accent);
             border-radius: 50%;
             box-shadow: 0 0 15px 3px #ffde3f;
-            transform-style: preserve-3d;
-            /* Use custom properties for lat/lon to position pins */
+            /* The transform now places the pin on the surface of the rotating sphere */
             transform: rotateY(var(--lon)) rotateX(var(--lat)) translateZ(clamp(100px, 20vw, 175px));
             animation: pulse 2s ease-in-out infinite;
         }
@@ -98,7 +103,8 @@
             position: absolute;
             bottom: 150%;
             left: 50%;
-            transform: translateX(-50%) rotateY(calc(-1 * var(--lon))) rotateX(calc(-1 * var(--lat))); /* Counter-rotate label */
+            /* Counter-rotate the label so it always faces the camera */
+            transform: translateX(-50%) rotateX(calc(-1 * var(--lat))) rotateY(calc(-1 * var(--lon)));
             background: #2a2a2a;
             color: white;
             padding: 5px 10px;
@@ -298,7 +304,8 @@
         <h2 class="section-title">The Imports</h2>
         <div class="globe-container">
             <div class="globe">
-                <div class="globe-map">
+                <div class="globe-sphere">
+                    <div class="globe-map"></div>
                     <div class="globe-pin" data-label="Artisanal Ceramics" style="--lat: 36deg; --lon: 138deg;"></div>
                     <div class="globe-pin" data-label="Leather Notebook" style="--lat: 42deg; --lon: 12deg;"></div>
                     <div class="globe-pin" data-label="Minimalist Desk Lamp" style="--lat: 60deg; --lon: 18deg;"></div>
