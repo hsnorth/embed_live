@@ -181,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(joinModal);
             if (stickyBanner) {
                 stickyBanner.classList.remove('is-visible');
+                isScrollLocked = false;
                 window.removeEventListener('scroll', handleScrollLock);
             }
         } catch (error) { showToast(error.message, 'error'); }
@@ -250,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(joinModal);
             if (stickyBanner) {
                 stickyBanner.classList.remove('is-visible');
+                isScrollLocked = false;
                 window.removeEventListener('scroll', handleScrollLock);
             }
         } else {
@@ -287,26 +289,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (stickyBanner) {
-        const essentialsSection = document.getElementById('essentials');
+        const triggerSection = document.getElementById('imports');
+        let bannerHasBeenShown = false;
         
         const bannerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const bannerClosed = sessionStorage.getItem('stickyBannerClosed') === 'true';
-                if (!entry.isIntersecting && !document.body.classList.contains('logged-in') && !bannerClosed) {
+                if (entry.isIntersecting && !document.body.classList.contains('logged-in') && !bannerClosed && !bannerHasBeenShown) {
+                    bannerHasBeenShown = true; // Make sure we only trigger this once per page load
                     stickyBanner.classList.add('is-visible');
                     scrollLockPosition = window.scrollY;
                     isScrollLocked = true;
                     window.addEventListener('scroll', handleScrollLock);
-                } else {
-                    stickyBanner.classList.remove('is-visible');
-                    isScrollLocked = false;
-                    window.removeEventListener('scroll', handleScrollLock);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.01 });
 
-        if (essentialsSection) {
-            bannerObserver.observe(essentialsSection);
+        if (triggerSection) {
+            bannerObserver.observe(triggerSection);
         }
 
         stickyNextBtn.addEventListener('click', () => {
@@ -330,13 +330,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        closeStickyBannerBtn.addEventListener('click', () => {
-            stickyBanner.classList.remove('is-visible');
-            isScrollLocked = false;
-            window.removeEventListener('scroll', handleScrollLock);
-            sessionStorage.setItem('stickyBannerClosed', 'true');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        if (closeStickyBannerBtn) {
+            closeStickyBannerBtn.addEventListener('click', () => {
+                stickyBanner.classList.remove('is-visible');
+                isScrollLocked = false;
+                window.removeEventListener('scroll', handleScrollLock);
+                sessionStorage.setItem('stickyBannerClosed', 'true');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
     }
 });
 
