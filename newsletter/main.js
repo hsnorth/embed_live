@@ -228,3 +228,13 @@ if (menuToggle && closeMenuBtn) {
     closeMenuBtn.addEventListener('click', toggleMenu);
 }
 
+// --- HOMEPAGE TYPEWRITER HEADING ---
+document.addEventListener('DOMContentLoaded', () => {
+    const typewriterHeading = document.getElementById('typewriter-heading');
+    if (typewriterHeading) {
+        const textToType = "What mattered this week in Montreal";
+        setTimeout(() => {
+            typewriterEffect(typewriterHeading, textToType, 60);
+        }, 500);
+    }
+});
