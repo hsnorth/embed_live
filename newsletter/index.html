@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* New styles for the article-style essentials */
+        /* Styles for the article-style essentials */
         .essentials-container {
             max-width: 680px; /* Centered, article-like width */
             margin: 0 auto;
@@ -31,9 +31,55 @@
             margin-bottom: 1rem;
         }
         .essential-item .item-description {
-            font-size: 1.2rem;
+            font-size: 1.2rem; /* Paragraph text */
             line-height: 1.8;
             color: #333;
+        }
+
+        /* New styles for the spinning globe */
+        .globe-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+            margin-bottom: 1.5rem;
+        }
+        .globe {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            animation: rotate-globe 20s linear infinite;
+        }
+        .globe-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: #ccc;
+            transform-origin: 0 50%;
+        }
+        .globe-line:nth-child(1) { transform: translateX(-50%) rotate(30deg); }
+        .globe-line:nth-child(2) { transform: translateX(-50%) rotate(60deg); }
+        .globe-line:nth-child(3) { transform: translateX(-50%) rotate(90deg); }
+        .globe-line:nth-child(4) { transform: translateX(-50%) rotate(120deg); }
+        .globe-line:nth-child(5) { transform: translateX(-50%) rotate(150deg); }
+        
+        .globe-band {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #ccc;
+            transform: translateY(-50%);
+        }
+        @keyframes rotate-globe {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -215,22 +261,26 @@
 
     <section id="imports" class="content-section">
         <h2 class="section-title">The Imports</h2>
-        <div class="item-grid">
-             <div class="grid-item">
-                <img src="https://placehold.co/600x400/DDD/333?text=Import+1" alt="Import Item 1" class="item-image">
-                <span class="eyebrow">From Japan</span>
+        <div class="globe-container">
+            <div class="globe">
+                <div class="globe-line"></div>
+                <div class="globe-line"></div>
+                <div class="globe-line"></div>
+                <div class="globe-line"></div>
+                <div class="globe-line"></div>
+                <div class="globe-band"></div>
+            </div>
+        </div>
+        <div class="essentials-container">
+            <div class="essential-item">
                 <h3 class="item-title">Artisanal Ceramics</h3>
                 <p class="item-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/DDD/333?text=Import+2" alt="Import Item 2" class="item-image">
-                <span class="eyebrow">From Italy</span>
+            <div class="essential-item">
                 <h3 class="item-title">Leather Notebook</h3>
                 <p class="item-description">Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/DDD/333?text=Import+3" alt="Import Item 3" class="item-image">
-                <span class="eyebrow">From Sweden</span>
+            <div class="essential-item">
                 <h3 class="item-title">Minimalist Desk Lamp</h3>
                 <p class="item-description">Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in.</p>
             </div>
