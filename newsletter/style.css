@@ -443,6 +443,80 @@ body.logged-in .mobile-top-bar {
 @keyframes toastSlideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes toastSlideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
+/* --- STICKY SIGNUP BANNER --- */
+.sticky-signup-banner {
+    position: fixed;
+    bottom: -100%; /* Initially hidden */
+    left: 0;
+    width: 100%;
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    z-index: 2000;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+    transition: bottom 0.5s ease-in-out;
+    box-sizing: border-box;
+}
+.sticky-signup-banner.is-visible {
+    bottom: 0;
+}
+.sticky-signup-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+.sticky-signup-text h3 {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 400;
+}
+.sticky-signup-text p {
+    font-family: var(--font-sans);
+    margin: 0;
+    max-width: 400px;
+}
+.sticky-signup-form {
+    display: flex;
+    gap: 0.5rem;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+.sticky-form-step {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 500px;
+}
+.sticky-input {
+    flex-grow: 1;
+    border: 1px solid var(--color-text);
+    padding: 0.8rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    min-width: 150px;
+}
+.sticky-input::placeholder {
+    color: #555;
+}
+.sticky-input:focus {
+    outline: 2px solid var(--color-text);
+}
+.sticky-btn {
+    background-color: var(--color-text);
+    color: var(--color-background);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
     .mobile-top-bar { display: block; }
@@ -458,6 +532,8 @@ body.logged-in .mobile-top-bar {
     .scrolled-logo-link { font-size: 2rem; position: static; transform: none; text-align: center; width: 100%; }
     .feature-section, .feature-section.reverse { grid-template-columns: 1fr; }
     .feature-section.reverse .feature-image { order: 1; }
+    .sticky-signup-content { flex-direction: column; text-align: center; }
+    .sticky-signup-form { justify-content: center; }
 }
 
 @media (min-width: 769px) and (max-width: 1023px) {
@@ -474,7 +550,7 @@ body.logged-in .mobile-top-bar {
         display: grid;
         align-items: flex-start;
         max-width: 1100px;
-        grid-template-columns: 1fr 1.5fr; /* Adjusted for better balance */
+        grid-template-columns: 1.1fr 2fr;
         gap: 4rem;
     }
     #welcome .sidebar-container {
