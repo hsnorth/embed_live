@@ -52,6 +52,8 @@
         /* New styles for the homepage layout and typewriter */
         @media (min-width: 1024px) {
             .content-wrapper {
+                display: grid; /* THIS WAS THE MISSING PIECE */
+                align-items: flex-start;
                 max-width: 1100px; 
                 grid-template-columns: 1.1fr 2fr; /* Flipped and resized columns */
                 gap: 4rem;
