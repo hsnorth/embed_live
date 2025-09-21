@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSearchBtn = document.getElementById('close-search-btn');
     const searchInput = document.getElementById('search-input');
     const stickyBanner = document.getElementById('sticky-signup-banner');
-    const closeStickyBannerBtn = document.getElementById('close-sticky-banner');
     const stickyForm = document.getElementById('sticky-signup-form');
     const stickyNextBtn = document.getElementById('sticky-next-btn');
     const stickyStep1 = stickyForm.querySelector('[data-step="1"]');
@@ -290,17 +289,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (stickyBanner) {
         const triggerSection = document.getElementById('imports');
-        let bannerHasBeenShown = false;
         
         const bannerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                const bannerClosed = sessionStorage.getItem('stickyBannerClosed') === 'true';
-                if (entry.isIntersecting && !document.body.classList.contains('logged-in') && !bannerClosed && !bannerHasBeenShown) {
-                    bannerHasBeenShown = true; // Make sure we only trigger this once per page load
-                    stickyBanner.classList.add('is-visible');
-                    scrollLockPosition = window.scrollY;
-                    isScrollLocked = true;
-                    window.addEventListener('scroll', handleScrollLock);
+                if (entry.isIntersecting && !document.body.classList.contains('logged-in')) {
+                    if (!stickyBanner.classList.contains('is-visible')) {
+                        stickyBanner.classList.add('is-visible');
+                        scrollLockPosition = entry.boundingClientRect.top + window.scrollY - window.innerHeight + stickyBanner.offsetHeight;
+                        isScrollLocked = true;
+                        window.addEventListener('scroll', handleScrollLock);
+                    }
                 }
             });
         }, { threshold: 0.01 });
@@ -329,16 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Please fill out all fields.', 'error');
             }
         });
-
-        if (closeStickyBannerBtn) {
-            closeStickyBannerBtn.addEventListener('click', () => {
-                stickyBanner.classList.remove('is-visible');
-                isScrollLocked = false;
-                window.removeEventListener('scroll', handleScrollLock);
-                sessionStorage.setItem('stickyBannerClosed', 'true');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
     }
 });
 
