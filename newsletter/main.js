@@ -41,6 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchOverlay = document.getElementById('search-overlay');
     const closeSearchBtn = document.getElementById('close-search-btn');
     const searchInput = document.getElementById('search-input');
+    const stickyBanner = document.getElementById('sticky-signup-banner');
+    const stickyForm = document.getElementById('sticky-signup-form');
+    const stickyNextBtn = document.getElementById('sticky-next-btn');
+    const stickyStep1 = stickyForm.querySelector('[data-step="1"]');
+    const stickyStep2 = stickyForm.querySelector('[data-step="2"]');
+    const stickyEmailInput = document.getElementById('sticky-email');
+
     
     let typeInterval;
     let joinEmailValue = '';
@@ -168,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
+            if (stickyBanner) stickyBanner.classList.remove('is-visible');
         } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
@@ -233,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             closeModal(signInModal);
             closeModal(joinModal);
+            if (stickyBanner) stickyBanner.classList.remove('is-visible');
         } else {
             document.body.classList.remove('logged-in');
             if (userAuthLinks) {
@@ -259,4 +268,45 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.addEventListener('click', toggleMenu);
         closeMenuBtn.addEventListener('click', toggleMenu);
     }
+
+    // --- STICKY BANNER LOGIC ---
+    if (stickyBanner) {
+        const welcomeSection = document.getElementById('welcome');
+        
+        const bannerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && !document.body.classList.contains('logged-in')) {
+                    stickyBanner.classList.add('is-visible');
+                } else {
+                    stickyBanner.classList.remove('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        if (welcomeSection) {
+            bannerObserver.observe(welcomeSection);
+        }
+
+        stickyNextBtn.addEventListener('click', () => {
+            if (stickyEmailInput.value && stickyEmailInput.checkValidity()) {
+                stickyStep1.classList.add('hidden');
+                stickyStep2.classList.remove('hidden');
+            } else {
+                showToast('Please enter a valid email.', 'error');
+            }
+        });
+
+        stickyForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = stickyEmailInput.value;
+            const name = document.getElementById('sticky-name').value;
+            const password = document.getElementById('sticky-password').value;
+            if (email && name && password) {
+                signUp(email, password, name, true);
+            } else {
+                showToast('Please fill out all fields.', 'error');
+            }
+        });
+    }
 });
+
