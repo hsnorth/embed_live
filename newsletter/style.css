@@ -295,19 +295,6 @@ body.logged-in .mobile-top-bar {
     text-align: center;
 }
 
-.sidebar { background-color: #2a2a2a; border-radius: 8px; color: #fff; padding: 1.5rem; overflow: hidden; }
-.sidebar-title { font-family: var(--font-sans); font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin: 0; padding-bottom: 0.75rem; border-bottom: 4px solid var(--color-accent); }
-.sidebar-content { margin-top: 1.5rem; }
-.sidebar-item { display: flex; gap: 1rem; }
-.sidebar-item + .sidebar-item { margin-top: 1.5rem; }
-.item-thumbnail { width: 70px; height: 70px; background-color: #444; flex-shrink: 0; border-radius: 4px; }
-.item-text h4 { margin: 0 0 0.25rem 0; font-size: 1rem; font-weight: 700; }
-.item-text p { font-family: var(--font-sans); font-size: 0.9rem; color: #ccc; line-height: 1.5; margin: 0; }
-.issue-intel { background-color: var(--color-accent); color: var(--color-text); padding: 1.5rem; margin-top: 2rem; border-radius: 8px; font-family: var(--font-sans); }
-.issue-intel h4 { font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 0.75rem 0; }
-.issue-intel p { font-size: 0.95rem; line-height: 1.5; margin: 0 0 0.25rem 0; color: var(--color-text); }
-.issue-intel p:last-of-type { margin-bottom: 0; }
-
 /* Styles for article-style sections (Essentials, Imports, Deliveries) */
 .essentials-container {
     max-width: 700px;
@@ -350,6 +337,52 @@ body.logged-in .mobile-top-bar {
     height: auto;
     display: block;
     margin: 0 auto;
+}
+
+/* --- Brief Sidebar --- */
+.brief-sidebar {
+    background-color: #f8f8f7;
+    border: 1px solid var(--color-border);
+    padding: 2rem 1.5rem;
+}
+.brief-sidebar-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-top: 1rem;
+}
+.brief-sidebar-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35px;
+    height: 4px;
+    background-color: var(--color-accent);
+}
+.brief-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.brief-item {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin: 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.brief-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.brief-item strong {
+    font-weight: 700;
 }
 
 /* Typewriter heading styles */
@@ -520,3 +553,4 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
+
