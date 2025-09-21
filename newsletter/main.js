@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSearchBtn = document.getElementById('close-search-btn');
     const searchInput = document.getElementById('search-input');
     const stickyBanner = document.getElementById('sticky-signup-banner');
-    const stickyOverlay = document.getElementById('sticky-overlay');
+    const closeStickyBannerBtn = document.getElementById('close-sticky-banner');
     const stickyForm = document.getElementById('sticky-signup-form');
     const stickyNextBtn = document.getElementById('sticky-next-btn');
     const stickyStep1 = stickyForm.querySelector('[data-step="1"]');
@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let typeInterval;
     let joinEmailValue = '';
+    let scrollLockPosition = 0;
+    let isScrollLocked = false;
 
     // --- LIVE DATE ---
     function setLiveDate() {
@@ -145,9 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modal) return;
         modal.setAttribute('aria-hidden', 'true');
         modal.classList.remove('is-open');
-        if (!document.querySelector('.sticky-signup-banner.is-visible')) {
-            document.body.classList.remove('no-scroll');
-        }
+        document.body.classList.remove('no-scroll');
+        
         if (joinFormStep1 && joinFormStep2) {
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
@@ -180,8 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(joinModal);
             if (stickyBanner) {
                 stickyBanner.classList.remove('is-visible');
-                stickyOverlay.classList.remove('is-visible');
-                document.body.classList.remove('no-scroll');
+                window.removeEventListener('scroll', handleScrollLock);
             }
         } catch (error) { showToast(error.message, 'error'); }
     };
@@ -250,8 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal(joinModal);
             if (stickyBanner) {
                 stickyBanner.classList.remove('is-visible');
-                stickyOverlay.classList.remove('is-visible');
-                document.body.classList.remove('no-scroll');
+                window.removeEventListener('scroll', handleScrollLock);
             }
         } else {
             document.body.classList.remove('logged-in');
@@ -281,27 +280,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- STICKY BANNER LOGIC ---
+    function handleScrollLock() {
+        if (isScrollLocked && window.scrollY > scrollLockPosition) {
+            window.scrollTo(0, scrollLockPosition);
+        }
+    }
+
     if (stickyBanner) {
-        const welcomeSection = document.getElementById('welcome');
+        const essentialsSection = document.getElementById('essentials');
         
         const bannerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (!entry.isIntersecting && !document.body.classList.contains('logged-in')) {
+                const bannerClosed = sessionStorage.getItem('stickyBannerClosed') === 'true';
+                if (!entry.isIntersecting && !document.body.classList.contains('logged-in') && !bannerClosed) {
                     stickyBanner.classList.add('is-visible');
-                    stickyOverlay.classList.add('is-visible');
-                    document.body.classList.add('no-scroll');
+                    scrollLockPosition = window.scrollY;
+                    isScrollLocked = true;
+                    window.addEventListener('scroll', handleScrollLock);
                 } else {
                     stickyBanner.classList.remove('is-visible');
-                    stickyOverlay.classList.remove('is-visible');
-                    if (!document.querySelector('.modal-overlay.is-open')) {
-                        document.body.classList.remove('no-scroll');
-                    }
+                    isScrollLocked = false;
+                    window.removeEventListener('scroll', handleScrollLock);
                 }
             });
         }, { threshold: 0.1 });
 
-        if (welcomeSection) {
-            bannerObserver.observe(welcomeSection);
+        if (essentialsSection) {
+            bannerObserver.observe(essentialsSection);
         }
 
         stickyNextBtn.addEventListener('click', () => {
@@ -323,6 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showToast('Please fill out all fields.', 'error');
             }
+        });
+
+        closeStickyBannerBtn.addEventListener('click', () => {
+            stickyBanner.classList.remove('is-visible');
+            isScrollLocked = false;
+            window.removeEventListener('scroll', handleScrollLock);
+            sessionStorage.setItem('stickyBannerClosed', 'true');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 });
