@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSearchBtn = document.getElementById('close-search-btn');
     const searchInput = document.getElementById('search-input');
     const stickyBanner = document.getElementById('sticky-signup-banner');
+    const stickyOverlay = document.getElementById('sticky-overlay');
     const stickyForm = document.getElementById('sticky-signup-form');
     const stickyNextBtn = document.getElementById('sticky-next-btn');
     const stickyStep1 = stickyForm.querySelector('[data-step="1"]');
@@ -144,7 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modal) return;
         modal.setAttribute('aria-hidden', 'true');
         modal.classList.remove('is-open');
-        document.body.classList.remove('no-scroll');
+        if (!document.querySelector('.sticky-signup-banner.is-visible')) {
+            document.body.classList.remove('no-scroll');
+        }
         if (joinFormStep1 && joinFormStep2) {
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
@@ -175,7 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
             await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
-            if (stickyBanner) stickyBanner.classList.remove('is-visible');
+            if (stickyBanner) {
+                stickyBanner.classList.remove('is-visible');
+                stickyOverlay.classList.remove('is-visible');
+                document.body.classList.remove('no-scroll');
+            }
         } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
@@ -241,7 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             closeModal(signInModal);
             closeModal(joinModal);
-            if (stickyBanner) stickyBanner.classList.remove('is-visible');
+            if (stickyBanner) {
+                stickyBanner.classList.remove('is-visible');
+                stickyOverlay.classList.remove('is-visible');
+                document.body.classList.remove('no-scroll');
+            }
         } else {
             document.body.classList.remove('logged-in');
             if (userAuthLinks) {
@@ -277,8 +288,14 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting && !document.body.classList.contains('logged-in')) {
                     stickyBanner.classList.add('is-visible');
+                    stickyOverlay.classList.add('is-visible');
+                    document.body.classList.add('no-scroll');
                 } else {
                     stickyBanner.classList.remove('is-visible');
+                    stickyOverlay.classList.remove('is-visible');
+                    if (!document.querySelector('.modal-overlay.is-open')) {
+                        document.body.classList.remove('no-scroll');
+                    }
                 }
             });
         }, { threshold: 0.1 });
