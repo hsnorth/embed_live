@@ -48,6 +48,49 @@
             display: block;
             margin: 0 auto; /* Center the image */
         }
+
+        /* --- Styles for The Cannoli Section --- */
+        .cannoli-section-content {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+            justify-content: center; /* Center items when wrapped */
+            align-items: flex-start; /* Align items to the top */
+            gap: 2rem; /* Space between text and image */
+            max-width: 1100px; /* Max width for the entire section content */
+            margin: 0 auto;
+            padding: 0 1rem; /* Add padding for smaller screens */
+        }
+
+        .cannoli-text-content {
+            flex: 1; /* Allows text to take available space */
+            min-width: 300px; /* Minimum width before wrapping */
+            max-width: 700px; /* Max width for the text block */
+            text-align: left;
+        }
+
+        .cannoli-image-container {
+            flex-shrink: 0; /* Prevent image from shrinking too much */
+            width: 100%; /* Default to full width on small screens */
+            max-width: 300px; /* Max width for the image */
+            text-align: center;
+        }
+
+        .cannoli-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Adjust for larger screens where text and image are side-by-side */
+        @media (min-width: 768px) {
+            .cannoli-text-content {
+                padding-right: 2rem; /* Add space between text and image */
+            }
+            .cannoli-image-container {
+                width: auto; /* Let image size naturally up to max-width */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -120,7 +163,7 @@
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
-                <p class="header-date">Tuesday, Sept. 19, 2025</p>
+                <p class="header-date">Tuesday, Sept. 21, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -247,8 +290,43 @@
         </div>
     </section>
 
-    <section id="deliveries" class="content-section placeholder-section"><h2 class="section-title">Next Deliveries</h2></section>
-    <section id="cannoli" class="content-section placeholder-section"><h2 class="section-title">Cannoli</h2></section>
+    <section id="deliveries" class="content-section">
+        <h2 class="section-title">Next Deliveries</h2>
+        <div class="essentials-container">
+            <div class="essential-item">
+                <h3 class="item-title">A Weatherproof Trench Coat</h3>
+                <p class="item-description">Arriving just in time for the shifting seasons, this classic trench is cut from water-repellent Italian cotton. A perfect transitional piece for city life, it’s tailored for a clean silhouette that works over a suit or a simple sweater.</p>
+            </div>
+            <div class="essential-item">
+                <h3 class="item-title">Portuguese Stoneware</h3>
+                <p class="item-description">Hand-finished in a family-run studio in the Algarve, our new collection of stoneware brings a rustic yet refined touch to the table. Each piece is unique, featuring a reactive glaze that creates subtle variations in colour.</p>
+            </div>
+            <div class="essential-item">
+                <h3 class="item-title">The Perfect Carry-on</h3>
+                <p class="item-description">Engineered in Germany, this lightweight polycarbonate carry-on is designed for the modern traveler. It features a silent wheel system, an integrated power bank, and a thoughtfully organized interior to make your journey seamless.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="cannoli" class="content-section">
+        <h2 class="section-title">The Cannoli</h2>
+        <div class="cannoli-section-content">
+            <div class="cannoli-text-content">
+                <div class="essential-item" style="border-top: none; padding-top: 0;">
+                    <h3 class="item-title">Sweet, Sweet Perfection</h3>
+                    <p class="item-description">Originating from Sicily, cannoli are a staple of Italian pastry, cherished for their crispy fried shell and creamy ricotta filling. Traditionally, the shells are made from flour, sugar, and a hint of cocoa, then fried until golden and crisp. The filling is a delectable blend of fresh ricotta cheese, often sweetened with sugar, flavored with vanilla or citrus zest, and sometimes studded with chocolate chips or candied fruit.</p>
+                </div>
+                <div class="essential-item">
+                    <h3 class="item-title">A Delicate Art</h3>
+                    <p class="item-description">Crafting the perfect cannoli is an art form. The dough must be worked to the right consistency to achieve that signature crunch, and the ricotta filling requires careful preparation to be smooth and light. Each cannolo is typically filled just before serving to prevent the shell from becoming soggy, ensuring every bite delivers a delightful contrast between the delicate, crisp exterior and the rich, sweet interior.</p>
+                </div>
+            </div>
+            <div class="cannoli-image-container">
+                <img src="sweet.png" alt="Person eating a cannoli" class="cannoli-image">
+            </div>
+        </div>
+    </section>
+
     <section id="coffee" class="content-section placeholder-section"><h2 class="section-title">Coffee Review</h2></section>
     <section id="games" class="content-section placeholder-section"><h2 class="section-title">Games</h2></section>
 
