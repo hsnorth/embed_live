@@ -39,57 +39,40 @@
         /* --- Styles for The Gazette Map --- */
         .map-container {
             margin: 2rem auto 3.5rem auto;
-            padding: 0 1rem; /* Add some padding on smaller screens */
+            padding: 0 1rem;
         }
         .map-image {
             width: 100%;
-            max-width: 1100px; /* Set a large max size for desktop */
+            max-width: 1100px;
             height: auto;
             display: block;
-            margin: 0 auto; /* Center the image */
-        }
-
-        /* --- Styles for The Cannoli Section --- */
-        .cannoli-section-content {
-            display: flex;
-            flex-wrap: wrap; /* Allows items to wrap on smaller screens */
-            justify-content: center; /* Center items when wrapped */
-            align-items: flex-start; /* Align items to the top */
-            gap: 2rem; /* Space between text and image */
-            max-width: 1100px; /* Max width for the entire section content */
             margin: 0 auto;
-            padding: 0 1rem; /* Add padding for smaller screens */
         }
-
-        .cannoli-text-content {
-            flex: 1; /* Allows text to take available space */
-            min-width: 300px; /* Minimum width before wrapping */
-            max-width: 700px; /* Max width for the text block */
-            text-align: left;
-        }
-
-        .cannoli-image-container {
-            flex-shrink: 0; /* Prevent image from shrinking too much */
-            width: 100%; /* Default to full width on small screens */
-            max-width: 300px; /* Max width for the image */
-            text-align: center;
-        }
-
-        .cannoli-image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Adjust for larger screens where text and image are side-by-side */
-        @media (min-width: 768px) {
-            .cannoli-text-content {
-                padding-right: 2rem; /* Add space between text and image */
-            }
-            .cannoli-image-container {
-                width: auto; /* Let image size naturally up to max-width */
+        
+        /* New styles for the homepage layout and typewriter */
+        @media (min-width: 1024px) {
+            .content-wrapper {
+                max-width: 1100px; /* Thinner max-width */
+                grid-template-columns: 2fr 1.1fr; /* New 2-column layout */
+                gap: 4rem;
             }
         }
+        .sidebar-typewriter {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-bottom: 2rem;
+            min-height: 3.9em; /* Reserve space to prevent layout shift */
+        }
+        .sidebar-typewriter.typing-active::after {
+            content: '|';
+            display: inline-block;
+            animation: blink 0.7s infinite;
+            font-weight: 300;
+            color: #888;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
     </style>
 </head>
@@ -194,19 +177,8 @@
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
         </article>
 
-        <div class="third-column">
-            <div class="article-preview">
-                <img src="https://placehold.co/600x400/FFF/333?text=Cannoli" alt="A sweet cannoli" class="preview-image">
-                <span class="eyebrow">The Cannoli</span>
-                <h3 class="preview-title"><a href="#">Arrow error: When resurfacing crews sent traffic into itself</a></h3>
-            </div>
-            <div class="article-preview">
-                <span class="eyebrow">The Coffee</span>
-                <h3 class="preview-title"><a href="#">In the Plateau, Café Tere</a></h3>
-            </div>
-        </div>
-
         <aside class="sidebar-container">
+            <h3 id="typewriter-heading" class="sidebar-typewriter"></h3>
             <div class="sidebar">
                 <h3 class="sidebar-title">Montreal Issue #3</h3>
                 <div class="sidebar-content">
@@ -307,7 +279,7 @@
             </div>
         </div>
     </section>
-
+    
     <section id="cannoli" class="content-section">
         <h2 class="section-title">The Cannoli</h2>
         <div class="cannoli-section-content">
