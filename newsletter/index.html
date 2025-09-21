@@ -8,6 +8,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* New styles for the article-style essentials */
+        .essentials-container {
+            max-width: 750px; /* Centered, article-like width */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 3.5rem; /* Space between each essential item */
+        }
+        .essential-item {
+            text-align: left;
+            border-top: 1px solid var(--color-border); /* Separator */
+            padding-top: 2.5rem;
+        }
+        .essential-item:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+        .essential-item .item-title {
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .essential-item .item-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
 
@@ -159,41 +187,32 @@
     
     <section id="essentials" class="content-section">
         <h2 class="section-title">Five essentials</h2>
-        <div class="item-grid">
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/EEE/333?text=Essential+1" alt="Essential Item 1" class="item-image">
-                <span class="eyebrow">Category</span>
+        <div class="essentials-container">
+            <div class="essential-item">
                 <h3 class="item-title">1. BLAH BLAH BLAH</h3>
                 <p class="item-description">It’s not always easy being rich – just ask Norway’s prime minister. Following re-election last week, Jonas Gahr Støre holds the nation’s purse strings as a cast of competitive coalition partners and critics from...
                 <br><br>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/EEE/333?text=Essential+2" alt="Essential Item 2" class="item-image">
-                <span class="eyebrow">Category</span>
-                <h3 class="item-title">2. Comfortable Shoes</h3>
-                <p class="item-description">Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrerit dolor magna.</p>
+            <div class="essential-item">
+                <h3 class="item-title">2. A Global Stance</h3>
+                <p class="item-description">Britain, Canada and Australia confirmed on Sunday that they now formally recognize Palestinian statehood, piling pressure on Israel to ease the humanitarian crisis in Gaza and putting three major American allies at odds with the Trump administration. The widely expected announcements came on the eve of the annual gathering of the United Nations General Assembly in New York. France and Portugal have also pledged to vote for recognition of Palestinian statehood at the U.N. this week, joining some 150 members of the body who have already done so.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/EEE/333?text=Essential+3" alt="Essential Item 3" class="item-image">
-                <span class="eyebrow">Category</span>
+            <div class="essential-item">
                 <h3 class="item-title">3. A Durable Tote Bag</h3>
                 <p class="item-description">Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/EEE/333?text=Essential+4" alt="Essential Item 4" class="item-image">
-                <span class="eyebrow">Category</span>
+            <div class="essential-item">
                 <h3 class="item-title">4. Quality Sunglasses</h3>
                 <p class="item-description">Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis.</p>
             </div>
-            <div class="grid-item">
-                <img src="https://placehold.co/600x400/EEE/333?text=Essential+5" alt="Essential Item 5" class="item-image">
-                <span class="eyebrow">Category</span>
+            <div class="essential-item">
                 <h3 class="item-title">5. A Classic Watch</h3>
                 <p class="item-description">Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui.</p>
             </div>
         </div>
     </section>
+
     <section id="imports" class="content-section">
         <h2 class="section-title">The Imports</h2>
         <div class="item-grid">
@@ -274,4 +293,3 @@
     <script src="scroll-spy.js"></script>
 </body>
 </html>
-
