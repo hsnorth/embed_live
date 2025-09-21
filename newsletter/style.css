@@ -459,20 +459,6 @@ body.logged-in .mobile-top-bar {
 .sticky-signup-banner.is-visible {
     bottom: 0;
 }
-.sticky-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text);
-    opacity: 0.7;
-}
-.sticky-close-btn:hover {
-    opacity: 1;
-}
 .sticky-signup-content {
     max-width: 1100px;
     margin: 0 auto;
