@@ -8,80 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Styles for the article-style essentials */
-        .essentials-container {
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 3.5rem;
-        }
-        .essential-item {
-            text-align: left;
-            border-top: 1px solid var(--color-border);
-            padding-top: 2.5rem;
-        }
-        .essential-item:first-child {
-            border-top: none;
-            padding-top: 0;
-        }
-        .essential-item .item-title {
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-        .essential-item .item-description {
-            font-size: 1.15rem;
-            line-height: 1.8;
-            color: #333;
-        }
-
-        /* --- Styles for The Gazette Map --- */
-        .map-container {
-            margin: 2rem auto 3.5rem auto;
-            padding: 0 1rem;
-        }
-        .map-image {
-            width: 100%;
-            max-width: 1100px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        /* New styles for the homepage layout and typewriter */
-        @media (min-width: 1024px) {
-            .content-wrapper {
-                display: grid; /* THIS WAS THE MISSING PIECE */
-                align-items: flex-start;
-                max-width: 1100px; 
-                grid-template-columns: 1.1fr 2fr; /* Flipped and resized columns */
-                gap: 4rem;
-            }
-        }
-        .sidebar-typewriter {
-            font-family: var(--font-serif);
-            font-size: 2.2rem;
-            font-weight: 400;
-            line-height: 1.3;
-            margin-bottom: 2rem;
-            min-height: 3.9em;
-        }
-        .sidebar-typewriter.typing-active::after {
-            content: '|';
-            display: inline-block;
-            animation: blink 0.7s infinite;
-            font-weight: 300;
-            color: #888;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* Font size adjustment for the new layout */
-        .main-article .article-title {
-            font-size: 2.8rem;
-        }
-
-    </style>
 </head>
 <body>
 
@@ -106,7 +32,7 @@
             <li>
                 <a href="#" class="has-arrow">
                     Past Issues
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </a>
             </li>
         </ul>
