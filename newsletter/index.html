@@ -20,7 +20,7 @@
             <button class="close-menu-btn" aria-label="Close menu">
                 &times;
             </button>
-            <a href="index.html" class="mobile-nav-logo">THE NEWS HAUL.</a>
+            <a href="index.html" class="mobile-nav-logo">THE NEWS HAUL</a>
         </div>
         <ul class="mobile-nav-links">
             <li>
@@ -55,11 +55,11 @@
                 <a href="how-it-works.html" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
             </div>
 
-            <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL.</a>
+            <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL</a>
 
             <div class="user-actions">
-                <a href="#" class="search-icon desktop-only" aria-label="Search">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <a href="#" class="search-icon desktop-only" id="search-icon" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
                 
                 <div class="desktop-only user-auth-links">
@@ -79,7 +79,7 @@
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
-                <p class="header-date">Tuesday, Sept. 21, 2025</p>
+                <p class="header-date" id="header-date-placeholder">Tuesday, Sept. 21, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -101,7 +101,6 @@
 
     <main id="welcome" class="content-wrapper">
         <aside class="sidebar-container">
-            <h3 id="typewriter-heading" class="sidebar-typewriter"></h3>
             <div class="brief-sidebar">
                 <h3 class="brief-sidebar-title">Montreal Issue #3</h3>
                 <div class="brief-content">
@@ -212,6 +211,12 @@
     <section id="coffee" class="content-section placeholder-section"><h2 class="section-title">Coffee Review</h2></section>
     <section id="games" class="content-section placeholder-section"><h2 class="section-title">Games</h2></section>
 
+    <div id="search-overlay" class="search-overlay" aria-hidden="true">
+        <button id="close-search-btn" class="search-close-btn">&times;</button>
+        <div class="search-modal-content">
+            <input type="search" id="search-input" class="search-input" placeholder="Type to search...">
+        </div>
+    </div>
     
     <div id="signInModal" class="modal-overlay" aria-hidden="true">
         <div class="modal-content subscription-card">
