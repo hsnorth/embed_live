@@ -650,7 +650,7 @@ body.logged-in .mobile-top-bar {
     #welcome.content-wrapper {
         display: grid;
         align-items: flex-start;
-        max-width: 1100px;
+        max-width: 900px;
         grid-template-columns: 1.1fr 2fr;
         gap: 4rem;
     }
