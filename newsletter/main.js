@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const stickyBanner = document.getElementById('sticky-signup-banner');
     const stickyForm = document.getElementById('sticky-signup-form');
     const stickyNextBtn = document.getElementById('sticky-next-btn');
-    const stickyStep1 = stickyForm.querySelector('[data-step="1"]');
-    const stickyStep2 = stickyForm.querySelector('[data-step="2"]');
+    const stickyStep1 = stickyForm ? stickyForm.querySelector('[data-step="1"]') : null;
+    const stickyStep2 = stickyForm ? stickyForm.querySelector('[data-step="2"]') : null;
     const stickyEmailInput = document.getElementById('sticky-email');
 
     
@@ -62,6 +62,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let joinEmailValue = '';
     let scrollLockPosition = 0;
     let isScrollLocked = false;
+
+    // --- "SHOW MORE" FUNCTIONALITY FOR HARRY'S NOTE ---
+    const harrysNoteWrapper = document.getElementById('harrys-note-wrapper');
+    const showMoreBtn = document.getElementById('show-more-btn');
+
+    if (harrysNoteWrapper && showMoreBtn) {
+        // Initially truncate the text
+        harrysNoteWrapper.classList.add('truncated');
+
+        showMoreBtn.addEventListener('click', () => {
+            const isTruncated = harrysNoteWrapper.classList.toggle('truncated');
+            showMoreBtn.textContent = isTruncated ? 'Show more' : 'Show less';
+        });
+    }
+
 
     // --- LIVE DATE ---
     function setLiveDate() {
@@ -109,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CUSTOM NOTIFICATION FUNCTION ---
     function showToast(message, type = 'info', duration = 4000) {
+        if (!toastContainer) return;
         const toast = document.createElement('div');
         toast.classList.add('toast', `toast-${type}`);
         toast.textContent = message;
@@ -192,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isScrollLocked = false;
                 window.removeEventListener('scroll', handleScrollLock);
             }
-        } catch (error) { showToast(error..message, 'error'); }
+        } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
         try {
@@ -228,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             joinEmailValue = joinFormStep1.elements['joinEmail'].value;
             if (joinEmailValue) {
                 joinFormStep1.classList.add('hidden');
-                joinFormStep2.classList.remove('hidden');
+                if(joinFormStep2) joinFormStep2.classList.remove('hidden');
             }
         });
     }
@@ -280,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMenuBtn = document.querySelector('.close-menu-btn');
 
     function toggleMenu() {
+        if (!mobileNav) return;
         const isOpen = mobileNav.classList.toggle('is-open');
         mobileNav.setAttribute('aria-hidden', !isOpen);
         document.body.classList.toggle('no-scroll', isOpen);
@@ -316,26 +333,30 @@ document.addEventListener('DOMContentLoaded', () => {
             bannerObserver.observe(triggerSection);
         }
 
-        stickyNextBtn.addEventListener('click', () => {
-            if (stickyEmailInput.value && stickyEmailInput.checkValidity()) {
-                stickyStep1.classList.add('hidden');
-                stickyStep2.classList.remove('hidden');
-            } else {
-                showToast('Please enter a valid email.', 'error');
-            }
-        });
+        if (stickyNextBtn) {
+            stickyNextBtn.addEventListener('click', () => {
+                if (stickyEmailInput && stickyEmailInput.value && stickyEmailInput.checkValidity()) {
+                    if (stickyStep1) stickyStep1.classList.add('hidden');
+                    if (stickyStep2) stickyStep2.classList.remove('hidden');
+                } else {
+                    showToast('Please enter a valid email.', 'error');
+                }
+            });
+        }
 
-        stickyForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = stickyEmailInput.value;
-            const name = document.getElementById('sticky-name').value;
-            const password = document.getElementById('sticky-password').value;
-            if (email && name && password) {
-                signUp(email, password, name, true);
-            } else {
-                showToast('Please fill out all fields.', 'error');
-            }
-        });
+        if (stickyForm) {
+            stickyForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = stickyEmailInput.value;
+                const name = document.getElementById('sticky-name').value;
+                const password = document.getElementById('sticky-password').value;
+                if (email && name && password) {
+                    signUp(email, password, name, true);
+                } else {
+                    showToast('Please fill out all fields.', 'error');
+                }
+            });
+        }
     }
 });
 
