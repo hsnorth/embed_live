@@ -278,6 +278,44 @@ body.logged-in .mobile-top-bar {
 .main-article p { font-size: 1.15rem; line-height: 1.8; color: #000; }
 .main-article .article-title { font-size: 2.8rem; }
 
+/* Styles for "Show More" functionality */
+.article-body-wrapper {
+    position: relative;
+    transition: max-height 0.5s ease-out;
+    overflow: hidden;
+}
+.article-body-wrapper.truncated {
+    max-height: 250px; /* Adjust this value to control how much text is shown initially */
+}
+.article-body-wrapper.truncated::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, var(--color-background));
+    pointer-events: none;
+}
+.show-more-btn {
+    background: none;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+.show-more-btn:hover {
+    background-color: var(--color-text);
+    color: var(--color-background);
+}
+
+
 .content-section {
     max-width: 1200px;
     margin: 0 auto;
