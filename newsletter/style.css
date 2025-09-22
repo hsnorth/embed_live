@@ -297,22 +297,29 @@ body.logged-in .mobile-top-bar {
     background: linear-gradient(to bottom, transparent, var(--color-background));
     pointer-events: none;
 }
+
+.show-more-container {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
 .show-more-btn {
     background: none;
-    border: 1px solid var(--color-border);
+    border: none;
+    color: #888;
     font-family: var(--font-sans);
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 0;
     cursor: pointer;
-    margin-top: 1.5rem;
-    transition: background-color 0.2s, color 0.2s;
+    transition: color 0.2s;
 }
+
 .show-more-btn:hover {
-    background-color: var(--color-text);
-    color: var(--color-background);
+    color: var(--color-text);
+    text-decoration: underline;
 }
 
 
@@ -720,4 +727,5 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
+
 
