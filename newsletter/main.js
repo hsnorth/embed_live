@@ -21,14 +21,15 @@ const db = getFirestore(app);
 console.log("Firebase v9 is connected!");
 
 document.addEventListener('DOMContentLoaded', () => {
+
     // --- LOADER ---
     const loader = document.getElementById('loader');
     if (loader) {
         setTimeout(() => {
             loader.classList.add('hidden');
-        }, 2000); // Hide after 2 seconds
+        }, 2000);
     }
-
+    
     // --- DOM ELEMENTS ---
     const header = document.querySelector('.main-header');
     const headerBranding = document.querySelector('.header-branding');
@@ -191,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isScrollLocked = false;
                 window.removeEventListener('scroll', handleScrollLock);
             }
-        } catch (error) { showToast(error.message, 'error'); }
+        } catch (error) { showToast(error..message, 'error'); }
     };
     const signIn = async (email, password) => {
         try {
