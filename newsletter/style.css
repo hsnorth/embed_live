@@ -134,8 +134,19 @@ body.logged-in .mobile-top-bar {
 }
 
 /* Style for the original, static navigation state */
+.main-nav.original-nav ul {
+    gap: 0;
+}
 .main-nav.original-nav ul li a {
     font-weight: 700;
+    padding: 0.8rem 1rem;
+    padding-bottom: calc(0.8rem - 4px);
+}
+.main-nav.original-nav ul li:not(:last-child)::after {
+    content: '|';
+    font-family: var(--font-sans);
+    font-weight: 400;
+    color: #aaa;
 }
 
 .main-nav ul li a.active-link {
@@ -146,6 +157,15 @@ body.logged-in .mobile-top-bar {
 .main-nav a:hover { color: #888; }
 
 /* Styles for the dynamic navigation components */
+.main-nav:not(.original-nav) ul {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.main-nav:not(.original-nav) ul::-webkit-scrollbar {
+    display: none;
+}
 .main-nav ul li.nav-section-title a {
     font-weight: 700;
     cursor: default;
@@ -158,10 +178,16 @@ body.logged-in .mobile-top-bar {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
-
 .main-nav ul li.nav-section-title a,
 .main-nav ul li.nav-separator a {
     border-bottom-color: transparent; /* No underline on title or separator */
+}
+.main-nav ul li a.next-section-link {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+.main-nav ul li a.next-section-link:hover {
+    opacity: 1;
 }
 
 .top-bar-left .nav-link,
@@ -610,3 +636,4 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
+
