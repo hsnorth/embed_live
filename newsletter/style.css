@@ -348,9 +348,11 @@ body.logged-in .mobile-top-bar {
 }
 .sidebar-pin {
     position: absolute;
-    top: 1.5rem;
+    top: -1px; /* Position at the very top */
     left: 1.5rem;
-    font-size: 1.5rem; /* Larger emoji size */
+    color: var(--color-text);
+    width: 28px;
+    height: 36px;
 }
 .sidebar-meta {
     font-family: var(--font-sans);
@@ -359,7 +361,7 @@ body.logged-in .mobile-top-bar {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #888;
-    margin-top: 3.5rem; /* Space for pin */
+    margin-top: 2.5rem; /* Reduced space for pin */
     margin-bottom: 0.5rem;
 }
 
@@ -680,6 +682,7 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
+
 
 
 
