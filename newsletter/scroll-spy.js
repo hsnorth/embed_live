@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sectionId = section.id;
         const mainTitle = originalTitles[sectionId] || section.querySelector('.section-title')?.textContent.trim() || section.id;
         
-        // Find sub-items, which are nested inside .essential-item divs
         const subItems = section.querySelectorAll('.essential-item');
         
         sectionsData[sectionId] = {
@@ -49,25 +48,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Helper function to scroll the nav to center the active link
+    const scrollNavToActiveLink = (link) => {
+        if (!link || !navUl) return;
+
+        const navRect = navUl.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        
+        // Calculate the ideal scroll position to center the link
+        const scrollLeft = navUl.scrollLeft + linkRect.left - navRect.left - (navRect.width / 2) + (linkRect.width / 2);
+
+        navUl.scrollTo({
+            left: scrollLeft,
+            behavior: 'smooth'
+        });
+    };
+
     // 2. Function to update the navigation bar to the dynamic, section-specific view
     const updateNavToSection = (activeSectionId) => {
         const data = sectionsData[activeSectionId];
         
-        // If the section is 'welcome' or has no sub-sections, revert to the original nav style
         if (!data || activeSectionId === 'welcome' || data.subSections.length === 0) {
-            restoreOriginalNav(activeSectionId); // Pass the ID to highlight the correct link
+            restoreOriginalNav(activeSectionId);
             return;
         }
 
         nav.classList.remove('original-nav');
         let newNavHTML = '';
         
-        // Build the new nav with section title and sub-section links
         newNavHTML += `<li class="nav-section-title"><a>${data.title}</a></li>`;
         newNavHTML += `<li class="nav-separator"><a>|</a></li>`;
         data.subSections.forEach(sub => {
             newNavHTML += `<li><a href="#${sub.id}">${sub.title}</a></li>`;
         });
+        
+        // Find the next main section and add it as a preview link
+        const mainSectionIds = Array.from(mainSections).map(s => s.id);
+        const currentIndex = mainSectionIds.indexOf(activeSectionId);
+        const nextSectionIndex = currentIndex + 1;
+
+        if (nextSectionIndex < mainSectionIds.length) {
+            const nextSectionId = mainSectionIds[nextSectionIndex];
+            const nextSectionTitle = originalTitles[nextSectionId] || 'Next';
+            newNavHTML += `<li class="nav-separator"><a>|</a></li>`;
+            newNavHTML += `<li><a href="#${nextSectionId}" class="next-section-link">${nextSectionTitle}</a></li>`;
+        }
         
         navUl.innerHTML = newNavHTML;
     };
@@ -92,14 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
 
         if (visibleSections.length > 0) {
-            // The first one in the sorted list is the topmost visible one
             const activeSectionId = visibleSections[0].target.id;
             updateNavToSection(activeSectionId);
         }
     }, {
         root: null,
-        // This margin creates a tighter detection zone at the top of the screen.
-        // It triggers when a section is within the top 20% of the viewport, below the 100px header.
         rootMargin: '-100px 0px -80% 0px', 
         threshold: 0
     });
@@ -116,19 +138,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (link) {
                 navUl.querySelectorAll('a').forEach(a => a.classList.remove('active-link'));
                 link.classList.add('active-link');
+                scrollNavToActiveLink(link.parentElement); // Pass the li element
             }
         }
     }, {
         root: null,
-        rootMargin: '-40% 0px -59% 0px', // Highlights the sub-section when it's near the middle of the screen
+        rootMargin: '-40% 0px -59% 0px',
         threshold: 0.01
     });
     
-    // Start observing all main sections and sub-sections
     mainSections.forEach(section => mainSectionObserver.observe(section));
     allSubSections.forEach(subSection => subSectionObserver.observe(subSection));
     
-    // Set the initial state of the navigation bar
     restoreOriginalNav('welcome');
 });
 
