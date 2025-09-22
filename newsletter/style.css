@@ -113,12 +113,13 @@ body.logged-in .mobile-top-bar {
 }
 .main-nav ul {
     display: flex; justify-content: center; align-items: center;
-    gap: 2rem; list-style: none; margin: 0; padding: 0;
+    gap: 1.5rem; /* Reduced gap */
+    list-style: none; margin: 0; padding: 0;
 }
 .main-nav ul li a {
     display: block;
     font-family: var(--font-sans);
-    font-weight: 700;
+    font-weight: 400; /* Default to normal weight for dynamic nav */
     font-size: 0.8rem;
     color: var(--color-text);
     text-decoration: none;
@@ -128,12 +129,41 @@ body.logged-in .mobile-top-bar {
     padding: 0.8rem 0;
     padding-bottom: calc(0.8rem - 4px); 
     border-bottom: 4px solid transparent;
-    transition: border-bottom-color 0.3s ease;
+    transition: border-bottom-color 0.3s ease, font-weight 0.3s ease;
+    white-space: nowrap; /* Prevent wrapping */
 }
+
+/* Style for the original, static navigation state */
+.main-nav.original-nav ul li a {
+    font-weight: 700;
+}
+
 .main-nav ul li a.active-link {
     border-bottom-color: var(--color-accent); 
+    font-weight: 700; /* Make active link bold in both nav states */
 }
+
 .main-nav a:hover { color: #888; }
+
+/* Styles for the dynamic navigation components */
+.main-nav ul li.nav-section-title a {
+    font-weight: 700;
+    cursor: default;
+}
+
+.main-nav ul li.nav-separator a {
+    font-weight: 400;
+    color: #999;
+    cursor: default;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.main-nav ul li.nav-section-title a,
+.main-nav ul li.nav-separator a {
+    border-bottom-color: transparent; /* No underline on title or separator */
+}
+
 .top-bar-left .nav-link,
 .user-actions .nav-link,
 .user-actions .btn {
@@ -580,4 +610,3 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
-
