@@ -3,7 +3,7 @@
     --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --color-text: #111111;
     --color-background: #ffffff;
-    --color-border: #111111; /* Changed from grey to black */
+    --color-border: #e0e0e0;
     --color-accent: #ffde3f;
     --color-signup-bg: #fefae0;
 }
@@ -263,6 +263,7 @@ body.logged-in .mobile-top-bar {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
+
 
 /* --- MAIN CONTENT & HOMEPAGE SECTIONS --- */
 .content-wrapper {
@@ -705,5 +706,3 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
-
-
