@@ -229,6 +229,41 @@ body.logged-in .mobile-top-bar {
 .main-header.scrolled .scrolled-logo-link { display: block; }
 .main-header.scrolled .main-nav { border-top: 1px solid var(--color-border); }
 
+/* --- LOADING SCREEN --- */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    gap: 10px;
+}
+#loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+.loader-icon {
+    height: 60px; /* Same size as header icon */
+    width: auto;
+}
+.loader-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 50px;
+    background-color: var(--color-text);
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 /* --- MAIN CONTENT & HOMEPAGE SECTIONS --- */
 .content-wrapper {
     margin: 3rem auto; padding: 0 1rem;
@@ -670,4 +705,5 @@ body.logged-in .mobile-top-bar {
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 }
+
 
