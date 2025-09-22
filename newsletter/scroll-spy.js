@@ -98,7 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, {
         root: null,
-        rootMargin: '-100px 0px -50% 0px', // Watches a band in the upper part of the viewport
+        // This margin creates a tighter detection zone at the top of the screen.
+        // It triggers when a section is within the top 20% of the viewport, below the 100px header.
+        rootMargin: '-100px 0px -80% 0px', 
         threshold: 0
     });
 
@@ -129,3 +131,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set the initial state of the navigation bar
     restoreOriginalNav('welcome');
 });
+
