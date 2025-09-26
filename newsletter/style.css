@@ -270,7 +270,6 @@ body.logged-in .mobile-top-bar {
 .content-wrapper {
     margin: 3rem auto; padding: 0 1rem;
 }
-
 .main-article { background: var(--color-background); }
 .eyebrow-container { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
 .harry-icon { width: 38px; height: 38px; object-fit: contain; }
@@ -298,12 +297,10 @@ body.logged-in .mobile-top-bar {
     background: linear-gradient(to bottom, transparent, var(--color-background));
     pointer-events: none;
 }
-
 .show-more-container {
     text-align: center;
     margin-top: 1.5rem;
 }
-
 .show-more-btn {
     background: none;
     border: none;
@@ -317,12 +314,10 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
     transition: color 0.2s;
 }
-
 .show-more-btn:hover {
     color: var(--color-text);
     text-decoration: underline;
 }
-
 
 .content-section {
     max-width: 1200px;
@@ -337,6 +332,99 @@ body.logged-in .mobile-top-bar {
     margin-top: 0;
     margin-bottom: 3rem;
     text-align: center;
+}
+
+/* --- INNER PAGE STYLES (ABOUT, HOW IT WORKS) --- */
+.page-header {
+    text-align: center;
+    padding: 3rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 3rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.page-header h1 {
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: -0.05em;
+}
+.content-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+.feature-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    margin: 0 auto 4rem;
+}
+.feature-section.reverse .feature-image {
+    order: 2;
+}
+.feature-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.feature-text h2 {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-top: 0;
+}
+.feature-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+/* --- TYPE-ON-SCROLL ANIMATION STYLES --- */
+.section-title-container {
+    position: relative;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+.typewriter-subtitle {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1.8rem;
+    color: #555;
+    line-height: 1.4;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    min-height: 2.5em; /* Reserve space */
+    padding: 0 1rem;
+}
+.typewriter-subtitle.fade-out {
+    opacity: 0;
+}
+.original-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out 0.2s; /* Add delay */
+    margin: 0; /* Override default h2 margin */
+}
+.original-title.fade-in {
+    opacity: 1;
+}
+.typewriter-subtitle::after {
+    content: '|';
+    display: inline-block;
+    animation: blink 0.7s infinite;
+    position: relative;
+    top: -2px;
+}
+.typewriter-subtitle.typing-done::after {
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 /* Styles for article-style sections (Essentials, Imports, Deliveries) */
@@ -696,7 +784,7 @@ body.logged-in .mobile-top-bar {
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
     .mobile-top-bar { display: block; }
-    .main-header { top: 38px; }
+    .main-header { top: 36px; }
     body.logged-in .main-header { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
