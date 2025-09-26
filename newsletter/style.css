@@ -795,6 +795,139 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
     white-space: nowrap;
 }
+/* --- COMMENTING FEATURE STYLES --- */
+
+/* "Add Comment" button that appears on highlight */
+#comment-trigger {
+    position: absolute;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+/* Modal form for writing a comment */
+.comment-form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3500;
+}
+
+.comment-form-content {
+    background-color: var(--color-background);
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    font-family: var(--font-sans);
+}
+
+.comment-form-content h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    margin-top: 0;
+}
+
+.comment-close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: #888;
+}
+
+.comment-quote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.comment-form-content textarea {
+    width: 100%;
+    height: 100px;
+    padding: 0.8rem;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    resize: vertical;
+}
+
+.comment-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#comment-post-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--color-accent);
+    border: none;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/* Dotted underline for commented text */
+.comment-highlight {
+    text-decoration: underline dotted var(--color-text);
+    text-decoration-thickness: 2px;
+    background-color: rgba(255, 222, 63, 0.2);
+    cursor: pointer;
+}
+
+/* Display box for viewing a comment */
+#comment-view {
+    position: absolute;
+    background: var(--color-background);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    z-index: 100;
+}
+#comment-view p {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Sidebar on wide screens */
+.comment-display-sidebar {
+    width: 320px;
+    position: absolute; /* Changed from fixed to absolute for better flow */
+    left: calc(100% + 2rem);
+}
+
+/* Pop-up on narrow screens */
+.comment-display-popup {
+    width: 80%;
+    max-width: 350px;
+}
 
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
