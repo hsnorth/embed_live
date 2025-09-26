@@ -1,24 +1,9 @@
-// Import Firebase functions
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+// Import the shared Firebase services and specific functions
+import { auth, db } from './firebase-init.js';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBgCds3FfTRZtZaAQ0Ej6hfgPPMqeRy54s",
-    authDomain: "newsletter-496de.firebaseapp.com",
-    projectId: "newsletter-496de",
-    storageBucket: "newsletter-496de.appspot.com",
-    messagingSenderId: "524546319756",
-    appId: "1:524546319756:web:947abcff220aec51aa22a9",
-    measurementId: "G-B8LSKDYS99"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-console.log("Firebase v9 is connected!");
+console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -359,4 +344,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
