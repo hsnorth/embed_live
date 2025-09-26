@@ -700,6 +700,11 @@ body.logged-in .mobile-top-bar {
     body.logged-in .main-header { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
+    
+    .logo {
+        font-size: clamp(2.8rem, 12vw, 4rem); /* Adjusted font size for mobile */
+    }
+
     .main-nav ul { justify-content: flex-start; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
     .main-nav ul::-webkit-scrollbar { display: none; }
     .article-title { font-size: 2.5rem; }
