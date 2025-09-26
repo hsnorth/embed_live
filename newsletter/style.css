@@ -17,6 +17,7 @@ body {
     font-weight: 400;
     color: var(--color-text);
     background-color: var(--color-background);
+    overflow-x: hidden; /* Prevents horizontal overflow */
 }
 body.no-scroll {
     overflow: hidden;
@@ -711,6 +712,13 @@ body.logged-in .mobile-top-bar {
     .sticky-signup-form { justify-content: center; }
     .content-section { padding: 3rem 1rem; }
     .team-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    
+    /* Adds divider between sidebar and article on mobile */
+    #welcome .main-article {
+        border-top: 1px solid var(--color-border);
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1023px) {
