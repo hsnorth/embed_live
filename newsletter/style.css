@@ -476,6 +476,35 @@ body.logged-in .mobile-top-bar {
     display: block;
 }
 
+/* --- About Us Page Team Grid --- */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+.team-member {
+    text-align: center;
+}
+.team-member img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    margin: 0 auto 1rem;
+}
+.team-member h3 {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+    font-family: var(--font-serif);
+}
+.team-member p {
+    margin: 0;
+    color: #666;
+    font-family: var(--font-sans);
+}
+
+
 /* --- Helper Styles & Mobile Nav --- */
 .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
 .hamburger-line { display: block; width: 24px; height: 2px; background-color: var(--color-text); }
@@ -598,7 +627,7 @@ body.logged-in .mobile-top-bar {
     background-color: var(--color-accent);
     color: var(--color-text);
     z-index: 2000;
-    padding: 2.5rem 2rem;
+    padding: 3rem 2rem;
     box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
     transition: bottom 0.5s ease-in-out;
     box-sizing: border-box;
@@ -680,6 +709,8 @@ body.logged-in .mobile-top-bar {
     .feature-section.reverse .feature-image { order: 1; }
     .sticky-signup-content { flex-direction: column; text-align: center; }
     .sticky-signup-form { justify-content: center; }
+    .content-section { padding: 3rem 1rem; }
+    .team-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 }
 
 @media (min-width: 769px) and (max-width: 1023px) {
@@ -726,6 +757,5 @@ body.logged-in .mobile-top-bar {
     .modal-close-btn { font-size: 2rem; top: 0.75rem; right: 0.75rem; }
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
+    .team-grid { grid-template-columns: 1fr; }
 }
-
-
