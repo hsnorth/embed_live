@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if the selection is within a commentable area
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer.parentElement;
-            if (!container.closest('.main-article, .essentials-container')) {
+            
+            // CORRECTED: Widened the scope of commentable areas
+            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) {
                 return; // Not in a commentable area
             }
 
