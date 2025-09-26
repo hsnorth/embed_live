@@ -84,7 +84,7 @@
             </div>
             <div class="branding-col branding-col-center">
                 <h1 class="logo">The News Haul</h1>
-                <p class="header-date" id="header-date-placeholder">Tuesday, Sept. 21, 2025</p>
+                <p class="header-date" id="header-date-placeholder">Friday, September 26, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -237,82 +237,20 @@
         </div>
     </section>
 
-    <div id="search-overlay" class="search-overlay" aria-hidden="true">
-        <button id="close-search-btn" class="search-close-btn">&times;</button>
-        <div class="search-modal-content">
-            <input type="search" id="search-input" class="search-input" placeholder="Type to search...">
-        </div>
-    </div>
-    
     <div id="signInModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content subscription-card">
-            <button class="modal-close-btn">&times;</button>
-            <h3 class="modal-header-text">SIGN IN</h3>
-            <form id="signInForm" class="modal-form">
-                <label for="signInEmail" class="form-label">EMAIL</label>
-                <input type="email" id="signInEmail" class="form-input" placeholder="Enter your email" required>
-                <label for="signInPassword" class="form-label">PASSWORD</label>
-                <input type="password" id="signInPassword" class="form-input" placeholder="Enter your password" required>
-                <button type="submit" class="modal-btn">SIGN IN</button>
-            </form>
-            <div class="modal-links">
-                <button id="forgotPasswordBtn" class="modal-link-btn">Forgot password?</button>
-                <button id="goToJoinBtnFromSignIn" class="modal-link-btn">Don't have an account? Join Community</button>
-            </div>
         </div>
-    </div>
     <div id="joinModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-content subscription-card">
-            <button class="modal-close-btn">&times;</button>
-            <h2 id="modalTagline" class="modal-tagline"></h2>
-            <form id="joinFormStep1" class="modal-form" data-step="1">
-                <label for="joinEmail" class="form-label">EMAIL</label>
-                <input type="email" id="joinEmail" class="form-input" placeholder="Enter your email" required>
-                <button type="submit" class="modal-btn">NEXT</button>
-            </form>
-            <form id="joinFormStep2" class="modal-form hidden" data-step="2">
-                <label for="joinName" class="form-label">NAME</label>
-                <input type="text" id="joinName" class="form-input" placeholder="Enter your name" required>
-                <label for="joinPassword" class="form-label">PASSWORD</label>
-                <input type="password" id="joinPassword" class="form-input" placeholder="Create a password" required>
-                
-                <div class="form-checkbox-group">
-                    <input type="checkbox" id="joinNewsletter" name="newsletter" checked>
-                    <label for="joinNewsletter">Yes, I want to receive the weekly newsletter.</label>
-                </div>
-
-                <button type="submit" class="modal-btn">JOIN</button>
-            </form>
-            <div class="modal-links">
-                <button id="goToSignInBtnFromJoin" class="modal-link-btn">Already have an account? Sign In</button>
-            </div>
         </div>
-    </div>
     <div id="toast-container"></div>
-    
     <div id="sticky-signup-banner" class="sticky-signup-banner">
-        <div class="sticky-signup-content">
-            <div class="sticky-signup-text">
-                <h3>Enjoy for free by subscribing</h3>
-                <p>Subscribe to The News Haul for fresh perspectives and stories that matter.</p>
-            </div>
-            <form id="sticky-signup-form" class="sticky-signup-form">
-                <div class="sticky-form-step" data-step="1">
-                    <input type="email" id="sticky-email" class="sticky-input" placeholder="Enter your email" required>
-                    <button type="button" id="sticky-next-btn" class="sticky-btn">Next</button>
-                </div>
-                <div class="sticky-form-step hidden" data-step="2">
-                    <input type="text" id="sticky-name" class="sticky-input" placeholder="Your name" required>
-                    <input type="password" id="sticky-password" class="sticky-input" placeholder="Create password" required>
-                    <button type="submit" class="sticky-btn">Join Now</button>
-                </div>
-            </form>
         </div>
-    </div>
 
+    <div id="comment-ui-container"></div>
+
+    <script type="module" src="firebase-init.js"></script>
     <script type="module" src="main.js"></script>
     <script src="scroll-spy.js"></script>
     <script src="type-on-scroll.js" defer></script>
-    <script type="module" src="commenting.js"></script> 
+    <script type="module" src="commenting.js"></script>
 </body>
 </html>
