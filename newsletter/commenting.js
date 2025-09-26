@@ -1,44 +1,46 @@
-// Import Firestore functions from the main script's Firebase setup
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+// Import the shared database instance and specific Firestore functions
+import { db } from './firebase-init.js';
+import { collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-const db = getFirestore();
 const commentsCollection = collection(db, 'comments');
 
 document.addEventListener('DOMContentLoaded', () => {
     const commentUiContainer = document.getElementById('comment-ui-container');
-    if (!commentUiContainer) return;
+    if (!commentUiContainer) {
+        console.error('Comment UI container not found!');
+        return;
+    }
 
     // --- 1. HIGHLIGHTING & TRIGGERING THE "ADD COMMENT" BUTTON ---
 
     document.addEventListener('mouseup', (e) => {
-        // Don't trigger on text input fields
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
         const selection = window.getSelection();
         const selectedText = selection.toString().trim();
 
-        // Remove any existing trigger button
         const existingTrigger = document.getElementById('comment-trigger');
         if (existingTrigger) existingTrigger.remove();
 
         if (selectedText.length > 0) {
-            // Check if the selection is within a commentable area
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer.parentElement;
             
-            // CORRECTED: Widened the scope of commentable areas
             if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) {
-                return; // Not in a commentable area
+                return;
             }
 
             const rect = range.getBoundingClientRect();
             const trigger = document.createElement('button');
             trigger.id = 'comment-trigger';
             trigger.innerHTML = `Add Comment`;
-            trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
-            trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (trigger.offsetWidth / 2)}px`;
             
             commentUiContainer.appendChild(trigger);
+            
+            // Position after appending to get accurate dimensions
+            const triggerRect = trigger.getBoundingClientRect();
+            trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
+            trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
 
             trigger.onclick = () => {
                 showCommentForm(selection);
@@ -47,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Remove trigger if user clicks elsewhere
     document.addEventListener('mousedown', (e) => {
         const trigger = document.getElementById('comment-trigger');
         if (trigger && !trigger.contains(e.target)) {
@@ -95,11 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. POSTING THE COMMENT TO FIRESTORE ---
 
     async function postComment(commentText, isPublic, selection, range) {
-        // Find a stable selector for the parent element
-        const parentElement = range.startContainer.parentElement;
+        const parentElement = range.startContainer.parentElement.closest('p, li, h3');
+        if (!parentElement) {
+            console.error("Could not find a suitable parent element for the comment.");
+            return;
+        }
         const selector = generateCssSelector(parentElement);
         
-        // Calculate the start and end offsets
         const preRange = document.createRange();
         preRange.selectNodeContents(parentElement);
         preRange.setEnd(range.startContainer, range.startOffset);
@@ -118,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 createdAt: new Date()
             });
             
-            // Apply the highlight immediately
             applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
 
         } catch (error) {
@@ -130,26 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. LOADING & APPLYING HIGHLIGHTS ON PAGE LOAD ---
 
     async function loadAndApplyAllHighlights() {
-        const snapshot = await getDocs(commentsCollection);
-        const comments = [];
-        snapshot.forEach(doc => {
-            if (doc.data().pageUrl === window.location.pathname) {
-                comments.push({ id: doc.id, ...doc.data() });
-            }
-        });
+        try {
+            const snapshot = await getDocs(commentsCollection);
+            const comments = [];
+            snapshot.forEach(doc => {
+                if (doc.data().pageUrl === window.location.pathname) {
+                    comments.push({ id: doc.id, ...doc.data() });
+                }
+            });
 
-        // Sort by start offset descending to avoid index issues when inserting spans
-        comments.sort((a, b) => b.startOffset - a.startOffset);
+            comments.sort((a, b) => b.startOffset - a.startOffset);
 
-        for (const comment of comments) {
-            const element = document.querySelector(comment.targetSelector);
-            if (element) {
-                applyHighlightToRange(element, comment.startOffset, comment.endOffset, comment.id);
+            for (const comment of comments) {
+                const element = document.querySelector(comment.targetSelector);
+                if (element) {
+                    applyHighlightToRange(element, comment.startOffset, comment.endOffset, comment.id);
+                }
             }
+        } catch(e) {
+            console.error("Could not load comments from Firestore.", e);
         }
     }
     
-    // Call on page load
     loadAndApplyAllHighlights();
 
 
@@ -157,15 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('click', async (e) => {
         const highlight = e.target.closest('.comment-highlight');
-        
-        // Close any open comment view
         const existingView = document.getElementById('comment-view');
-        if (existingView && !highlight) {
-             existingView.remove();
-             return;
+
+        if (existingView && (!highlight || existingView.dataset.commentId === highlight.dataset.commentId)) {
+            existingView.remove();
+            return;
         }
         if (existingView) existingView.remove();
-
 
         if (highlight) {
             const commentId = highlight.dataset.commentId;
@@ -174,18 +176,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const commentData = commentDoc.data();
             const rect = highlight.getBoundingClientRect();
-
+            
             const view = document.createElement('div');
             view.id = 'comment-view';
-            view.innerHTML = `<p>${commentData.commentText}</p>`;
+            view.dataset.commentId = commentId;
+            view.innerHTML = `<p>${commentData.commentText}</p><button class="comment-close-btn">&times;</button>`;
             
             commentUiContainer.appendChild(view);
+            view.querySelector('.comment-close-btn').onclick = () => view.remove();
 
-            // Responsive positioning
-            if (window.innerWidth > 900) { // Wide screen: Sidebar
+            if (window.innerWidth > 900) {
                 view.className = 'comment-display-sidebar';
                 view.style.top = `${window.scrollY + rect.top}px`;
-            } else { // Small screen: Pop-up
+            } else {
                 view.className = 'comment-display-popup';
                 view.style.top = `${window.scrollY + rect.bottom + 10}px`;
                 view.style.left = `${window.scrollX + rect.left}px`;
@@ -202,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const highlighted = originalHtml.substring(start, end);
         const after = originalHtml.substring(end);
         
-        // Avoid re-wrapping highlights
         if (highlighted.includes('class="comment-highlight"')) return;
 
         const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
@@ -215,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         while (el.nodeType === Node.ELEMENT_NODE) {
             let selector = el.nodeName.toLowerCase();
             if (el.id) {
-                selector += '#' + el.id;
+                selector = `#${el.id}`;
                 path.unshift(selector);
                 break;
             } else {
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                        nth++;
                 }
                 if (nth != 1)
-                    selector += ":nth-of-type("+nth+")";
+                    selector += `:nth-of-type(${nth})`;
             }
             path.unshift(selector);
             el = el.parentNode;
