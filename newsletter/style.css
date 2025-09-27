@@ -1287,3 +1287,37 @@ body.logged-in .mobile-top-bar {
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
     .team-grid { grid-template-columns: 1fr; }
 }
+
+/* --- COLLAPSIBLE ACCOUNT SECTION STYLES --- */
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Remove bottom margin from title inside a collapsible header */
+.collapsible-header .account-section-title {
+    margin-bottom: 0;
+}
+
+.collapsible-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.collapsible-header.is-open .collapsible-arrow {
+    transform: rotate(180deg); /* Points the arrow up */
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+    padding-top: 0;
+}
+
+.collapsible-content.is-open {
+    max-height: 500px; /* A large value to allow for content expansion */
+    padding-top: 1.5rem;
+}
