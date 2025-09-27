@@ -146,7 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // In commenting.js, replace the old showCommentForm function with this one
+
     function showCommentForm(selection) {
+        const range = selection.getRangeAt(0); // Capture the valid range immediately
         const modal = document.createElement('div');
         modal.className = 'comment-form-modal';
         modal.innerHTML = `
@@ -164,34 +167,37 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         commentUiContainer.appendChild(modal);
         modal.querySelector('.comment-close-btn').onclick = () => modal.remove();
-        modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        
         modal.querySelector('#comment-post-btn').onclick = async () => {
             const commentText = document.getElementById('comment-textarea').value;
             const isPublic = document.getElementById('comment-public-checkbox').checked;
             if (commentText.trim()) {
-                await postComment(commentText, isPublic, selection, selection.getRangeAt(0));
+                // Use the range that was captured safely above
+                await postComment(commentText, isPublic, selection, range);
                 modal.remove();
+            } else {
+                alert("Comment cannot be empty.");
             }
         };
     }
+    // In commenting.js, replace the debugging postComment function with this clean one
 
     async function postComment(commentText, isPublic, selection, range) {
-        console.log("1. 'postComment' function has been called.");
-    
         const user = auth.currentUser;
-        if (!user) {
-            console.error("2. SILENT EXIT: No authenticated user was found.");
-            return;
-        }
-        console.log("2. User is authenticated:", user.uid);
+        if (!user) return;
+    
+        // We get the user's name from the database to attach to the comment
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
     
         const parentElement = range.startContainer.parentElement.closest('p, li, h3');
         if (!parentElement) {
-            console.error("3. SILENT EXIT: Could not find a valid parent element (<p>, <li>, or <h3>) for the highlight.");
-            console.warn("   - This usually happens if you click elsewhere on the page after highlighting text, which clears the selection.");
+            // This check is a failsafe, but our main fix in showCommentForm should prevent this
+            console.error("Could not find a valid parent element for the comment.");
             return;
         }
-        console.log("3. Found a valid parent element:", parentElement);
     
         const selector = generateCssSelector(parentElement);
         const preRange = document.createRange();
@@ -200,25 +206,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const startOffset = getRangeHtml(preRange).length;
         const endOffset = startOffset + getRangeHtml(range).length;
     
-        console.log("4. All checks passed. Attempting to save comment to Firestore...");
         try {
             const docRef = await addDoc(commentsCollection, {
                 commentText, isPublic, highlightedText: selection.toString(),
                 targetSelector: selector, startOffset, endOffset,
-                userId: user.uid, userName: "A User", // Using a placeholder for now
+                userId: user.uid, userName: userName,
                 pageUrl: window.location.pathname, createdAt: new Date()
             });
             
-            console.log("5. SUCCESS: Comment saved to Firestore with ID:", docRef.id);
             applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
             
             const newHighlight = parentElement.querySelector(`[data-comment-id="${docRef.id}"]`);
             if (newHighlight) {
-                const commentData = { id: docRef.id, userName: "A User", commentText };
+                const commentData = { id: docRef.id, userName: userName, commentText };
                 showCommentView(commentData, newHighlight);
             }
         } catch (error) {
-            console.error("6. FIRESTORE ERROR: ", error);
+            console.error("Error saving comment to Firestore: ", error);
         }
     }
 
