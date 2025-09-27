@@ -7,31 +7,20 @@ console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- WEEKDAY CLOSED LOGIC ---
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
-
-    if (isWeekday) {
-        const closedOverlay = document.getElementById('weekday-closed-overlay');
-        const messagePlaceholder = document.getElementById('weekday-message-placeholder');
-        const signupForm = document.getElementById('weekday-signup-form');
-        const loader = document.getElementById('loader');
-
-    // Replace the old typeWriter function with this one
+    // A generic typewriter function, available to all logic
     const typeWriter = (element, text, speed, callback) => {
         let i = 0;
+        if (!element) return;
         element.innerHTML = '';
         const interval = setInterval(() => {
             if (i < text.length) {
                 const char = text.charAt(i);
-                // Check if the character is the start of an HTML tag
                 if (char === '<') {
                     const closingTagIndex = text.indexOf('>', i);
                     if (closingTagIndex !== -1) {
                         const tag = text.substring(i, closingTagIndex + 1);
                         element.innerHTML += tag;
-                        i = closingTagIndex; // Move index to the end of the tag
+                        i = closingTagIndex;
                     }
                 } else {
                     element.innerHTML += char;
@@ -44,27 +33,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, speed);
     };
+
+    // --- WEEKDAY CLOSED LOGIC ---
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+
+    if (isWeekday) {
+        const closedOverlay = document.getElementById('weekday-closed-overlay');
+        const messagePlaceholder = document.getElementById('weekday-message-placeholder');
+        const signupForm = document.getElementById('weekday-signup-form');
+        const loader = document.getElementById('loader');
         
-        // Hide the main content to prevent it from flashing
         document.body.style.overflow = 'hidden';
 
         setTimeout(() => {
             if (loader) loader.classList.add('hidden');
-            
             if (closedOverlay) closedOverlay.style.display = 'flex';
             
             const textToType = "Sorry, we're closed on weekdays.<br>Come back Saturday morning.";
             typeWriter(messagePlaceholder, textToType, 60, () => {
                 if (signupForm) signupForm.classList.add('is-visible');
             });
-        }, 2000); // Wait for the initial loader to finish
+        }, 2000);
 
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const emailInput = document.getElementById('weekday-email');
                 if (emailInput && emailInput.value) {
-                    // This uses your existing showToast function if available
                     if (typeof showToast === 'function') {
                         showToast(`${emailInput.value} has been added to the list!`, 'success');
                     } else {
@@ -74,17 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        
-        // Stop the rest of the main.js script from running
-        return; 
+        return; // Stop the rest of the script from running on weekdays
     }
 
-    // --- LOADER ---
+    // --- WEEKEND/NORMAL PAGE LOAD ---
     const loader = document.getElementById('loader');
-    if (loader) {
+    const loaderMessage = document.getElementById('loader-message');
+    if (loader && loaderMessage) {
         setTimeout(() => {
-            loader.classList.add('hidden');
-        }, 2000);
+            typeWriter(loaderMessage, "The haul is open.", 80, () => {
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 1000);
+            });
+        }, 500);
     }
     
     // --- DOM ELEMENTS ---
@@ -113,8 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const stickyStep1 = stickyForm ? stickyForm.querySelector('[data-step="1"]') : null;
     const stickyStep2 = stickyForm ? stickyForm.querySelector('[data-step="2"]') : null;
     const stickyEmailInput = document.getElementById('sticky-email');
+    const howItWorksTriggers = document.querySelectorAll('.js-how-it-works-trigger');
+    const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
+    const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
     const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
-    
+
     let typeInterval;
     let joinEmailValue = '';
     let scrollLockPosition = 0;
@@ -197,27 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('no-scroll');
         if (modal.id === 'joinModal') {
             const textToType = "For stories to tell at the supper";
-            const typewriterEffect = (element, text, speed, callback) => {
-                let i = 0;
-                element.innerHTML = '';
-                element.classList.add('typing-active');
-                if (typeInterval) clearInterval(typeInterval);
-                typeInterval = setInterval(() => {
-                    if (i < text.length) {
-                        element.innerHTML += text.charAt(i);
-                        i++;
-                    } else {
-                        clearInterval(typeInterval);
-                        element.classList.remove('typing-active');
-                        if (callback) callback();
-                    }
-                }, speed);
-            }
-            setTimeout(() => {
-                typewriterEffect(modalTagline, textToType, 80, () => {
-                    if(joinFormStep1) joinFormStep1.classList.add('form-visible');
-                });
-            }, 300);
+            typeWriter(modalTagline, textToType, 80, () => {
+                if(joinFormStep1) joinFormStep1.classList.add('form-visible');
+            });
         }
     }
 
@@ -257,11 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
             await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
-            if (stickyBanner) {
-                stickyBanner.classList.remove('is-visible');
-                isScrollLocked = false;
-                window.removeEventListener('scroll', handleScrollLock);
-            }
         } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
@@ -327,13 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     e.preventDefault(); 
                     openAccountPanel();
                 });
-            }
-            closeModal(signInModal);
-            closeModal(joinModal);
-            if (stickyBanner) {
-                stickyBanner.classList.remove('is-visible');
-                isScrollLocked = false;
-                window.removeEventListener('scroll', handleScrollLock);
             }
         } else {
             document.body.classList.remove('logged-in');
@@ -461,28 +434,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-        // --- HOW IT WORKS PANEL LOGIC ---
-    const howItWorksTriggers = document.querySelectorAll('.js-how-it-works-trigger');
-    const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
-    const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
-    
+    // --- HOW IT WORKS PANEL LOGIC ---
     function openHowItWorksPanel() {
         if (!howItWorksPanelOverlay) return;
         howItWorksPanelOverlay.classList.add('is-open');
         document.body.classList.add('no-scroll');
     }
-    
+
     function closeHowItWorksPanel() {
         if (!howItWorksPanelOverlay) return;
         howItWorksPanelOverlay.classList.remove('is-open');
         document.body.classList.remove('no-scroll');
     }
-    
+
     if (howItWorksTriggers.length > 0) {
         howItWorksTriggers.forEach(trigger => {
             trigger.addEventListener('click', (e) => {
                 e.preventDefault();
-                // If the mobile nav is open, close it first
                 const mobileNav = document.querySelector('.mobile-nav');
                 if (mobileNav && mobileNav.classList.contains('is-open')) {
                     mobileNav.classList.remove('is-open');
@@ -491,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    
     if (howItWorksPanelOverlay) {
         howItWorksPanelOverlay.addEventListener('click', (e) => {
             if (e.target === howItWorksPanelOverlay) {
@@ -499,7 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
     if (howItWorksPanelCloseBtn) {
         howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
     }
