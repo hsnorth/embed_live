@@ -77,14 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKEND/NORMAL PAGE LOAD ---
     const loader = document.getElementById('loader');
     const loaderMessage = document.getElementById('loader-message');
+    
     if (loader && loaderMessage) {
+        // 1. Wait 2 seconds in the initial state (bag + cursor)
         setTimeout(() => {
+            // 2. Add the 'is-typing' class to change the layout
+            loader.classList.add('is-typing');
+            
+            // 3. Start the typewriter effect
             typeWriter(loaderMessage, "The haul is open.", 80, () => {
+                // 4. After typing, wait a moment then hide the loader
                 setTimeout(() => {
                     loader.classList.add('hidden');
-                }, 1000);
+                }, 1000); // 1-second pause after message
             });
-        }, 500);
+    
+        }, 2000); // 2-second initial pause
     }
     
     // --- DOM ELEMENTS ---
