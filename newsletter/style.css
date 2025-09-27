@@ -1321,3 +1321,49 @@ body.logged-in .mobile-top-bar {
     max-height: 500px; /* A large value to allow for content expansion */
     padding-top: 1.5rem;
 }
+
+/* --- "HOW IT WORKS" PANEL STYLES --- */
+.account-panel.from-left {
+    right: auto;
+    left: -100%; /* Start off-screen to the left */
+    box-shadow: 5px 0 25px rgba(0,0,0,0.15); /* Shadow on the right side */
+    transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Animate the 'left' property */
+}
+
+.account-panel-overlay.is-open .account-panel.from-left {
+    left: 0;
+    right: auto;
+}
+    
+#how-it-works-panel .account-panel-header h2 {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin: 0;
+}
+    
+#how-it-works-panel .item-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+#how-it-works-panel .item-description {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+#how-it-works-panel .item-description:last-child {
+    margin-bottom: 0;
+}
+
+#how-it-works-panel .item-description strong {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    color: var(--color-text);
+}
