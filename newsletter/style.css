@@ -1367,3 +1367,11 @@ body.logged-in .mobile-top-bar {
     font-weight: 700;
     color: var(--color-text);
 }
+
+/* --- MOBILE ICON SPACING --- */
+.user-actions {
+    gap: 0.5rem; /* Adjusts space between mobile icons */
+}
+.mobile-only-icon svg {
+    display: block; /* Ensures proper alignment */
+}
