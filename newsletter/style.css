@@ -166,6 +166,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 .slider.round { border-radius: 28px; }
 .slider.round:before { border-radius: 50%; }
 
+/* In style.css, replace the entire LOADER section */
+
 /* --- LOADER --- */
 #loader {
     position: fixed;
@@ -175,32 +177,50 @@ input:checked + .slider:before { transform: translateX(22px); }
     height: 100%;
     background-color: var(--color-background);
     display: flex;
+    flex-direction: column; /* Stack items vertically */
     justify-content: center;
     align-items: center;
     z-index: 10000;
     opacity: 1;
-    transition: opacity 0.5s ease-out;
+    /* Add a delay to the fade-out so the message can be read */
+    transition: opacity 0.5s ease-out 0.5s;
 }
 #loader.hidden {
     opacity: 0;
     pointer-events: none;
 }
 .loader-icon {
-    height: 60px; /* Same as branding icon */
-    margin-right: 8px;
+    height: 60px;
+    margin-bottom: 1rem; /* Add space below the icon */
 }
 .loader-cursor {
+    display: none; /* Hide the old cursor */
+}
+.loader-message {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 2rem;
+    margin-top: 1rem;
+    color: var(--color-text);
+    min-height: 1.5em; /* Reserve space */
+}
+/* Blinking cursor for the new message */
+.loader-message::after {
+    content: '|';
     display: inline-block;
-    width: 3px;
-    height: 50px;
-    background-color: var(--color-text);
-    animation: blink 1s infinite;
+    animation: blink 0.8s infinite;
+    position: relative;
+    top: -2px;
+    opacity: 1;
+}
+.loader-message.typing-done::after {
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-
 
 /* --- MOBILE TOP BAR --- */
 .mobile-top-bar {
