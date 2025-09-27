@@ -1377,6 +1377,8 @@ body.logged-in .mobile-top-bar {
 }
 /* --- MOBILE ACCOUNT ICON STYLES --- */
 
+/* --- MOBILE ACCOUNT ICON STYLES --- */
+
 /* Set the icon color to black */
 #mobile-account-trigger {
     color: var(--color-text);
