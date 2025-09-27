@@ -166,8 +166,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 .slider.round { border-radius: 28px; }
 .slider.round:before { border-radius: 50%; }
 
-/* In style.css, replace the entire LOADER section */
-
 /* --- LOADER --- */
 #loader {
     position: fixed;
@@ -177,7 +175,8 @@ input:checked + .slider:before { transform: translateX(22px); }
     height: 100%;
     background-color: var(--color-background);
     display: flex;
-    flex-direction: column; /* Stack items vertically */
+    /* Start with items side-by-side */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     z-index: 10000;
@@ -189,14 +188,38 @@ input:checked + .slider:before { transform: translateX(22px); }
     opacity: 0;
     pointer-events: none;
 }
+
+/* This new class will be added by JavaScript to change the layout */
+#loader.is-typing {
+    flex-direction: column;
+}
+
 .loader-icon {
     height: 60px;
-    margin-bottom: 1rem; /* Add space below the icon */
+    margin-right: 8px; /* Default margin for side-by-side layout */
 }
+
+/* Adjust the icon's margin when the layout changes to vertical */
+#loader.is-typing .loader-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+}
+
 .loader-cursor {
-    display: none; /* Hide the old cursor */
+    display: inline-block; /* The original cursor is visible by default */
+    width: 3px;
+    height: 50px;
+    background-color: var(--color-text);
+    animation: blink 1s infinite;
 }
+
+/* Hide the original cursor when the typing animation starts */
+#loader.is-typing .loader-cursor {
+    display: none;
+}
+
 .loader-message {
+    display: none; /* The message is hidden by default */
     font-family: var(--font-serif);
     font-weight: 400;
     font-size: 2rem;
@@ -204,7 +227,12 @@ input:checked + .slider:before { transform: translateX(22px); }
     color: var(--color-text);
     min-height: 1.5em; /* Reserve space */
 }
-/* Blinking cursor for the new message */
+
+/* Show the message area when the typing animation starts */
+#loader.is-typing .loader-message {
+    display: block;
+}
+
 .loader-message::after {
     content: '|';
     display: inline-block;
@@ -221,7 +249,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
-
 /* --- MOBILE TOP BAR --- */
 .mobile-top-bar {
     display: none;
