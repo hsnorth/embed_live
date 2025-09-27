@@ -7,6 +7,67 @@ console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- WEEKDAY CLOSED LOGIC ---
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+
+    if (isWeekday) {
+        const closedOverlay = document.getElementById('weekday-closed-overlay');
+        const messagePlaceholder = document.getElementById('weekday-message-placeholder');
+        const signupForm = document.getElementById('weekday-signup-form');
+        const loader = document.getElementById('loader');
+
+        // A generic typewriter function
+        const typeWriter = (element, text, speed, callback) => {
+            let i = 0;
+            element.innerHTML = '';
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    element.classList.add('typing-done');
+                    if (callback) callback();
+                }
+            }, speed);
+        };
+        
+        // Hide the main content to prevent it from flashing
+        document.body.style.overflow = 'hidden';
+
+        setTimeout(() => {
+            if (loader) loader.classList.add('hidden');
+            
+            if (closedOverlay) closedOverlay.style.display = 'flex';
+            
+            const textToType = "Sorry, we're closed on weekdays. Come back Saturday morning.";
+            typeWriter(messagePlaceholder, textToType, 60, () => {
+                if (signupForm) signupForm.classList.add('is-visible');
+            });
+        }, 2000); // Wait for the initial loader to finish
+
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailInput = document.getElementById('weekday-email');
+                if (emailInput && emailInput.value) {
+                    // This uses your existing showToast function if available
+                    if (typeof showToast === 'function') {
+                        showToast(`${emailInput.value} has been added to the list!`, 'success');
+                    } else {
+                        alert("Thank you for subscribing!");
+                    }
+                    signupForm.reset();
+                }
+            });
+        }
+        
+        // Stop the rest of the main.js script from running
+        return; 
+    }
+
     // --- LOADER ---
     const loader = document.getElementById('loader');
     if (loader) {
