@@ -1375,3 +1375,22 @@ body.logged-in .mobile-top-bar {
 .mobile-only-icon svg {
     display: block; /* Ensures proper alignment */
 }
+/* --- MOBILE ACCOUNT ICON STYLES --- */
+
+/* Set the icon color to black */
+#mobile-account-trigger {
+    color: var(--color-text);
+}
+
+/* Hide the icon by default */
+#mobile-account-trigger {
+    display: none;
+}
+
+/* On small screens, ONLY show the icon if the user is logged in */
+@media (max-width: 768px) {
+    body.logged-in #mobile-account-trigger {
+        display: flex; /* Use flex to vertically align the SVG icon */
+        align-items: center;
+    }
+}
