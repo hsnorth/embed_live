@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- UTILITY FUNCTIONS ---
-
     function applyHighlightToRange(element, start, end, commentId) {
         const originalHtml = element.innerHTML;
         const before = originalHtml.substring(0, start);
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return path.join(" > ");
     }
 
-    // This function removes all comment highlights and UI elements from the page.
     function cleanupComments() {
         document.getElementById('comment-trigger')?.remove();
         document.getElementById('comment-view')?.remove();
@@ -63,18 +61,52 @@ document.addEventListener('DOMContentLoaded', () => {
             const parent = span.parentNode;
             if (parent) {
                 parent.replaceChild(document.createTextNode(span.textContent), span);
-                parent.normalize(); // Merges adjacent text nodes
+                parent.normalize();
             }
         });
     }
 
+    // --- UI DISPLAY FUNCTIONS ---
+    
+    // NEW FUNCTION to handle creating and positioning the comment view
+    function showCommentView(commentData, highlightElement) {
+        // Remove any existing view first
+        document.getElementById('comment-view')?.remove();
+
+        const rect = highlightElement.getBoundingClientRect();
+        
+        const view = document.createElement('div');
+        view.id = 'comment-view';
+        view.dataset.commentId = commentData.id;
+        view.innerHTML = `
+            <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
+            <p>${commentData.commentText}</p>
+            <button class="comment-view-close-btn">&times;</button>
+        `;
+        
+        commentUiContainer.appendChild(view);
+        view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
+
+        if (window.innerWidth > 900) {
+            view.className = 'comment-display-sidebar';
+            const mainContent = highlightElement.closest('.main-article, .essentials-container, .cannoli-section-content');
+            if (mainContent) {
+                const contentRect = mainContent.getBoundingClientRect();
+                view.style.top = `${window.scrollY + rect.top}px`;
+                view.style.left = `${contentRect.right + 20}px`;
+            }
+        } else {
+            view.className = 'comment-display-popup';
+            view.style.top = `${window.scrollY + rect.bottom + 10}px`;
+            view.style.left = `${window.scrollX + rect.left}px`;
+        }
+    }
 
     // --- CORE COMMENTING FUNCTIONS ---
 
     async function loadAndApplyAllHighlights() {
-        cleanupComments(); // Ensure a clean slate before applying highlights
+        cleanupComments();
         try {
-            // Use the globally defined commentsCollection
             const snapshot = await getDocs(commentsCollection);
             const comments = [];
             snapshot.forEach(doc => {
@@ -147,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const endOffset = startOffset + range.toString().length;
 
         try {
-            // Use the globally defined commentsCollection
             const docRef = await addDoc(commentsCollection, {
                 commentText,
                 isPublic,
@@ -162,6 +193,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
+            
+            // --- THIS IS THE FIX ---
+            // After posting, find the new highlight and show the comment view
+            const newHighlight = parentElement.querySelector(`[data-comment-id="${docRef.id}"]`);
+            if (newHighlight) {
+                const commentData = { id: docRef.id, userName, commentText };
+                showCommentView(commentData, newHighlight);
+            }
+            // --- END FIX ---
 
         } catch (error) {
             console.error("Error adding comment: ", error);
@@ -169,37 +209,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- EVENT HANDLERS ---
-    // Defined here so they can be added and removed based on auth state
 
     const handleMouseUp = (e) => {
         if (e.target.closest('input, textarea, button')) return;
-
         const selection = window.getSelection();
         const selectedText = selection.toString().trim();
-
         document.getElementById('comment-trigger')?.remove();
-
         if (selectedText.length > 0) {
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer.parentElement;
-            
-            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) {
-                return;
-            }
-
+            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) return;
             const rect = range.getBoundingClientRect();
             const trigger = document.createElement('button');
             trigger.id = 'comment-trigger';
             trigger.innerHTML = `Add Comment`;
-            
             commentUiContainer.appendChild(trigger);
-            
             const triggerRect = trigger.getBoundingClientRect();
             trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
             trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
-
             trigger.addEventListener('mousedown', (e) => e.stopPropagation());
-
             trigger.onclick = () => {
                 showCommentForm(selection);
                 trigger.remove();
@@ -216,47 +244,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleHighlightClick = async (e) => {
         const highlight = e.target.closest('.comment-highlight');
-        const existingView = document.getElementById('comment-view');
-
-        if (existingView && (!highlight || existingView.dataset.commentId === highlight.dataset.commentId)) {
-            existingView.remove();
-            return;
-        }
-        if (existingView) existingView.remove();
-
         if (highlight) {
+            const existingView = document.getElementById('comment-view');
+            if (existingView && existingView.dataset.commentId === highlight.dataset.commentId) {
+                existingView.remove();
+                return;
+            }
             const commentId = highlight.dataset.commentId;
             const commentDoc = await getDoc(doc(db, 'comments', commentId));
             if (!commentDoc.exists()) return;
-
-            const commentData = commentDoc.data();
-            const rect = highlight.getBoundingClientRect();
             
-            const view = document.createElement('div');
-            view.id = 'comment-view';
-            view.dataset.commentId = commentId;
-            view.innerHTML = `
-                <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
-                <p>${commentData.commentText}</p>
-                <button class="comment-view-close-btn">&times;</button>
-            `;
-            
-            commentUiContainer.appendChild(view);
-            view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
-
-            if (window.innerWidth > 900) {
-                view.className = 'comment-display-sidebar';
-                const mainContent = highlight.closest('.main-article, .essentials-container, .cannoli-section-content');
-                if (mainContent) {
-                    const contentRect = mainContent.getBoundingClientRect();
-                    view.style.top = `${window.scrollY + rect.top}px`;
-                    view.style.left = `${contentRect.right + 20}px`;
-                }
-            } else {
-                view.className = 'comment-display-popup';
-                view.style.top = `${window.scrollY + rect.bottom + 10}px`;
-                view.style.left = `${window.scrollX + rect.left}px`;
-            }
+            // Use the centralized showCommentView function
+            showCommentView({ id: commentId, ...commentDoc.data() }, highlight);
         }
     };
 
@@ -264,13 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // --- USER IS LOGGED IN ---
             loadAndApplyAllHighlights();
             document.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('mousedown', handleMouseDown);
             document.addEventListener('click', handleHighlightClick);
         } else {
-            // --- USER IS LOGGED OUT ---
             cleanupComments();
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('mousedown', handleMouseDown);
