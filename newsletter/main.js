@@ -41,11 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stickyStep1 = stickyForm ? stickyForm.querySelector('[data-step="1"]') : null;
     const stickyStep2 = stickyForm ? stickyForm.querySelector('[data-step="2"]') : null;
     const stickyEmailInput = document.getElementById('sticky-email');
-    const howItWorksTrigger = document.getElementById('how-it-works-trigger');
-    const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
-    const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
     const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
-
     
     let typeInterval;
     let joinEmailValue = '';
@@ -393,25 +389,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // --- HOW IT WORKS PANEL LOGIC ---
+        // --- HOW IT WORKS PANEL LOGIC ---
+    const howItWorksTriggers = document.querySelectorAll('.js-how-it-works-trigger');
+    const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
+    const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
+    
     function openHowItWorksPanel() {
         if (!howItWorksPanelOverlay) return;
         howItWorksPanelOverlay.classList.add('is-open');
         document.body.classList.add('no-scroll');
     }
-
+    
     function closeHowItWorksPanel() {
         if (!howItWorksPanelOverlay) return;
         howItWorksPanelOverlay.classList.remove('is-open');
         document.body.classList.remove('no-scroll');
     }
-
-    if (howItWorksTrigger) {
-        howItWorksTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            openHowItWorksPanel();
+    
+    if (howItWorksTriggers.length > 0) {
+        howItWorksTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                // If the mobile nav is open, close it first
+                const mobileNav = document.querySelector('.mobile-nav');
+                if (mobileNav && mobileNav.classList.contains('is-open')) {
+                    mobileNav.classList.remove('is-open');
+                }
+                openHowItWorksPanel();
+            });
         });
     }
+    
     if (howItWorksPanelOverlay) {
         howItWorksPanelOverlay.addEventListener('click', (e) => {
             if (e.target === howItWorksPanelOverlay) {
@@ -419,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
     if (howItWorksPanelCloseBtn) {
         howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
     }
