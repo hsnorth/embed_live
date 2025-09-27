@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
     
         try {
+            // This part saves the reply to the database
             await addDoc(commentsCollection, {
                 commentText: replyText,
                 parentCommentId: parentCommentId,
@@ -132,9 +133,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 pageUrl: window.location.pathname,
                 createdAt: new Date()
             });
+    
+            // --- FIX: Instantly add the new reply to the UI ---
             const commentView = document.getElementById('comment-view');
             if (commentView) {
-                loadAndDisplayReplies(parentCommentId, commentView);
+                const repliesContainer = commentView.querySelector('.replies-container');
+                if (repliesContainer) {
+                    // Create the HTML element for the new reply
+                    const newReplyDiv = document.createElement('div');
+                    newReplyDiv.className = 'reply';
+                    newReplyDiv.innerHTML = `
+                        <div class="reply-author">${userName}</div>
+                        <p class="reply-body">${replyText}</p>
+                    `;
+                    // Append it directly to the list
+                    repliesContainer.appendChild(newReplyDiv);
+                }
+                // Remove the reply form after posting
                 commentView.querySelector('.reply-form-container')?.remove();
             }
         } catch (error) {
