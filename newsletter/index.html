@@ -305,6 +305,60 @@
             </form>
         </div>
     </div>
+        <!-- MY ACCOUNT PANEL -->
+    <div id="account-panel-overlay" class="account-panel-overlay">
+        <div id="account-panel" class="account-panel">
+            <!-- Panel Header -->
+            <div class="account-panel-header">
+                <h2 id="account-greeting">Bonjour!</h2>
+                <button id="account-panel-close-btn" class="account-panel-close-btn">&times;</button>
+            </div>
+
+            <!-- Panel Content -->
+            <div class="account-panel-content">
+
+                <!-- Newsletter Section -->
+                <div class="account-section">
+                    <h3 class="account-section-title">Newsletter</h3>
+                    <div class="newsletter-toggle">
+                        <p>Receive weekly updates from The News Haul.</p>
+                        <label class="switch">
+                            <input type="checkbox" id="newsletter-checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Personal Details Section -->
+                <div class="account-section">
+                    <h3 class="account-section-title">Personal Details</h3>
+                    <form id="account-details-form">
+                        <label for="account-name">Name</label>
+                        <input type="text" id="account-name" class="account-input">
+
+                        <label for="account-email">Email</label>
+                        <input type="email" id="account-email" class="account-input" disabled>
+
+                        <button type="submit" class="btn-account-save">Save Changes</button>
+                    </form>
+                     <form id="account-password-form" class="account-section-subsection">
+                        <label for="account-password">New Password</label>
+                        <input type="password" id="account-password" class="account-input" placeholder="Leave blank to keep current">
+                        <button type="submit" class="btn-account-save">Change Password</button>
+                    </form>
+                </div>
+                
+                <!-- Account Actions -->
+                <div class="account-section">
+                     <div class="account-actions">
+                        <button id="logout-btn" class="btn-account-action">Log Out</button>
+                        <button id="delete-account-btn" class="btn-account-action btn-danger">Delete Account</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <div id="comment-ui-container"></div>
 
