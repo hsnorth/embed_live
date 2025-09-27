@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const existingTrigger = document.getElementById('comment-trigger');
         if (existingTrigger) existingTrigger.remove();
 
-        // NEW: Only show the "Add Comment" button if a user is logged in.
+        // Only show the "Add Comment" button if a user is logged in.
         if (selectedText.length > 0 && auth.currentUser) {
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer.parentElement;
@@ -98,9 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function postComment(commentText, isPublic, selection, range) {
         const user = auth.currentUser;
-        if (!user) return; // Safeguard in case user logs out
+        if (!user) return; 
 
-        // Fetch the user's name from your 'users' collection
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
@@ -123,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetSelector: selector,
                 startOffset,
                 endOffset,
-                userId: user.uid, // NEW: Save user's ID
-                userName: userName, // NEW: Save user's name
+                userId: user.uid,
+                userName: userName,
                 pageUrl: window.location.pathname,
                 createdAt: new Date()
             });
@@ -188,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const view = document.createElement('div');
             view.id = 'comment-view';
             view.dataset.commentId = commentId;
-            // NEW: Display the author's name
             view.innerHTML = `
                 <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
                 <p>${commentData.commentText}</p>
@@ -196,4 +194,62 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             commentUiContainer.appendChild(view);
-            view.querySelector('.comment-view-
+            view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
+
+            if (window.innerWidth > 900) {
+                view.className = 'comment-display-sidebar';
+                const mainContent = highlight.closest('.main-article, .essentials-container, .cannoli-section-content');
+                if (mainContent) {
+                    const contentRect = mainContent.getBoundingClientRect();
+                    view.style.top = `${window.scrollY + rect.top}px`;
+                    view.style.left = `${contentRect.right + 20}px`;
+                }
+            } else {
+                view.className = 'comment-display-popup';
+                view.style.top = `${window.scrollY + rect.bottom + 10}px`;
+                view.style.left = `${window.scrollX + rect.left}px`;
+            }
+        }
+    });
+
+
+    // --- UTILITY FUNCTIONS ---
+
+    function applyHighlightToRange(element, start, end, commentId) {
+        const originalHtml = element.innerHTML;
+        const before = originalHtml.substring(0, start);
+        const highlighted = originalHtml.substring(start, end);
+        const after = originalHtml.substring(end);
+        
+        if (highlighted.includes('class="comment-highlight"')) return;
+
+        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
+        element.innerHTML = newHtml;
+    }
+
+    function generateCssSelector(el) {
+        if (!(el instanceof Element)) return;
+        let path = [];
+        while (el.nodeType === Node.ELEMENT_NODE) {
+            let selector = el.nodeName.toLowerCase();
+            if (el.id) {
+                selector = '#' + el.id;
+                path.unshift(selector);
+                break;
+            } else {
+                let sib = el, nth = 1;
+                while (sib = sib.previousElementSibling) {
+                    if (sib.nodeName.toLowerCase() === selector) {
+                       nth++;
+                    }
+                }
+                if (nth !== 1) {
+                    selector += `:nth-of-type(${nth})`;
+                }
+            }
+            path.unshift(selector);
+            el = el.parentNode;
+        }
+        return path.join(" > ");
+    }
+});
