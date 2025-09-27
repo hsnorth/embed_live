@@ -115,48 +115,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+// In commenting.js, replace the entire postReply function with this one
+
     async function postReply(replyText, parentCommentId) {
         const user = auth.currentUser;
-        if (!user || !replyText.trim()) return;
+        if (!user || !replyText.trim()) {
+            alert("You must be logged in and write a reply.");
+            return;
+        }
     
+        console.log(`Attempting to save reply as user: ${user.uid}`);
+        
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
     
-        try {
-            // This part saves the reply to the database
-            await addDoc(commentsCollection, {
-                commentText: replyText,
-                parentCommentId: parentCommentId,
-                userId: user.uid,
-                userName: userName,
-                pageUrl: window.location.pathname,
-                createdAt: new Date()
-            });
+        const replyData = {
+            commentText: replyText,
+            parentCommentId: parentCommentId,
+            userId: user.uid,
+            userName: userName,
+            pageUrl: window.location.pathname,
+            createdAt: new Date()
+        };
     
-            // --- FIX: Instantly add the new reply to the UI ---
+        console.log("Data being sent to Firestore:", replyData);
+    
+        try {
+            await addDoc(commentsCollection, replyData);
+            
+            // If we reach this line, the save was successful.
+            alert("Success! Your reply was saved to the database.");
+            
+            // Now we refresh the list from the database.
             const commentView = document.getElementById('comment-view');
             if (commentView) {
-                const repliesContainer = commentView.querySelector('.replies-container');
-                if (repliesContainer) {
-                    // Create the HTML element for the new reply
-                    const newReplyDiv = document.createElement('div');
-                    newReplyDiv.className = 'reply';
-                    newReplyDiv.innerHTML = `
-                        <div class="reply-author">${userName}</div>
-                        <p class="reply-body">${replyText}</p>
-                    `;
-                    // Append it directly to the list
-                    repliesContainer.appendChild(newReplyDiv);
-                }
-                // Remove the reply form after posting
+                loadAndDisplayReplies(parentCommentId, commentView);
                 commentView.querySelector('.reply-form-container')?.remove();
             }
+    
         } catch (error) {
-            console.error("Error posting reply: ", error);
+            // If we reach this line, the save failed.
+            console.error("--- FIRESTORE SAVE FAILED ---", error);
+            alert("Error: The reply could not be saved. Please check the developer console for a detailed error message.");
         }
     }
-    
     function showReplyForm(parentCommentId, viewElement) {
         viewElement.querySelector('.reply-form-container')?.remove();
     
