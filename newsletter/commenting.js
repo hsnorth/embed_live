@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- UTILITY FUNCTIONS ---
+    function getRangeHtml(range) {
+        const container = document.createElement('div');
+        container.appendChild(range.cloneContents());
+        return container.innerHTML;
+    }
+
     function applyHighlightToRange(element, start, end, commentId) {
         const originalHtml = element.innerHTML;
         const before = originalHtml.substring(0, start);
@@ -181,11 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!parentElement) return;
 
         const selector = generateCssSelector(parentElement);
+        
+        // Create a range from the parent's start to the selection's start
         const preRange = document.createRange();
         preRange.selectNodeContents(parentElement);
         preRange.setEnd(range.startContainer, range.startOffset);
-        const startOffset = preRange.toString().length;
-        const endOffset = startOffset + range.toString().length;
+
+        // Calculate offsets based on HTML length, not text length, for accuracy
+        const startOffset = getRangeHtml(preRange).length;
+        const endOffset = startOffset + getRangeHtml(range).length;
 
         try {
             const docRef = await addDoc(commentsCollection, {
