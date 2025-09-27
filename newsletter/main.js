@@ -18,21 +18,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const signupForm = document.getElementById('weekday-signup-form');
         const loader = document.getElementById('loader');
 
-        // A generic typewriter function
-        const typeWriter = (element, text, speed, callback) => {
-            let i = 0;
-            element.innerHTML = '';
-            const interval = setInterval(() => {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
+    // Replace the old typeWriter function with this one
+    const typeWriter = (element, text, speed, callback) => {
+        let i = 0;
+        element.innerHTML = '';
+        const interval = setInterval(() => {
+            if (i < text.length) {
+                const char = text.charAt(i);
+                // Check if the character is the start of an HTML tag
+                if (char === '<') {
+                    const closingTagIndex = text.indexOf('>', i);
+                    if (closingTagIndex !== -1) {
+                        const tag = text.substring(i, closingTagIndex + 1);
+                        element.innerHTML += tag;
+                        i = closingTagIndex; // Move index to the end of the tag
+                    }
                 } else {
-                    clearInterval(interval);
-                    element.classList.add('typing-done');
-                    if (callback) callback();
+                    element.innerHTML += char;
                 }
-            }, speed);
-        };
+                i++;
+            } else {
+                clearInterval(interval);
+                element.classList.add('typing-done');
+                if (callback) callback();
+            }
+        }, speed);
+    };
         
         // Hide the main content to prevent it from flashing
         document.body.style.overflow = 'hidden';
