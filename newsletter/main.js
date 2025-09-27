@@ -1,8 +1,7 @@
 // Import the shared Firebase services and specific functions
 import { auth, db } from './firebase-init.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -274,6 +273,137 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // --- AUTH STATE LISTENER (runs on every page) ---
+    onAuthStateChanged(auth, (user) => {
+        const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
+        if (user) {
+            document.body.classList.add('logged-in');
+            if (userAuthLinks) {
+                // Change "SIGN OUT" to "MY ACCOUNT"
+                userAuthLinks.innerHTML = `<a href="#" class="btn" id="myAccountBtn">MY ACCOUNT</a>`;
+                document.getElementById('myAccountBtn').addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    openAccountPanel(); // New function to open the panel
+                });
+            }
+            // ... (rest of the onAuthStateChanged logic)
+        } else {
+            // ... (the existing 'else' block)
+        }
+    });
+
+    // --- NEW: ACCOUNT PANEL LOGIC ---
+    const accountPanelOverlay = document.getElementById('account-panel-overlay');
+    const accountPanelCloseBtn = document.getElementById('account-panel-close-btn');
+    const newsletterCheckbox = document.getElementById('newsletter-checkbox');
+    const accountDetailsForm = document.getElementById('account-details-form');
+    const accountPasswordForm = document.getElementById('account-password-form');
+    const accountNameInput = document.getElementById('account-name');
+    const accountEmailInput = document.getElementById('account-email');
+    const logoutBtn = document.getElementById('logout-btn');
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+
+    async function openAccountPanel() {
+        const user = auth.currentUser;
+        if (!user || !accountPanelOverlay) return;
+
+        // Fetch user data from Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            accountNameInput.value = userData.name || '';
+            accountEmailInput.value = userData.email || '';
+            newsletterCheckbox.checked = userData.newsletter !== false; // Default to true if undefined
+        }
+
+        accountPanelOverlay.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeAccountPanel() {
+        if (!accountPanelOverlay) return;
+        accountPanelOverlay.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+    }
+
+    // Event Listeners for the account panel
+    if (accountPanelOverlay) accountPanelOverlay.addEventListener('click', (e) => { if (e.target === accountPanelOverlay) closeAccountPanel(); });
+    if (accountPanelCloseBtn) accountPanelCloseBtn.addEventListener('click', closeAccountPanel);
+    if (logoutBtn) logoutBtn.addEventListener('click', async () => {
+        await handleSignOut();
+        closeAccountPanel();
+    });
+
+    // Handle newsletter preference change
+    if (newsletterCheckbox) {
+        newsletterCheckbox.addEventListener('change', async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { newsletter: newsletterCheckbox.checked });
+            showToast('Newsletter preference saved!', 'info');
+        });
+    }
+
+    // Handle personal details update
+    if (accountDetailsForm) {
+        accountDetailsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const newName = accountNameInput.value;
+            if (!user || !newName.trim()) return;
+
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { name: newName });
+            showToast('Your name has been updated.', 'success');
+        });
+    }
+    
+    // Handle password change
+    if (accountPasswordForm) {
+        accountPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const newPassword = document.getElementById('account-password').value;
+            if (!user || !newPassword) return;
+
+            try {
+                await updatePassword(user, newPassword);
+                showToast('Password updated successfully!', 'success');
+                accountPasswordForm.reset();
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        });
+    }
+
+    // Handle account deletion
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', async () => {
+            if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) return;
+
+            try {
+                // First, delete the user's data from Firestore
+                await deleteDoc(doc(db, 'users', user.uid));
+                // Then, delete the user from Authentication
+                await deleteUser(user);
+                
+                showToast('Your account has been permanently deleted.', 'info');
+                closeAccountPanel();
+            } catch (error) {
+                showToast(`Error deleting account: ${error.message}`, 'error');
+                console.error("Account deletion error:", error);
+            }
+        });
+    }
 
     // --- Simple Menu Toggle ---
     const menuToggle = document.querySelector('.menu-toggle');
