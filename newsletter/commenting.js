@@ -67,14 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- UI DISPLAY FUNCTIONS ---
-    
-    // NEW FUNCTION to handle creating and positioning the comment view
     function showCommentView(commentData, highlightElement) {
-        // Remove any existing view first
         document.getElementById('comment-view')?.remove();
-
         const rect = highlightElement.getBoundingClientRect();
-        
         const view = document.createElement('div');
         view.id = 'comment-view';
         view.dataset.commentId = commentData.id;
@@ -83,10 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>${commentData.commentText}</p>
             <button class="comment-view-close-btn">&times;</button>
         `;
-        
         commentUiContainer.appendChild(view);
         view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
-
         if (window.innerWidth > 900) {
             view.className = 'comment-display-sidebar';
             const mainContent = highlightElement.closest('.main-article, .essentials-container, .cannoli-section-content');
@@ -115,13 +108,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            comments.sort((a, b) => b.startOffset - a.startOffset);
+            // Group comments by their target element selector
+            const commentsBySelector = comments.reduce((acc, comment) => {
+                const selector = comment.targetSelector;
+                if (!acc[selector]) acc[selector] = [];
+                acc[selector].push(comment);
+                return acc;
+            }, {});
 
-            for (const comment of comments) {
-                const element = document.querySelector(comment.targetSelector);
-                if (element) {
-                    applyHighlightToRange(element, comment.startOffset, comment.endOffset, comment.id);
+            // Process each element that has comments
+            for (const selector in commentsBySelector) {
+                const element = document.querySelector(selector);
+                if (!element) continue;
+
+                const elementComments = commentsBySelector[selector].sort((a, b) => b.startOffset - a.startOffset);
+                let newHtml = element.innerHTML;
+
+                for (const comment of elementComments) {
+                    const before = newHtml.substring(0, comment.startOffset);
+                    const highlighted = newHtml.substring(comment.startOffset, comment.endOffset);
+                    const after = newHtml.substring(comment.endOffset);
+
+                    if (highlighted.includes('class="comment-highlight"')) continue;
+
+                    newHtml = `${before}<span class="comment-highlight" data-comment-id="${comment.id}">${highlighted}</span>${after}`;
                 }
+                element.innerHTML = newHtml;
             }
         } catch(e) {
             console.error("Could not load comments from Firestore.", e);
@@ -145,14 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         commentUiContainer.appendChild(modal);
-
         modal.querySelector('.comment-close-btn').onclick = () => modal.remove();
         modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
-
         modal.querySelector('#comment-post-btn').onclick = async () => {
             const commentText = document.getElementById('comment-textarea').value;
             const isPublic = document.getElementById('comment-public-checkbox').checked;
-
             if (commentText.trim()) {
                 await postComment(commentText, isPublic, selection, selection.getRangeAt(0));
                 modal.remove();
@@ -180,36 +189,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const docRef = await addDoc(commentsCollection, {
-                commentText,
-                isPublic,
-                highlightedText: selection.toString(),
-                targetSelector: selector,
-                startOffset,
-                endOffset,
-                userId: user.uid,
-                userName: userName,
-                pageUrl: window.location.pathname,
-                createdAt: new Date()
+                commentText, isPublic, highlightedText: selection.toString(),
+                targetSelector: selector, startOffset, endOffset,
+                userId: user.uid, userName: userName,
+                pageUrl: window.location.pathname, createdAt: new Date()
             });
             
             applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
             
-            // --- THIS IS THE FIX ---
-            // After posting, find the new highlight and show the comment view
             const newHighlight = parentElement.querySelector(`[data-comment-id="${docRef.id}"]`);
             if (newHighlight) {
                 const commentData = { id: docRef.id, userName, commentText };
                 showCommentView(commentData, newHighlight);
             }
-            // --- END FIX ---
-
         } catch (error) {
             console.error("Error adding comment: ", error);
         }
     }
 
     // --- EVENT HANDLERS ---
-
     const handleMouseUp = (e) => {
         if (e.target.closest('input, textarea, button')) return;
         const selection = window.getSelection();
@@ -253,14 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentId = highlight.dataset.commentId;
             const commentDoc = await getDoc(doc(db, 'comments', commentId));
             if (!commentDoc.exists()) return;
-            
-            // Use the centralized showCommentView function
             showCommentView({ id: commentId, ...commentDoc.data() }, highlight);
         }
     };
 
     // --- AUTH-DRIVEN INITIALIZATION ---
-
     onAuthStateChanged(auth, (user) => {
         if (user) {
             loadAndApplyAllHighlights();
