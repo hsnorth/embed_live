@@ -1119,6 +1119,21 @@ body.logged-in .mobile-top-bar {
     }
 }
 
+/* --- DRAGGABLE COMMENT STYLES --- */
+
+/* On medium screens and up, make the header a drag handle */
+@media (min-width: 769px) {
+    #comment-view .comment-view-header {
+        cursor: move;
+    }
+}
+
+/* Optional: Add a subtle style when the box is actively being dragged */
+#comment-view.is-dragging {
+    opacity: 0.9;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
 @media (max-width: 480px) {
     .modal-content { padding: 1.5rem; }
     .modal-header-text, .modal-tagline { font-size: 1.8rem; }
