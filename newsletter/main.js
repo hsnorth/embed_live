@@ -2,6 +2,7 @@
 import { auth, db } from './firebase-init.js';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
 console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -252,8 +253,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             document.body.classList.add('logged-in');
             if (userAuthLinks) {
-                userAuthLinks.innerHTML = `<a href="#" class="btn" id="signOutBtn">SIGN OUT</a>`;
-                document.getElementById('signOutBtn').addEventListener('click', (e) => { e.preventDefault(); handleSignOut(); });
+                // Change "SIGN OUT" to "MY ACCOUNT"
+                userAuthLinks.innerHTML = `<a href="#" class="btn" id="myAccountBtn">MY ACCOUNT</a>`;
+                document.getElementById('myAccountBtn').addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    openAccountPanel();
+                });
             }
             closeModal(signInModal);
             closeModal(joinModal);
@@ -266,34 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('logged-in');
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
-                const signInLink = document.getElementById('signInLink');
-                const joinLink = document.getElementById('joinLink');
-                if(signInLink) signInLink.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
-                if(joinLink) joinLink.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
+                document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
+                document.getElementById('joinLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
             }
         }
     });
 
-    // --- AUTH STATE LISTENER (runs on every page) ---
-    onAuthStateChanged(auth, (user) => {
-        const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
-        if (user) {
-            document.body.classList.add('logged-in');
-            if (userAuthLinks) {
-                // Change "SIGN OUT" to "MY ACCOUNT"
-                userAuthLinks.innerHTML = `<a href="#" class="btn" id="myAccountBtn">MY ACCOUNT</a>`;
-                document.getElementById('myAccountBtn').addEventListener('click', (e) => { 
-                    e.preventDefault(); 
-                    openAccountPanel(); // New function to open the panel
-                });
-            }
-            // ... (rest of the onAuthStateChanged logic)
-        } else {
-            // ... (the existing 'else' block)
-        }
-    });
-
-    // --- NEW: ACCOUNT PANEL LOGIC ---
+    // --- ACCOUNT PANEL LOGIC ---
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
     const accountPanelCloseBtn = document.getElementById('account-panel-close-btn');
     const newsletterCheckbox = document.getElementById('newsletter-checkbox');
@@ -303,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountEmailInput = document.getElementById('account-email');
     const logoutBtn = document.getElementById('logout-btn');
     const deleteAccountBtn = document.getElementById('delete-account-btn');
+    const personalDetailsToggle = document.getElementById('personal-details-toggle');
+    const personalDetailsContent = document.getElementById('personal-details-content');
 
     async function openAccountPanel() {
         const user = auth.currentUser;
@@ -402,6 +388,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(`Error deleting account: ${error.message}`, 'error');
                 console.error("Account deletion error:", error);
             }
+        });
+    }
+
+    // Handle collapsible section
+    if (personalDetailsToggle) {
+        personalDetailsToggle.addEventListener('click', () => {
+            personalDetailsToggle.classList.toggle('is-open');
+            personalDetailsContent.classList.toggle('is-open');
         });
     }
 
