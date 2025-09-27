@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (closedOverlay) closedOverlay.style.display = 'flex';
             
-            const textToType = "Sorry, we're closed on weekdays. Come back Saturday morning.";
+            const textToType = "Sorry, we're closed on weekdays.<br>Come back Saturday morning.";
             typeWriter(messagePlaceholder, textToType, 60, () => {
                 if (signupForm) signupForm.classList.add('is-visible');
             });
