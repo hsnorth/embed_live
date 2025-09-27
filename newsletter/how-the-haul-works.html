@@ -50,14 +50,14 @@
                 </button>
                 <a href="how-the-haul-works.html" class="nav-link how-it-works">HOW THE HAUL WORKS?</a>
             </div>
-            <a href="index (6).html" class="scrolled-logo-link">THE NEWS HAUL.</a>
+            <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL.</a>
             <div class="user-actions">
                 <a href="#" class="search-icon desktop-only" aria-label="Search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </a>
                 <div class="desktop-only user-auth-links">
-                    <a href="#" class="nav-link">SIGN IN</a>
-                    <a href="#" class="btn btn-primary">JOIN COMMUNITY</a>
+                    <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
+                    <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
                 </div>
                 <a href="#" class="mobile-only-icon" aria-label="Cart">
                     <img src="bag.png" alt="Shopping bag icon">
@@ -69,8 +69,8 @@
                 <img src="env.png" alt="Envelope icon" class="branding-icon env-icon">
             </div>
             <div class="branding-col branding-col-center">
-                <a href="index (6).html" style="text-decoration: none; color: inherit;"><h1 class="logo">The News Haul</h1></a>
-                <p class="header-date">Tuesday, Sept. 19, 2025</p>
+                <a href="index.html" style="text-decoration: none; color: inherit;"><h1 class="logo">The News Haul</h1></a>
+                <p class="header-date" id="header-date-placeholder">Saturday, September 27, 2025</p>
             </div>
             <div class="branding-col branding-col-right">
                 <img src="bag.png" alt="Bag icon" class="branding-icon">
@@ -84,45 +84,37 @@
                 <li><a href="index.html#deliveries">Next deliveries</a></li>
                 <li><a href="index.html#cannoli">Cannoli</a></li>
                 <li><a href="index.html#coffee">Coffee Review</a></li>
-                <li><a href="index.html#games">Games</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="page-content">
-        <div class="page-header">
-            <h1>More than just a subscription</h1>
-        </div>
-
-        <div class="content-container">
-            <div class="feature-section">
-                <div class="feature-image">
-                    <img src="https://placehold.co/800x600/EEE/333?text=Community+Event" alt="Community event">
+       <section class="content-section" style="border-top: none; padding-top: 2rem;">
+            <h2 class="section-title">How The Haul Works</h2>
+            <div class="essentials-container">
+                <div class="essential-item">
+                    <h3 class="item-title">What Is The News Haul?</h3>
+                    <p class="item-description">I’m Harry North, a reporter at The Montreal Gazette. Each week, I cover breaking news across the city — on the ground, in real time, speaking with the people it affects.</p>
+                    <p class="item-description">But in the rush of daily headlines, one question often gets lost: What actually matters? </p>
+                    <p class="item-description">This is what guides the News Haul. Indeed this isn’t a stream of alerts. It’s a weekly, curated briefing that intends to bring the most important, revealing, and delightful stories from Montreal and beyond. Stories that you tell your family and friends in conversation. Stories that make you think a bit. </p>
+                    <p class="item-description">Think of it as a well-edited market basket of journalism: fresh, selective, and worth your time.</p>
                 </div>
-                <div class="feature-text">
-                    <h2>Exclusive access to our global community</h2>
-                    <p>As a News Haul subscriber, you're invited to join us in person — at book launches, panel talks, cocktails and conferences. Meet our team, connect with others and swap ideas.</p>
+                <div class="essential-item">
+                    <h3 class="item-title">The Format: 5–3–2–1</h3>
+                    <p class="item-description">Each edition follows a rough structure:</p>
+                    <p class="item-description"><strong>5 Essentials.</strong> These are the stories that defined the week in Montreal.</p>
+                    <p class="item-description"><strong>3 Imports.</strong> Global developments with local relevance in Montreal.</p>
+                    <p class="item-description"><strong>2 Next Deliveries.</strong> Signals and shifts to watch in the week ahead.</p>
+                    <p class="item-description"><strong>1 Cannoli.</strong> A lighter or surprising story to end on a sweet note.</p>
                 </div>
-            </div>
-            <div class="feature-section reverse">
-                <div class="feature-image">
-                    <img src="https://placehold.co/800x600/DDD/333?text=Journalism" alt="Journalism in action">
-                </div>
-                <div class="feature-text">
-                    <h2>The best in journalism</h2>
-                    <p>Each News Haul issue takes you somewhere new – from Stockholm start-ups to São Paulo design studios. With global bureaux and correspondents, we deliver sharp reporting, fresh ideas and a unique perspective.</p>
-                </div>
-            </div>
-            <div class="feature-section">
-                <div class="feature-image">
-                    <img src="https://placehold.co/800x600/CCC/333?text=Delivered" alt="Newsletter delivery">
-                </div>
-                <div class="feature-text">
-                    <h2>Delivered your way</h2>
-                    <p>Enjoy our reporting in print, online, or through our audio dispatches. Access our full digital archive and get unlimited access on any device, including the digital edition of our print issues.</p>
+                <div class="essential-item">
+                    <h3 class="item-title">Community With a Side of Creativity</h3>
+                    <p class="item-description">Good journalism should spark conversation — not just headlines. The News Haul is built for people who care about the city, who want to share stories, and who don’t mind a little wit with their weekend reading.</p>
+                    <p class="item-description">It’s also a space to test new features. For example, try highlighting text and commenting directly on the parts that catch your attention. </p>
+                    <p class="item-description">While we’re here: the name — The News Haul — came after some thought. Naming things is tricky. But think of it this way: it’s a haul in the best sense. A well-edited market basket of journalism: fresh, selective, and worth your time. And like many good markets, we’re only open on weekends.</p>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
     <script type="module" src="main.js"></script>
