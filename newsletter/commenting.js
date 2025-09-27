@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. HIGHLIGHTING & TRIGGERING THE "ADD COMMENT" BUTTON ---
 
     document.addEventListener('mouseup', (e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        // Don't trigger on text input fields or buttons
+        if (e.target.closest('input, textarea, button')) return;
 
         const selection = window.getSelection();
         const selectedText = selection.toString().trim();
@@ -37,10 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             commentUiContainer.appendChild(trigger);
             
-            // Position after appending to get accurate dimensions
             const triggerRect = trigger.getBoundingClientRect();
             trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
             trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
+
+            // FIX: This new line prevents the 'mousedown' listener below from removing the button before the 'click' can happen.
+            trigger.addEventListener('mousedown', (e) => e.stopPropagation());
 
             trigger.onclick = () => {
                 showCommentForm(selection);
@@ -49,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // This listener now safely handles clicks "away" from the trigger button
     document.addEventListener('mousedown', (e) => {
         const trigger = document.getElementById('comment-trigger');
         if (trigger && !trigger.contains(e.target)) {
