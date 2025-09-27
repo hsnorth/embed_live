@@ -72,14 +72,78 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- UI DISPLAY & REPLY FUNCTIONS ---
+    // In commenting.js, replace the old showCommentView function with these two:
+
+    /**
+     * Makes the comment view box draggable by its header.
+     * @param {HTMLElement} element The comment view element to make draggable.
+     */
+    function makeDraggable(element) {
+        const handle = element.querySelector('.comment-view-header');
+        if (!handle) return; // We only want to drag by the header
+    
+        let isDragging = false;
+        let initialX, initialY, offsetX, offsetY;
+        
+        // Get the main header to prevent dragging the box on top of it
+        const mainHeader = document.querySelector('.main-header');
+        const navHeight = mainHeader ? mainHeader.offsetHeight : 0;
+    
+        handle.onmousedown = (e) => {
+            isDragging = true;
+            // Record initial positions
+            initialX = e.clientX;
+            initialY = e.clientY;
+            offsetX = element.offsetLeft;
+            offsetY = element.offsetTop;
+            
+            element.classList.add('is-dragging'); // Add style for visual feedback
+    
+            // Listen for mouse movements and release
+            document.onmousemove = onMouseMove;
+            document.onmouseup = onMouseUp;
+        };
+    
+        function onMouseMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+    
+            // Calculate the new position
+            const deltaX = e.clientX - initialX;
+            const deltaY = e.clientY - initialY;
+            let newTop = offsetY + deltaY;
+            let newLeft = offsetX + deltaX;
+    
+            // Constraint: Prevent the box from being dragged under the nav header
+            if (newTop < navHeight) {
+                newTop = navHeight;
+            }
+            
+            element.style.top = `${newTop}px`;
+            element.style.left = `${newLeft}px`;
+        }
+    
+        function onMouseUp() {
+            isDragging = false;
+            element.classList.remove('is-dragging');
+            
+            // Stop listening to mouse events
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+    }
+    
+    /**
+     * Displays the comment view with screen-size-aware positioning.
+     */
     function showCommentView(commentData, highlightElement) {
         document.getElementById('comment-view')?.remove();
         const rect = highlightElement.getBoundingClientRect();
         const view = document.createElement('div');
         view.id = 'comment-view';
         view.dataset.commentId = commentData.id;
-
+    
+        // The HTML structure remains the same
         view.innerHTML = `
             <div class="comment-view-header">
                 <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
@@ -91,16 +155,17 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="replies-container"></div>
         `;
-
+    
         commentUiContainer.appendChild(view);
-
-        // Logic for replies
+        const viewRect = view.getBoundingClientRect();
+    
+        // Logic for replies and close button
         loadAndDisplayReplies(commentData.id, view);
         view.querySelector('.reply-btn').onclick = (e) => showReplyForm(e.target.dataset.commentId, view);
         view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
-
-        // Positioning logic
-        if (window.innerWidth > 900) {
+    
+        // --- NEW Positioning and Draggable Logic ---
+        if (window.innerWidth > 900) { // Large screens
             view.className = 'comment-display-sidebar';
             const mainContent = highlightElement.closest('.main-article, .essentials-container, .cannoli-section-content');
             if (mainContent) {
@@ -108,10 +173,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 view.style.top = `${window.scrollY + rect.top}px`;
                 view.style.left = `${contentRect.right + 20}px`;
             }
-        } else {
+            makeDraggable(view); // Enable dragging
+        } else { // Medium and Small screens
             view.className = 'comment-display-popup';
-            view.style.top = `${window.scrollY + rect.bottom + 10}px`;
-            view.style.left = `${window.scrollX + rect.left}px`;
+            // Position below and centered to the highlighted text
+            view.style.top = `${window.scrollY + rect.bottom + 15}px`;
+            const centeredLeft = (rect.left + (rect.width / 2)) - (viewRect.width / 2);
+            view.style.left = `${Math.max(15, centeredLeft)}px`; // Use Math.max to prevent it from going off the left edge
+            
+            if (window.innerWidth > 768) {
+                makeDraggable(view); // Enable dragging only on medium screens and up
+            }
         }
     }
     
