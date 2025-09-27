@@ -900,27 +900,145 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
 }
 
-/* Display box for viewing a comment */
+/* --- REPLACED/NEW COMMENT STYLES START HERE --- */
+
+/* This replaces the old #comment-view style */
 #comment-view {
     position: absolute;
     background: var(--color-background);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     border: 1px solid var(--color-border);
-    padding: 1.5rem;
     z-index: 100;
+    padding: 0; 
+    min-width: 300px;
 }
-#comment-view p {
-    margin: 0;
+
+.comment-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: #fcfcfc;
+}
+
+.comment-author {
     font-family: var(--font-sans);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-text);
 }
+
+.comment-view-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    transition: color 0.2s ease;
+}
+.comment-view-close-btn:hover {
+    color: var(--color-text);
+}
+
+#comment-view .comment-body {
+    padding: 1.25rem;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+/* New styles for the reply functionality */
+.comment-footer {
+    padding: 0.5rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.reply-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    text-transform: uppercase;
+}
+.reply-btn:hover {
+    color: var(--color-text);
+}
+
+.replies-container {
+    background-color: #fcfcfc;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid var(--color-border);
+}
+
+.reply {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.reply:last-child {
+    border-bottom: none;
+}
+
+.reply-author {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.reply-body {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #444;
+}
+
+.reply-form-container {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.reply-textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    border: 1px solid var(--color-border);
+    padding: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    min-height: 60px;
+    margin-bottom: 0.75rem;
+}
+
+.post-reply-btn {
+    background-color: var(--color-text);
+    color: var(--color-background);
+    border: none;
+    padding: 0.6rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* --- END OF NEW COMMENT STYLES --- */
+
 
 /* Sidebar on wide screens */
 .comment-display-sidebar {
     width: 320px;
     position: absolute; /* Changed from fixed to absolute for better flow */
-    left: calc(100% + 2rem);
 }
 
 /* Pop-up on narrow screens */
@@ -994,6 +1112,10 @@ body.logged-in .mobile-top-bar {
     }
     .cannoli-image-container {
         width: auto;
+    }
+    
+    .comment-display-sidebar {
+        left: calc(100% + 2rem);
     }
 }
 
