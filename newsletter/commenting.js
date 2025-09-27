@@ -176,44 +176,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function postComment(commentText, isPublic, selection, range) {
+        console.log("1. 'postComment' function has been called.");
+    
         const user = auth.currentUser;
-        if (!user) return; 
-
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
-        
+        if (!user) {
+            console.error("2. SILENT EXIT: No authenticated user was found.");
+            return;
+        }
+        console.log("2. User is authenticated:", user.uid);
+    
         const parentElement = range.startContainer.parentElement.closest('p, li, h3');
-        if (!parentElement) return;
-
+        if (!parentElement) {
+            console.error("3. SILENT EXIT: Could not find a valid parent element (<p>, <li>, or <h3>) for the highlight.");
+            console.warn("   - This usually happens if you click elsewhere on the page after highlighting text, which clears the selection.");
+            return;
+        }
+        console.log("3. Found a valid parent element:", parentElement);
+    
         const selector = generateCssSelector(parentElement);
-        
-        // Create a range from the parent's start to the selection's start
         const preRange = document.createRange();
         preRange.selectNodeContents(parentElement);
         preRange.setEnd(range.startContainer, range.startOffset);
-
-        // Calculate offsets based on HTML length, not text length, for accuracy
         const startOffset = getRangeHtml(preRange).length;
         const endOffset = startOffset + getRangeHtml(range).length;
-
+    
+        console.log("4. All checks passed. Attempting to save comment to Firestore...");
         try {
             const docRef = await addDoc(commentsCollection, {
                 commentText, isPublic, highlightedText: selection.toString(),
                 targetSelector: selector, startOffset, endOffset,
-                userId: user.uid, userName: userName,
+                userId: user.uid, userName: "A User", // Using a placeholder for now
                 pageUrl: window.location.pathname, createdAt: new Date()
             });
             
+            console.log("5. SUCCESS: Comment saved to Firestore with ID:", docRef.id);
             applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
             
             const newHighlight = parentElement.querySelector(`[data-comment-id="${docRef.id}"]`);
             if (newHighlight) {
-                const commentData = { id: docRef.id, userName, commentText };
+                const commentData = { id: docRef.id, userName: "A User", commentText };
                 showCommentView(commentData, newHighlight);
             }
         } catch (error) {
-            console.error("Error adding comment: ", error);
+            console.error("6. FIRESTORE ERROR: ", error);
         }
     }
 
