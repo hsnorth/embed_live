@@ -260,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     openAccountPanel();
                 });
             }
-            if (mobileAccountTrigger) mobileAccountTrigger.style.display = 'flex'; // Show mobile icon
             closeModal(signInModal);
             closeModal(joinModal);
             if (stickyBanner) {
@@ -275,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
                 document.getElementById('joinLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
             }
-            if (mobileAccountTrigger) mobileAccountTrigger.style.display = 'none'; // Hide mobile icon
         }
     });
 
