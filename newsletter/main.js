@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const stickyStep1 = stickyForm ? stickyForm.querySelector('[data-step="1"]') : null;
     const stickyStep2 = stickyForm ? stickyForm.querySelector('[data-step="2"]') : null;
     const stickyEmailInput = document.getElementById('sticky-email');
+    const howItWorksTrigger = document.getElementById('how-it-works-trigger');
+    const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
+    const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
 
     
     let typeInterval;
@@ -397,6 +400,36 @@ document.addEventListener('DOMContentLoaded', () => {
             personalDetailsToggle.classList.toggle('is-open');
             personalDetailsContent.classList.toggle('is-open');
         });
+    }
+    
+    // --- HOW IT WORKS PANEL LOGIC ---
+    function openHowItWorksPanel() {
+        if (!howItWorksPanelOverlay) return;
+        howItWorksPanelOverlay.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeHowItWorksPanel() {
+        if (!howItWorksPanelOverlay) return;
+        howItWorksPanelOverlay.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+    }
+
+    if (howItWorksTrigger) {
+        howItWorksTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            openHowItWorksPanel();
+        });
+    }
+    if (howItWorksPanelOverlay) {
+        howItWorksPanelOverlay.addEventListener('click', (e) => {
+            if (e.target === howItWorksPanelOverlay) {
+                closeHowItWorksPanel();
+            }
+        });
+    }
+    if (howItWorksPanelCloseBtn) {
+        howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
     }
 
     // --- Simple Menu Toggle ---
