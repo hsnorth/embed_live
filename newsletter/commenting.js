@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
             trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
 
-            // FIX: This new line prevents the 'mousedown' listener below from removing the button before the 'click' can happen.
             trigger.addEventListener('mousedown', (e) => e.stopPropagation());
 
             trigger.onclick = () => {
@@ -52,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // This listener now safely handles clicks "away" from the trigger button
     document.addEventListener('mousedown', (e) => {
         const trigger = document.getElementById('comment-trigger');
         if (trigger && !trigger.contains(e.target)) {
@@ -167,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const highlight = e.target.closest('.comment-highlight');
         const existingView = document.getElementById('comment-view');
 
+        // Close logic: if clicking away, or clicking the same highlight again.
         if (existingView && (!highlight || existingView.dataset.commentId === highlight.dataset.commentId)) {
             existingView.remove();
             return;
@@ -184,14 +183,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const view = document.createElement('div');
             view.id = 'comment-view';
             view.dataset.commentId = commentId;
-            view.innerHTML = `<p>${commentData.commentText}</p><button class="comment-close-btn">&times;</button>`;
+            view.innerHTML = `<p>${commentData.commentText}</p><button class="comment-view-close-btn">&times;</button>`;
             
             commentUiContainer.appendChild(view);
-            view.querySelector('.comment-close-btn').onclick = () => view.remove();
+            view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
 
+            // Responsive positioning logic
             if (window.innerWidth > 900) {
                 view.className = 'comment-display-sidebar';
-                view.style.top = `${window.scrollY + rect.top}px`;
+                
+                // Find the main content column to position relative to
+                const mainContent = highlight.closest('.main-article, .essentials-container, .cannoli-section-content');
+                if (mainContent) {
+                    const contentRect = mainContent.getBoundingClientRect();
+                    view.style.top = `${window.scrollY + rect.top}px`;
+                    view.style.left = `${contentRect.right + 20}px`; // Position 20px right of the content column
+                }
+
             } else {
                 view.className = 'comment-display-popup';
                 view.style.top = `${window.scrollY + rect.bottom + 10}px`;
