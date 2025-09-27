@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const howItWorksTrigger = document.getElementById('how-it-works-trigger');
     const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
     const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
+    const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
 
     
     let typeInterval;
@@ -56,15 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const showMoreBtn = document.getElementById('show-more-btn');
 
     if (harrysNoteWrapper && showMoreBtn) {
-        // Initially truncate the text
         harrysNoteWrapper.classList.add('truncated');
-
         showMoreBtn.addEventListener('click', () => {
             const isTruncated = harrysNoteWrapper.classList.toggle('truncated');
             showMoreBtn.textContent = isTruncated ? 'Show more' : 'Show less';
         });
     }
-
 
     // --- LIVE DATE ---
     function setLiveDate() {
@@ -256,13 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             document.body.classList.add('logged-in');
             if (userAuthLinks) {
-                // Change "SIGN OUT" to "MY ACCOUNT"
                 userAuthLinks.innerHTML = `<a href="#" class="btn" id="myAccountBtn">MY ACCOUNT</a>`;
                 document.getElementById('myAccountBtn').addEventListener('click', (e) => { 
                     e.preventDefault(); 
                     openAccountPanel();
                 });
             }
+            if (mobileAccountTrigger) mobileAccountTrigger.style.display = 'flex'; // Show mobile icon
             closeModal(signInModal);
             closeModal(joinModal);
             if (stickyBanner) {
@@ -277,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
                 document.getElementById('joinLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
             }
+            if (mobileAccountTrigger) mobileAccountTrigger.style.display = 'none'; // Hide mobile icon
         }
     });
 
@@ -297,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = auth.currentUser;
         if (!user || !accountPanelOverlay) return;
 
-        // Fetch user data from Firestore
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
 
@@ -305,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const userData = userDoc.data();
             accountNameInput.value = userData.name || '';
             accountEmailInput.value = userData.email || '';
-            newsletterCheckbox.checked = userData.newsletter !== false; // Default to true if undefined
+            newsletterCheckbox.checked = userData.newsletter !== false;
         }
 
         accountPanelOverlay.classList.add('is-open');
@@ -318,15 +316,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('no-scroll');
     }
 
-    // Event Listeners for the account panel
     if (accountPanelOverlay) accountPanelOverlay.addEventListener('click', (e) => { if (e.target === accountPanelOverlay) closeAccountPanel(); });
     if (accountPanelCloseBtn) accountPanelCloseBtn.addEventListener('click', closeAccountPanel);
     if (logoutBtn) logoutBtn.addEventListener('click', async () => {
         await handleSignOut();
         closeAccountPanel();
     });
+    if (mobileAccountTrigger) mobileAccountTrigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        openAccountPanel();
+    });
 
-    // Handle newsletter preference change
     if (newsletterCheckbox) {
         newsletterCheckbox.addEventListener('change', async () => {
             const user = auth.currentUser;
@@ -337,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle personal details update
     if (accountDetailsForm) {
         accountDetailsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -351,7 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Handle password change
     if (accountPasswordForm) {
         accountPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -369,7 +367,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle account deletion
     if (deleteAccountBtn) {
         deleteAccountBtn.addEventListener('click', async () => {
             if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
@@ -380,11 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!user) return;
 
             try {
-                // First, delete the user's data from Firestore
                 await deleteDoc(doc(db, 'users', user.uid));
-                // Then, delete the user from Authentication
                 await deleteUser(user);
-                
                 showToast('Your account has been permanently deleted.', 'info');
                 closeAccountPanel();
             } catch (error) {
@@ -394,7 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle collapsible section
     if (personalDetailsToggle) {
         personalDetailsToggle.addEventListener('click', () => {
             personalDetailsToggle.classList.toggle('is-open');
