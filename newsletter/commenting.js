@@ -1,8 +1,7 @@
-// Import the shared auth/db instances and specific Firestore functions
+// Import the shared auth/db instances, specific Firestore functions, and the auth state listener
 import { db, auth } from './firebase-init.js';
 import { collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
-const commentsCollection = collection(db, 'comments');
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const commentUiContainer = document.getElementById('comment-ui-container');
@@ -11,56 +10,87 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- 1. HIGHLIGHTING & TRIGGERING THE "ADD COMMENT" BUTTON ---
+    // --- UTILITY FUNCTIONS ---
 
-    document.addEventListener('mouseup', (e) => {
-        // Don't trigger on text input fields or buttons
-        if (e.target.closest('input, textarea, button')) return;
+    function applyHighlightToRange(element, start, end, commentId) {
+        const originalHtml = element.innerHTML;
+        const before = originalHtml.substring(0, start);
+        const highlighted = originalHtml.substring(start, end);
+        const after = originalHtml.substring(end);
+        
+        if (highlighted.includes('class="comment-highlight"')) return;
 
-        const selection = window.getSelection();
-        const selectedText = selection.toString().trim();
+        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
+        element.innerHTML = newHtml;
+    }
 
-        const existingTrigger = document.getElementById('comment-trigger');
-        if (existingTrigger) existingTrigger.remove();
-
-        // Only show the "Add Comment" button if a user is logged in.
-        if (selectedText.length > 0 && auth.currentUser) {
-            const range = selection.getRangeAt(0);
-            const container = range.commonAncestorContainer.parentElement;
-            
-            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) {
-                return;
+    function generateCssSelector(el) {
+        if (!(el instanceof Element)) return;
+        let path = [];
+        while (el.nodeType === Node.ELEMENT_NODE) {
+            let selector = el.nodeName.toLowerCase();
+            if (el.id) {
+                selector = '#' + el.id;
+                path.unshift(selector);
+                break;
+            } else {
+                let sib = el, nth = 1;
+                while (sib = sib.previousElementSibling) {
+                    if (sib.nodeName.toLowerCase() === selector) {
+                       nth++;
+                    }
+                }
+                if (nth !== 1) {
+                    selector += `:nth-of-type(${nth})`;
+                }
             }
-
-            const rect = range.getBoundingClientRect();
-            const trigger = document.createElement('button');
-            trigger.id = 'comment-trigger';
-            trigger.innerHTML = `Add Comment`;
-            
-            commentUiContainer.appendChild(trigger);
-            
-            const triggerRect = trigger.getBoundingClientRect();
-            trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
-            trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
-
-            trigger.addEventListener('mousedown', (e) => e.stopPropagation());
-
-            trigger.onclick = () => {
-                showCommentForm(selection);
-                trigger.remove();
-            };
+            path.unshift(selector);
+            el = el.parentNode;
         }
-    });
-    
-    document.addEventListener('mousedown', (e) => {
-        const trigger = document.getElementById('comment-trigger');
-        if (trigger && !trigger.contains(e.target)) {
-            trigger.remove();
+        return path.join(" > ");
+    }
+
+    // This function removes all comment highlights and UI elements from the page.
+    function cleanupComments() {
+        document.getElementById('comment-trigger')?.remove();
+        document.getElementById('comment-view')?.remove();
+
+        const highlights = document.querySelectorAll('.comment-highlight');
+        highlights.forEach(span => {
+            const parent = span.parentNode;
+            if (parent) {
+                parent.replaceChild(document.createTextNode(span.textContent), span);
+                parent.normalize(); // Merges adjacent text nodes
+            }
+        });
+    }
+
+
+    // --- CORE COMMENTING FUNCTIONS ---
+
+    async function loadAndApplyAllHighlights() {
+        cleanupComments(); // Ensure a clean slate before applying highlights
+        try {
+            const snapshot = await getDocs(commentsCollection);
+            const comments = [];
+            snapshot.forEach(doc => {
+                if (doc.data().pageUrl === window.location.pathname) {
+                    comments.push({ id: doc.id, ...doc.data() });
+                }
+            });
+
+            comments.sort((a, b) => b.startOffset - a.startOffset);
+
+            for (const comment of comments) {
+                const element = document.querySelector(comment.targetSelector);
+                if (element) {
+                    applyHighlightToRange(element, comment.startOffset, comment.endOffset, comment.id);
+                }
+            }
+        } catch(e) {
+            console.error("Could not load comments from Firestore.", e);
         }
-    });
-
-
-    // --- 2. SHOWING THE COMMENT INPUT FORM ---
+    }
 
     function showCommentForm(selection) {
         const modal = document.createElement('div');
@@ -94,8 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- 3. POSTING THE COMMENT TO FIRESTORE ---
-
     async function postComment(commentText, isPublic, selection, range) {
         const user = auth.currentUser;
         if (!user) return; 
@@ -115,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const endOffset = startOffset + range.toString().length;
 
         try {
-            const docRef = await addDoc(commentsCollection, {
+            const docRef = await addDoc(collection(db, 'comments'), {
                 commentText,
                 isPublic,
                 highlightedText: selection.toString(),
@@ -135,38 +163,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- EVENT HANDLERS ---
+    // Defined here so they can be added and removed based on auth state
 
-    // --- 4. LOADING & APPLYING HIGHLIGHTS ON PAGE LOAD ---
+    const handleMouseUp = (e) => {
+        if (e.target.closest('input, textarea, button')) return;
 
-    async function loadAndApplyAllHighlights() {
-        try {
-            const snapshot = await getDocs(commentsCollection);
-            const comments = [];
-            snapshot.forEach(doc => {
-                if (doc.data().pageUrl === window.location.pathname) {
-                    comments.push({ id: doc.id, ...doc.data() });
-                }
-            });
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
 
-            comments.sort((a, b) => b.startOffset - a.startOffset);
+        document.getElementById('comment-trigger')?.remove();
 
-            for (const comment of comments) {
-                const element = document.querySelector(comment.targetSelector);
-                if (element) {
-                    applyHighlightToRange(element, comment.startOffset, comment.endOffset, comment.id);
-                }
+        if (selectedText.length > 0) {
+            const range = selection.getRangeAt(0);
+            const container = range.commonAncestorContainer.parentElement;
+            
+            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) {
+                return;
             }
-        } catch(e) {
-            console.error("Could not load comments from Firestore.", e);
+
+            const rect = range.getBoundingClientRect();
+            const trigger = document.createElement('button');
+            trigger.id = 'comment-trigger';
+            trigger.innerHTML = `Add Comment`;
+            
+            commentUiContainer.appendChild(trigger);
+            
+            const triggerRect = trigger.getBoundingClientRect();
+            trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
+            trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
+
+            trigger.addEventListener('mousedown', (e) => e.stopPropagation());
+
+            trigger.onclick = () => {
+                showCommentForm(selection);
+                trigger.remove();
+            };
         }
-    }
+    };
     
-    loadAndApplyAllHighlights();
+    const handleMouseDown = (e) => {
+        const trigger = document.getElementById('comment-trigger');
+        if (trigger && !trigger.contains(e.target)) {
+            trigger.remove();
+        }
+    };
 
-
-    // --- 5. VIEWING COMMENTS ---
-
-    document.addEventListener('click', async (e) => {
+    const handleHighlightClick = async (e) => {
         const highlight = e.target.closest('.comment-highlight');
         const existingView = document.getElementById('comment-view');
 
@@ -210,46 +253,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 view.style.left = `${window.scrollX + rect.left}px`;
             }
         }
-    });
+    };
 
+    // --- AUTH-DRIVEN INITIALIZATION ---
 
-    // --- UTILITY FUNCTIONS ---
-
-    function applyHighlightToRange(element, start, end, commentId) {
-        const originalHtml = element.innerHTML;
-        const before = originalHtml.substring(0, start);
-        const highlighted = originalHtml.substring(start, end);
-        const after = originalHtml.substring(end);
-        
-        if (highlighted.includes('class="comment-highlight"')) return;
-
-        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
-        element.innerHTML = newHtml;
-    }
-
-    function generateCssSelector(el) {
-        if (!(el instanceof Element)) return;
-        let path = [];
-        while (el.nodeType === Node.ELEMENT_NODE) {
-            let selector = el.nodeName.toLowerCase();
-            if (el.id) {
-                selector = '#' + el.id;
-                path.unshift(selector);
-                break;
-            } else {
-                let sib = el, nth = 1;
-                while (sib = sib.previousElementSibling) {
-                    if (sib.nodeName.toLowerCase() === selector) {
-                       nth++;
-                    }
-                }
-                if (nth !== 1) {
-                    selector += `:nth-of-type(${nth})`;
-                }
-            }
-            path.unshift(selector);
-            el = el.parentNode;
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // --- USER IS LOGGED IN ---
+            loadAndApplyAllHighlights();
+            document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('mousedown', handleMouseDown);
+            document.addEventListener('click', handleHighlightClick);
+        } else {
+            // --- USER IS LOGGED OUT ---
+            cleanupComments();
+            document.removeEventListener('mouseup', handleMouseUp);
+            document.removeEventListener('mousedown', handleMouseDown);
+            document.removeEventListener('click', handleHighlightClick);
         }
-        return path.join(" > ");
-    }
+    });
 });
