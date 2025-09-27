@@ -238,12 +238,73 @@
     </section>
 
     <div id="signInModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2 class="modal-header-text">Sign In</h2>
+            <form id="signInForm" class="modal-form">
+                <label for="signInEmail" class="form-label">Email Address</label>
+                <input type="email" id="signInEmail" name="signInEmail" class="form-input" required placeholder="name@example.com">
+                <label for="signInPassword" class="form-label">Password</label>
+                <input type="password" id="signInPassword" name="signInPassword" class="form-input" required placeholder="••••••••••••">
+                <button type="submit" class="modal-btn">Sign In</button>
+            </form>
+            <div class="modal-links">
+                <button class="modal-link-btn" id="forgotPasswordBtn">Forgot Password?</button>
+                <button class="modal-link-btn" id="goToJoinBtnFromSignIn">Don't have an account? Join us</button>
+            </div>
         </div>
+    </div>
     <div id="joinModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <p id="modalTagline" class="modal-tagline"></p>
+            
+            <form id="joinFormStep1" class="modal-form">
+                <label for="joinEmail" class="form-label">Email Address</label>
+                <input type="email" id="joinEmail" name="joinEmail" class="form-input" required placeholder="name@example.com">
+                <button type="submit" class="modal-btn">Continue</button>
+            </form>
+
+            <form id="joinFormStep2" class="modal-form hidden">
+                <label for="joinName" class="form-label">Your Name</label>
+                <input type="text" id="joinName" name="joinName" class="form-input" required placeholder="First and last name">
+                
+                <label for="joinPassword" class="form-label">Create a Password</label>
+                <input type="password" id="joinPassword" name="joinPassword" class="form-input" required placeholder="At least 6 characters">
+                
+                <label style="display: flex; align-items: center; gap: 10px; font-family: var(--font-sans); font-size: 0.9rem; margin-top: 0.5rem;">
+                    <input type="checkbox" id="joinNewsletter" name="joinNewsletter" checked>
+                    Receive weekly updates
+                </label>
+                
+                <button type="submit" class="modal-btn">Create Account</button>
+            </form>
+            
+            <div class="modal-links">
+                <button class="modal-link-btn" id="goToSignInBtnFromJoin">Already have an account? Sign In</button>
+            </div>
         </div>
+    </div>
     <div id="toast-container"></div>
     <div id="sticky-signup-banner" class="sticky-signup-banner">
+        <div class="sticky-signup-content">
+            <div class="sticky-signup-text">
+                <h3>Get the full haul.</h3>
+                <p>Join our community to get full access to every story, event, and special offer.</p>
+            </div>
+            <form id="sticky-signup-form" class="sticky-signup-form">
+                <div data-step="1" class="sticky-form-step">
+                    <input type="email" id="sticky-email" placeholder="Your email address" class="sticky-input" required>
+                    <button type="button" id="sticky-next-btn" class="sticky-btn">Next</button>
+                </div>
+                <div data-step="2" class="sticky-form-step hidden">
+                    <input type="text" id="sticky-name" placeholder="Your Name" class="sticky-input" required>
+                    <input type="password" id="sticky-password" placeholder="Create Password" class="sticky-input" required>
+                    <button type="submit" class="sticky-btn">Join Now</button>
+                </div>
+            </form>
         </div>
+    </div>
 
     <div id="comment-ui-container"></div>
 
