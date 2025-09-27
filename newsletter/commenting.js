@@ -1,6 +1,6 @@
 // Import the shared auth/db instances, specific Firestore functions, and the auth state listener
 import { db, auth } from './firebase-init.js';
-import { collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 // Define the collection reference at the top level of the module
@@ -72,20 +72,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- UI DISPLAY FUNCTIONS ---
+    // --- UI DISPLAY & REPLY FUNCTIONS ---
     function showCommentView(commentData, highlightElement) {
         document.getElementById('comment-view')?.remove();
         const rect = highlightElement.getBoundingClientRect();
         const view = document.createElement('div');
         view.id = 'comment-view';
         view.dataset.commentId = commentData.id;
+
         view.innerHTML = `
-            <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
-            <p>${commentData.commentText}</p>
-            <button class="comment-view-close-btn">&times;</button>
+            <div class="comment-view-header">
+                <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
+                <button class="comment-view-close-btn">&times;</button>
+            </div>
+            <p class="comment-body">${commentData.commentText}</p>
+            <div class="comment-footer">
+                <button class="reply-btn" data-comment-id="${commentData.id}">Reply</button>
+            </div>
+            <div class="replies-container"></div>
         `;
+
         commentUiContainer.appendChild(view);
+
+        // Logic for replies
+        loadAndDisplayReplies(commentData.id, view);
+        view.querySelector('.reply-btn').onclick = (e) => showReplyForm(e.target.dataset.commentId, view);
         view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
+
+        // Positioning logic
         if (window.innerWidth > 900) {
             view.className = 'comment-display-sidebar';
             const mainContent = highlightElement.closest('.main-article, .essentials-container, .cannoli-section-content');
@@ -100,13 +114,87 @@ document.addEventListener('DOMContentLoaded', () => {
             view.style.left = `${window.scrollX + rect.left}px`;
         }
     }
+    
+    async function postReply(replyText, parentCommentId) {
+        const user = auth.currentUser;
+        if (!user || !replyText.trim()) return;
+    
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
+    
+        try {
+            await addDoc(commentsCollection, {
+                commentText: replyText,
+                parentCommentId: parentCommentId,
+                userId: user.uid,
+                userName: userName,
+                pageUrl: window.location.pathname,
+                createdAt: new Date()
+            });
+            const commentView = document.getElementById('comment-view');
+            if (commentView) {
+                loadAndDisplayReplies(parentCommentId, commentView);
+                commentView.querySelector('.reply-form-container')?.remove();
+            }
+        } catch (error) {
+            console.error("Error posting reply: ", error);
+        }
+    }
+    
+    function showReplyForm(parentCommentId, viewElement) {
+        viewElement.querySelector('.reply-form-container')?.remove();
+    
+        const formContainer = document.createElement('div');
+        formContainer.className = 'reply-form-container';
+        formContainer.innerHTML = `
+            <textarea class="reply-textarea" placeholder="Write a reply..."></textarea>
+            <button class="post-reply-btn">Post Reply</button>
+        `;
+        viewElement.appendChild(formContainer);
+    
+        const postBtn = formContainer.querySelector('.post-reply-btn');
+        const textarea = formContainer.querySelector('.reply-textarea');
+        textarea.focus();
+    
+        postBtn.onclick = () => {
+            postReply(textarea.value, parentCommentId);
+        };
+    }
+    
+    async function loadAndDisplayReplies(parentCommentId, viewElement) {
+        let repliesContainer = viewElement.querySelector('.replies-container');
+        if (!repliesContainer) {
+            repliesContainer = document.createElement('div');
+            repliesContainer.className = 'replies-container';
+            viewElement.appendChild(repliesContainer);
+        }
+        
+        repliesContainer.innerHTML = '';
+    
+        const q = query(commentsCollection, where("parentCommentId", "==", parentCommentId), orderBy("createdAt"));
+        const querySnapshot = await getDocs(q);
+    
+        querySnapshot.forEach((doc) => {
+            const replyData = doc.data();
+            const replyDiv = document.createElement('div');
+            replyDiv.className = 'reply';
+            replyDiv.innerHTML = `
+                <div class="reply-author">${replyData.userName}</div>
+                <p class="reply-body">${replyData.commentText}</p>
+            `;
+            repliesContainer.appendChild(replyDiv);
+        });
+    }
 
     // --- CORE COMMENTING FUNCTIONS ---
-
     async function loadAndApplyAllHighlights() {
         cleanupComments();
         try {
-            const snapshot = await getDocs(commentsCollection);
+            // Query for top-level comments only (where parentCommentId is null)
+            const q = query(commentsCollection, where("parentCommentId", "==", null));
+            const snapshot = await getDocs(q);
+            
             const comments = [];
             snapshot.forEach(doc => {
                 if (doc.data().pageUrl === window.location.pathname) {
@@ -114,7 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Group comments by their target element selector
             const commentsBySelector = comments.reduce((acc, comment) => {
                 const selector = comment.targetSelector;
                 if (!acc[selector]) acc[selector] = [];
@@ -122,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return acc;
             }, {});
 
-            // Process each element that has comments
             for (const selector in commentsBySelector) {
                 const element = document.querySelector(selector);
                 if (!element) continue;
@@ -146,10 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // In commenting.js, replace the old showCommentForm function with this one
-
     function showCommentForm(selection) {
-        const range = selection.getRangeAt(0); // Capture the valid range immediately
+        const range = selection.getRangeAt(0);
         const modal = document.createElement('div');
         modal.className = 'comment-form-modal';
         modal.innerHTML = `
@@ -173,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentText = document.getElementById('comment-textarea').value;
             const isPublic = document.getElementById('comment-public-checkbox').checked;
             if (commentText.trim()) {
-                // Use the range that was captured safely above
                 await postComment(commentText, isPublic, selection, range);
                 modal.remove();
             } else {
@@ -181,35 +264,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
-    // In commenting.js, replace the debugging postComment function with this clean one
 
     async function postComment(commentText, isPublic, selection, range) {
         const user = auth.currentUser;
         if (!user) return;
-    
-        // We get the user's name from the database to attach to the comment
+
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
-    
+
         const parentElement = range.startContainer.parentElement.closest('p, li, h3');
         if (!parentElement) {
-            // This check is a failsafe, but our main fix in showCommentForm should prevent this
             console.error("Could not find a valid parent element for the comment.");
             return;
         }
-    
+
         const selector = generateCssSelector(parentElement);
         const preRange = document.createRange();
         preRange.selectNodeContents(parentElement);
         preRange.setEnd(range.startContainer, range.startOffset);
         const startOffset = getRangeHtml(preRange).length;
         const endOffset = startOffset + getRangeHtml(range).length;
-    
+
         try {
             const docRef = await addDoc(commentsCollection, {
                 commentText, isPublic, highlightedText: selection.toString(),
                 targetSelector: selector, startOffset, endOffset,
+                parentCommentId: null, // This marks it as a top-level comment
                 userId: user.uid, userName: userName,
                 pageUrl: window.location.pathname, createdAt: new Date()
             });
