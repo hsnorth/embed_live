@@ -3,6 +3,9 @@ import { db, auth } from './firebase-init.js';
 import { collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
+// Define the collection reference at the top level of the module
+const commentsCollection = collection(db, 'comments');
+
 document.addEventListener('DOMContentLoaded', () => {
     const commentUiContainer = document.getElementById('comment-ui-container');
     if (!commentUiContainer) {
@@ -71,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAndApplyAllHighlights() {
         cleanupComments(); // Ensure a clean slate before applying highlights
         try {
+            // Use the globally defined commentsCollection
             const snapshot = await getDocs(commentsCollection);
             const comments = [];
             snapshot.forEach(doc => {
@@ -143,7 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const endOffset = startOffset + range.toString().length;
 
         try {
-            const docRef = await addDoc(collection(db, 'comments'), {
+            // Use the globally defined commentsCollection
+            const docRef = await addDoc(commentsCollection, {
                 commentText,
                 isPublic,
                 highlightedText: selection.toString(),
