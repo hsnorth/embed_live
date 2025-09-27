@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="weekday-closed-overlay" style="display: none;">
+        <div class="weekday-closed-content">
+            <h1 id="weekday-message-placeholder"></h1>
+            <form id="weekday-signup-form" class="weekday-signup-form">
+                <label for="weekday-email">Get the haul delivered to your inbox</label>
+                <div class="weekday-input-group">
+                    <input type="email" id="weekday-email" placeholder="Your email address" required>
+                    <button type="submit">Subscribe</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="loader">
         <img src="bag.png" alt="Loading..." class="loader-icon">
