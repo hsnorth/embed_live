@@ -206,40 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, duration);
     }
 
-    // --- MODAL FUNCTIONS ---
-    function openModal(modal) {
-        if (!modal) return;
-        modal.setAttribute('aria-hidden', 'false');
-        modal.classList.add('is-open');
-        document.body.classList.add('no-scroll');
-        if (modal.id === 'joinModal') {
-            const textToType = "For stories to tell at the supper";
-            typeWriter(modalTagline, textToType, 80, () => {
-                if(joinFormStep1) joinFormStep1.classList.add('form-visible');
-            });
-        }
-    }
-
-    function closeModal(modal) {
-        if (!modal) return;
-        modal.setAttribute('aria-hidden', 'true');
-        modal.classList.remove('is-open');
-        document.body.classList.remove('no-scroll');
-        
-        if (joinFormStep1 && joinFormStep2) {
-            joinFormStep1.classList.remove('hidden');
-            joinFormStep2.classList.add('hidden');
-            joinFormStep1.reset();
-            joinFormStep2.reset();
-            joinFormStep1.classList.remove('form-visible');
-        }
-        if (typeInterval) clearInterval(typeInterval);
-        if (modalTagline) {
-            modalTagline.innerHTML = '';
-            modalTagline.classList.remove('typing-active');
-        }
-    }
-    
     /* ADDED: Helper to remove the sticky banner and scroll lock */
     function removeStickyBannerLock() {
         if (stickyBanner && stickyBanner.classList.contains('is-visible')) {
@@ -254,13 +220,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- MODAL FUNCTIONS ---
+    function openModal(modal) {
+        if (!modal) return;
+        modal.setAttribute('aria-hidden', 'false');
+        modal.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+        
+        if (modal.id === 'joinModal') {
+            const content = modal.querySelector('.modal-content');
+            
+            // Inject Sign In link under tagline on first step
+            if (joinFormStep1 && joinFormStep1.classList.contains('form-visible')) {
+                let signInLink = content.querySelector('.modal-sign-in-prompt');
+                if (!signInLink) {
+                    signInLink = document.createElement('button');
+                    signInLink.className = 'modal-sign-in-prompt modal-link-btn';
+                    signInLink.textContent = 'Already have an account? Sign In';
+                    signInLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        closeModal(joinModal);
+                        openModal(signInModal);
+                    });
+                    joinFormStep1.insertAdjacentElement('afterend', signInLink);
+                }
+                signInLink.style.display = 'block';
+            }
+
+            const textToType = "For stories to tell at the supper";
+            typeWriter(modalTagline, textToType, 80, () => {
+                if(joinFormStep1) joinFormStep1.classList.add('form-visible');
+            });
+        }
+    }
+
+    function closeModal(modal) {
+        if (!modal) return;
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+        
+        if (joinFormStep1 && joinFormStep2) {
+            // Restore to step 1 state
+            joinFormStep1.classList.remove('hidden');
+            joinFormStep2.classList.add('hidden');
+            joinFormStep1.reset();
+            joinFormStep2.reset();
+            joinFormStep1.classList.remove('form-visible');
+            
+            // Hide the dynamically added sign-in link on closing
+            const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
+            if(signInLink) signInLink.style.display = 'none';
+        }
+        if (typeInterval) clearInterval(typeInterval);
+        if (modalTagline) {
+            modalTagline.innerHTML = '';
+            modalTagline.classList.remove('typing-active');
+        }
+    }
 
     // --- EVENT LISTENERS ---
     modalCloseBtns.forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal-overlay'))));
     if (signInModal) signInModal.addEventListener('click', (e) => { if (e.target === signInModal) closeModal(signInModal) });
     if (joinModal) joinModal.addEventListener('click', (e) => { if (e.target === joinModal) closeModal(joinModal) });
+    
+    // Reroute these to use the new logic if needed, but they work as fallback if dynamic link is missing
     if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', (e) => { e.preventDefault(); closeModal(signInModal); openModal(joinModal); });
     if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', (e) => { e.preventDefault(); closeModal(joinModal); openModal(signInModal); });
+    
     if (mobileJoinLink) mobileJoinLink.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
     if (mobileSignInLink) mobileSignInLink.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
 
@@ -308,8 +335,35 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             joinEmailValue = joinFormStep1.elements['joinEmail'].value;
             if (joinEmailValue) {
+                joinFormStep1.classList.remove('form-visible');
                 joinFormStep1.classList.add('hidden');
-                if(joinFormStep2) joinFormStep2.classList.remove('hidden');
+                
+                // Hide sign in link when moving to step 2
+                const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
+                if(signInLink) signInLink.style.display = 'none';
+                
+                if(joinFormStep2) {
+                    // Inject back button at the start of step 2
+                    let backBtn = joinModal.querySelector('.join-back-btn');
+                    if(!backBtn) {
+                        backBtn = document.createElement('button');
+                        backBtn.className = 'join-back-btn modal-link-btn back-arrow'; // Use back-arrow class for styling
+                        backBtn.innerHTML = '&#8592; Back'; 
+                        backBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            joinFormStep2.classList.add('hidden');
+                            joinFormStep1.classList.remove('hidden');
+                            joinFormStep1.classList.add('form-visible');
+                            backBtn.remove();
+                            
+                            // Reshow sign in link when going back to step 1
+                            const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
+                            if(signInLink) signInLink.style.display = 'block';
+                        });
+                        joinModal.querySelector('.modal-content').insertAdjacentElement('afterbegin', backBtn);
+                    }
+                    joinFormStep2.classList.remove('hidden');
+                }
             }
         });
     }
