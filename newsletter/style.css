@@ -276,6 +276,8 @@ body.logged-in .mobile-top-bar {
 
 /* --- HEADER --- */
 .main-header {
+    position: sticky; /* ADDED: Makes the entire header sticky */
+    top: 0;           /* ADDED: Sticks it to the top */
     z-index: 1001;
     background-color: var(--color-background);
     max-width: 1200px;
@@ -333,15 +335,13 @@ body.logged-in .mobile-top-bar {
     margin: 0.5rem 0 0 0;
     text-align: center;
 }
-
 .main-nav {
-    position: sticky;
-    top: 0;
+    /* REMOVED: position: sticky; */
+    /* REMOVED: top: 0; */
     z-index: 1001;
     background-color: var(--color-background);
     border-bottom: 1px solid var(--color-border);
 }
-/* ... */
 .main-nav ul {
     display: flex; justify-content: center; align-items: center;
     gap: 1.5rem; /* Reduced gap */
@@ -1538,4 +1538,3 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
     white-space: nowrap;
 }
-
