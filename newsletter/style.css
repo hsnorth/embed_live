@@ -1448,8 +1448,6 @@ body.logged-in .mobile-top-bar {
 }
 /* --- MOBILE ACCOUNT ICON STYLES --- */
 
-/* --- MOBILE ACCOUNT ICON STYLES --- */
-
 /* Set the icon color to black */
 #mobile-account-trigger {
     color: var(--color-text);
@@ -1460,12 +1458,10 @@ body.logged-in .mobile-top-bar {
     display: none;
 }
 
-/* On small screens, ONLY show the icon if the user is logged in */
-@media (max-width: 768px) {
-    body.logged-in #mobile-account-trigger {
-        display: flex; /* Use flex to vertically align the SVG icon */
-        align-items: center;
-    }
+/* On ALL screens, show the icon if the user is logged in */
+body.logged-in #mobile-account-trigger {
+    display: flex; /* Use flex to vertically align the SVG icon */
+    align-items: center;
 }
 
 /* --- WEEKDAY CLOSED OVERLAY STYLES --- */
@@ -1558,6 +1554,4 @@ body.logged-in .mobile-top-bar {
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-}
-
 }
