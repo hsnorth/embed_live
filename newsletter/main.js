@@ -154,10 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setLiveDate();
     
+
+    // ... (lines 160-170)
+    
     // --- HEADER SCROLL EFFECT ---
     if (header && headerBranding) {
+        // Calculate the height of the content *above* the sticky nav
+        const topBarHeight = header.querySelector('.header-top-bar').offsetHeight;
+        const brandingHeight = header.querySelector('.header-branding').offsetHeight;
+        const scrollThreshold = topBarHeight + brandingHeight;
+
         window.addEventListener('scroll', () => {
-            const scrollThreshold = header.offsetHeight - header.querySelector('.main-nav').offsetHeight;
             if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
             } else {
@@ -165,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
     // --- SEARCH MODAL ---
     function openSearch() {
         if (!searchOverlay) return;
