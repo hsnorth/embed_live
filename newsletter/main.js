@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const content = modal.querySelector('.modal-content');
             
             // Inject Sign In link under tagline on first step
-            if (joinFormStep1 && joinFormStep1.classList.contains('form-visible')) {
+            if (joinFormStep1 && !joinFormStep1.classList.contains('hidden')) { // Check if step 1 is visible/about to be visible
                 let signInLink = content.querySelector('.modal-sign-in-prompt');
                 if (!signInLink) {
                     signInLink = document.createElement('button');
@@ -242,7 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         closeModal(joinModal);
                         openModal(signInModal);
                     });
-                    joinFormStep1.insertAdjacentElement('afterend', signInLink);
+                    // Insert after the button in Step 1
+                    joinFormStep1.querySelector('.modal-btn').insertAdjacentElement('afterend', signInLink);
                 }
                 signInLink.style.display = 'block';
             }
@@ -268,9 +269,11 @@ document.addEventListener('DOMContentLoaded', () => {
             joinFormStep2.reset();
             joinFormStep1.classList.remove('form-visible');
             
-            // Hide the dynamically added sign-in link on closing
+            // Hide the dynamically added sign-in link and back button on closing
             const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
             if(signInLink) signInLink.style.display = 'none';
+            const backBtn = joinModal.querySelector('.join-back-btn');
+            if(backBtn) backBtn.remove();
         }
         if (typeInterval) clearInterval(typeInterval);
         if (modalTagline) {
