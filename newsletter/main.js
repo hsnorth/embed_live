@@ -154,24 +154,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setLiveDate();
     
-
-    // ... (lines 160-170)
-    
     // --- HEADER SCROLL EFFECT ---
     if (header && headerBranding) {
-        // Calculate the height of the content *above* the sticky nav
-        const topBarHeight = header.querySelector('.header-top-bar').offsetHeight;
-        const brandingHeight = header.querySelector('.header-branding').offsetHeight;
-        const scrollThreshold = topBarHeight + brandingHeight;
-
         window.addEventListener('scroll', () => {
+            // Calculate the height of the non-sticky elements (Top Bar + Branding)
+            const navElement = header.querySelector('.main-nav');
+            // The scroll threshold is the height of the header minus the height of the nav
+            // so that the 'scrolled' class is applied exactly when the nav hits the top (0 scroll distance from the header's sticky point).
+            const scrollThreshold = header.offsetHeight - navElement.offsetHeight;
+            
             if (window.scrollY > scrollThreshold) {
+                // Apply 'scrolled' class to hide branding and show the small logo
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
         });
     }
+
     // --- SEARCH MODAL ---
     function openSearch() {
         if (!searchOverlay) return;
