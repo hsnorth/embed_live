@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 signInLink.style.display = 'block';
             }
 
-            const textToType = "For stories to tell at the supper";
+            const textToType = "For stories to tell at supper";
             typeWriter(modalTagline, textToType, 80, () => {
                 if(joinFormStep1) joinFormStep1.classList.add('form-visible');
             });
