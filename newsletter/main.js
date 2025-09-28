@@ -239,6 +239,21 @@ document.addEventListener('DOMContentLoaded', () => {
             modalTagline.classList.remove('typing-active');
         }
     }
+    
+    /* ADDED: Helper to remove the sticky banner and scroll lock */
+    function removeStickyBannerLock() {
+        if (stickyBanner && stickyBanner.classList.contains('is-visible')) {
+            stickyBanner.classList.remove('is-visible');
+        }
+        if (isScrollLocked) {
+            isScrollLocked = false;
+            window.removeEventListener('scroll', handleScrollLock);
+            // It's important to remove 'no-scroll' if it was applied elsewhere, 
+            // though in this context it's primarily used by modals.
+            document.body.classList.remove('no-scroll'); 
+        }
+    }
+
 
     // --- EVENT LISTENERS ---
     modalCloseBtns.forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal-overlay'))));
@@ -256,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
+            removeStickyBannerLock(); // Call helper on successful sign up
         } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
@@ -263,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await signInWithEmailAndPassword(auth, email, password);
             showToast('Successfully signed in!', 'success');
             closeModal(signInModal);
+            removeStickyBannerLock(); // Call helper on successful sign in
         } catch (error) { showToast(error.message, 'error'); }
     };
     const handleSignOut = async () => {
@@ -313,17 +330,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AUTH STATE LISTENER (runs on every page) ---
     onAuthStateChanged(auth, (user) => {
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
+        const mobileAccountTrigger = document.getElementById('mobile-account-trigger'); 
+
+        // Remove old click listeners to prevent duplicates
+        mobileAccountTrigger?.removeEventListener('click', (e) => { e.preventDefault(); openAccountPanel(); });
+        
         if (user) {
             document.body.classList.add('logged-in');
+            removeStickyBannerLock(); // Call helper when user state is logged in
+            
+            // 1. Hide the desktop links entirely
             if (userAuthLinks) {
-                userAuthLinks.innerHTML = `<a href="#" class="btn" id="myAccountBtn">MY ACCOUNT</a>`;
-                document.getElementById('myAccountBtn').addEventListener('click', (e) => { 
+                userAuthLinks.innerHTML = ``; // Clear the desktop auth links area
+            }
+            
+            // 2. Attach listener to the icon
+            if (mobileAccountTrigger) {
+                mobileAccountTrigger.addEventListener('click', (e) => { 
                     e.preventDefault(); 
                     openAccountPanel();
                 });
             }
+
         } else {
             document.body.classList.remove('logged-in');
+            
+            // Restore the desktop links for sign in/join
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
                 document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
@@ -512,15 +544,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const bannerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !document.body.classList.contains('logged-in')) {
-                    if (!stickyBanner.classList.contains('is-visible')) {
-                        stickyBanner.classList.add('is-visible');
-                        scrollLockPosition = entry.boundingClientRect.top + window.scrollY - window.innerHeight + stickyBanner.offsetHeight;
-                        isScrollLocked = true;
-                        window.addEventListener('scroll', handleScrollLock);
-                    }
+                // IMPORTANT: Only trigger if NOT logged in AND the banner is not already visible
+                if (entry.isIntersecting && !document.body.classList.contains('logged-in') && !stickyBanner.classList.contains('is-visible')) {
+                    stickyBanner.classList.add('is-visible');
+                    scrollLockPosition = entry.boundingClientRect.top + window.scrollY - window.innerHeight + stickyBanner.offsetHeight;
+                    isScrollLocked = true;
+                    window.addEventListener('scroll', handleScrollLock);
                 }
             });
+            // We should also unobserve if the user is logged in
+             if (document.body.classList.contains('logged-in') && triggerSection) {
+                 bannerObserver.unobserve(triggerSection);
+            }
         }, { threshold: 0.01 });
 
         if (triggerSection) {
