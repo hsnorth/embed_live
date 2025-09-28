@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Configuration for which sections get an animated subtitle
     const sectionsToAnimate = [
-        { id: 'essentials', subtitle: 'Stories that mattered this week in Montreal' },
-        { id: 'imports', subtitle: 'And what about the stories around the world that mattered here' },
+        { id: 'essentials', subtitle: 'What mattered this week in Montreal' },
+        { id: 'imports', subtitle: 'Stories abroad that mattered here' },
         { id: 'deliveries', subtitle: "What are we monitoring next week?" },
         { id: 'cannoli', subtitle: 'The sweet treat' }
     ];
