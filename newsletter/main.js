@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- HEADER SCROLL EFFECT ---
     if (header && headerBranding) {
         window.addEventListener('scroll', () => {
-            const scrollThreshold = headerBranding.offsetHeight;
+            const scrollThreshold = header.offsetHeight - header.querySelector('.main-nav').offsetHeight;
             if (window.scrollY > scrollThreshold) {
                 header.classList.add('scrolled');
             } else {
