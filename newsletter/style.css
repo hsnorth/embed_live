@@ -333,6 +333,7 @@ body.logged-in .mobile-top-bar {
     margin: 0.5rem 0 0 0;
     text-align: center;
 }
+
 .main-nav {
     position: sticky;
     top: 0;
@@ -340,6 +341,7 @@ body.logged-in .mobile-top-bar {
     background-color: var(--color-background);
     border-bottom: 1px solid var(--color-border);
 }
+/* ... */
 .main-nav ul {
     display: flex; justify-content: center; align-items: center;
     gap: 1.5rem; /* Reduced gap */
