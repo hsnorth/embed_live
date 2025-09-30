@@ -175,64 +175,50 @@ input:checked + .slider:before { transform: translateX(22px); }
     height: 100%;
     background-color: var(--color-background);
     display: flex;
-    /* Start with items side-by-side */
     flex-direction: row;
     justify-content: center;
     align-items: center;
     z-index: 10000;
     opacity: 1;
-    /* Add a delay to the fade-out so the message can be read */
     transition: opacity 0.5s ease-out 0.5s;
 }
 #loader.hidden {
     opacity: 0;
     pointer-events: none;
 }
-
-/* This new class will be added by JavaScript to change the layout */
 #loader.is-typing {
     flex-direction: column;
 }
-
 .loader-icon {
     height: 60px;
-    margin-right: 8px; /* Default margin for side-by-side layout */
+    margin-right: 8px;
 }
-
-/* Adjust the icon's margin when the layout changes to vertical */
 #loader.is-typing .loader-icon {
     margin-right: 0;
     margin-bottom: 1rem;
 }
-
 .loader-cursor {
-    display: inline-block; /* The original cursor is visible by default */
+    display: inline-block;
     width: 3px;
     height: 50px;
     background-color: var(--color-text);
     animation: blink 1s infinite;
 }
-
-/* Hide the original cursor when the typing animation starts */
 #loader.is-typing .loader-cursor {
     display: none;
 }
-
 .loader-message {
-    display: none; /* The message is hidden by default */
+    display: none;
     font-family: var(--font-serif);
     font-weight: 400;
     font-size: 2rem;
     margin-top: 1rem;
     color: var(--color-text);
-    min-height: 1.5em; /* Reserve space */
+    min-height: 1.5em;
 }
-
-/* Show the message area when the typing animation starts */
 #loader.is-typing .loader-message {
     display: block;
 }
-
 .loader-message::after {
     content: '|';
     display: inline-block;
@@ -276,8 +262,8 @@ body.logged-in .mobile-top-bar {
 
 /* --- HEADER --- */
 .main-header {
-    position: sticky; /* ADDED: Makes the entire header sticky */
-    top: 0;           /* ADDED: Sticks it to the top */
+    position: sticky;
+    top: 0;
     z-index: 1001;
     background-color: var(--color-background);
     max-width: 1200px;
@@ -285,10 +271,6 @@ body.logged-in .mobile-top-bar {
     padding: 0 1rem;
     box-sizing: border-box;
 }
-.simple-header {
-    border-bottom: 1px solid var(--color-border);
-}
-
 .header-top-bar {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -299,7 +281,6 @@ body.logged-in .mobile-top-bar {
 }
 .top-bar-left { justify-self: start; display: flex; align-items: center; gap: 1.5rem; }
 .user-actions { justify-self: end; display: flex; align-items: center; gap: 1.5rem; }
-
 .header-branding {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -335,21 +316,19 @@ body.logged-in .mobile-top-bar {
     text-align: center;
 }
 .main-nav {
-    /* REMOVED: position: sticky; */
-    /* REMOVED: top: 0; */
     z-index: 1001;
     background-color: var(--color-background);
     border-bottom: 1px solid var(--color-border);
 }
 .main-nav ul {
     display: flex; justify-content: center; align-items: center;
-    gap: 1.5rem; /* Reduced gap */
+    gap: 1.5rem;
     list-style: none; margin: 0; padding: 0;
 }
 .main-nav ul li a {
     display: block;
     font-family: var(--font-sans);
-    font-weight: 400; /* Default to normal weight for dynamic nav */
+    font-weight: 400;
     font-size: 0.8rem;
     color: var(--color-text);
     text-decoration: none;
@@ -357,29 +336,23 @@ body.logged-in .mobile-top-bar {
     letter-spacing: 0.5px;
     transition: color 0.2s ease;
     padding: 0.8rem 0;
-    padding-bottom: calc(0.8rem - 4px); 
+    padding-bottom: calc(0.8rem - 4px);
     border-bottom: 4px solid transparent;
     transition: border-bottom-color 0.3s ease, font-weight 0.3s ease;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
 }
-
-/* Style for the original, static navigation state */
 .main-nav.original-nav ul li a {
     font-weight: 700;
     padding: 0.8rem 1rem;
     padding-bottom: calc(0.8rem - 4px);
 }
-
 .main-nav ul li a.active-link {
-    border-bottom-color: var(--color-accent); 
-    font-weight: 700; /* Make active link bold in both nav states */
+    border-bottom-color: var(--color-accent);
+    font-weight: 700;
 }
-
 .main-nav a:hover { color: #888; }
-
-/* Styles for the dynamic navigation components */
 .main-nav:not(.original-nav) ul {
-    justify-content: center; /* Changed from flex-start to center */
+    justify-content: center;
     overflow-x: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -391,7 +364,6 @@ body.logged-in .mobile-top-bar {
     font-weight: 700;
     cursor: default;
 }
-
 .main-nav ul li.nav-separator a {
     font-weight: 400;
     color: #999;
@@ -401,7 +373,7 @@ body.logged-in .mobile-top-bar {
 }
 .main-nav ul li.nav-section-title a,
 .main-nav ul li.nav-separator a {
-    border-bottom-color: transparent; /* No underline on title or separator */
+    border-bottom-color: transparent;
 }
 .main-nav ul li a.next-section-link {
     opacity: 0.6;
@@ -410,7 +382,6 @@ body.logged-in .mobile-top-bar {
 .main-nav ul li a.next-section-link:hover {
     opacity: 1;
 }
-
 .top-bar-left .nav-link,
 .user-actions .nav-link,
 .user-actions .btn {
@@ -458,10 +429,10 @@ body.logged-in .mobile-top-bar {
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
 
-/* --- NEW: Live Ticker Bar Styles --- */
+/* --- Live Ticker Bar Styles --- */
 .live-ticker-container {
     max-width: 1200px;
-    margin: 1rem auto 0; /* Adds top margin and centers */
+    margin: 1rem auto 0;
     padding: 0 1rem;
     box-sizing: border-box;
 }
@@ -472,7 +443,7 @@ body.logged-in .mobile-top-bar {
     background-color: var(--color-text);
     color: var(--color-background);
     padding: 0.75rem 1.25rem;
-    border-radius: 9999px; /* Pill shape */
+    border-radius: 9999px;
     overflow: hidden;
     font-family: var(--font-sans);
     font-size: 0.9rem;
@@ -494,12 +465,10 @@ body.logged-in .mobile-top-bar {
 .sound-bar-animation span:nth-child(2) { animation-delay: -0.2s; }
 .sound-bar-animation span:nth-child(3) { animation-delay: -0.4s; }
 .sound-bar-animation span:nth-child(4) { animation-delay: -0.6s; }
-
 @keyframes sound-wave {
     0% { height: 2px; }
     100% { height: 16px; }
 }
-
 .ticker-title {
     font-weight: 700;
     white-space: nowrap;
@@ -511,61 +480,74 @@ body.logged-in .mobile-top-bar {
 }
 .headlines-container {
     flex-grow: 1;
-    min-width: 0; /* Allows flex-item to shrink */
-    height: 1.2em; /* Height of one line of text */
+    min-width: 0;
     overflow: hidden;
-    position: relative;
 }
-.headlines-list {
-    list-style: none;
-    padding: 0;
+.headlines-track {
+    display: flex;
+    width: fit-content;
+}
+.headlines-track p {
     margin: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* 3 original items, 1 duplicate = 4 total */
-    /* Animation moves list up by 3/4 of its height */
-    animation: roll-headlines 12s linear infinite;
-}
-.headlines-list li {
-    line-height: 1.2em;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    animation: scroll-horizontal 30s linear infinite;
 }
-@keyframes roll-headlines {
-    0% { transform: translateY(0%); }
-    8% { transform: translateY(0%); } /* Pause on 1st item */
-    11% { transform: translateY(-25%); }
-    33% { transform: translateY(-25%); } /* Pause on 2nd item */
-    36% { transform: translateY(-50%); }
-    58% { transform: translateY(-50%); } /* Pause on 3rd item */
-    61% { transform: translateY(-75%); }
-    100% { transform: translateY(-75%); } /* Arrive at duplicate */
+@keyframes scroll-horizontal {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
-
 
 /* --- MAIN CONTENT & HOMEPAGE SECTIONS --- */
 .content-wrapper {
-    margin: 3rem auto; padding: 0 1rem;
+    margin: 3rem auto;
+    padding: 0 1rem;
 }
-.main-article { background: var(--color-background); }
-.eyebrow-container { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
-.harry-icon { width: 38px; height: 38px; object-fit: contain; }
-.eyebrow { font-family: var(--font-sans); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin: 0; }
-.article-title { font-family: var(--font-serif); font-size: 3.2rem; font-weight: 400; line-height: 1.15; margin-top: 0; margin-bottom: 1rem; }
-.main-article p { font-size: 1.15rem; line-height: 1.8; color: #000; }
-.main-article .article-title { font-size: 2.8rem; }
-
-/* Styles for "Show More" functionality */
+.main-article {
+    background: var(--color-background);
+}
+.eyebrow-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+.harry-icon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+}
+.eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: block;
+    margin: 0;
+}
+.article-title {
+    font-family: var(--font-serif);
+    font-size: 3.2rem;
+    font-weight: 400;
+    line-height: 1.15;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+.main-article p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #000;
+}
+.main-article .article-title {
+    font-size: 2.8rem;
+}
 .article-body-wrapper {
     position: relative;
     transition: max-height 0.5s ease-out;
     overflow: hidden;
 }
 .article-body-wrapper.truncated {
-    max-height: 150px; /* Reduced from 250px to show less text initially */
+    max-height: 150px;
 }
 .article-body-wrapper.truncated::after {
     content: '';
@@ -599,48 +581,101 @@ body.logged-in .mobile-top-bar {
     text-decoration: underline;
 }
 
-/* --- MODIFIED: Weekly Highlights Section as a Card --- */
-.weekly-highlights {
-    padding: 3rem 1rem; 
-    border-top: 1px solid var(--color-border);
-}
-.weekly-highlights-content {
-    max-width: 720px;
-    margin: 0 auto;
-    background-color: #f2f2f2;
-    border: 1px solid var(--color-border);
+/* --- NEW Issue Card Styles --- */
+.issue-card {
+    background-color: #7a7e68;
     border-radius: 12px;
-    padding: 2.5rem;
-    box-sizing: border-box;
-}
-.highlights-title {
-    font-family: var(--font-serif);
-    font-size: 2.2rem;
-    font-weight: 400;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    text-align: left;
-}
-.weekly-highlights ul {
-    list-style-type: disc;
-    margin: 0;
-    padding-left: 1.5rem;
+    padding: 1.5rem;
+    color: var(--color-background);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    border: 1px solid #6b705c;
+    margin-top: 2rem;
+}
+.issue-card-header {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 1rem 0;
+    padding: 0;
     text-align: left;
 }
-.weekly-highlights li {
+.issue-card-image-wrapper {
+    text-align: center;
+    padding: 2rem 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.issue-card-image-wrapper img {
+    width: 60%;
+    height: auto;
+}
+.issue-card-body {
+    padding: 1.5rem 0;
+}
+.issue-card-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+.issue-card-title {
     font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.25rem 0;
+}
+.issue-card-subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
     font-size: 1.1rem;
-    line-height: 1.6;
-    padding-left: 0.5rem;
-    color: #333;
+    margin: 0 0 1.5rem 0;
+    opacity: 0.9;
+}
+.issue-card-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.issue-card-highlights a {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    line-height: 1.4;
+    color: var(--color-background);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+}
+.issue-card-highlights a:hover {
+    text-decoration-color: var(--color-accent);
+}
+.issue-card-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    text-align: left;
+}
+.issue-card-footer span {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+}
+
+.page-scroll-indicator {
+    text-align: center;
+    padding: 2rem 0;
 }
 .scroll-down-arrow {
-    display: block;
-    text-align: center;
-    margin-top: 2.5rem;
+    display: inline-block;
     color: var(--color-text);
 }
 .scroll-down-arrow svg {
@@ -652,12 +687,14 @@ body.logged-in .mobile-top-bar {
     transform: translateY(5px);
 }
 
-
 .content-section {
     max-width: 1200px;
     margin: 0 auto;
     padding: 4rem 1rem;
     border-top: 1px solid var(--color-border);
+}
+#essentials.content-section {
+    padding-top: 2rem;
 }
 .section-title {
     font-family: var(--font-serif);
@@ -666,54 +703,6 @@ body.logged-in .mobile-top-bar {
     margin-top: 0;
     margin-bottom: 3rem;
     text-align: center;
-}
-
-/* --- INNER PAGE STYLES (ABOUT, HOW IT WORKS) --- */
-.page-header {
-    text-align: center;
-    padding: 3rem 1rem;
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: 3rem;
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-}
-.page-header h1 {
-    font-size: clamp(3rem, 8vw, 4.5rem);
-    font-weight: 400;
-    margin: 0;
-    letter-spacing: -0.05em;
-}
-.content-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-.feature-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
-    margin: 0 auto 4rem;
-}
-.feature-section.reverse .feature-image {
-    order: 2;
-}
-.feature-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-.feature-text h2 {
-    font-family: var(--font-serif);
-    font-size: 2.2rem;
-    font-weight: 400;
-    margin-top: 0;
-}
-.feature-text p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #333;
 }
 
 /* --- TYPE-ON-SCROLL ANIMATION STYLES --- */
@@ -726,11 +715,11 @@ body.logged-in .mobile-top-bar {
     font-family: var(--font-sans);
     font-weight: 400;
     font-size: 1.8rem;
-    color: var(--color-text); /* Changed to black */
+    color: var(--color-text);
     line-height: 1.4;
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
-    min-height: 2.5em; /* Reserve space */
+    min-height: 2.5em;
     padding: 0 1rem;
     display: flex;
     justify-content: center;
@@ -746,8 +735,8 @@ body.logged-in .mobile-top-bar {
     width: 100%;
     transform: translate(-50%, -50%);
     opacity: 0;
-    transition: opacity 0.5s ease-in-out 0.2s; /* Add delay */
-    margin: 0; /* Override default h2 margin */
+    transition: opacity 0.5s ease-in-out 0.2s;
+    margin: 0;
 }
 .original-title.fade-in {
     opacity: 1;
@@ -807,104 +796,26 @@ body.logged-in .mobile-top-bar {
     color: #333;
 }
 
-/* --- Styles for The Gazette Map --- */
-.map-container {
-    margin: 2rem auto 3.5rem auto;
-    padding: 0 1rem;
-}
-.map-image {
-    width: 100%;
-    max-width: 1100px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-}
-
-/* --- Brief Sidebar --- */
-.brief-sidebar {
-    background-color: #f2f2f2; /* Light grey background */
-    border: 1px solid var(--color-border);
-    padding: 2rem 1.5rem;
-    color: var(--color-text);
-    position: relative;
-    border-radius: 12px; /* Curved edges */
-}
-.sidebar-pin {
-    position: absolute;
-    top: -1px; /* Position at the very top */
-    left: 1.5rem;
-    color: var(--color-text);
-    width: 28px;
-    height: 36px;
-}
-.sidebar-meta {
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    margin-top: 2.5rem; /* Reduced space for pin */
-    margin-bottom: 0.5rem;
-}
-
-.brief-sidebar-title {
-    font-family: var(--font-serif);
-    font-weight: 400; /* Regular weight */
-    font-size: 2rem; /* Larger font size */
-    letter-spacing: -0.5px;
-    margin-top: 0; 
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 8px solid var(--color-text); /* Thicker black underline */
-    position: static;
-    padding-top: 0;
-    text-transform: none; /* remove uppercase */
-    color: var(--color-text);
-}
-.brief-sidebar-title::before {
-    content: none;
-}
-.brief-content ul {
-    list-style-type: disc;
-    margin: 1.5rem 0 0 0;
-    padding-left: 1.2rem; /* Indent bullets */
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem; /* Space between bullets */
-}
-.brief-content li {
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    padding-left: 0.5rem;
-    color: #333;
-}
-.brief-content li strong {
-    color: var(--color-text);
-}
-
-
 /* Cannoli Section styles */
 .cannoli-section-content {
     display: flex;
-    flex-wrap: wrap; 
-    justify-content: center; 
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: flex-start;
-    gap: 2rem; 
-    max-width: 1100px; 
+    gap: 2rem;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1rem; 
+    padding: 0 1rem;
 }
 .cannoli-text-content {
-    flex: 1; 
-    min-width: 300px; 
+    flex: 1;
+    min-width: 300px;
     max-width: 700px;
     text-align: left;
 }
 .cannoli-image-container {
-    flex-shrink: 0; 
-    width: 100%; 
+    flex-shrink: 0;
+    width: 100%;
     max-width: 300px;
     text-align: center;
 }
@@ -913,35 +824,6 @@ body.logged-in .mobile-top-bar {
     height: auto;
     display: block;
 }
-
-/* --- About Us Page Team Grid --- */
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-}
-.team-member {
-    text-align: center;
-}
-.team-member img {
-    width: 100%;
-    max-width: 250px;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    margin: 0 auto 1rem;
-}
-.team-member h3 {
-    margin: 0.5rem 0;
-    font-size: 1.2rem;
-    font-family: var(--font-serif);
-}
-.team-member p {
-    margin: 0;
-    color: #666;
-    font-family: var(--font-sans);
-}
-
 
 /* --- Helper Styles & Mobile Nav --- */
 .menu-toggle { background: none; border: none; cursor: pointer; padding: 0.5rem; display: flex; flex-direction: column; gap: 5px; }
@@ -954,12 +836,12 @@ body.logged-in .mobile-top-bar {
 
 .mobile-nav { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: var(--color-background); z-index: 2000; transform: translateX(-100%); transition: transform 0.3s ease-in-out; padding: 1rem; box-sizing: border-box; overflow-y: auto; text-align: left; }
 .mobile-nav.is-open { transform: translateX(0); }
-.mobile-nav-header { 
+.mobile-nav-header {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    width: 100%; 
-    min-height: 55px; 
-    align-items: center; 
+    width: 100%;
+    min-height: 55px;
+    align-items: center;
 }
 .mobile-nav-header .close-menu-btn { justify-self: start; }
 .mobile-nav-header .mobile-nav-logo { justify-self: center; }
@@ -1027,7 +909,6 @@ body.logged-in .mobile-top-bar {
 .modal-overlay.is-open { opacity: 1; visibility: visible; }
 .modal-content { background-color: var(--color-background); padding: 2rem; border-radius: 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; position: relative; transform: translateY(20px); transition: transform 0.3s ease; box-sizing: border-box; }
 .modal-overlay.is-open .modal-content { transform: translateY(0); }
-.subscription-card { border: 1px solid var(--color-border); background-color: #fcfcfc; }
 .modal-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--color-text); line-height: 1; padding: 0; opacity: 0.7; transition: opacity 0.2s ease; }
 .modal-close-btn:hover { opacity: 1; }
 .modal-header-text { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 400; text-align: center; margin-top: 0.5rem; margin-bottom: 2rem; color: var(--color-text); }
@@ -1045,8 +926,6 @@ body.logged-in .mobile-top-bar {
 .modal-links { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-top: 1.5rem; }
 .modal-link-btn { background: none; border: none; color: #555; font-family: var(--font-sans); font-size: 0.9rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; opacity: 0.8; transition: opacity 0.2s ease, color 0.2s ease; }
 .modal-link-btn:hover { color: var(--color-text); opacity: 1; }
-
-/* ADDED: Style for the dynamically inserted Back button */
 .join-back-btn {
     display: flex;
     align-items: center;
@@ -1062,7 +941,6 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
 }
 .join-back-btn.back-arrow {
-    /* Style for the Unicode arrow character */
     font-size: 1.2rem;
     padding-right: 0.5rem;
 }
@@ -1080,7 +958,7 @@ body.logged-in .mobile-top-bar {
 /* --- STICKY SIGNUP BANNER --- */
 .sticky-signup-banner {
     position: fixed;
-    bottom: -100%; /* Initially hidden */
+    bottom: -100%;
     left: 0;
     width: 100%;
     background-color: var(--color-accent);
@@ -1151,8 +1029,6 @@ body.logged-in .mobile-top-bar {
     white-space: nowrap;
 }
 /* --- COMMENTING FEATURE STYLES --- */
-
-/* "Add Comment" button that appears on highlight */
 #comment-trigger {
     position: absolute;
     background-color: var(--color-text);
@@ -1163,12 +1039,10 @@ body.logged-in .mobile-top-bar {
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
-    z-index: 1010; /* Increased z-index */
+    z-index: 1010;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     border-radius: 4px;
 }
-
-/* Modal form for writing a comment */
 .comment-form-modal {
     position: fixed;
     top: 0;
@@ -1181,7 +1055,6 @@ body.logged-in .mobile-top-bar {
     align-items: center;
     z-index: 3500;
 }
-
 .comment-form-content {
     background-color: var(--color-background);
     padding: 2rem;
@@ -1190,13 +1063,11 @@ body.logged-in .mobile-top-bar {
     position: relative;
     font-family: var(--font-sans);
 }
-
 .comment-form-content h3 {
     font-family: var(--font-serif);
     font-size: 1.5rem;
     margin-top: 0;
 }
-
 .comment-close-btn {
     position: absolute;
     top: 0.5rem;
@@ -1207,7 +1078,6 @@ body.logged-in .mobile-top-bar {
     cursor: pointer;
     color: #888;
 }
-
 .comment-quote {
     border-left: 3px solid var(--color-accent);
     padding-left: 1rem;
@@ -1216,7 +1086,6 @@ body.logged-in .mobile-top-bar {
     color: #555;
     font-size: 0.95rem;
 }
-
 .comment-form-content textarea {
     width: 100%;
     height: 100px;
@@ -1227,14 +1096,12 @@ body.logged-in .mobile-top-bar {
     margin-bottom: 1rem;
     resize: vertical;
 }
-
 .comment-options {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
 }
-
 #comment-post-btn {
     width: 100%;
     padding: 1rem;
@@ -1246,28 +1113,21 @@ body.logged-in .mobile-top-bar {
     text-transform: uppercase;
     cursor: pointer;
 }
-
-/* Dotted underline for commented text */
 .comment-highlight {
     text-decoration: underline dotted var(--color-text);
     text-decoration-thickness: 2px;
     background-color: rgba(255, 222, 63, 0.2);
     cursor: pointer;
 }
-
-/* --- REPLACED/NEW COMMENT STYLES START HERE --- */
-
-/* This replaces the old #comment-view style */
 #comment-view {
     position: absolute;
     background: var(--color-background);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     border: 1px solid var(--color-border);
     z-index: 100;
-    padding: 0; 
+    padding: 0;
     min-width: 300px;
 }
-
 .comment-view-header {
     display: flex;
     justify-content: space-between;
@@ -1276,14 +1136,12 @@ body.logged-in .mobile-top-bar {
     border-bottom: 1px solid var(--color-border);
     background-color: #fcfcfc;
 }
-
 .comment-author {
     font-family: var(--font-sans);
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--color-text);
 }
-
 .comment-view-close-btn {
     background: none;
     border: none;
@@ -1297,7 +1155,6 @@ body.logged-in .mobile-top-bar {
 .comment-view-close-btn:hover {
     color: var(--color-text);
 }
-
 #comment-view .comment-body {
     padding: 1.25rem;
     margin: 0;
@@ -1306,13 +1163,10 @@ body.logged-in .mobile-top-bar {
     line-height: 1.7;
     color: #333;
 }
-
-/* New styles for the reply functionality */
 .comment-footer {
     padding: 0.5rem 1.25rem;
     border-top: 1px solid var(--color-border);
 }
-
 .reply-btn {
     background: none;
     border: none;
@@ -1327,14 +1181,12 @@ body.logged-in .mobile-top-bar {
 .reply-btn:hover {
     color: var(--color-text);
 }
-
 .replies-container {
     background-color: #fcfcfc;
     max-height: 200px;
     overflow-y: auto;
     border-top: 1px solid var(--color-border);
 }
-
 .reply {
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--color-border);
@@ -1342,14 +1194,12 @@ body.logged-in .mobile-top-bar {
 .reply:last-child {
     border-bottom: none;
 }
-
 .reply-author {
     font-family: var(--font-sans);
     font-weight: 700;
     font-size: 0.8rem;
     margin-bottom: 0.25rem;
 }
-
 .reply-body {
     font-family: var(--font-serif);
     font-size: 0.95rem;
@@ -1357,12 +1207,10 @@ body.logged-in .mobile-top-bar {
     margin: 0;
     color: #444;
 }
-
 .reply-form-container {
     padding: 1rem 1.25rem;
     border-top: 1px solid var(--color-border);
 }
-
 .reply-textarea {
     display: block;
     width: 100%;
@@ -1375,7 +1223,6 @@ body.logged-in .mobile-top-bar {
     min-height: 60px;
     margin-bottom: 0.75rem;
 }
-
 .post-reply-btn {
     background-color: var(--color-text);
     color: var(--color-background);
@@ -1386,17 +1233,10 @@ body.logged-in .mobile-top-bar {
     font-size: 0.8rem;
     cursor: pointer;
 }
-
-/* --- END OF NEW COMMENT STYLES --- */
-
-
-/* Sidebar on wide screens */
 .comment-display-sidebar {
     width: 320px;
-    position: absolute; /* Changed from fixed to absolute for better flow */
+    position: absolute;
 }
-
-/* Pop-up on narrow screens */
 .comment-display-popup {
     width: 80%;
     max-width: 350px;
@@ -1446,31 +1286,19 @@ body.logged-in .mobile-top-bar {
 }
 
 /* --- Responsive Styles --- */
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
     .mobile-top-bar { display: block; }
     .main-header { top: 36px; }
     body.logged-in .main-header { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
-    
-    .logo {
-        font-size: clamp(2.8rem, 12vw, 4rem); /* Adjusted font size for mobile */
-    }
-
+    .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
     .main-nav ul { justify-content: flex-start; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
     .main-nav ul::-webkit-scrollbar { display: none; }
     .article-title { font-size: 2.5rem; }
     .desktop-only { display: none; }
     .mobile-only-icon { display: block; }
     .scrolled-logo-link { font-size: 2rem; position: static; transform: none; text-align: center; width: 100%; }
-    .feature-section, .feature-section.reverse { grid-template-columns: 1fr; }
-    .feature-section.reverse .feature-image { order: 1; }
-    .sticky-signup-content { flex-direction: column; text-align: center; }
-    .sticky-signup-form { justify-content: center; }
-    .content-section { padding: 3rem 1rem; }
-    .team-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-    
-    /* MODIFIED: Removes divider between the (now gone) sidebar and article on mobile */
     #welcome .main-article {
         border-top: none;
         margin-top: 0;
@@ -1478,50 +1306,34 @@ body.logged-in .mobile-top-bar {
     }
 }
 
-@media (min-width: 769px) and (max-width: 1023px) {
-    .desktop-only { display: flex; }
-    .mobile-only-icon { display: none; }
-}
-
 @media (min-width: 1024px) {
     .how-it-works { display: block; }
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
     
-    /* MODIFIED: This removes the two-column grid layout on desktop */
-    #welcome.content-wrapper {
-        display: block; /* Changed from grid */
-        max-width: 680px; /* Match the article width for a single column */
-        grid-template-columns: none;
-        gap: 0;
+    .live-ticker-container {
+        max-width: 680px;
     }
-    /* REMOVED: Obsolete grid column rules for sidebar and article */
 
-    .cannoli-section-content {
-        justify-content: space-between;
+    #welcome.content-wrapper {
+        display: grid;
+        grid-template-columns: 2fr 1.1fr;
+        gap: 4rem;
+        max-width: 1100px;
+        align-items: flex-start;
     }
-    .cannoli-text-content {
-        padding-right: 2rem;
-    }
-    .cannoli-image-container {
-        width: auto;
-    }
-    
-    .comment-display-sidebar {
-        left: calc(100% + 2rem);
+
+    .issue-card {
+        margin-top: 0;
     }
 }
 
 /* --- DRAGGABLE COMMENT STYLES --- */
-
-/* On medium screens and up, make the header a drag handle */
 @media (min-width: 769px) {
     #comment-view .comment-view-header {
         cursor: move;
     }
 }
-
-/* Optional: Add a subtle style when the box is actively being dragged */
 #comment-view.is-dragging {
     opacity: 0.9;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
@@ -1545,53 +1357,44 @@ body.logged-in .mobile-top-bar {
     align-items: center;
     cursor: pointer;
 }
-
-/* Remove bottom margin from title inside a collapsible header */
 .collapsible-header .account-section-title {
     margin-bottom: 0;
 }
-
 .collapsible-arrow {
     font-size: 0.8rem;
     transition: transform 0.3s ease;
 }
-
 .collapsible-header.is-open .collapsible-arrow {
-    transform: rotate(180deg); /* Points the arrow up */
+    transform: rotate(180deg);
 }
-
 .collapsible-content {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
     padding-top: 0;
 }
-
 .collapsible-content.is-open {
-    max-height: 500px; /* A large value to allow for content expansion */
+    max-height: 500px;
     padding-top: 1.5rem;
 }
 
 /* --- "HOW IT WORKS" PANEL STYLES --- */
 .account-panel.from-left {
     right: auto;
-    left: -100%; /* Start off-screen to the left */
-    box-shadow: 5px 0 25px rgba(0,0,0,0.15); /* Shadow on the right side */
-    transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Animate the 'left' property */
+    left: -100%;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.15);
+    transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
 .account-panel-overlay.is-open .account-panel.from-left {
     left: 0;
     right: auto;
 }
-    
 #how-it-works-panel .account-panel-header h2 {
     font-family: var(--font-serif);
     font-size: 1.8rem;
     font-weight: 400;
     margin: 0;
 }
-    
 #how-it-works-panel .item-title {
     font-family: var(--font-serif);
     font-size: 1.5rem;
@@ -1600,18 +1403,15 @@ body.logged-in .mobile-top-bar {
     margin-top: 0;
     margin-bottom: 1rem;
 }
-
 #how-it-works-panel .item-description {
     font-size: 1rem;
     line-height: 1.8;
     color: #333;
     margin-bottom: 1rem;
 }
-
 #how-it-works-panel .item-description:last-child {
     margin-bottom: 0;
 }
-
 #how-it-works-panel .item-description strong {
     font-family: var(--font-sans);
     font-weight: 700;
@@ -1620,26 +1420,20 @@ body.logged-in .mobile-top-bar {
 
 /* --- MOBILE ICON SPACING --- */
 .user-actions {
-    gap: 0.5rem; /* Adjusts space between mobile icons */
+    gap: 0.5rem;
 }
 .mobile-only-icon svg {
-    display: block; /* Ensures proper alignment */
+    display: block;
 }
 /* --- MOBILE ACCOUNT ICON STYLES --- */
-
-/* Set the icon color to black */
 #mobile-account-trigger {
     color: var(--color-text);
 }
-
-/* Hide the icon by default */
 #mobile-account-trigger {
     display: none;
 }
-
-/* On ALL screens, show the icon if the user is logged in */
 body.logged-in #mobile-account-trigger {
-    display: flex; /* Use flex to vertically align the SVG icon */
+    display: flex;
     align-items: center;
 }
 
@@ -1659,7 +1453,6 @@ body.logged-in #mobile-account-trigger {
     padding: 1rem;
     box-sizing: border-box;
 }
-
 #weekday-message-placeholder {
     font-family: var(--font-serif);
     font-size: clamp(2rem, 5vw, 2.8rem);
@@ -1668,8 +1461,6 @@ body.logged-in #mobile-account-trigger {
     color: var(--color-text);
     min-height: 1.5em;
 }
-
-/* Blinking cursor for typewriter effect */
 #weekday-message-placeholder::after {
     content: '|';
     display: inline-block;
@@ -1678,31 +1469,26 @@ body.logged-in #mobile-account-trigger {
     top: -4px;
     opacity: 1;
 }
-
 #weekday-message-placeholder.typing-done::after {
     opacity: 0;
     transition: opacity 0.3s;
 }
-
 .weekday-signup-form {
     margin-top: 3rem;
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s;
 }
-
 .weekday-signup-form.is-visible {
     opacity: 1;
     transform: translateY(0);
 }
-
 .weekday-signup-form label {
     display: block;
     font-family: var(--font-sans);
     font-size: 1.1rem;
     margin-bottom: 1rem;
 }
-
 .weekday-input-group {
     display: flex;
     justify-content: center;
@@ -1710,7 +1496,6 @@ body.logged-in #mobile-account-trigger {
     margin: 0 auto;
     border: 1px solid var(--color-text);
 }
-
 .weekday-input-group input {
     flex-grow: 1;
     border: none;
@@ -1723,7 +1508,6 @@ body.logged-in #mobile-account-trigger {
 .weekday-input-group input:focus {
     outline: none;
 }
-
 .weekday-input-group button {
     background-color: var(--color-text);
     color: var(--color-background);
