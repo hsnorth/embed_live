@@ -584,15 +584,13 @@ body.logged-in .mobile-top-bar {
 .open-haul-prompt {
     font-family: var(--font-serif);
     font-weight: 400;
-    font-size: 3rem;
-    text-transform: uppercase;
-    letter-spacing: -0.08em;
+    font-size: 2rem;
     margin: 0 0 1rem 0;
     text-align: center;
 }
 .page-scroll-indicator {
     text-align: center;
-    padding: 2rem 0;
+    padding: 1rem 0;
 }
 .scroll-down-arrow {
     display: inline-block;
