@@ -583,10 +583,10 @@ body.logged-in .mobile-top-bar {
 
 /* --- NEW "What's Happening" Card Styles --- */
 .whats-happening-card {
-    background-color: #2a2a2a; /* Dark grey */
+    background-color: #e7e7e7; /* Dark grey */
     border-radius: 12px;
     padding: 1.5rem;
-    color: var(--color-background);
+    color: black;
     margin-top: 2rem;
 }
 .wh-title {
