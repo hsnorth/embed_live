@@ -581,92 +581,54 @@ body.logged-in .mobile-top-bar {
     text-decoration: underline;
 }
 
-/* --- NEW Issue Card Styles --- */
-.issue-card {
-    background-color: #7a7e68;
+/* --- NEW "What's Happening" Card Styles --- */
+.whats-happening-card {
+    background-color: #2a2a2a; /* Dark grey */
     border-radius: 12px;
     padding: 1.5rem;
     color: var(--color-background);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #6b705c;
     margin-top: 2rem;
 }
-.issue-card-header {
+.wh-title {
     font-family: var(--font-serif);
-    font-weight: 600;
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-weight: 700;
+    font-size: 1.8rem;
     margin: 0 0 1rem 0;
     padding: 0;
-    text-align: left;
 }
-.issue-card-image-wrapper {
-    text-align: center;
-    padding: 2rem 0;
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.issue-card-image-wrapper img {
-    width: 60%;
-    height: auto;
-}
-.issue-card-body {
-    padding: 1.5rem 0;
-}
-.issue-card-divider {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
+.wh-list {
+    list-style: none;
+    padding: 0;
     margin: 0;
 }
-.issue-card-title {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin: 1.5rem 0 0.25rem 0;
+.wh-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
-.issue-card-subtitle {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 1.1rem;
-    margin: 0 0 1.5rem 0;
-    opacity: 0.9;
+.wh-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
-.issue-card-highlights {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+.wh-item:first-child {
+    padding-top: 0;
 }
-.issue-card-highlights a {
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    line-height: 1.4;
+.wh-item a {
     color: var(--color-background);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1px;
-}
-.issue-card-highlights a:hover {
-    text-decoration-color: var(--color-accent);
-}
-.issue-card-footer {
-    margin-top: auto;
-    padding-top: 1rem;
-    text-align: left;
-}
-.issue-card-footer span {
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
+    text-decoration: none;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    opacity: 0.7;
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+.wh-item a:hover {
+    color: var(--color-accent);
+}
+.wh-category {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: #aaa;
 }
 
 .page-scroll-indicator {
@@ -1322,7 +1284,7 @@ body.logged-in .mobile-top-bar {
         align-items: flex-start;
     }
 
-    .issue-card {
+    .whats-happening-card {
         margin-top: 0;
     }
 }
