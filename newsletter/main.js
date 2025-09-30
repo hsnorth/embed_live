@@ -57,17 +57,33 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
+        // MODIFIED: This logic now opens the main join modal instead of just showing a toast.
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const emailInput = document.getElementById('weekday-email');
-                if (emailInput && emailInput.value) {
-                    if (typeof showToast === 'function') {
-                        showToast(`${emailInput.value} has been added to the list!`, 'success');
+                const emailValue = emailInput ? emailInput.value : '';
+
+                if (emailValue) {
+                    // Get the main "Join Community" modal and its email field
+                    const joinModal = document.getElementById('joinModal');
+                    const joinEmailInput = document.getElementById('joinEmail');
+
+                    if (joinModal && joinEmailInput) {
+                        // Pre-fill the email in the main modal
+                        joinEmailInput.value = emailValue;
+
+                        // Open the full sign-up modal
+                        openModal(joinModal);
+
+                        // Hide the weekday overlay so the user can see the modal
+                        if (closedOverlay) {
+                            closedOverlay.style.display = 'none';
+                        }
                     } else {
-                        alert("Thank you for subscribing!");
+                        // Fallback if the main modal isn't found for some reason
+                        alert("Thank you for your interest!");
                     }
-                    signupForm.reset();
                 }
             });
         }
@@ -157,14 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- HEADER SCROLL EFFECT ---
     if (header && headerBranding) {
         window.addEventListener('scroll', () => {
-            // Calculate the height of the non-sticky elements (Top Bar + Branding)
             const navElement = header.querySelector('.main-nav');
-            // The scroll threshold is the height of the header minus the height of the nav
-            // so that the 'scrolled' class is applied exactly when the nav hits the top (0 scroll distance from the header's sticky point).
             const scrollThreshold = header.offsetHeight - navElement.offsetHeight;
             
             if (window.scrollY > scrollThreshold) {
-                // Apply 'scrolled' class to hide branding and show the small logo
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
@@ -214,8 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isScrollLocked) {
             isScrollLocked = false;
             window.removeEventListener('scroll', handleScrollLock);
-            // It's important to remove 'no-scroll' if it was applied elsewhere, 
-            // though in this context it's primarily used by modals.
             document.body.classList.remove('no-scroll'); 
         }
     }
@@ -230,8 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal.id === 'joinModal') {
             const content = modal.querySelector('.modal-content');
             
-            // Inject Sign In link under tagline on first step
-            if (joinFormStep1 && !joinFormStep1.classList.contains('hidden')) { // Check if step 1 is visible/about to be visible
+            if (joinFormStep1 && !joinFormStep1.classList.contains('hidden')) {
                 let signInLink = content.querySelector('.modal-sign-in-prompt');
                 if (!signInLink) {
                     signInLink = document.createElement('button');
@@ -242,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         closeModal(joinModal);
                         openModal(signInModal);
                     });
-                    // Insert after the button in Step 1
                     joinFormStep1.querySelector('.modal-btn').insertAdjacentElement('afterend', signInLink);
                 }
                 signInLink.style.display = 'block';
@@ -262,14 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('no-scroll');
         
         if (joinFormStep1 && joinFormStep2) {
-            // Restore to step 1 state
             joinFormStep1.classList.remove('hidden');
             joinFormStep2.classList.add('hidden');
             joinFormStep1.reset();
             joinFormStep2.reset();
             joinFormStep1.classList.remove('form-visible');
             
-            // Hide the dynamically added sign-in link and back button on closing
             const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
             if(signInLink) signInLink.style.display = 'none';
             const backBtn = joinModal.querySelector('.join-back-btn');
@@ -287,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signInModal) signInModal.addEventListener('click', (e) => { if (e.target === signInModal) closeModal(signInModal) });
     if (joinModal) joinModal.addEventListener('click', (e) => { if (e.target === joinModal) closeModal(joinModal) });
     
-    // Reroute these to use the new logic if needed, but they work as fallback if dynamic link is missing
     if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', (e) => { e.preventDefault(); closeModal(signInModal); openModal(joinModal); });
     if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', (e) => { e.preventDefault(); closeModal(joinModal); openModal(signInModal); });
     
@@ -301,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
-            removeStickyBannerLock(); // Call helper on successful sign up
+            removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
     const signIn = async (email, password) => {
@@ -309,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await signInWithEmailAndPassword(auth, email, password);
             showToast('Successfully signed in!', 'success');
             closeModal(signInModal);
-            removeStickyBannerLock(); // Call helper on successful sign in
+            removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
     const handleSignOut = async () => {
@@ -341,16 +346,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 joinFormStep1.classList.remove('form-visible');
                 joinFormStep1.classList.add('hidden');
                 
-                // Hide sign in link when moving to step 2
                 const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
                 if(signInLink) signInLink.style.display = 'none';
                 
                 if(joinFormStep2) {
-                    // Inject back button at the start of step 2
                     let backBtn = joinModal.querySelector('.join-back-btn');
                     if(!backBtn) {
                         backBtn = document.createElement('button');
-                        backBtn.className = 'join-back-btn modal-link-btn back-arrow'; // Use back-arrow class for styling
+                        backBtn.className = 'join-back-btn modal-link-btn back-arrow';
                         backBtn.innerHTML = '&#8592; Back'; 
                         backBtn.addEventListener('click', (e) => {
                             e.preventDefault();
@@ -359,7 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             joinFormStep1.classList.add('form-visible');
                             backBtn.remove();
                             
-                            // Reshow sign in link when going back to step 1
                             const signInLink = joinModal.querySelector('.modal-sign-in-prompt');
                             if(signInLink) signInLink.style.display = 'block';
                         });
@@ -389,19 +391,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
         const mobileAccountTrigger = document.getElementById('mobile-account-trigger'); 
 
-        // Remove old click listeners to prevent duplicates
         mobileAccountTrigger?.removeEventListener('click', (e) => { e.preventDefault(); openAccountPanel(); });
         
         if (user) {
             document.body.classList.add('logged-in');
-            removeStickyBannerLock(); // Call helper when user state is logged in
+            removeStickyBannerLock();
             
-            // 1. Hide the desktop links entirely
             if (userAuthLinks) {
-                userAuthLinks.innerHTML = ``; // Clear the desktop auth links area
+                userAuthLinks.innerHTML = ``;
             }
             
-            // 2. Attach listener to the icon
             if (mobileAccountTrigger) {
                 mobileAccountTrigger.addEventListener('click', (e) => { 
                     e.preventDefault(); 
@@ -412,7 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.body.classList.remove('logged-in');
             
-            // Restore the desktop links for sign in/join
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
                 document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
@@ -601,7 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const bannerObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                // IMPORTANT: Only trigger if NOT logged in AND the banner is not already visible
                 if (entry.isIntersecting && !document.body.classList.contains('logged-in') && !stickyBanner.classList.contains('is-visible')) {
                     stickyBanner.classList.add('is-visible');
                     scrollLockPosition = entry.boundingClientRect.top + window.scrollY - window.innerHeight + stickyBanner.offsetHeight;
@@ -609,7 +606,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.addEventListener('scroll', handleScrollLock);
                 }
             });
-            // We should also unobserve if the user is logged in
              if (document.body.classList.contains('logged-in') && triggerSection) {
                  bannerObserver.unobserve(triggerSection);
             }
