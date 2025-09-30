@@ -459,6 +459,45 @@ body.logged-in .mobile-top-bar {
 .main-header.scrolled .header-branding { display: none; }
 .main-header.scrolled .scrolled-logo-link { display: block; }
 
+/* --- ADDED: Audio Player Bar Styles --- */
+.audio-player-bar {
+    background-color: var(--color-accent); /* Using your existing accent yellow */
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-text);
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.audio-player-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.audio-player-bar .play-icon {
+    width: 20px;
+    height: 20px;
+    fill: var(--color-text);
+}
+.audio-player-bar .on-air-label {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text);
+}
+.audio-player-bar .audio-divider {
+    height: 20px;
+    width: 2px;
+    background-color: var(--color-text);
+    opacity: 0.7;
+}
+.audio-player-bar .audio-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+
 /* --- MAIN CONTENT & HOMEPAGE SECTIONS --- */
 .content-wrapper {
     margin: 3rem auto; padding: 0 1rem;
@@ -477,8 +516,9 @@ body.logged-in .mobile-top-bar {
     transition: max-height 0.5s ease-out;
     overflow: hidden;
 }
+/* MODIFIED: Harry's Note Truncation */
 .article-body-wrapper.truncated {
-    max-height: 250px; /* Adjust this value to control how much text is shown initially */
+    max-height: 150px; /* Reduced from 250px to show less text initially */
 }
 .article-body-wrapper.truncated::after {
     content: '';
@@ -510,6 +550,40 @@ body.logged-in .mobile-top-bar {
 .show-more-btn:hover {
     color: var(--color-text);
     text-decoration: underline;
+}
+
+/* --- ADDED: Weekly Highlights Section --- */
+.weekly-highlights {
+    background-color: #f2f2f2; /* Same grey as the old sidebar */
+    padding: 2.5rem 1rem;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+.weekly-highlights-content {
+    max-width: 680px; /* Aligns with your article content */
+    margin: 0 auto;
+}
+.highlights-title {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+.weekly-highlights ul {
+    list-style-type: disc;
+    margin: 0;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.weekly-highlights li {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    padding-left: 0.5rem;
+    color: #333;
 }
 
 .content-section {
@@ -1329,11 +1403,11 @@ body.logged-in .mobile-top-bar {
     .content-section { padding: 3rem 1rem; }
     .team-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
     
-    /* Adds divider between sidebar and article on mobile */
+    /* MODIFIED: Removes divider between the (now gone) sidebar and article on mobile */
     #welcome .main-article {
-        border-top: 1px solid var(--color-border);
-        margin-top: 2rem;
-        padding-top: 2rem;
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
     }
 }
 
@@ -1347,20 +1421,14 @@ body.logged-in .mobile-top-bar {
     .desktop-only { display: flex; }
     .mobile-only-icon { display: none; }
     
+    /* MODIFIED: This removes the two-column grid layout on desktop */
     #welcome.content-wrapper {
-        display: grid;
-        align-items: flex-start;
-        max-width: 1100px;
-        grid-template-columns: 1.1fr 2fr;
-        gap: 4rem;
+        display: block; /* Changed from grid */
+        max-width: 680px; /* Match the article width for a single column */
+        grid-template-columns: none;
+        gap: 0;
     }
-    #welcome .sidebar-container {
-        grid-column: 1;
-        position: static;
-    }
-    #welcome .main-article {
-        grid-column: 2;
-    }
+    /* REMOVED: Obsolete grid column rules for sidebar and article */
 
     .cannoli-section-content {
         justify-content: space-between;
