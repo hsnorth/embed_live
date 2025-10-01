@@ -320,6 +320,7 @@ body.logged-in .mobile-top-bar {
     text-align: center;
     transition: opacity 0.3s ease-in-out;
 }
+
 .top-bar-left .nav-link,
 .user-actions .nav-link,
 .user-actions .btn {
