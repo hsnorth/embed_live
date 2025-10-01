@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
-        // MODIFIED: Logic updated to pre-check email and show step 2 below step 1.
         if (signupForm) {
             const step1 = signupForm.querySelector('[data-step="1"]');
             const step2 = signupForm.querySelector('[data-step="2"]');
@@ -118,16 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         const emailValue = emailInput.value;
                         
                         try {
+                            // Check if email is already registered
                             const methods = await fetchSignInMethodsForEmail(auth, emailValue);
                             if (methods.length > 0) {
                                 showWeekdayError('This email is already registered. You can sign in on Saturday!');
                             } else {
+                                // Email is new, proceed to next step
                                 weekdayEmailValue = emailValue;
-                                // Don't hide step 1, just reveal step 2 below it
                                 step2.classList.remove('hidden');
-                                // Optionally disable the first step to prevent changes
-                                emailInput.disabled = true;
-                                nextBtn.disabled = true;
+                                nextBtn.classList.add('hidden'); // Hide the "Subscribe" button
                             }
                         } catch (error) {
                             showWeekdayError('Could not verify email. Please try again.');
@@ -141,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
+
+                // Update email value from the field, in case it was edited
+                weekdayEmailValue = document.getElementById('weekday-email').value;
 
                 const nameInput = document.getElementById('weekday-name');
                 const passwordInput = document.getElementById('weekday-password');
@@ -184,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return; 
     }
 
+    // ... (The rest of your main.js file is unchanged) ...
     // ... (The rest of your main.js file is unchanged from here down) ...
 
     // --- WEEKEND/NORMAL PAGE LOAD ---
