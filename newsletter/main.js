@@ -1,6 +1,6 @@
 // Import the shared Firebase services and specific functions
 import { auth, db } from './firebase-init.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 console.log("Firebase is connected via shared module!");
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
-        // MODIFIED: Added full error handling
+        // MODIFIED: Logic updated to pre-check email and show step 2 below step 1.
         if (signupForm) {
             const step1 = signupForm.querySelector('[data-step="1"]');
             const step2 = signupForm.querySelector('[data-step="2"]');
@@ -110,12 +110,28 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (nextBtn && step1 && step2) {
-                nextBtn.addEventListener('click', () => {
+                nextBtn.addEventListener('click', async () => {
+                    if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
                     const emailInput = document.getElementById('weekday-email');
+                    
                     if (emailInput && emailInput.value && emailInput.checkValidity()) {
-                        weekdayEmailValue = emailInput.value;
-                        step1.classList.add('hidden');
-                        step2.classList.remove('hidden');
+                        const emailValue = emailInput.value;
+                        
+                        try {
+                            const methods = await fetchSignInMethodsForEmail(auth, emailValue);
+                            if (methods.length > 0) {
+                                showWeekdayError('This email is already registered. You can sign in on Saturday!');
+                            } else {
+                                weekdayEmailValue = emailValue;
+                                // Don't hide step 1, just reveal step 2 below it
+                                step2.classList.remove('hidden');
+                                // Optionally disable the first step to prevent changes
+                                emailInput.disabled = true;
+                                nextBtn.disabled = true;
+                            }
+                        } catch (error) {
+                            showWeekdayError('Could not verify email. Please try again.');
+                        }
                     } else {
                         showWeekdayError('Please enter a valid email address.');
                     }
@@ -165,10 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        return; // Stop the rest of the script from running on weekdays
+        return; 
     }
 
-
+    // ... (The rest of your main.js file is unchanged from here down) ...
 
     // --- WEEKEND/NORMAL PAGE LOAD ---
     const loader = document.getElementById('loader');
