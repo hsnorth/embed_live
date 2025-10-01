@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, speed);
     };
     
-    // --- DOM ELEMENTS ---
+    // --- DOM ELEMENTS (MOVED TO TOP) ---
     const header = document.querySelector('.main-header');
     const headerBranding = document.querySelector('.header-branding');
     const signInModal = document.getElementById('signInModal');
@@ -64,9 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
     const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
     const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
+    const loader = document.getElementById('loader'); // Moved up
+    const loaderMessage = document.getElementById('loader-message'); // Moved up
 
     let typeInterval;
     let joinEmailValue = '';
+    let weekdayEmailValue = '';
     let scrollLockPosition = 0;
     let isScrollLocked = false;
     
@@ -79,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const closedOverlay = document.getElementById('weekday-closed-overlay');
         const messagePlaceholder = document.getElementById('weekday-message-placeholder');
         const signupForm = document.getElementById('weekday-signup-form');
-        const loader = document.getElementById('loader');
         
         document.body.style.overflow = 'hidden';
 
@@ -93,10 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
-        // MODIFIED: Complete rewrite for a sleeker, state-based, single-form experience.
         if (signupForm) {
             let formStep = 1;
-            let weekdayEmailValue = '';
             
             const credentialsContainer = document.getElementById('weekday-credentials-container');
             const submitBtn = document.getElementById('weekday-submit-btn');
@@ -114,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
 
-                // --- Step 1: Validate Email ---
                 if (formStep === 1) {
                     const emailInput = document.getElementById('weekday-email');
                     if (emailInput && emailInput.value && emailInput.checkValidity()) {
@@ -125,12 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (methods.length > 0) {
                                 showWeekdayError('This email is already registered. You can sign in on Saturday!');
                             } else {
-                                // Email is new, proceed to next step
                                 weekdayEmailValue = emailValue;
                                 credentialsContainer.classList.add('is-open');
                                 formLabel.textContent = 'Complete your account';
                                 submitBtn.textContent = 'Create Account';
-                                formStep = 2; // Advance to the next step
+                                formStep = 2;
                             }
                         } catch (error) {
                             showWeekdayError('Could not verify email. Please try again.');
@@ -140,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } 
                 
-                // --- Step 2: Create Account ---
                 else if (formStep === 2) {
+                    weekdayEmailValue = document.getElementById('weekday-email').value;
                     const nameInput = document.getElementById('weekday-name');
                     const passwordInput = document.getElementById('weekday-password');
                     const name = nameInput ? nameInput.value : '';
@@ -186,9 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- WEEKEND/NORMAL PAGE LOAD ---
-    const loader = document.getElementById('loader');
-    const loaderMessage = document.getElementById('loader-message');
-    
     if (loader && loaderMessage) {
         setTimeout(() => {
             loader.classList.add('is-typing');
