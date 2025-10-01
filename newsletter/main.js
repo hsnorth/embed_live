@@ -7,7 +7,6 @@ console.log("Firebase is connected via shared module!");
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // A generic typewriter function, available to all logic
     const typeWriter = (element, text, speed, callback) => {
         let i = 0;
         if (!element) return;
@@ -64,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const howItWorksPanelOverlay = document.getElementById('how-it-works-panel-overlay');
     const howItWorksPanelCloseBtn = document.getElementById('how-it-works-panel-close-btn');
     const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
-    const loader = document.getElementById('loader'); // Moved up
-    const loaderMessage = document.getElementById('loader-message'); // Moved up
+    const loader = document.getElementById('loader');
+    const loaderMessage = document.getElementById('loader-message');
 
     let typeInterval;
     let joinEmailValue = '';
@@ -125,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 showWeekdayError('This email is already registered. You can sign in on Saturday!');
                             } else {
                                 weekdayEmailValue = emailValue;
+                                credentialsContainer.classList.remove('hidden');
                                 credentialsContainer.classList.add('is-open');
                                 formLabel.textContent = 'Complete your account';
                                 submitBtn.textContent = 'Create Account';
@@ -183,6 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return; 
     }
 
+    // --- (Rest of the main.js file is unchanged) ---
+    // ...
     // --- WEEKEND/NORMAL PAGE LOAD ---
     if (loader && loaderMessage) {
         setTimeout(() => {
