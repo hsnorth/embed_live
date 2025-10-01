@@ -322,7 +322,7 @@ body.logged-in .mobile-top-bar {
 }
 .main-nav ul {
     display: flex;
-    justify-content: flex-start; /* MODIFIED: Changed from 'center' to align nav to the left */
+    justify-content: flex-start;
     align-items: center;
     gap: 1.5rem;
     list-style: none;
@@ -627,43 +627,6 @@ body.logged-in .mobile-top-bar {
     margin-top: 0;
     margin-bottom: 3rem;
     text-align: center;
-}
-
-/* --- STYLES FOR MULTI-STEP WEEKDAY FORM --- */
-.weekday-form-step.hidden {
-    display: none;
-}
-
-.weekday-input-group.vertical {
-    flex-direction: column;
-    gap: 0.5rem;
-    border: none;
-}
-
-.weekday-input-group.vertical input {
-    border: 1px solid var(--color-text);
-}
-
-/* --- STYLES FOR DISABLED WEEKDAY FORM INPUTS --- */
-.weekday-input-group input:disabled,
-.weekday-input-group button:disabled {
-    background-color: #f0f0f0;
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.weekday-error {
-    color: #c0392b;
-    font-family: var(--font-sans);
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    min-height: 1.2em;
-    font-weight: 700;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-.weekday-error.is-visible {
-    opacity: 1;
 }
 
 /* --- TYPE-ON-SCROLL ANIMATION STYLES --- */
@@ -1254,8 +1217,7 @@ body.logged-in .mobile-top-bar {
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
     .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
-    .main-nav ul { justify-content: flex-start; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
-    .main-nav ul::-webkit-scrollbar { display: none; }
+    .main-nav ul { justify-content: flex-start; }
     .article-title { font-size: 2.5rem; }
     .desktop-only { display: none; }
     .mobile-only-icon { display: block; }
@@ -1471,4 +1433,37 @@ body.logged-in #mobile-account-trigger {
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+}
+
+/* --- STYLES FOR MULTI-STEP WEEKDAY FORM --- */
+.weekday-form-step.hidden {
+    display: none;
+}
+
+.weekday-input-group.vertical {
+    flex-direction: column;
+    gap: 0.5rem;
+    border: none;
+}
+
+#weekday-signup-form input {
+    border: 1px solid var(--color-text);
+    padding: 0.8rem 1rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.weekday-error {
+    color: #c0392b;
+    font-family: var(--font-sans);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    min-height: 1.2em;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.weekday-error.is-visible {
+    opacity: 1;
 }
