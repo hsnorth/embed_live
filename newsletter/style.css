@@ -644,6 +644,14 @@ body.logged-in .mobile-top-bar {
     border: 1px solid var(--color-text);
 }
 
+/* --- STYLES FOR DISABLED WEEKDAY FORM INPUTS --- */
+.weekday-input-group input:disabled,
+.weekday-input-group button:disabled {
+    background-color: #f0f0f0;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 .weekday-error {
     color: #c0392b;
     font-family: var(--font-sans);
