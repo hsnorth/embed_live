@@ -629,6 +629,21 @@ body.logged-in .mobile-top-bar {
     text-align: center;
 }
 
+/* --- STYLES FOR MULTI-STEP WEEKDAY FORM --- */
+.weekday-form-step.hidden {
+    display: none;
+}
+
+.weekday-input-group.vertical {
+    flex-direction: column;
+    gap: 0.5rem;
+    border: none; /* Remove border for the vertical layout */
+}
+
+.weekday-input-group.vertical input {
+    border: 1px solid var(--color-text);
+}
+
 /* --- TYPE-ON-SCROLL ANIMATION STYLES --- */
 .section-title-container {
     position: relative;
