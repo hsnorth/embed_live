@@ -560,4 +560,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (deleteAccountBtn) {
-        deleteAccountBtn.addEventListener('click', async ().
+        deleteAccountBtn.addEventListener('click', async () => {
+            if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) return;
+
+            try {
+                await deleteDoc(doc(db, 'users', user.uid));
+                await deleteUser(user);
+                showToast('Your account has been permanently deleted.', 'info');
+                closeAccountPanel();
+            } catch (error) {
+                showToast(`Error deleting account: ${error.message}`, 'error');
+                console.error("Account deletion error:", error);
+            }
+        });
+    }
+
+    if (personalDetailsToggle) {
+        personalDetailsToggle.addEventListener('click', () => {
+            personalDetailsToggle.classList.toggle('is-open');
+            personalDetailsContent.classList.toggle('is-open');
+        });
+    }
+    
+    // --- HOW IT WORKS PANEL LOGIC ---
+    function openHowItWorksPanel() {
+        if (!howItWorksPanelOverlay) return;
+        howItWorksPanelOverlay.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeHowItWorksPanel() {
+        if (!howItWorksPanelOverlay) return;
+        howItWorksPanelOverlay.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+    }
+
+    if (howItWorksTriggers.length > 0) {
+        howItWorksTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                const mobileNav = document.querySelector('.mobile-nav');
+                if (mobileNav && mobileNav.classList.contains('is-open')) {
+                    mobileNav.classList.remove('is-open');
+                }
+                openHowItWorksPanel();
+            });
+        });
+    }
+    if (howItWorksPanelOverlay) {
+        howItWorksPanelOverlay.addEventListener('click', (e) => {
+            if (e.target === howItWorksPanelOverlay) {
+                closeHowItWorksPanel();
+            }
+        });
+    }
+    if (howItWorksPanelCloseBtn) {
+        howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
+    }
+
+    // --- Simple Menu Toggle ---
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileNav = document.querySelector('.mobile-nav');
+    const closeMenuBtn = document.querySelector('.close-menu-btn');
+
+    function toggleMenu() {
+        if (!mobileNav) return;
+        const isOpen = mobileNav.classList.toggle('is-open');
+        mobileNav.setAttribute('aria-hidden', !isOpen);
+        document.body.classList.toggle('no-scroll', isOpen);
+    }
+    if (menuToggle && closeMenuBtn) {
+        menuToggle.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+    }
+
+    // --- STICKY BANNER LOGIC ---
+    function handleScrollLock() {
+        if (isScrollLocked && window.scrollY > scrollLockPosition) {
+            window.scrollTo(0, scrollLockPosition);
+        }
+    }
+
+    if (stickyBanner) {
+        const triggerSection = document.getElementById('imports');
+        
+        const bannerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !document.body.classList.contains('logged-in') && !stickyBanner.classList.contains('is-visible')) {
+                    stickyBanner.classList.add('is-visible');
+                    scrollLockPosition = entry.boundingClientRect.top + window.scrollY - window.innerHeight + stickyBanner.offsetHeight;
+                    isScrollLocked = true;
+                    window.addEventListener('scroll', handleScrollLock);
+                }
+            });
+             if (document.body.classList.contains('logged-in') && triggerSection) {
+                 bannerObserver.unobserve(triggerSection);
+            }
+        }, { threshold: 0.01 });
+
+        if (triggerSection) {
+            bannerObserver.observe(triggerSection);
+        }
+
+        if (stickyNextBtn) {
+            stickyNextBtn.addEventListener('click', () => {
+                if (stickyEmailInput && stickyEmailInput.value && stickyEmailInput.checkValidity()) {
+                    if (stickyStep1) stickyStep1.classList.add('hidden');
+                    if (stickyStep2) stickyStep2.classList.remove('hidden');
+                } else {
+                    showToast('Please enter a valid email.', 'error');
+                }
+            });
+        }
+
+        if (stickyForm) {
+            stickyForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = stickyEmailInput.value;
+                const name = document.getElementById('sticky-name').value;
+                const password = document.getElementById('sticky-password').value;
+                if (email && name && password) {
+                    signUp(email, password, name, true);
+                } else {
+                    showToast('Please fill out all fields.', 'error');
+                }
+            });
+        }
+    }
+});
