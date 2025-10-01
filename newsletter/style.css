@@ -320,7 +320,6 @@ body.logged-in .mobile-top-bar {
     text-align: center;
     transition: opacity 0.3s ease-in-out;
 }
-
 .top-bar-left .nav-link,
 .user-actions .nav-link,
 .user-actions .btn {
@@ -497,6 +496,7 @@ body.logged-in .mobile-top-bar {
 }
 .main-article .article-title {
     font-size: 2.8rem;
+    margin-bottom: 1.5rem;
 }
 .article-body-wrapper {
     position: relative;
@@ -517,7 +517,7 @@ body.logged-in .mobile-top-bar {
     pointer-events: none;
 }
 .show-more-container {
-    text-align: center;
+    text-align: right;
     margin-top: 1.5rem;
 }
 .show-more-btn {
