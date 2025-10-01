@@ -22,18 +22,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="weekday-closed-overlay" style="display: none;">
+   <div id="weekday-closed-overlay" style="display: none;">
         <div class="weekday-closed-content">
             <h1 id="weekday-message-placeholder"></h1>
             <form id="weekday-signup-form" class="weekday-signup-form">
-                <label id="weekday-form-label">Get the haul delivered to your inbox</label>
+                <label id="weekday-form-label">Get the full haul straight to your inbox</label>
                 
                 <div class="weekday-input-group">
                     <input type="email" id="weekday-email" placeholder="Your email address" required>
                 </div>
                 
-                <div id="weekday-credentials-container" class="weekday-credentials">
+                <div id="weekday-credentials-container" class="weekday-credentials hidden">
                     <div class="weekday-input-group vertical">
                         <input type="text" id="weekday-name" placeholder="Your Name" required>
                         <input type="password" id="weekday-password" placeholder="Create a Password (min. 6 characters)" required>
@@ -42,7 +41,7 @@
 
                 <div id="weekday-error-message" class="weekday-error"></div>
                 
-                <button type="submit" id="weekday-submit-btn" class="weekday-btn">Continue</button>
+                <button type="submit" id="weekday-submit-btn" class="weekday-btn">Join</button>
             </form>
         </div>
     </div>
@@ -52,6 +51,7 @@
         <span class="loader-cursor"></span>
         <h1 id="loader-message" class="loader-message"></h1> 
     </div>
+
 
     <div class="mobile-top-bar">
         <a href="#" id="mobileJoinLink">Subscribe</a> | <a href="#" id="mobileSignInLink">Log in</a>
