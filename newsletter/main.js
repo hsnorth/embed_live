@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, speed);
     };
     
-    // This variable needs to be accessible by the weekday logic
     let weekdayEmailValue = '';
     
     // --- DOM ELEMENTS ---
@@ -96,11 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
-        // MODIFIED: This logic now handles the new 2-step form on the overlay itself.
+        // MODIFIED: Added full error handling
         if (signupForm) {
             const step1 = signupForm.querySelector('[data-step="1"]');
             const step2 = signupForm.querySelector('[data-step="2"]');
             const nextBtn = document.getElementById('weekday-next-btn');
+            const errorMessageDiv = document.getElementById('weekday-error-message');
+
+            const showWeekdayError = (message) => {
+                if (errorMessageDiv) {
+                    errorMessageDiv.textContent = message;
+                    errorMessageDiv.classList.add('is-visible');
+                }
+            };
 
             if (nextBtn && step1 && step2) {
                 nextBtn.addEventListener('click', () => {
@@ -110,13 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         step1.classList.add('hidden');
                         step2.classList.remove('hidden');
                     } else {
-                        alert('Please enter a valid email address.');
+                        showWeekdayError('Please enter a valid email address.');
                     }
                 });
             }
 
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
+
                 const nameInput = document.getElementById('weekday-name');
                 const passwordInput = document.getElementById('weekday-password');
                 const name = nameInput ? nameInput.value : '';
@@ -137,10 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             contentWrapper.innerHTML = '<h1>Thank you for joining!<br>We’ll see you Saturday.</h1>';
                         }
                     } catch (error) {
-                        alert(`Error: ${error.message}`);
+                        let message = 'An unexpected error occurred. Please try again.';
+                        switch (error.code) {
+                            case 'auth/email-already-in-use':
+                                message = 'This email address is already registered. You can sign in on Saturday!';
+                                break;
+                            case 'auth/weak-password':
+                                message = 'Your password needs to be at least 6 characters long.';
+                                break;
+                            case 'auth/invalid-email':
+                                message = 'The email address you entered is not valid.';
+                                break;
+                        }
+                        showWeekdayError(message);
                     }
                 } else {
-                    alert('Please fill out all fields.');
+                    showWeekdayError('Please make sure all fields are filled out.');
                 }
             });
         }
