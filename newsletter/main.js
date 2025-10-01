@@ -101,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = document.getElementById('weekday-submit-btn');
             const formLabel = document.getElementById('weekday-form-label');
             const errorMessageDiv = document.getElementById('weekday-error-message');
+            const nameInput = document.getElementById('weekday-name');
+            const passwordInput = document.getElementById('weekday-password');
 
             const showWeekdayError = (message) => {
                 if (errorMessageDiv) {
@@ -126,6 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 weekdayEmailValue = emailValue;
                                 credentialsContainer.classList.remove('hidden');
                                 credentialsContainer.classList.add('is-open');
+                                if (nameInput) nameInput.disabled = false;
+                                if (passwordInput) passwordInput.disabled = false;
                                 formLabel.textContent = 'Complete your account';
                                 submitBtn.textContent = 'Create Account';
                                 formStep = 2;
@@ -140,8 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 else if (formStep === 2) {
                     weekdayEmailValue = document.getElementById('weekday-email').value;
-                    const nameInput = document.getElementById('weekday-name');
-                    const passwordInput = document.getElementById('weekday-password');
                     const name = nameInput ? nameInput.value : '';
                     const password = passwordInput ? passwordInput.value : '';
 
