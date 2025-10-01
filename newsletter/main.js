@@ -33,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, speed);
     };
-
-    // --- MOVED UP: DOM ELEMENTS ---
-    // This block is now at the top so the variables are always available.
+    
+    // This variable needs to be accessible by the weekday logic
+    let weekdayEmailValue = '';
+    
+    // --- DOM ELEMENTS ---
     const header = document.querySelector('.main-header');
     const headerBranding = document.querySelector('.header-branding');
     const signInModal = document.getElementById('signInModal');
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let joinEmailValue = '';
     let scrollLockPosition = 0;
     let isScrollLocked = false;
-
+    
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
@@ -94,30 +96,58 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
+        // MODIFIED: This logic now handles the new 2-step form on the overlay itself.
         if (signupForm) {
-            signupForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const emailInput = document.getElementById('weekday-email');
-                const emailValue = emailInput ? emailInput.value : '';
+            const step1 = signupForm.querySelector('[data-step="1"]');
+            const step2 = signupForm.querySelector('[data-step="2"]');
+            const nextBtn = document.getElementById('weekday-next-btn');
 
-                if (emailValue) {
-                    const joinModal = document.getElementById('joinModal');
-                    const joinEmailInput = document.getElementById('joinEmail');
-
-                    if (joinModal && joinEmailInput) {
-                        joinEmailInput.value = emailValue;
-                        openModal(joinModal);
-                        if (closedOverlay) {
-                            closedOverlay.style.display = 'none';
-                        }
+            if (nextBtn && step1 && step2) {
+                nextBtn.addEventListener('click', () => {
+                    const emailInput = document.getElementById('weekday-email');
+                    if (emailInput && emailInput.value && emailInput.checkValidity()) {
+                        weekdayEmailValue = emailInput.value;
+                        step1.classList.add('hidden');
+                        step2.classList.remove('hidden');
                     } else {
-                        alert("Thank you for your interest!");
+                        alert('Please enter a valid email address.');
                     }
+                });
+            }
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nameInput = document.getElementById('weekday-name');
+                const passwordInput = document.getElementById('weekday-password');
+                const name = nameInput ? nameInput.value : '';
+                const password = passwordInput ? passwordInput.value : '';
+
+                if (weekdayEmailValue && name && password) {
+                    try {
+                        const userCredential = await createUserWithEmailAndPassword(auth, weekdayEmailValue, password);
+                        await setDoc(doc(db, "users", userCredential.user.uid), {
+                            email: weekdayEmailValue,
+                            name: name,
+                            createdAt: serverTimestamp(),
+                            newsletter: true
+                        });
+                        
+                        const contentWrapper = document.querySelector('.weekday-closed-content');
+                        if (contentWrapper) {
+                            contentWrapper.innerHTML = '<h1>Thank you for joining!<br>We’ll see you Saturday.</h1>';
+                        }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                    }
+                } else {
+                    alert('Please fill out all fields.');
                 }
             });
         }
         return; // Stop the rest of the script from running on weekdays
     }
+
+
 
     // --- WEEKEND/NORMAL PAGE LOAD ---
     const loader = document.getElementById('loader');
