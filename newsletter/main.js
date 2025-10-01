@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
     const loader = document.getElementById('loader');
     const loaderMessage = document.getElementById('loader-message');
+    const controlCentreTrigger = document.getElementById('control-centre-trigger');
+    const controlCentreOverlay = document.getElementById('control-centre-overlay');
+    const controlCentreCloseBtn = document.getElementById('control-centre-close-btn');
 
     let typeInterval;
     let joinEmailValue = '';
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 2;
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 
     if (isWeekday) {
         const closedOverlay = document.getElementById('weekday-closed-overlay');
@@ -470,6 +473,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // --- CONTROL CENTRE PANEL LOGIC ---
+    function openControlCentrePanel() {
+        if (!controlCentreOverlay) return;
+        controlCentreOverlay.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+    }
+
+    function closeControlCentrePanel() {
+        if (!controlCentreOverlay) return;
+        controlCentreOverlay.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+    }
+
+    if (controlCentreTrigger) controlCentreTrigger.addEventListener('click', (e) => { e.preventDefault(); openControlCentrePanel(); });
+    if (controlCentreOverlay) controlCentreOverlay.addEventListener('click', (e) => { if (e.target === controlCentreOverlay) closeControlCentrePanel(); });
+    if (controlCentreCloseBtn) controlCentreCloseBtn.addEventListener('click', closeControlCentrePanel);
 
     // --- ACCOUNT PANEL LOGIC ---
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
