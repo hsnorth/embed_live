@@ -536,6 +536,11 @@ body.logged-in .mobile-top-bar {
     font-family: var(--font-sans);
     font-size: 0.9rem;
     text-decoration: none;
+    /* MODIFIED: Set max-width for the yellow bar */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box; /* Ensures padding is included in the width */
 }
 .sound-bar-animation {
     display: flex;
@@ -592,7 +597,7 @@ body.logged-in .mobile-top-bar {
 }
 .main-article {
     background: var(--color-background);
-    max-width: 850px; /* MODIFIED: Set max width */
+    max-width: 800px; /* MODIFIED: Set max width to 800px */
     margin-left: auto;   /* MODIFIED: Center container */
     margin-right: auto;  /* MODIFIED: Center container */
 }
@@ -682,11 +687,13 @@ body.logged-in .mobile-top-bar {
     text-align: center;
 }
 .page-scroll-indicator {
-    text-align: center;
+    text-align: center; /* MODIFIED: Center the button */
     padding: 2rem 0 4rem;
+    max-width: 800px; /* MODIFIED: Added for centering with other elements */
+    margin: 0 auto; /* MODIFIED: Added for centering with other elements */
 }
 .open-haul-button {
-    display: inline-flex;
+    display: inline-flex; /* MODIFIED: Changed from block to inline-flex to center better */
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
