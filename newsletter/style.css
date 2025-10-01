@@ -1353,7 +1353,7 @@ body.logged-in #mobile-account-trigger {
     align-items: center;
 }
 
-* --- WEEKDAY CLOSED OVERLAY STYLES --- */
+/* --- WEEKDAY CLOSED OVERLAY STYLES --- */
 #weekday-closed-overlay {
     position: fixed;
     top: 0;
