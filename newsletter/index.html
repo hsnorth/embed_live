@@ -26,10 +26,20 @@
         <div class="weekday-closed-content">
             <h1 id="weekday-message-placeholder"></h1>
             <form id="weekday-signup-form" class="weekday-signup-form">
-                <label for="weekday-email">Get the haul delivered to your inbox</label>
-                <div class="weekday-input-group">
-                    <input type="email" id="weekday-email" placeholder="Your email address" required>
-                    <button type="submit">Subscribe</button>
+                <div data-step="1" class="weekday-form-step">
+                    <label for="weekday-email">Get the haul delivered to your inbox</label>
+                    <div class="weekday-input-group">
+                        <input type="email" id="weekday-email" placeholder="Your email address" required>
+                        <button type="button" id="weekday-next-btn">Subscribe</button>
+                    </div>
+                </div>
+                <div data-step="2" class="weekday-form-step hidden">
+                    <label for="weekday-name">Complete your account</label>
+                    <div class="weekday-input-group vertical">
+                        <input type="text" id="weekday-name" placeholder="Your Name" required>
+                        <input type="password" id="weekday-password" placeholder="Create a Password (min. 6 characters)" required>
+                        <button type="submit">Create Account</button>
+                    </div>
                 </div>
             </form>
         </div>
