@@ -34,8 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, speed);
     };
     
-    let weekdayEmailValue = '';
-    
     // --- DOM ELEMENTS ---
     const header = document.querySelector('.main-header');
     const headerBranding = document.querySelector('.header-branding');
@@ -95,10 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
 
+        // MODIFIED: Complete rewrite for a sleeker, state-based, single-form experience.
         if (signupForm) {
-            const step1 = signupForm.querySelector('[data-step="1"]');
-            const step2 = signupForm.querySelector('[data-step="2"]');
-            const nextBtn = document.getElementById('weekday-next-btn');
+            let formStep = 1;
+            let weekdayEmailValue = '';
+            
+            const credentialsContainer = document.getElementById('weekday-credentials-container');
+            const submitBtn = document.getElementById('weekday-submit-btn');
+            const formLabel = document.getElementById('weekday-form-label');
             const errorMessageDiv = document.getElementById('weekday-error-message');
 
             const showWeekdayError = (message) => {
@@ -108,24 +110,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            if (nextBtn && step1 && step2) {
-                nextBtn.addEventListener('click', async () => {
-                    if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
+
+                // --- Step 1: Validate Email ---
+                if (formStep === 1) {
                     const emailInput = document.getElementById('weekday-email');
-                    
                     if (emailInput && emailInput.value && emailInput.checkValidity()) {
                         const emailValue = emailInput.value;
                         
                         try {
-                            // Check if email is already registered
                             const methods = await fetchSignInMethodsForEmail(auth, emailValue);
                             if (methods.length > 0) {
                                 showWeekdayError('This email is already registered. You can sign in on Saturday!');
                             } else {
                                 // Email is new, proceed to next step
                                 weekdayEmailValue = emailValue;
-                                step2.classList.remove('hidden');
-                                nextBtn.classList.add('hidden'); // Hide the "Subscribe" button
+                                credentialsContainer.classList.add('is-open');
+                                formLabel.textContent = 'Complete your account';
+                                submitBtn.textContent = 'Create Account';
+                                formStep = 2; // Advance to the next step
                             }
                         } catch (error) {
                             showWeekdayError('Could not verify email. Please try again.');
@@ -133,60 +138,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         showWeekdayError('Please enter a valid email address.');
                     }
-                });
-            }
+                } 
+                
+                // --- Step 2: Create Account ---
+                else if (formStep === 2) {
+                    const nameInput = document.getElementById('weekday-name');
+                    const passwordInput = document.getElementById('weekday-password');
+                    const name = nameInput ? nameInput.value : '';
+                    const password = passwordInput ? passwordInput.value : '';
 
-            signupForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
-
-                // Update email value from the field, in case it was edited
-                weekdayEmailValue = document.getElementById('weekday-email').value;
-
-                const nameInput = document.getElementById('weekday-name');
-                const passwordInput = document.getElementById('weekday-password');
-                const name = nameInput ? nameInput.value : '';
-                const password = passwordInput ? passwordInput.value : '';
-
-                if (weekdayEmailValue && name && password) {
-                    try {
-                        const userCredential = await createUserWithEmailAndPassword(auth, weekdayEmailValue, password);
-                        await setDoc(doc(db, "users", userCredential.user.uid), {
-                            email: weekdayEmailValue,
-                            name: name,
-                            createdAt: serverTimestamp(),
-                            newsletter: true
-                        });
-                        
-                        const contentWrapper = document.querySelector('.weekday-closed-content');
-                        if (contentWrapper) {
-                            contentWrapper.innerHTML = '<h1>Thank you for joining!<br>We’ll see you Saturday.</h1>';
+                    if (weekdayEmailValue && name && password) {
+                        try {
+                            const userCredential = await createUserWithEmailAndPassword(auth, weekdayEmailValue, password);
+                            await setDoc(doc(db, "users", userCredential.user.uid), {
+                                email: weekdayEmailValue,
+                                name: name,
+                                createdAt: serverTimestamp(),
+                                newsletter: true
+                            });
+                            
+                            const contentWrapper = document.querySelector('.weekday-closed-content');
+                            if (contentWrapper) {
+                                contentWrapper.innerHTML = '<h1>Thank you for joining!<br>We’ll see you Saturday.</h1>';
+                            }
+                        } catch (error) {
+                            let message = 'An unexpected error occurred. Please try again.';
+                            switch (error.code) {
+                                case 'auth/email-already-in-use':
+                                    message = 'This email address is already registered. You can sign in on Saturday!';
+                                    break;
+                                case 'auth/weak-password':
+                                    message = 'Your password needs to be at least 6 characters long.';
+                                    break;
+                                case 'auth/invalid-email':
+                                    message = 'The email address you entered is not valid.';
+                                    break;
+                            }
+                            showWeekdayError(message);
                         }
-                    } catch (error) {
-                        let message = 'An unexpected error occurred. Please try again.';
-                        switch (error.code) {
-                            case 'auth/email-already-in-use':
-                                message = 'This email address is already registered. You can sign in on Saturday!';
-                                break;
-                            case 'auth/weak-password':
-                                message = 'Your password needs to be at least 6 characters long.';
-                                break;
-                            case 'auth/invalid-email':
-                                message = 'The email address you entered is not valid.';
-                                break;
-                        }
-                        showWeekdayError(message);
+                    } else {
+                        showWeekdayError('Please make sure all fields are filled out.');
                     }
-                } else {
-                    showWeekdayError('Please make sure all fields are filled out.');
                 }
             });
         }
         return; 
     }
-
-    // ... (The rest of your main.js file is unchanged) ...
-    // ... (The rest of your main.js file is unchanged from here down) ...
 
     // --- WEEKEND/NORMAL PAGE LOAD ---
     const loader = document.getElementById('loader');
