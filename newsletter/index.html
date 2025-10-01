@@ -22,28 +22,35 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="weekday-closed-overlay" style="display: none;">
         <div class="weekday-closed-content">
             <h1 id="weekday-message-placeholder"></h1>
             <form id="weekday-signup-form" class="weekday-signup-form">
-                <div data-step="1" class="weekday-form-step">
-                    <label for="weekday-email">Get the haul delivered to your inbox</label>
-                    <div class="weekday-input-group">
-                        <input type="email" id="weekday-email" placeholder="Your email address" required>
-                        <button type="button" id="weekday-next-btn">Subscribe</button>
-                    </div>
+                <label id="weekday-form-label">Get the haul delivered to your inbox</label>
+                
+                <div class="weekday-input-group">
+                    <input type="email" id="weekday-email" placeholder="Your email address" required>
                 </div>
-                <div data-step="2" class="weekday-form-step hidden">
-                    <label for="weekday-name">Complete your account</label>
+                
+                <div id="weekday-credentials-container" class="weekday-credentials">
                     <div class="weekday-input-group vertical">
                         <input type="text" id="weekday-name" placeholder="Your Name" required>
                         <input type="password" id="weekday-password" placeholder="Create a Password (min. 6 characters)" required>
-                        <button type="submit">Create Account</button>
                     </div>
                 </div>
+
+                <div id="weekday-error-message" class="weekday-error"></div>
+                
+                <button type="submit" id="weekday-submit-btn" class="weekday-btn">Continue</button>
             </form>
-            <div id="weekday-error-message" class="weekday-error"></div>
         </div>
+    </div>
+
+    <div id="loader">
+       </div>
+    
+</body>
     </div>
     <div id="loader">
         <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c" alt="Loading..." class="loader-icon">
