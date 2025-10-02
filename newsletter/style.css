@@ -1416,9 +1416,6 @@ body.logged-in #mobile-account-trigger {
     .desktop-only {
         display: none;
     }
-    
-}
-@media (max-width: 430px) {
     /* On mobile, show the bag icon */
     .header-top-bar.scrolled .scrolled-icon-link {
         display: block;
@@ -1427,7 +1424,9 @@ body.logged-in #mobile-account-trigger {
     .header-top-bar.scrolled .scrolled-logo-link {
         display: none;
     }
+    
 }
+
 
 @media (min-width: 1024px) {
     .how-it-works { display: block; }
