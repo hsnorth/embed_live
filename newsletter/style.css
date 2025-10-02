@@ -1411,7 +1411,12 @@ body.logged-in #mobile-account-trigger {
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
     .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
-
+    
+    /* Hide the desktop auth buttons on screens this size and smaller */
+    .desktop-only {
+        display: none;
+    }
+    
 }
 @media (max-width: 430px) {
     /* On mobile, show the bag icon */
