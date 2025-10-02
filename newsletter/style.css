@@ -597,10 +597,37 @@ body.logged-in .mobile-top-bar {
 }
 .main-article {
     background: var(--color-background);
-    max-width: 800px; /* MODIFIED: Set max width to 800px */
-    margin-left: auto;   /* MODIFIED: Center container */
-    margin-right: auto;  /* MODIFIED: Center container */
+    max-width: 1100px; /* Increased from 800px */
+    margin-left: auto;
+    margin-right: auto;
 }
+
+/* --- NEW STYLES FOR WELCOME SECTION GRID --- */
+.welcome-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 4rem; /* Creates space between the two columns */
+    align-items: flex-start;
+}
+
+/* Main content area (left side) */
+.welcome-main-content {
+    flex-basis: 65%; /* Takes up 65% of the width */
+}
+
+/* Sidebar area (right side) */
+.welcome-sidebar {
+    flex-basis: 35%; /* Takes up 35% of the width */
+    border-left: 1px solid var(--color-border);
+    padding-left: 4rem;
+}
+
+/* Smaller font size for the sidebar paragraph to differentiate it */
+.welcome-sidebar .article-body-wrapper p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
 .eyebrow-container {
     display: flex;
     align-items: center;
@@ -1336,6 +1363,38 @@ body.logged-in .mobile-top-bar {
 }
 
 /* --- Responsive Styles --- */
+/* --- Responsive Styles for the new welcome layout --- */
+@media (max-width: 900px) {
+    .welcome-grid {
+        flex-direction: column; /* Stack the columns vertically */
+        gap: 2rem; /* Reduce the gap for stacked view */
+    }
+
+    .welcome-main-content,
+    .welcome-sidebar {
+        flex-basis: 100%; /* Make each column full width */
+        width: 100%;
+    }
+    
+    .welcome-sidebar {
+        border-left: none; /* Remove the side border */
+        padding-left: 0;
+        border-top: 1px solid var(--color-border); /* Add a top border for separation */
+        padding-top: 2rem;
+    }
+
+    /* Center the article title on mobile for better balance */
+    .welcome-main-content .article-title {
+        text-align: center;
+    }
+    
+    /* Center the eyebrow text on mobile */
+    .welcome-main-content .eyebrow {
+        text-align: center;
+        display: block; /* Ensure it takes full width to center text */
+    }
+}
+
 @media (max-width: 1023px) {
     .mobile-top-bar { display: block; }
     .main-header { top: 36px; }
