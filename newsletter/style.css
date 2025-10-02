@@ -261,24 +261,36 @@ body.logged-in .mobile-top-bar {
 }
 
 /* --- HEADER --- */
+/* The main-header is now just a wrapper for branding and scrolls normally */
 .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 1001;
     background-color: var(--color-background);
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
     box-sizing: border-box;
 }
+
+/* This top bar is now the sticky element */
 .header-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    background-color: var(--color-background);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.25rem 1rem;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 0.25rem 0rem;
     min-height: 55px;
-    position: relative;
+    transition: border-bottom-color 0.3s ease;
 }
+
+.header-top-bar.scrolled {
+    border-bottom: 1px solid var(--color-border);
+}
+
 .top-bar-left { justify-self: start; display: flex; align-items: center; gap: 1.5rem; }
 .user-actions { justify-self: end; display: flex; align-items: center; gap: 0.5rem; }
 .header-branding {
@@ -458,21 +470,14 @@ body.logged-in .mobile-top-bar {
     height: 30px;
 }
 
-.main-header.scrolled .header-branding {
-    display: none;
-}
-.main-header.scrolled .main-nav {
-    display: none;
-}
-.main-header.scrolled .header-top-bar {
-    border-bottom: 1px solid var(--color-border);
-}
-.main-header.scrolled .scrolled-logo-link {
+/* Updated selectors for the scrolled state */
+.header-top-bar.scrolled .scrolled-logo-link {
     display: block;
 }
-.main-header.scrolled .how-it-works {
+.header-top-bar.scrolled .how-it-works {
     display: none;
 }
+
 
 /* --- WELCOME LAYOUT --- */
 .welcome-layout {
@@ -536,11 +541,10 @@ body.logged-in .mobile-top-bar {
     font-family: var(--font-sans);
     font-size: 0.9rem;
     text-decoration: none;
-    /* MODIFIED: Set max-width for the yellow bar */
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    box-sizing: border-box; /* Ensures padding is included in the width */
+    box-sizing: border-box;
 }
 .sound-bar-animation {
     display: flex;
@@ -597,7 +601,7 @@ body.logged-in .mobile-top-bar {
 }
 .main-article {
     background: var(--color-background);
-    max-width: 950px; /* Increased from 800px */
+    max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -606,23 +610,20 @@ body.logged-in .mobile-top-bar {
 .welcome-grid {
     display: flex;
     justify-content: space-between;
-    gap: 4rem; /* Creates space between the two columns */
+    gap: 4rem;
     align-items: flex-start;
 }
 
-/* Main content area (left side) */
 .welcome-main-content {
-    flex-basis: 65%; /* Takes up 65% of the width */
+    flex-basis: 65%;
 }
 
-/* Sidebar area (right side) */
 .welcome-sidebar {
-    flex-basis: 35%; /* Takes up 35% of the width */
+    flex-basis: 35%;
     border-left: 1px solid var(--color-border);
     padding-left: 4rem;
 }
 
-/* Smaller font size for the sidebar paragraph to differentiate it */
 .welcome-sidebar .article-body-wrapper p {
     font-size: 1.05rem;
     line-height: 1.7;
@@ -714,13 +715,13 @@ body.logged-in .mobile-top-bar {
     text-align: center;
 }
 .page-scroll-indicator {
-    text-align: center; /* MODIFIED: Center the button */
+    text-align: center;
     padding: 2rem 0 4rem;
-    max-width: 800px; /* MODIFIED: Added for centering with other elements */
-    margin: 0 auto; /* MODIFIED: Added for centering with other elements */
+    max-width: 800px;
+    margin: 0 auto;
 }
 .open-haul-button {
-    display: inline-flex; /* MODIFIED: Changed from block to inline-flex to center better */
+    display: inline-flex;
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
@@ -835,7 +836,7 @@ body.logged-in .mobile-top-bar {
 
 /* Styles for article-style sections (Essentials, Imports, Deliveries) */
 .essentials-container {
-    max-width: 750px; /* MODIFIED: Changed from 680px */
+    max-width: 750px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -1363,51 +1364,46 @@ body.logged-in .mobile-top-bar {
 }
 
 /* --- Responsive Styles --- */
-/* --- Responsive Styles for the new welcome layout --- */
 @media (max-width: 900px) {
     .welcome-grid {
-        flex-direction: column; /* Stack the columns vertically */
-        gap: 2rem; /* Reduce the gap for stacked view */
+        flex-direction: column;
+        gap: 2rem;
     }
 
     .welcome-main-content,
     .welcome-sidebar {
-        flex-basis: 100%; /* Make each column full width */
+        flex-basis: 100%;
         width: 100%;
     }
     
     .welcome-sidebar {
-        border-left: none; /* Remove the side border */
+        border-left: none;
         padding-left: 0;
-        border-top: 1px solid var(--color-border); /* Add a top border for separation */
+        border-top: 1px solid var(--color-border);
         padding-top: 2rem;
     }
 
-    /* Center the article title on mobile for better balance */
     .welcome-main-content .article-title {
         text-align: center;
     }
     
-    /* Center the eyebrow text on mobile */
     .welcome-main-content .eyebrow {
         text-align: center;
-        display: block; /* Ensure it takes full width to center text */
+        display: block;
     }
 }
 
 @media (max-width: 1023px) {
     .mobile-top-bar { display: block; }
-    .main-header { top: 36px; }
-    body.logged-in .main-header { top: 0; }
+    .header-top-bar { top: 36px; } /* Adjust sticky position for mobile top bar */
+    body.logged-in .header-top-bar { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
     .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
     
-    .main-header.scrolled .scrolled-logo-link {
-        display: none; /* Hide text logo on mobile */
-    }
-    .main-header.scrolled .scrolled-icon-link {
-        display: block; /* Show icon logo on mobile */
+    /* Updated selector for the mobile scrolled state */
+    .header-top-bar.scrolled .scrolled-icon-link {
+        display: block;
     }
 }
 
@@ -1428,7 +1424,7 @@ body.logged-in .mobile-top-bar {
         padding: 2rem;
     }
     .welcome-layout > .live-ticker-container {
-        display: none; /* Hide top ticker on desktop */
+        display: none;
     }
     .newsletter-hero {
         grid-area: hero;
@@ -1436,13 +1432,13 @@ body.logged-in .mobile-top-bar {
     .sidebar-content {
         grid-area: sidebar;
         position: sticky;
-        top: 100px; /* Adjust based on header height */
+        top: 100px;
     }
     .sidebar-content h3 {
         margin-top: 0;
     }
     .sidebar-content .live-ticker-container {
-        display: block; /* Show ticker in sidebar on desktop */
+        display: block;
         max-width: 100%;
         padding: 0;
         margin: 0 0 2rem 0;
@@ -1470,29 +1466,27 @@ body.logged-in .mobile-top-bar {
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
 
+/* --- Additional Responsive Tidying for Small Screens --- */
 @media (max-width: 480px) {
     .modal-content { padding: 1.5rem; }
     .modal-header-text, .modal-tagline { font-size: 1.8rem; }
     .modal-close-btn { font-size: 2rem; top: 0.75rem; right: 0.75rem; }
     .modal-btn { padding: 0.8rem 1rem; }
     #toast-container { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
-    /* Reduce padding and font size of the live ticker bar */
+    
     .live-ticker-bar {
         padding: 0.6rem 1rem;
         font-size: 0.8rem;
     }
 
-    /* Reduce the top margin of the main content wrapper */
     .content-wrapper {
         margin-top: 2rem;
     }
 
-    /* Reduce font size of the main article title */
     .main-article .article-title {
         font-size: 2.2rem;
     }
 
-    /* Reduce vertical padding for sections */
     .content-section {
         padding: 3rem 1rem;
     }
