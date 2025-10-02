@@ -226,15 +226,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setLiveDate();
     
     // --- HEADER SCROLL EFFECT ---
-    if (header) {
+    // --- HEADER SCROLL EFFECT ---
+    const headerTopBar = document.querySelector('.header-top-bar');
+    const headerBranding = document.querySelector('.header-branding');
+    
+    if (headerTopBar && headerBranding) {
         window.addEventListener('scroll', () => {
-            // A small threshold to trigger the scrolled class
-            const scrollThreshold = 10;
+            // Calculate the trigger point: when the bottom of the branding section
+            // hits the top of the viewport.
+            const scrollThreshold = headerBranding.offsetTop + headerBranding.offsetHeight;
             
+            // Add the 'scrolled' class to the top bar (not the whole header)
             if (window.scrollY > scrollThreshold) {
-                header.classList.add('scrolled');
+                headerTopBar.classList.add('scrolled');
             } else {
-                header.classList.remove('scrolled');
+                headerTopBar.classList.remove('scrolled');
             }
         });
     }
