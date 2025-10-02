@@ -1395,15 +1395,21 @@ body.logged-in .mobile-top-bar {
 
 @media (max-width: 1023px) {
     .mobile-top-bar { display: block; }
-    .header-top-bar { top: 36px; } /* Adjust sticky position for mobile top bar */
+    .header-top-bar { top: 36px; }
     body.logged-in .header-top-bar { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
     .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
-    
-    /* Updated selector for the mobile scrolled state */
+
+}
+@media (max-width: 430px) {
+    /* On mobile, show the bag icon */
     .header-top-bar.scrolled .scrolled-icon-link {
         display: block;
+    }
+    /* And hide the text logo */
+    .header-top-bar.scrolled .scrolled-logo-link {
+        display: none;
     }
 }
 
