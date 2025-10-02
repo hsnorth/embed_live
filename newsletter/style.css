@@ -261,6 +261,17 @@ body.logged-in .mobile-top-bar {
 }
 
 /* --- HEADER --- */
+/* Hide user-specific icons by default */
+#control-centre-trigger,
+#mobile-account-trigger {
+    display: none;
+}
+
+/* Show the icons ONLY when the user is logged in */
+body.logged-in #control-centre-trigger,
+body.logged-in #mobile-account-trigger {
+    display: flex; /* Using flex because .header-icon uses it */
+}
 /* The main-header is now just a wrapper for branding and scrolls normally */
 .main-header {
     background-color: var(--color-background);
