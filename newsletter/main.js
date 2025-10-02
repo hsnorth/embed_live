@@ -228,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- HEADER SCROLL EFFECT ---
     // --- HEADER SCROLL EFFECT ---
     const headerTopBar = document.querySelector('.header-top-bar');
-    const headerBranding = document.querySelector('.header-branding');
     
     if (headerTopBar && headerBranding) {
         window.addEventListener('scroll', () => {
