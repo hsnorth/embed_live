@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Montreal Weekly | Audio Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="audio-page">
+    
+    <div class="header-top-bar">
+        <div class="top-bar-left">
+            <button class="menu-toggle" aria-label="Open menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <a href="#" class="nav-link how-it-works js-how-it-works-trigger">HOW THE HAUL WORKS?</a>
+        </div>
+    
+        <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL</a>
+        <a href="index.html" class="scrolled-icon-link">
+            <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c" alt="The News Haul">
+        </a>
+    
+        <div class="user-actions">
+            <div class="desktop-only user-auth-links">
+                <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
+                <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
+            </div>
+        
+            <a href="#" id="control-centre-trigger" class="header-icon" aria-label="Control Centre">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            </a>
+            
+            <a href="#" id="mobile-account-trigger" class="header-icon" aria-label="My Account">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+        
+        </div>
+    </div>
+
+    <div class="audio-hero-container">
+        <div class="audio-hero-content">
+            <div class="audio-eyebrow">
+                <span class="eyebrow-text">THE MONTREAL WEEKLY</span>
+                <span class="eyebrow-date">OCT. 3, 2025</span>
+            </div>
+            
+            <h1 class="audio-title">5-3-2-1: What mattered most this week in Montreal</h1>
+            
+            <div class="audio-player-controls">
+                <audio id="podcast-audio" src="YOUR_AUDIO_FILE_URL.mp3"></audio> 
+                
+                <button id="play-pause-btn" class="play-pause-btn">
+                    <svg id="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-lg">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <svg id="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-lg hidden">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+                
+                <div id="audio-visualizer" class="sound-bar-animation large">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                
+            </div>
+
+            <p class="audio-listen-prompt">Listen to the curated edition of **The News Haul**.</p>
+            
+        </div>
+    </div>
+    
+    <div id="sticky-signup-banner" class="sticky-signup-banner is-visible audio-paywall-modal">
+        <div class="sticky-signup-content">
+            <div class="sticky-signup-text">
+                <h3>Resubscribe for unlimited access to all of The News Haul.</h3>
+                <p>The audio haul requires a subscription.</p>
+            </div>
+            <a href="#" id="showSignInModalFromAudio" class="sticky-btn">Sign In / Subscribe</a>
+        </div>
+    </div>
+
+    <div id="signInModal" class="modal-overlay" aria-hidden="true">...</div>
+    <div id="joinModal" class="modal-overlay" aria-hidden="true">...</div>
+    <div id="toast-container"></div>
+    <div id="account-panel-overlay" class="account-panel-overlay">...</div>
+    <div id="how-it-works-panel-overlay" class="account-panel-overlay">...</div>
+    <div id="control-centre-overlay" class="account-panel-overlay">...</div>
+    <nav class="mobile-nav" aria-hidden="true">...</nav>
+    <div id="search-overlay" class="search-overlay">...</div>
+
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="main.js"></script>
+    <script>
+        // Custom JS for the audio player page
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('podcast-audio');
+            const playBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const visualizer = document.getElementById('audio-visualizer');
+            const paywall = document.getElementById('sticky-signup-banner');
+            const signInBtn = document.getElementById('showSignInModalFromAudio');
+
+            // Assuming main.js exports openModal or you use the link's IDs
+            signInBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Close the sticky banner if necessary
+                paywall.classList.remove('is-visible'); 
+                // Trigger the sign-in modal
+                document.getElementById('signInLink').click();
+            });
+
+            // Logic to check auth state and remove paywall
+            const checkAuthAndPaywall = () => {
+                const isLoggedIn = document.body.classList.contains('logged-in');
+                if (isLoggedIn) {
+                    paywall.classList.remove('is-visible');
+                    // Enable player controls
+                    playBtn.disabled = false;
+                } else {
+                    paywall.classList.add('is-visible');
+                    // Disable player controls
+                    playBtn.disabled = true; 
+                }
+            };
+
+            // Listener to check auth status on player load and state change
+            if (window.auth) { // Assuming auth object is made global or accessible
+                 window.auth.onAuthStateChanged(checkAuthAndPaywall);
+            }
+            checkAuthAndPaywall();
+
+
+            // Basic Player Logic
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    visualizer.classList.add('is-playing');
+                } else {
+                    audio.pause();
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    visualizer.classList.remove('is-playing');
+                }
+            });
+
+            audio.addEventListener('ended', () => {
+                audio.currentTime = 0;
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                visualizer.classList.remove('is-playing');
+            });
+            
+        });
+    </script>
+</body>
+</html>;
