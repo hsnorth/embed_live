@@ -1741,3 +1741,17 @@ body.logged-in #mobile-account-trigger {
 .weekday-error.is-visible {
     opacity: 1;
 }
+/* --- CONTROL CENTRE ADDITIONS --- */
+.coming-soon-section {
+    opacity: 0.5; /* Grey out the whole section */
+    pointer-events: none; /* Disable interaction for all children */
+    user-select: none;
+}
+.coming-soon-section .account-section-title {
+    /* Keep title slightly more visible */
+    color: #b0b0b0; 
+}
+.coming-soon-item .switch {
+    /* Ensure the switch is still readable/visible, though disabled */
+    opacity: 0.7; 
+}
