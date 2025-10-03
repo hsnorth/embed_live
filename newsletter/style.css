@@ -1755,3 +1755,9 @@ body.logged-in #mobile-account-trigger {
     /* Ensure the switch is still readable/visible, though disabled */
     opacity: 0.7; 
 }
+/* --- Control Feature Visibility via body class --- */
+body.commenting-disabled #comment-trigger,
+body.commenting-disabled .comment-highlight,
+body.commenting-disabled #comment-view {
+    display: none !important;
+}
