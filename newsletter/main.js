@@ -68,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const controlCentreTrigger = document.getElementById('control-centre-trigger');
     const controlCentreOverlay = document.getElementById('control-centre-overlay');
     const controlCentreCloseBtn = document.getElementById('control-centre-close-btn');
+    // ADDED: New Control Centre elements
+    const commentsToggle = document.getElementById('comments-toggle');
+    const digipadToggle = document.getElementById('digipad-toggle');
+    const deepnoteToggle = document.getElementById('deepnote-toggle');
 
     let typeInterval;
     let joinEmailValue = '';
@@ -157,7 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 email: weekdayEmailValue,
                                 name: name,
                                 createdAt: serverTimestamp(),
-                                newsletter: true
+                                newsletter: true,
+                                commentsEnabled: true // ADDED: Default to true on signup
                             });
                             
                             const contentWrapper = document.querySelector('.weekday-closed-content');
@@ -188,8 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return; 
     }
 
-    // --- (Rest of the main.js file is unchanged) ---
-    // ...
     // --- WEEKEND/NORMAL PAGE LOAD ---
     if (loader && loaderMessage) {
         setTimeout(() => {
@@ -225,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setLiveDate();
     
-    // --- HEADER SCROLL EFFECT ---
     // --- HEADER SCROLL EFFECT ---
     const headerTopBar = document.querySelector('.header-top-bar');
     
@@ -348,22 +350,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT LISTENERS ---
-    modalCloseBtns.forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal-overlay'))));
-    if (signInModal) signInModal.addEventListener('click', (e) => { if (e.target === signInModal) closeModal(signInModal) });
-    if (joinModal) joinModal.addEventListener('click', (e) => { if (e.target === joinModal) closeModal(joinModal) });
-    
-    if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', (e) => { e.preventDefault(); closeModal(signInModal); openModal(joinModal); });
-    if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', (e) => { e.preventDefault(); closeModal(joinModal); openModal(signInModal); });
-    
-    if (mobileJoinLink) mobileJoinLink.addEventListener('click', (e) => { e.preventDefault(); openModal(joinModal); });
-    if (mobileSignInLink) mobileSignInLink.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
-
     // --- AUTHENTICATION FUNCTIONS ---
     const signUp = async (email, password, name, wantsNewsletter) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, "users", userCredential.user.uid), { email, name, createdAt: serverTimestamp(), newsletter: wantsNewsletter });
+            await setDoc(doc(db, "users", userCredential.user.uid), { 
+                email, 
+                name, 
+                createdAt: serverTimestamp(), 
+                newsletter: wantsNewsletter,
+                commentsEnabled: true // ADDED: Default to true
+            });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
             removeStickyBannerLock();
@@ -389,6 +386,19 @@ document.addEventListener('DOMContentLoaded', () => {
             await sendPasswordResetEmail(auth, email);
             showToast("Password reset email sent! Check your inbox.", 'info');
         } catch (error) { showToast(error.message, 'error'); }
+    };
+
+    /* ADDED: Function to update user preference in Firestore */
+    const updateCommentsPreference = async (isEnabled) => {
+        const user = auth.currentUser;
+        if (!user) return;
+        try {
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { commentsEnabled: isEnabled });
+            showToast(`Comments have been ${isEnabled ? 'turned ON' : 'turned OFF'}.`, 'info');
+        } catch (error) {
+            showToast(`Error saving preference: ${error.message}`, 'error');
+        }
     };
 
     // --- FORM SUBMISSION HANDLERS ---
@@ -447,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- AUTH STATE LISTENER (runs on every page) ---
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => { // NOTE: made the function ASYNC
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
         const mobileAccountTrigger = document.getElementById('mobile-account-trigger'); 
 
@@ -457,6 +467,33 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.add('logged-in');
             removeStickyBannerLock();
             
+            // --- ADDED: Fetch and apply user preferences ---
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                let commentsEnabled = true; // Default state for logged-in user
+
+                if (userDoc.exists() && userDoc.data().commentsEnabled !== undefined) {
+                    commentsEnabled = userDoc.data().commentsEnabled;
+                }
+                
+                // Set the toggle state in the control center
+                if (commentsToggle) {
+                    commentsToggle.checked = commentsEnabled;
+                }
+                
+                // Apply the class to the body to control external UI features
+                document.body.classList.toggle('commenting-disabled', !commentsEnabled);
+
+            } catch(e) {
+                console.error("Error fetching user preferences:", e);
+                // Default to ON if fetching fails, and ensure UI reflects this
+                document.body.classList.remove('commenting-disabled');
+                if (commentsToggle) commentsToggle.checked = true;
+            }
+            // --- END ADDED CODE ---
+
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = ``;
             }
@@ -471,6 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.body.classList.remove('logged-in');
             
+            // ADDED: When logged out, comments are always OFF
+            document.body.classList.add('commenting-disabled'); 
+
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
                 document.getElementById('signInLink')?.addEventListener('click', (e) => { e.preventDefault(); openModal(signInModal); });
@@ -495,6 +535,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (controlCentreTrigger) controlCentreTrigger.addEventListener('click', (e) => { e.preventDefault(); openControlCentrePanel(); });
     if (controlCentreOverlay) controlCentreOverlay.addEventListener('click', (e) => { if (e.target === controlCentreOverlay) closeControlCentrePanel(); });
     if (controlCentreCloseBtn) controlCentreCloseBtn.addEventListener('click', closeControlCentrePanel);
+
+    /* ADDED: Comments Toggle Listener */
+    if (commentsToggle) {
+        commentsToggle.addEventListener('change', () => {
+            const isEnabled = commentsToggle.checked;
+            updateCommentsPreference(isEnabled);
+            // Toggle a class on body to control commenting feature UI visibility
+            document.body.classList.toggle('commenting-disabled', !isEnabled);
+        });
+    }
 
     // --- ACCOUNT PANEL LOGIC ---
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
