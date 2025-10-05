@@ -12,38 +12,42 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* Hide all large branding from the main template */
-        .audio-page .header-branding,
-        .audio-page .main-header {
-            display: none;
-        }
-
-        /* 1. Ensure the top bar is transparent and visible over the hero */
+        /* Base HTML/Body Styles for Non-Sticky Header */
+        /* Overrides the default sticky behavior set in style.css */
         .audio-page .header-top-bar {
+            position: relative !important; /* Make non-sticky */
+            top: auto !important;
             background-color: transparent; 
             border-bottom: none; 
             z-index: 999; 
+            min-height: 80px; /* Give space for the logo */
+            display: block;
         }
-
-        /* 2. Hide all unnecessary elements for the single-icon look */
-        .audio-page .top-bar-left,
-        .audio-page .user-actions,
+        
+        /* Nav Bar Positioning for Single Icon */
+        .audio-page .header-top-bar > div,
         .audio-page .scrolled-logo-link {
             display: none !important;
         }
 
-        /* 3. Ensure the centered icon is visible and styled for the dark background */
         .audio-page .scrolled-icon-link {
             display: block !important; 
-            position: absolute;
+            position: absolute; /* Relative to the header-top-bar */
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%); 
         }
         .audio-page .scrolled-icon-link img {
-            /* If the image is naturally dark, you might need a filter, but we remove the brightening filter */
+            /* Ensures the logo is clear on the dark background */
+            filter: brightness(100%); 
         }
-        
+
+        /* Hide all large branding */
+        .audio-page .header-branding,
+        .audio-page .main-header {
+            display: none;
+        }
+
         /* Audio Hero Styles */
         .audio-hero-container {
             width: 100%;
@@ -143,18 +147,15 @@
             animation: sound-wave-large 1.2s ease-in-out infinite alternate;
         }
         .sound-bar-animation.large.is-playing span:nth-child(2) { animation-delay: -0.1s; }
-        .sound-bar-animation.large.is-playing span:nth-child(3) { animation-delay: -0.2s; }
-        .sound-bar-animation.large.is-playing span:nth-child(4) { animation-delay: -0.3s; }
         .sound-bar-animation.large.is-playing span:nth-child(20) { animation-delay: -1.9s; }
-
         @keyframes sound-wave-large {
             0% { height: 4px; }
             100% { height: 30px; }
         }
         
-        /* === PAST EPISODES SECTION STYLES === */
+        /* === PAST EPISODES SECTION STYLES (Netflix Style) === */
         .past-episodes-section {
-            padding: 3rem 0;
+            padding: 4rem 0; /* Increased top/bottom padding */
             background-color: #f7f7f7;
             border-top: 1px solid var(--color-border);
         }
@@ -162,55 +163,88 @@
             font-family: var(--font-serif);
             font-size: 2rem;
             font-weight: 400;
-            margin: 0 1rem 1.5rem 1rem;
-            padding-left: 20px; /* Aligns with the episode items padding */
+            margin: 0 0 1.5rem 0;
+            padding-left: 30px; /* Increased side padding */
         }
         
         /* The scrolling container */
         .episode-scroll-container {
             display: flex;
             overflow-x: scroll;
-            padding: 0 20px; /* Add padding to the sides */
-            gap: 15px;
+            padding: 0 30px 20px 30px; /* Increased side/bottom padding */
+            gap: 20px; /* Increased gap between cards */
             /* Hide scrollbar for a cleaner look */
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
             scroll-behavior: smooth;
         }
         .episode-scroll-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
         }
 
         .episode-card {
-            flex: 0 0 auto; /* Prevent cards from shrinking */
-            width: 250px; /* Fixed width for the swipe effect */
+            flex: 0 0 auto;
+            width: 280px; /* Slightly wider cards */
             background-color: var(--color-background);
             border: 1px solid var(--color-border);
             border-radius: 4px;
-            padding: 1rem;
-            cursor: default; /* Not clickable yet */
-            transition: box-shadow 0.2s;
+            padding: 1.2rem;
+            cursor: default;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        /* Hover effect for a more interactive feel */
         .episode-card:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+             transform: translateY(-5px);
         }
 
         .episode-card .eyebrow {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
+            font-family: var(--font-sans);
+            font-weight: 700;
             color: #888;
         }
         .episode-card h3 {
             font-family: var(--font-serif);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
             margin: 0.5rem 0 0.5rem 0;
             line-height: 1.3;
         }
         .episode-card p {
             font-family: var(--font-sans);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #555;
             margin: 0;
+        }
+        
+        /* === FOOTER STYLES === */
+        .audio-footer {
+            border-top: 1px solid var(--color-border);
+            padding: 3rem 1rem;
+            background-color: var(--color-background);
+            text-align: center;
+        }
+        .audio-footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .audio-footer-logo {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: -0.06em;
+            color: var(--color-text);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .audio-footer-copyright {
+            margin-top: 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: #888;
         }
 
     </style>
@@ -219,6 +253,7 @@
 
     <div class="header-top-bar">
         <div class="top-bar-left"></div>
+        
         <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL</a>
         <a href="index.html" class="scrolled-icon-link">
             <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c" alt="The News Haul">
@@ -287,7 +322,6 @@
                 <h3>Back to School Special</h3>
                 <p>Everything you missed while away this summer.</p>
             </div>
-
             <div class="episode-card">
                 <span class="eyebrow">Aug 30, 2025</span>
                 <h3>The Pre-Season Preview</h3>
@@ -296,29 +330,24 @@
             
         </div>
     </section>
-    <div id="signInModal" class="modal-overlay" aria-hidden="true">...</div>
-    <div id="joinModal" class="modal-overlay" aria-hidden="true">...</div>
-    <div id="toast-container"></div>
-    <div id="account-panel-overlay" class="account-panel-overlay"></div>
-    <div id="how-it-works-panel-overlay" class="account-panel-overlay"></div>
-    <div id="control-centre-overlay" class="account-panel-overlay"></div>
-    <nav class="mobile-nav" aria-hidden="true"></nav>
-    <div id="search-overlay" class="search-overlay"></div>
-
-
+    <footer class="audio-footer">
+        <div class="audio-footer-content">
+            <a href="index.html" class="audio-footer-logo">THE NEWS HAUL</a>
+            <p class="audio-footer-copyright">&copy; 2025 The News Haul. All Rights Reserved.</p>
+        </div>
+    </footer>
     <script type="module" src="firebase-init.js"></script>
     <script type="module" src="main.js"></script>
     <script>
         // Custom JS for the audio player page
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if the required elements exist
             const audio = document.getElementById('podcast-audio');
             const playBtn = document.getElementById('play-pause-btn');
             const playIcon = document.getElementById('play-icon');
             const pauseIcon = document.getElementById('pause-icon');
             const visualizer = document.getElementById('audio-visualizer');
             
-            if (!audio || !playBtn) return; // Exit if page is incomplete
+            if (!audio || !playBtn) return;
 
             // 1. Basic Player Logic (Always enabled)
             playBtn.addEventListener('click', () => {
@@ -341,8 +370,6 @@
                 pauseIcon.classList.add('hidden');
                 visualizer.classList.remove('is-playing');
             });
-            
-            // NOTE: No paywall, auth, or observer logic is needed for this simple, free player.
         });
     </script>
 </body>
