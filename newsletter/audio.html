@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="audio-page">
-    
+
     <div class="header-top-bar">
         <div class="top-bar-left">
             <button class="menu-toggle" aria-label="Open menu">
@@ -32,7 +32,7 @@
                 <a href="#" class="nav-link" id="signInLink">SIGN IN</a>
                 <a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>
             </div>
-        
+            
             <a href="#" id="control-centre-trigger" class="header-icon" aria-label="Control Centre">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
             </a>
@@ -93,14 +93,61 @@
         </div>
     </div>
 
-    <div id="signInModal" class="modal-overlay" aria-hidden="true">...</div>
-    <div id="joinModal" class="modal-overlay" aria-hidden="true">...</div>
+    <div id="signInModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2 class="modal-header-text">Sign In</h2>
+            <form id="signInForm" class="modal-form">
+                <label for="signInEmail" class="form-label">Email Address</label>
+                <input type="email" id="signInEmail" name="signInEmail" class="form-input" required placeholder="name@example.com">
+                <label for="signInPassword" class="form-label">Password</label>
+                <input type="password" id="signInPassword" name="signInPassword" class="form-input" required placeholder="••••••••••••">
+                <button type="submit" class="modal-btn">Sign In</button>
+            </form>
+            <div class="modal-links">
+                <button class="modal-link-btn" id="forgotPasswordBtn">Forgot Password?</button>
+                <button class="modal-link-btn" id="goToJoinBtnFromSignIn">Don't have an account? Join us</button>
+            </div>
+        </div>
+    </div>
+    <div id="joinModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <p id="modalTagline" class="modal-tagline"></p>
+            
+            <form id="joinFormStep1" class="modal-form">
+                <label for="joinEmail" class="form-label">Email Address</label>
+                <input type="email" id="joinEmail" name="joinEmail" class="form-input" required placeholder="name@example.com">
+                <button type="submit" class="modal-btn">Continue</button>
+            </form>
+
+            <form id="joinFormStep2" class="modal-form hidden">
+                <label for="joinName" class="form-label">Your Name</label>
+                <input type="text" id="joinName" name="joinName" class="form-input" required placeholder="First and last name">
+                
+                <label for="joinPassword" class="form-label">Create a Password</label>
+                <input type="password" id="joinPassword" name="joinPassword" class="form-input" required placeholder="At least 6 characters">
+                
+                <label style="display: flex; align-items: center; gap: 10px; font-family: var(--font-sans); font-size: 0.9rem; margin-top: 0.5rem;">
+                    <input type="checkbox" id="joinNewsletter" name="joinNewsletter" checked>
+                    Receive weekly updates
+                </label>
+                
+                <button type="submit" class="modal-btn">Create Account</button>
+            </form>
+            
+            <div class="modal-links">
+                <button class="modal-link-btn" id="goToSignInBtnFromJoin">Already have an account? Sign In</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
-    <div id="account-panel-overlay" class="account-panel-overlay">...</div>
-    <div id="how-it-works-panel-overlay" class="account-panel-overlay">...</div>
-    <div id="control-centre-overlay" class="account-panel-overlay">...</div>
-    <nav class="mobile-nav" aria-hidden="true">...</nav>
-    <div id="search-overlay" class="search-overlay">...</div>
+    <div id="account-panel-overlay" class="account-panel-overlay"></div>
+    <div id="how-it-works-panel-overlay" class="account-panel-overlay"></div>
+    <div id="control-centre-overlay" class="account-panel-overlay"></div>
+    <nav class="mobile-nav" aria-hidden="true"></nav>
+    <div id="search-overlay" class="search-overlay"></div>
 
 
     <script type="module" src="firebase-init.js"></script>
@@ -115,39 +162,63 @@
             const visualizer = document.getElementById('audio-visualizer');
             const paywall = document.getElementById('sticky-signup-banner');
             const signInBtn = document.getElementById('showSignInModalFromAudio');
+            
+            // NOTE: The onAuthStateChanged listener in main.js will now run
+            // and handle toggling the 'logged-in' class on the body.
 
-            // Assuming main.js exports openModal or you use the link's IDs
-            signInBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Close the sticky banner if necessary
-                paywall.classList.remove('is-visible'); 
-                // Trigger the sign-in modal
-                document.getElementById('signInLink').click();
-            });
-
-            // Logic to check auth state and remove paywall
+            // 1. Logic to check auth state and remove paywall
+            // We rely on the auth state change in main.js, which handles the 'logged-in' class.
             const checkAuthAndPaywall = () => {
                 const isLoggedIn = document.body.classList.contains('logged-in');
                 if (isLoggedIn) {
                     paywall.classList.remove('is-visible');
-                    // Enable player controls
+                    // Ensure the player is enabled if logged in
                     playBtn.disabled = false;
+                    if(audio.paused) {
+                         // Optional: Auto-play audio when paywall is removed on login
+                         // audio.play();
+                         // playIcon.classList.add('hidden');
+                         // pauseIcon.classList.remove('hidden');
+                         // visualizer.classList.add('is-playing');
+                    }
                 } else {
                     paywall.classList.add('is-visible');
-                    // Disable player controls
+                    // Disable player controls and stop playback
                     playBtn.disabled = true; 
+                    if (!audio.paused) audio.pause();
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    visualizer.classList.remove('is-playing');
                 }
             };
 
-            // Listener to check auth status on player load and state change
-            if (window.auth) { // Assuming auth object is made global or accessible
-                 window.auth.onAuthStateChanged(checkAuthAndPaywall);
-            }
-            checkAuthAndPaywall();
+            // Re-check auth state immediately and whenever the DOM changes (e.g., when main.js runs)
+            // The onAuthStateChanged listener in main.js will update the body class,
+            // so we set up an observer to react to that change.
+            new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === "class") {
+                        checkAuthAndPaywall();
+                    }
+                });
+            }).observe(document.body, { attributes: true });
+
+            checkAuthAndPaywall(); // Initial check
 
 
-            // Basic Player Logic
+            // 2. Button to open the Sign In Modal
+            signInBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Close the sticky banner visual
+                paywall.classList.remove('is-visible'); 
+                // Trigger the sign-in modal using the link's built-in click handler from main.js
+                document.getElementById('signInLink').click();
+            });
+
+            // 3. Basic Player Logic
             playBtn.addEventListener('click', () => {
+                if (playBtn.disabled) return; // Prevent play if paywall is active
+
                 if (audio.paused) {
                     audio.play();
                     playIcon.classList.add('hidden');
@@ -171,4 +242,4 @@
         });
     </script>
 </body>
-</html>;
+</html>
