@@ -1762,29 +1762,45 @@ body.commenting-disabled #comment-view {
     display: none !important;
 }
 /* --- AUDIO PLAYER PAGE STYLES --- */
+
+/* --- AUDIO PLAYER PAGE STYLES --- */
+/* We need to redefine the nav bar styles for the dark background */
+
 .audio-page .header-top-bar {
+    /* Set the background of the nav bar itself to transparent 
+       so the dark hero background shows through */
+    background-color: transparent; 
     border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Light border on dark background */
 }
-.audio-page .user-actions a,
-.audio-page .top-bar-left a,
-.audio-page .top-bar-left .menu-toggle .hamburger-line {
-    color: var(--color-background); /* White text on dark header */
+
+.audio-page .top-bar-left .nav-link,
+.audio-page .user-actions a:not(.btn),
+.audio-page .user-actions svg {
+    /* Set main text/icon color to white */
+    color: var(--color-background); 
     stroke: var(--color-background);
-    background-color: transparent;
 }
-.audio-page .user-actions .btn-primary {
-    /* Keep join button look/feel */
-    background-color: var(--color-accent); 
-    color: var(--color-text);
+.audio-page .top-bar-left .menu-toggle .hamburger-line {
+    /* Set hamburger lines to white */
+    background-color: var(--color-background);
 }
 .audio-page .scrolled-logo-link {
-    color: var(--color-background); /* White logo */
+    /* Set the text logo to white */
+    color: var(--color-background); 
+}
+.audio-page .scrolled-icon-link img {
+    /* Set the bag icon to white/light color, if it's an SVG or can be styled. 
+       If it's a PNG, it will remain its original color. */
+    filter: brightness(2); 
 }
 
-/* Hero Container (The Dark Blue Section) */
+/* Ensure the hero does not conflict with the navigation layer */
 .audio-hero-container {
+    /* Pushes the hero up to cover the whole screen, but the nav bar's 
+       higher Z-index keeps it visible */
+    position: relative; 
     width: 100%;
-    min-height: 80vh; /* Make it large and dominant */
+    min-height: 80vh; 
     background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
     display: flex;
     justify-content: center;
@@ -1794,6 +1810,8 @@ body.commenting-disabled #comment-view {
     padding: 4rem 1rem;
     box-sizing: border-box;
 }
+
+
 .audio-hero-content {
     max-width: 800px;
     margin-top: -10vh; /* Adjust for visual center */
