@@ -12,146 +12,149 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* Hide all large branding from the main template */
-        .audio-page .header-branding,
-        .audio-page .main-header {
-            display: none;
-        }
+    /* Hide all large branding from the main template */
+    .audio-page .header-branding,
+    .audio-page .main-header {
+        display: none;
+    }
 
-        /* 1. Ensure the top bar is transparent and visible over the hero */
-        .audio-page .header-top-bar {
-            background-color: transparent; 
-            border-bottom: none; 
-            z-index: 999; 
-        }
+    /* 1. Ensure the top bar is transparent and visible over the hero */
+    .audio-page .header-top-bar {
+        background-color: transparent; 
+        border-bottom: none; 
+        z-index: 999; 
+    }
 
-        /* 2. Hide all unnecessary elements for the single-icon look */
-        .audio-page .top-bar-left,
-        .audio-page .user-actions,
-        .audio-page .scrolled-logo-link {
-            display: none !important;
-        }
+    /* 2. Hide all unnecessary elements for the single-icon look */
+    .audio-page .top-bar-left,
+    .audio-page .user-actions,
+    .audio-page .scrolled-logo-link {
+        display: none !important;
+    }
 
-        /* 3. Ensure the centered icon is visible and styled for the dark background */
-        .audio-page .scrolled-icon-link {
-            display: block !important; 
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%); 
-        }
-        .audio-page .scrolled-icon-link img {
-            filter: brightness(2); 
-        }
-        
-        /* Audio Hero Styles */
-        .audio-hero-container {
-            width: 100%;
-            min-height: 80vh; 
-            background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--color-background);
-            text-align: center;
-            padding: 4rem 1rem;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 1;
-        }
-        .audio-hero-content {
-            max-width: 800px;
-            margin-top: -10vh;
-        }
-        .audio-eyebrow {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            font-family: var(--font-sans);
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        .audio-eyebrow .eyebrow-date {
-            opacity: 0.6;
-        }
-        .audio-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 600;
-            line-height: 1.15;
-            margin: 0 0 2rem 0;
-        }
-        .audio-listen-prompt {
-            font-family: var(--font-sans);
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        /* Player Controls */
-        .audio-player-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        .play-pause-btn {
-            background: var(--color-accent);
-            color: var(--color-text);
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.2s;
-            padding: 0;
-        }
-        .play-pause-btn:hover {
-            transform: scale(1.05);
-        }
-        .play-pause-btn .icon-lg {
-            width: 24px;
-            height: 24px;
-            position: absolute;
-            transform: translateX(2px);
-        }
-        /* Large Visualizer */
-        .sound-bar-animation.large {
-            width: 150px;
-            height: 30px;
-            gap: 3px;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        .sound-bar-animation.large span {
-            width: 4px;
-            background-color: var(--color-background);
-            animation: none;
-        }
-        .sound-bar-animation.large.is-playing {
-            opacity: 1;
-        }
-        .sound-bar-animation.large.is-playing span {
-            animation: sound-wave-large 1.2s ease-in-out infinite alternate;
-        }
-        .sound-bar-animation.large.is-playing span:nth-child(2) { animation-delay: -0.1s; }
-        .sound-bar-animation.large.is-playing span:nth-child(3) { animation-delay: -0.2s; }
-        .sound-bar-animation.large.is-playing span:nth-child(4) { animation-delay: -0.3s; }
-        .sound-bar-animation.large.is-playing span:nth-child(20) { animation-delay: -1.9s; }
+    /* 3. Ensure the centered icon is visible and styled for the dark background */
+    .audio-page .scrolled-icon-link {
+        display: block !important; 
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%); 
+    }
+    .audio-page .scrolled-icon-link img {
+        /* REMOVED: filter: brightness(2); */
+        /* If your image itself is not showing correctly (e.g., it's a dark image on a dark background),
+           you might need to adjust the image file itself or use a different filter.
+           But for a typically light/white logo, removing this filter is the fix. */
+    }
+    
+    /* Audio Hero Styles */
+    .audio-hero-container {
+        width: 100%;
+        min-height: 80vh; 
+        background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-background);
+        text-align: center;
+        padding: 4rem 1rem;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+    }
+    .audio-hero-content {
+        max-width: 800px;
+        margin-top: -10vh;
+    }
+    .audio-eyebrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .audio-eyebrow .eyebrow-date {
+        opacity: 0.6;
+    }
+    .audio-title {
+        font-family: var(--font-serif);
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        font-weight: 600;
+        line-height: 1.15;
+        margin: 0 0 2rem 0;
+    }
+    .audio-listen-prompt {
+        font-family: var(--font-sans);
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    /* Player Controls */
+    .audio-player-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    .play-pause-btn {
+        background: var(--color-accent);
+        color: var(--color-text);
+        border: none;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+        padding: 0;
+    }
+    .play-pause-btn:hover {
+        transform: scale(1.05);
+    }
+    .play-pause-btn .icon-lg {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        transform: translateX(2px);
+    }
+    /* Large Visualizer */
+    .sound-bar-animation.large {
+        width: 150px;
+        height: 30px;
+        gap: 3px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+    }
+    .sound-bar-animation.large span {
+        width: 4px;
+        background-color: var(--color-background);
+        animation: none;
+    }
+    .sound-bar-animation.large.is-playing {
+        opacity: 1;
+    }
+    .sound-bar-animation.large.is-playing span {
+        animation: sound-wave-large 1.2s ease-in-out infinite alternate;
+    }
+    .sound-bar-animation.large.is-playing span:nth-child(2) { animation-delay: -0.1s; }
+    .sound-bar-animation.large.is-playing span:nth-child(3) { animation-delay: -0.2s; }
+    .sound-bar-animation.large.is-playing span:nth-child(4) { animation-delay: -0.3s; }
+    .sound-bar-animation.large.is-playing span:nth-child(20) { animation-delay: -1.9s; }
 
-        @keyframes sound-wave-large {
-            0% { height: 4px; }
-            100% { height: 30px; }
-        }
-    </style>
+    @keyframes sound-wave-large {
+        0% { height: 4px; }
+        100% { height: 30px; }
+    }
+</style>
 </head>
 <body class="audio-page">
 
