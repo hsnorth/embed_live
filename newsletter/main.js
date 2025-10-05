@@ -5,6 +5,8 @@ import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from "http
 
 console.log("Firebase is connected via shared module!");
 
+window.auth = auth; 
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const typeWriter = (element, text, speed, callback) => {
