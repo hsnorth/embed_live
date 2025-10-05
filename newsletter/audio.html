@@ -37,28 +37,25 @@
             top: 50%;
             transform: translate(-50%, -50%); 
         }
-        .audio-page .scrolled-icon-link img {
-            /* Ensures the logo is clear on the dark background */
-            filter: brightness(100%); 
-        }
-
         /* Hide all large branding */
         .audio-page .header-branding,
         .audio-page .main-header {
             display: none;
         }
 
-        /* Audio Hero Styles */
+        /* Audio Hero Styles - EXTENDED DOWNWARDS */
         .audio-hero-container {
             width: 100%;
-            min-height: 80vh; 
+            /* min-height property removed so it only covers the main player */
+            /* The next section will now handle the dark background extension */
+            padding: 4rem 1rem 0; /* Adjusted padding to remove bottom padding */
             background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
             display: flex;
+            flex-direction: column; /* Allows content sections to stack */
             justify-content: center;
             align-items: center;
             color: var(--color-background);
             text-align: center;
-            padding: 4rem 1rem;
             box-sizing: border-box;
             position: relative;
             z-index: 1;
@@ -66,6 +63,7 @@
         .audio-hero-content {
             max-width: 800px;
             margin-top: -10vh;
+            padding-bottom: 5rem; /* Add padding below the main player */
         }
         .audio-eyebrow {
             display: flex;
@@ -153,18 +151,21 @@
             100% { height: 30px; }
         }
         
-        /* === PAST EPISODES SECTION STYLES (Netflix Style) === */
+        /* === PAST EPISODES SECTION STYLES (Integrated Dark Carousel) === */
         .past-episodes-section {
-            padding: 4rem 0; /* Increased top/bottom padding */
-            background-color: #f7f7f7;
-            border-top: 1px solid var(--color-border);
+            /* Inherit dark background */
+            background-color: #000000; 
+            padding: 0 0 5rem 0; /* Removed top padding, added significant bottom padding */
+            border-top: none; 
+            width: 100%;
         }
         .past-episodes-section h2 {
             font-family: var(--font-serif);
-            font-size: 2rem;
+            font-size: 2.2rem; /* Slightly bigger title */
             font-weight: 400;
+            color: var(--color-background); /* White title text */
             margin: 0 0 1.5rem 0;
-            padding-left: 30px; /* Increased side padding */
+            padding-left: 30px; 
         }
         
         /* The scrolling container */
@@ -172,8 +173,7 @@
             display: flex;
             overflow-x: scroll;
             padding: 0 30px 20px 30px; /* Increased side/bottom padding */
-            gap: 20px; /* Increased gap between cards */
-            /* Hide scrollbar for a cleaner look */
+            gap: 20px; 
             -ms-overflow-style: none;
             scrollbar-width: none;
             scroll-behavior: smooth;
@@ -184,17 +184,16 @@
 
         .episode-card {
             flex: 0 0 auto;
-            width: 280px; /* Slightly wider cards */
-            background-color: var(--color-background);
-            border: 1px solid var(--color-border);
+            width: 300px; /* Slightly wider cards */
+            background-color: #1a1a1a; /* Dark card background */
+            border: 1px solid #333333; /* Subtle border */
             border-radius: 4px;
             padding: 1.2rem;
-            cursor: default;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         /* Hover effect for a more interactive feel */
         .episode-card:hover {
-             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+             box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
              transform: translateY(-5px);
         }
 
@@ -202,27 +201,29 @@
             font-size: 0.8rem;
             font-family: var(--font-sans);
             font-weight: 700;
-            color: #888;
+            color: #aaaaaa; /* Light gray text */
         }
         .episode-card h3 {
             font-family: var(--font-serif);
-            font-size: 1.3rem;
+            font-size: 1.4rem; /* Slightly bigger episode title */
             font-weight: 600;
+            color: var(--color-background); /* White text */
             margin: 0.5rem 0 0.5rem 0;
             line-height: 1.3;
         }
         .episode-card p {
             font-family: var(--font-sans);
             font-size: 0.95rem;
-            color: #555;
+            color: #cccccc; /* Lighter white for body text */
             margin: 0;
         }
         
         /* === FOOTER STYLES === */
         .audio-footer {
-            border-top: 1px solid var(--color-border);
+            border-top: 1px solid #333333; /* Light border for contrast */
             padding: 3rem 1rem;
-            background-color: var(--color-background);
+            background-color: #000000;
+            color: var(--color-background);
             text-align: center;
         }
         .audio-footer-content {
@@ -235,7 +236,7 @@
             font-size: 1.8rem;
             text-transform: uppercase;
             letter-spacing: -0.06em;
-            color: var(--color-text);
+            color: var(--color-background); /* White logo in footer */
             text-decoration: none;
             display: block;
             margin-bottom: 0.5rem;
@@ -244,7 +245,7 @@
             margin-top: 1rem;
             font-family: var(--font-sans);
             font-size: 0.9rem;
-            color: #888;
+            color: #aaaaaa;
         }
 
     </style>
@@ -253,7 +254,6 @@
 
     <div class="header-top-bar">
         <div class="top-bar-left"></div>
-        
         <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL</a>
         <a href="index.html" class="scrolled-icon-link">
             <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c" alt="The News Haul">
