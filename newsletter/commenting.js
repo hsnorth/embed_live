@@ -26,6 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(range.cloneContents());
         return container.innerHTML;
     }
+        // PASTE THE MISSING FUNCTION HERE
+    function applyHighlightToRange(element, start, end, commentId) {
+        const originalHtml = element.innerHTML;
+        const before = originalHtml.substring(0, start);
+        const highlighted = originalHtml.substring(start, end);
+        const after = originalHtml.substring(end);
+        
+        if (highlighted.includes('class="comment-highlight"')) return;
+
+        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
+        element.innerHTML = newHtml;
+    }
 
     function generateCssSelector(el) {
         if (!(el instanceof Element)) return;
