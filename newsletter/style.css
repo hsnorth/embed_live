@@ -1807,4 +1807,59 @@ body.commenting-disabled .comment-highlight,
 body.commenting-disabled #comment-view {
     display: none !important;
 }
-/* --- AUDIO PLAYER PAGE STYLES --- */
+/* --- DEEPNOTE & SELECTION TRIGGER STYLES --- */
+
+/* This is the new trigger that holds both buttons */
+#selection-trigger {
+    position: absolute;
+    z-index: 1010;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+}
+
+/* Style for the individual buttons inside the trigger */
+.selection-trigger-btn {
+    background: none;
+    border: none;
+    color: var(--color-background);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Divider between the buttons */
+.selection-trigger-divider {
+    width: 1px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Style for text marked as a deepnote */
+.deepnote-highlight {
+    cursor: pointer;
+    border-bottom: 2px dotted var(--color-text);
+    text-decoration: none !important; /* Override other underlines */
+    background: none !important; /* Override comment highlight */
+}
+
+/* The pop-up that displays the deepnote content */
+#deepnote-view {
+    position: absolute;
+    background: var(--color-background);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid var(--color-border);
+    z-index: 100;
+    padding: 1.25rem;
+    max-width: 320px;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+}
