@@ -541,50 +541,75 @@ body.logged-in #mobile-account-trigger {
 
 /* --- UPDATED LIVE TICKER BAR STYLES --- */
 
+/* --- UPDATED LIVE TICKER BAR STYLES --- */
+
+/* This rule centers the ticker and sets its max-width */
+.live-ticker-container {
+    max-width: 1200px; /* Matches your site's main content width */
+    margin: 1rem auto; /* Centers the bar on the page */
+    padding: 0 1rem;   /* Aligns it with your header/content padding */
+    box-sizing: border-box;
+}
+
 .live-ticker-bar {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    overflow: hidden;
-    font-family: var(--font-sans);
-    font-size: 0.9rem;
-    text-decoration: none;
-    box-sizing: border-box;
-
-    /* --- New styles for your requested look --- */
-    background-color: var(--color-accent); /* Your yellow color */
-    color: var(--color-text);             /* Your black text color */
-    border-bottom: 2px solid var(--color-text); /* The black underline */
-    border-radius: 0;                     /* Removes the rounded corners */
-    width: 100%;                          /* Makes it full width */
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-text);
     padding: 0.75rem 1.25rem;
-    margin: 0;
-    max-width: none;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Make sure the sound animation bars are black */
+/* New wrapper for the static content (play icon, title, sound bar) */
+.ticker-static-section {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;    /* Adjusts space between icon, title, and sound bar */
+    flex-shrink: 0; /* Prevents this section from shrinking */
+}
+
+/* New style for the black play icon */
+.play-icon {
+    width: 18px;
+    height: 18px;
+    fill: var(--color-text); /* Makes the SVG icon black */
+}
+
+.ticker-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.sound-bar-animation {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 16px;
+}
+
 .sound-bar-animation span {
-    background-color: var(--color-text); /* Sets bar color to black */
+    width: 3px;
+    background-color: var(--color-text);
     animation: sound-wave 1.2s ease-in-out infinite alternate;
 }
 
-/* This animation is from your original file */
 @keyframes sound-wave {
     0% { height: 2px; }
     100% { height: 16px; }
 }
 
-.ticker-title {
-    font-weight: 700;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
 .ticker-separator {
-    opacity: 1; /* Make the separator fully black */
-    flex-shrink: 0;
+    opacity: 1; /* Ensures separator is solid black */
 }
 
+/* Styles for the scrolling text section */
 .headlines-container {
     flex-grow: 1;
     min-width: 0;
@@ -596,7 +621,6 @@ body.logged-in #mobile-account-trigger {
     width: fit-content;
 }
 
-/* Ensures the text is black and keeps scrolling */
 .headlines-track p {
     margin: 0;
     white-space: nowrap;
@@ -604,7 +628,6 @@ body.logged-in #mobile-account-trigger {
     color: var(--color-text);
 }
 
-/* This keyframe animation is from your original file */
 @keyframes scroll-horizontal {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
