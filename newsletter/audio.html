@@ -360,39 +360,52 @@
     </footer>
     <script type="module" src="firebase-init.js"></script>
     <script type="module" src="main.js"></script>
-    <script>
-        // Custom JS for the audio player page
-        document.addEventListener('DOMContentLoaded', () => {
-            const audio = document.getElementById('podcast-audio');
-            const playBtn = document.getElementById('play-pause-btn');
-            const playIcon = document.getElementById('play-icon');
-            const pauseIcon = document.getElementById('pause-icon');
-            const visualizer = document.getElementById('audio-visualizer');
-            
-            if (!audio || !playBtn) return;
+<script>
+    // Custom JS for the audio player page
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check if the required elements exist
+        const audio = document.getElementById('podcast-audio');
+        const playBtn = document.getElementById('play-pause-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const visualizer = document.getElementById('audio-visualizer');
+        
+        if (!audio || !playBtn) return; // Exit if page is incomplete
 
-            // 1. Basic Player Logic (Always enabled)
-            playBtn.addEventListener('click', () => {
-                if (audio.paused) {
-                    audio.play();
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
-                    visualizer.classList.add('is-playing');
-                } else {
-                    audio.pause();
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
-                    visualizer.classList.remove('is-playing');
-                }
-            });
+        // Function to set the visual state to PLAYING
+        const setPlayingState = () => {
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+            visualizer.classList.add('is-playing');
+        };
 
-            audio.addEventListener('ended', () => {
-                audio.currentTime = 0;
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-                visualizer.classList.remove('is-playing');
-            });
+        // Function to set the visual state to PAUSED/STOPPED
+        const setPausedState = () => {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            visualizer.classList.remove('is-playing');
+        };
+
+        // 1. Basic Player Logic (Always enabled)
+        playBtn.addEventListener('click', () => {
+            // Check the actual state of the audio element
+            if (audio.paused) {
+                // Audio is paused, so play it and set to Playing State
+                audio.play();
+                setPlayingState();
+            } else {
+                // Audio is playing, so pause it and set to Paused State
+                audio.pause();
+                setPausedState();
+            }
         });
-    </script>
+
+        // Ensure visuals reset when audio naturally ends
+        audio.addEventListener('ended', () => {
+            audio.currentTime = 0;
+            setPausedState();
+        });
+    });
+</script>
 </body>
 </html>
