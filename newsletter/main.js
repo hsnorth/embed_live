@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADDED: New Control Centre elements
     const commentsToggle = document.getElementById('comments-toggle');
     const digipadToggle = document.getElementById('digipad-toggle');
-    const deepnoteToggle = document.getElementById('deepnote-toggle');
 
     let typeInterval;
     let joinEmailValue = '';
