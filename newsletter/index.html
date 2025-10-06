@@ -282,6 +282,19 @@
             </div>
         </div>
     </section>
+    <div id="deepnote-ui-container"></div>
+
+    <div id="deepnote-form-modal" class="modal-overlay" aria-hidden="true" style="z-index: 3600;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="modal-header-text" style="font-size: 1.8rem; margin-bottom: 1rem;">Add Deepnote</h3>
+            <p class="comment-quote" id="deepnote-quote"></p>
+            <form id="deepnote-form">
+                <textarea id="deepnote-textarea" placeholder="Provide extra context or information here..." required></textarea>
+                <button type="submit" id="deepnote-post-btn" class="modal-btn">Save Deepnote</button>
+            </form>
+        </div>
+    </div>
 
     <footer class="main-footer">
         <div class="footer-content">
