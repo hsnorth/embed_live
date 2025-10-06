@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const controlCentreTrigger = document.getElementById('control-centre-trigger');
     const controlCentreOverlay = document.getElementById('control-centre-overlay');
     const controlCentreCloseBtn = document.getElementById('control-centre-close-btn');
+    const deepnoteToggle = document.getElementById('deepnote-toggle');
     // ADDED: New Control Centre elements
     const commentsToggle = document.getElementById('comments-toggle');
     const digipadToggle = document.getElementById('digipad-toggle');
