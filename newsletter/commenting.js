@@ -3,33 +3,28 @@ import { db, auth } from './firebase-init.js';
 import { collection, addDoc, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
-// Define the collection reference at the top level of the module
+// --- MODIFIED --- Define collection references for both features
 const commentsCollection = collection(db, 'comments');
+const deepnotesCollection = collection(db, 'deepnotes'); // --- NEW ---
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- MODIFIED --- Add deepnote container
     const commentUiContainer = document.getElementById('comment-ui-container');
-    if (!commentUiContainer) {
-        console.error('Comment UI container not found!');
+    const deepnoteUiContainer = document.getElementById('deepnote-ui-container'); // --- NEW ---
+    
+    if (!commentUiContainer || !deepnoteUiContainer) {
+        console.error('Comment or Deepnote UI container not found!');
         return;
     }
 
-    // --- UTILITY FUNCTIONS ---
+    // --- NEW --- Global variable to hold the current text selection
+    let currentSelectionRange = null;
+
+    // --- UTILITY FUNCTIONS (Your existing functions) ---
     function getRangeHtml(range) {
         const container = document.createElement('div');
         container.appendChild(range.cloneContents());
         return container.innerHTML;
-    }
-
-    function applyHighlightToRange(element, start, end, commentId) {
-        const originalHtml = element.innerHTML;
-        const before = originalHtml.substring(0, start);
-        const highlighted = originalHtml.substring(start, end);
-        const after = originalHtml.substring(end);
-        
-        if (highlighted.includes('class="comment-highlight"')) return;
-
-        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
-        element.innerHTML = newHtml;
     }
 
     function generateCssSelector(el) {
@@ -44,13 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 let sib = el, nth = 1;
                 while (sib = sib.previousElementSibling) {
-                    if (sib.nodeName.toLowerCase() === selector) {
-                       nth++;
-                    }
+                    if (sib.nodeName.toLowerCase() === selector) nth++;
                 }
-                if (nth !== 1) {
-                    selector += `:nth-of-type(${nth})`;
-                }
+                if (nth !== 1) selector += `:nth-of-type(${nth})`;
             }
             path.unshift(selector);
             el = el.parentNode;
@@ -58,12 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return path.join(" > ");
     }
 
-    function cleanupComments() {
-        document.getElementById('comment-trigger')?.remove();
+    // --- MODIFIED --- Renamed to cleanup all features
+    function cleanupFeatures() {
+        document.getElementById('selection-trigger')?.remove(); // --- MODIFIED ---
         document.getElementById('comment-view')?.remove();
+        document.getElementById('deepnote-view')?.remove(); // --- NEW ---
 
-        const highlights = document.querySelectorAll('.comment-highlight');
-        highlights.forEach(span => {
+        // Cleanup comment highlights
+        document.querySelectorAll('.comment-highlight').forEach(span => {
+            const parent = span.parentNode;
+            if (parent) {
+                parent.replaceChild(document.createTextNode(span.textContent), span);
+                parent.normalize();
+            }
+        });
+        // --- NEW --- Cleanup deepnote highlights
+        document.querySelectorAll('.deepnote-highlight').forEach(span => {
             const parent = span.parentNode;
             if (parent) {
                 parent.replaceChild(document.createTextNode(span.textContent), span);
@@ -131,6 +132,144 @@ document.addEventListener('DOMContentLoaded', () => {
             document.onmousemove = null;
             document.onmouseup = null;
         }
+    }
+
+        function showDeepnoteForm() {
+        document.getElementById('selection-trigger')?.remove();
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+        if (!selectedText || !currentSelectionRange) return;
+
+        const modal = document.getElementById('deepnote-form-modal');
+        if (modal) {
+            modal.querySelector('#deepnote-quote').textContent = `"${selectedText}"`;
+            modal.classList.add('is-open');
+            modal.querySelector('#deepnote-textarea').focus();
+        }
+    }
+
+    /**
+     * Saves a new deepnote to Firestore.
+     */
+    async function postDeepnote() {
+        const user = auth.currentUser;
+        if (!user || !currentSelectionRange) return;
+
+        const content = document.getElementById('deepnote-textarea').value;
+        if (!content.trim()) {
+            alert("Deepnote cannot be empty.");
+            return;
+        }
+        
+        const parentElement = currentSelectionRange.startContainer.parentElement.closest('p, li, h3');
+        if (!parentElement) {
+            console.error("Could not find a valid parent element for the deepnote.");
+            return;
+        }
+
+        // Use the same highlighting logic as comments
+        const selector = generateCssSelector(parentElement);
+        const preRange = document.createRange();
+        preRange.selectNodeContents(parentElement);
+        preRange.setEnd(currentSelectionRange.startContainer, currentSelectionRange.startOffset);
+        const startOffset = getRangeHtml(preRange).length;
+        const endOffset = startOffset + getRangeHtml(currentSelectionRange).length;
+
+        try {
+            await addDoc(deepnotesCollection, {
+                content: content,
+                highlightedText: currentSelectionRange.toString(),
+                targetSelector: selector,
+                startOffset: startOffset,
+                endOffset: endOffset,
+                userId: user.uid,
+                pageUrl: window.location.pathname,
+                createdAt: new Date()
+            });
+            await loadAllFeatures(); // Reload all highlights to show the new one
+        } catch (error) {
+            console.error("Error saving deepnote: ", error);
+        } finally {
+            const modal = document.getElementById('deepnote-form-modal');
+            if(modal) {
+                modal.classList.remove('is-open');
+                modal.querySelector('form').reset();
+            }
+        }
+    }
+
+    /**
+     * Displays a deepnote pop-up view.
+     */
+    async function showDeepnoteView(highlightElement) {
+        document.getElementById('deepnote-view')?.remove(); // Close any existing view
+        const deepnoteId = highlightElement.dataset.deepnoteId;
+        if (!deepnoteId) return;
+
+        try {
+            const docRef = doc(db, 'deepnotes', deepnoteId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const deepnoteData = docSnap.data();
+                const view = document.createElement('div');
+                view.id = 'deepnote-view';
+                view.textContent = deepnoteData.content;
+                deepnoteUiContainer.appendChild(view);
+
+                // Position the view below the highlight
+                const rect = highlightElement.getBoundingClientRect();
+                view.style.top = `${window.scrollY + rect.bottom + 5}px`;
+                view.style.left = `${window.scrollX + rect.left}px`;
+            }
+        } catch (error) {
+            console.error("Error fetching deepnote:", error);
+        }
+    }
+
+    // --- MODIFIED --- Renamed to load all features
+    async function loadAllFeatures() {
+        cleanupFeatures(); // Start with a clean slate
+
+        // 1. Load Comments
+        try {
+            const q = query(commentsCollection, where("pageUrl", "==", window.location.pathname), where("parentCommentId", "==", null));
+            const snapshot = await getDocs(q);
+            snapshot.forEach(doc => {
+                const comment = { id: doc.id, ...doc.data() };
+                const element = document.querySelector(comment.targetSelector);
+                if (element) {
+                    // This is a simplified highlight application. Your original, more complex one is better.
+                    // For this example, we'll assume a simple innerHTML replacement strategy
+                    // Replace with your 'applyHighlightToRange' logic if needed.
+                    let html = element.innerHTML;
+                    const before = html.substring(0, comment.startOffset);
+                    const highlighted = html.substring(comment.startOffset, comment.endOffset);
+                    const after = html.substring(comment.endOffset);
+                    if (!highlighted.includes('comment-highlight')) {
+                         element.innerHTML = `${before}<span class="comment-highlight" data-comment-id="${comment.id}">${highlighted}</span>${after}`;
+                    }
+                }
+            });
+        } catch(e) { console.error("Could not load comments.", e); }
+
+        // 2. Load Deepnotes --- NEW ---
+        try {
+            const q = query(deepnotesCollection, where("pageUrl", "==", window.location.pathname));
+            const snapshot = await getDocs(q);
+            snapshot.forEach(doc => {
+                const deepnote = { id: doc.id, ...doc.data() };
+                const element = document.querySelector(deepnote.targetSelector);
+                if (element) {
+                    let html = element.innerHTML;
+                    const before = html.substring(0, deepnote.startOffset);
+                    const highlighted = html.substring(deepnote.startOffset, deepnote.endOffset);
+                    const after = html.substring(deepnote.endOffset);
+                    if (!highlighted.includes('deepnote-highlight')) {
+                        element.innerHTML = `${before}<span class="deepnote-highlight" data-deepnote-id="${deepnote.id}">${highlighted}</span>${after}`;
+                    }
+                }
+            });
+        } catch(e) { console.error("Could not load deepnotes.", e); }
     }
     
     /**
@@ -397,66 +536,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT HANDLERS ---
+   // --- MODIFIED --- EVENT HANDLERS ---
+
     const handleMouseUp = (e) => {
-        if (e.target.closest('input, textarea, button')) return;
-        const selection = window.getSelection();
-        const selectedText = selection.toString().trim();
-        document.getElementById('comment-trigger')?.remove();
-        if (selectedText.length > 0) {
-            const range = selection.getRangeAt(0);
-            const container = range.commonAncestorContainer.parentElement;
-            if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) return;
-            const rect = range.getBoundingClientRect();
-            const trigger = document.createElement('button');
-            trigger.id = 'comment-trigger';
-            trigger.innerHTML = `Add Comment`;
-            commentUiContainer.appendChild(trigger);
-            const triggerRect = trigger.getBoundingClientRect();
-            trigger.style.top = `${window.scrollY + rect.bottom + 5}px`;
-            trigger.style.left = `${window.scrollX + rect.left + (rect.width / 2) - (triggerRect.width / 2)}px`;
-            trigger.addEventListener('mousedown', (e) => e.stopPropagation());
-            trigger.onclick = () => {
-                showCommentForm(selection);
-                trigger.remove();
-            };
-        }
+        // Debounce to prevent immediate closing on trigger click
+        setTimeout(() => {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+            document.getElementById('selection-trigger')?.remove(); // Remove old trigger
+            
+            if (selectedText.length > 0 && !e.target.closest('input, textarea, button, #comment-view, #deepnote-view')) {
+                const range = selection.getRangeAt(0);
+                const container = range.commonAncestorContainer.parentElement;
+                
+                // Check if selection is within allowed content areas
+                if (!container.closest('.main-article, .essentials-container, .cannoli-section-content')) return;
+                
+                currentSelectionRange = range; // Save the range
+
+                // --- NEW SELECTION TRIGGER ---
+                const rect = range.getBoundingClientRect();
+                const trigger = document.createElement('div');
+                trigger.id = 'selection-trigger';
+                trigger.innerHTML = `
+                    <button class="selection-trigger-btn" id="comment-trigger-btn">Add Comment</button>
+                    <div class="selection-trigger-divider"></div>
+                    <button class="selection-trigger-btn" id="deepnote-trigger-btn">Add Deepnote</button>
+                `;
+                document.body.appendChild(trigger);
+                
+                // Position the new trigger
+                trigger.style.top = `${window.scrollY + rect.top - trigger.offsetHeight - 5}px`;
+                trigger.style.left = `${window.scrollX + rect.left + (rect.width - trigger.offsetWidth) / 2}px`;
+                
+                // Add listeners to buttons
+                document.getElementById('comment-trigger-btn').onclick = () => showCommentForm(selection);
+                document.getElementById('deepnote-trigger-btn').onclick = showDeepnoteForm;
+            }
+        }, 10);
     };
     
-    const handleMouseDown = (e) => {
-        const trigger = document.getElementById('comment-trigger');
-        if (trigger && !trigger.contains(e.target)) {
-            trigger.remove();
+    const handleDocumentClick = async (e) => {
+        // Hide trigger if clicking away
+        if (!e.target.closest('#selection-trigger')) {
+            document.getElementById('selection-trigger')?.remove();
         }
-    };
 
-    const handleHighlightClick = async (e) => {
-        const highlight = e.target.closest('.comment-highlight');
-        if (highlight) {
-            const existingView = document.getElementById('comment-view');
-            if (existingView && existingView.dataset.commentId === highlight.dataset.commentId) {
-                existingView.remove();
-                return;
-            }
-            const commentId = highlight.dataset.commentId;
+        // Handle clicking on a comment highlight
+        const commentHighlight = e.target.closest('.comment-highlight');
+        if (commentHighlight) {
+            // Your existing logic to show comment view
+            const commentId = commentHighlight.dataset.commentId;
             const commentDoc = await getDoc(doc(db, 'comments', commentId));
-            if (!commentDoc.exists()) return;
-            showCommentView({ id: commentId, ...commentDoc.data() }, highlight);
+            if (commentDoc.exists()) {
+                showCommentView({ id: commentId, ...commentDoc.data() }, commentHighlight);
+            }
+            return;
         }
+
+        // --- NEW --- Handle clicking on a deepnote highlight
+        const deepnoteHighlight = e.target.closest('.deepnote-highlight');
+        if (deepnoteHighlight) {
+            showDeepnoteView(deepnoteHighlight);
+            return;
+        }
+
+        // Hide pop-ups if clicking away from them
+        if (!e.target.closest('#comment-view')) document.getElementById('comment-view')?.remove();
+        if (!e.target.closest('#deepnote-view')) document.getElementById('deepnote-view')?.remove();
     };
 
-    // --- AUTH-DRIVEN INITIALIZATION ---
+    // --- NEW --- Listener for the deepnote save button
+    const deepnoteForm = document.getElementById('deepnote-form');
+    if (deepnoteForm) {
+        deepnoteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            postDeepnote();
+        });
+    }
+
+    // --- MODIFIED --- AUTH-DRIVEN INITIALIZATION ---
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            loadAndApplyAllHighlights();
+        // --- MODIFIED --- Check for the body class added in your main.js
+        const commentingDisabled = document.body.classList.contains('commenting-disabled');
+        
+        cleanupFeatures(); // Always cleanup first
+        
+        if (user && !commentingDisabled) {
+            loadAllFeatures(); // Load comments and deepnotes
             document.addEventListener('mouseup', handleMouseUp);
-            document.addEventListener('mousedown', handleMouseDown);
-            document.addEventListener('click', handleHighlightClick);
+            document.addEventListener('click', handleDocumentClick);
         } else {
-            cleanupComments();
+            // If logged out or commenting is disabled, remove listeners
             document.removeEventListener('mouseup', handleMouseUp);
-            document.removeEventListener('mousedown', handleMouseDown);
-            document.removeEventListener('click', handleHighlightClick);
+            document.removeEventListener('click', handleDocumentClick);
         }
     });
 });
