@@ -432,6 +432,17 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast(`Error saving preference: ${error.message}`, 'error');
         }
     };
+    const updateDeepnotePreference = async (isEnabled) => {
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+        const userDocRef = doc(db, 'users', user.uid);
+        await updateDoc(userDocRef, { deepnotesEnabled: isEnabled });
+        showToast(`Deepnotes have been ${isEnabled ? 'turned ON' : 'turned OFF'}.`, 'info');
+    } catch (error) {
+        showToast(`Error saving preference: ${error.message}`, 'error');
+        }
+    };
 
     // --- FORM SUBMISSION HANDLERS ---
     if (signInForm) {
@@ -498,25 +509,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             document.body.classList.add('logged-in');
             removeStickyBannerLock();
-            
-            // --- ADDED: Fetch and apply user preferences ---
+    
             try {
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
-
-                let commentsEnabled = true; // Default state for logged-in user
-
-                if (userDoc.exists() && userDoc.data().commentsEnabled !== undefined) {
-                    commentsEnabled = userDoc.data().commentsEnabled;
+    
+                let commentsEnabled = true; // Default state
+                let deepnotesEnabled = true; // --- NEW: Default state for deepnotes
+    
+                if (userDoc.exists()) {
+                    commentsEnabled = userDoc.data().commentsEnabled !== false;
+                    deepnotesEnabled = userDoc.data().deepnotesEnabled !== false; // --- NEW ---
                 }
-                
-                // Set the toggle state in the control center
-                if (commentsToggle) {
-                    commentsToggle.checked = commentsEnabled;
-                }
-                
-                // Apply the class to the body to control external UI features
+    
+                // Set the toggle states in the control center
+                if (commentsToggle) commentsToggle.checked = commentsEnabled;
+                if (deepnoteToggle) deepnoteToggle.checked = deepnotesEnabled; // --- NEW ---
+    
+                // Apply classes to the body to control UI features
                 document.body.classList.toggle('commenting-disabled', !commentsEnabled);
+                document.body.classList.toggle('deepnote-disabled', !deepnotesEnabled); // --- NEW ---
 
             } catch(e) {
                 console.error("Error fetching user preferences:", e);
@@ -542,6 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // ADDED: When logged out, comments are always OFF
             document.body.classList.add('commenting-disabled'); 
+            document.body.classList.add('deepnote-disabled'); // --- NEW: Also disable deepnotes when logged out
 
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
@@ -578,6 +591,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+        /* ADDED: Deepnote Toggle Listener */
+    if (deepnoteToggle) {
+        deepnoteToggle.addEventListener('change', () => {
+            const isEnabled = deepnoteToggle.checked;
+            updateDeepnotePreference(isEnabled);
+            // Toggle a class on the body to control the feature's UI
+            document.body.classList.toggle('deepnote-disabled', !isEnabled);
+        });
+    }
     // --- ACCOUNT PANEL LOGIC ---
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
     const accountPanelCloseBtn = document.getElementById('account-panel-close-btn');
