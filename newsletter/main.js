@@ -206,6 +206,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
     }
+
+    if (modalCloseBtns.length > 0) {
+        // Loop through each 'X' button
+        modalCloseBtns.forEach(btn => {
+            // Add a click listener
+            btn.addEventListener('click', () => {
+                // Find the closest parent modal overlay and close it
+                const modal = btn.closest('.modal-overlay');
+                if (modal) {
+                    closeModal(modal);
+                }
+            });
+        });
+    }
+
     
     // --- "SHOW MORE" FUNCTIONALITY FOR HARRY'S NOTE ---
     const harrysNoteWrapper = document.getElementById('harrys-note-wrapper');
