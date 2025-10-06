@@ -568,6 +568,21 @@ body.logged-in #mobile-account-trigger {
     border-top-left-radius: 6px;                /* Added a slight curve to the top-left corner */
     border-top-right-radius: 6px;               /* Added a slight curve to the top-right corner */
 }
+/* --- Responsive Rule for Live Ticker --- */
+@media (max-width: 500px) {
+    .live-ticker-container {
+        max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        margin-top: 0; /* Removes the top margin on mobile for a tighter layout */
+    }
+
+    .live-ticker-bar {
+        /* Removes the rounded corners for a clean, edge-to-edge look on mobile */
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+}
 
 /* New wrapper for the static content (play icon, title, sound bar) */
 .ticker-static-section {
