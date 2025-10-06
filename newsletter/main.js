@@ -220,6 +220,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    // --- MOBILE TOP BAR LINK EVENT LISTENERS ---
+    if (mobileJoinLink) {
+        mobileJoinLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent the link from jumping to the top of the page
+            openModal(joinModal); // Open the 'Join' modal
+        });
+    }
+
+    if (mobileSignInLink) {
+        mobileSignInLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent the link from jumping to the top of the page
+            openModal(signInModal); // Open the 'Sign In' modal
+        });
+    }
 
     
     // --- "SHOW MORE" FUNCTIONALITY FOR HARRY'S NOTE ---
