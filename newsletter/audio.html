@@ -14,247 +14,263 @@
     
     <link rel="stylesheet" href="style.css">
 
-    <style>
-        /* Base HTML/Body Styles for Non-Sticky Header */
-        .audio-page .header-top-bar {
-            position: relative !important;
-            top: auto !important;
-            background-color: transparent; 
-            border-bottom: none; 
-            z-index: 999; 
-            min-height: 80px; 
-            display: block;
-        }
-        
-        /* Nav Bar Positioning for Single Icon */
-        .audio-page .header-top-bar > div,
-        .audio-page .scrolled-logo-link {
-            display: none !important;
-        }
+<style>
+    /* Base HTML/Body Styles for Non-Sticky Header */
+    .audio-page .header-top-bar {
+        position: relative !important;
+        top: auto !important;
+        background-color: transparent; 
+        border-bottom: none; 
+        z-index: 999; 
+        min-height: 80px; 
+        display: block;
+    }
+    
+    /* Nav Bar Positioning for Single Icon */
+    .audio-page .header-top-bar > div,
+    .audio-page .scrolled-logo-link {
+        display: none !important;
+    }
 
-        .audio-page .scrolled-icon-link {
-            display: block !important; 
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%); 
-        }
-        .audio-page .scrolled-icon-link img {
-            filter: brightness(100%); 
-        }
+    .audio-page .scrolled-icon-link {
+        display: block !important; 
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%); 
+    }
+    .audio-page .scrolled-icon-link img {
+        /* Logo Size Fix: Increased by 15% */
+        height: 70px; /* Original was likely 60px or less, 70px is approx 15-20% increase */
+        width: auto;
+        filter: brightness(100%); 
+    }
 
-        /* Hide all large branding */
-        .audio-page .header-branding,
-        .audio-page .main-header {
-            display: none;
-        }
+    /* Hide all large branding */
+    .audio-page .header-branding,
+    .audio-page .main-header {
+        display: none;
+    }
 
-        /* Audio Hero Styles - FIXING SPACING */
-        .audio-hero-container {
-            width: 100%;
-            /* ADDED TOP PADDING: Pushes content away from the header */
-            padding: 8rem 1rem 0; 
-            background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: var(--color-background);
-            text-align: center;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 1;
-        }
-        .audio-hero-content {
-            max-width: 800px;
-            /* REDUCED NEGATIVE MARGIN: Less pull up, fixes top spacing collision */
-            margin-top: -5vh; 
-            padding-bottom: 5rem; 
-        }
-        
-        /* FIX: Ensure eyebrow is visible (it was likely hidden by margin-top) */
+    /* Audio Hero Styles - FIXING SPACING */
+    .audio-hero-container {
+        width: 100%;
+        padding: 8rem 1rem 0; 
+        background: linear-gradient(180deg, rgba(2, 6, 82, 1) 0%, rgba(0, 0, 0, 1) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-background);
+        text-align: center;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+    }
+    .audio-hero-content {
+        max-width: 800px;
+        margin-top: -5vh; 
+        padding-bottom: 5rem; 
+    }
+    
+    /* Eyebrow and Date Styling */
+    .audio-eyebrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .audio-eyebrow .eyebrow-date {
+        opacity: 0.6;
+    }
+    /* Responsive stacking for small screens */
+    @media (max-width: 500px) {
         .audio-eyebrow {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            font-family: var(--font-sans);
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.8);
+            flex-direction: column; /* Stack vertically */
+            gap: 0.5rem;
         }
         .audio-eyebrow .eyebrow-date {
-            opacity: 0.6;
+            opacity: 0.8; /* Improve visibility when stacked */
         }
-        .audio-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 600;
-            line-height: 1.15;
-            margin: 0 0 2rem 0;
-        }
-        .audio-listen-prompt {
-            font-family: var(--font-sans);
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        /* Player Controls */
-        .audio-player-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        .play-pause-btn {
-            background: var(--color-accent);
-            color: var(--color-text);
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.2s;
-            padding: 0;
-        }
-        .play-pause-btn:hover {
-            transform: scale(1.05);
-        }
-        .play-pause-btn .icon-lg {
-            width: 24px;
-            height: 24px;
-            position: absolute;
-            transform: translateX(2px);
-        }
-        /* Large Visualizer */
-        .sound-bar-animation.large {
-            width: 150px;
-            height: 30px;
-            gap: 3px;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        .sound-bar-animation.large span {
-            width: 4px;
-            background-color: var(--color-background);
-            animation: none;
-        }
-        .sound-bar-animation.large.is-playing {
-            opacity: 1;
-        }
-        .sound-bar-animation.large.is-playing span {
-            animation: sound-wave-large 1.2s ease-in-out infinite alternate;
-        }
-        .sound-bar-animation.large.is-playing span:nth-child(2) { animation-delay: -0.1s; }
-        .sound-bar-animation.large.is-playing span:nth-child(20) { animation-delay: -1.9s; }
-        @keyframes sound-wave-large {
-            0% { height: 4px; }
-            100% { height: 30px; }
-        }
-        
-        /* === PAST EPISODES SECTION STYLES (Integrated Dark Carousel) === */
-        .past-episodes-section {
-            background-color: #000000; 
-            padding: 0 0 5rem 0;
-            border-top: none; 
-            width: 100%;
-        }
-        .past-episodes-section h2 {
-            font-family: var(--font-serif);
-            font-size: 2.2rem;
-            font-weight: 400;
-            color: var(--color-background);
-            margin: 0 0 1.5rem 0;
-            padding-left: 30px; 
-        }
-        
-        /* The scrolling container */
-        .episode-scroll-container {
-            display: flex;
-            overflow-x: scroll;
-            padding: 0 30px 20px 30px;
-            gap: 20px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-        }
-        .episode-scroll-container::-webkit-scrollbar {
-            display: none;
-        }
+    }
 
-        .episode-card {
-            flex: 0 0 auto;
-            width: 300px;
-            background-color: #1a1a1a;
-            border: 1px solid #333333;
-            border-radius: 4px;
-            padding: 1.2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .episode-card:hover {
-             box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
-             transform: translateY(-5px);
-        }
 
-        .episode-card .eyebrow {
-            font-size: 0.8rem;
-            font-family: var(--font-sans);
-            font-weight: 700;
-            color: #aaaaaa;
-        }
-        .episode-card h3 {
-            font-family: var(--font-serif);
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--color-background);
-            margin: 0.5rem 0 0.5rem 0;
-            line-height: 1.3;
-        }
-        .episode-card p {
-            font-family: var(--font-sans);
-            font-size: 0.95rem;
-            color: #cccccc;
-            margin: 0;
-        }
-        
-        /* === FOOTER STYLES === */
-        .audio-footer {
-            border-top: 1px solid #333333;
-            padding: 3rem 1rem;
-            background-color: #000000;
-            color: var(--color-background);
-            text-align: center;
-        }
-        .audio-footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .audio-footer-logo {
-            font-family: var(--font-serif);
-            font-weight: 400;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: -0.06em;
-            color: var(--color-background);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        .audio-footer-copyright {
-            margin-top: 1rem;
-            font-family: var(--font-sans);
-            font-size: 0.9rem;
-            color: #aaaaaa;
-        }
+    .audio-title {
+        font-family: var(--font-serif);
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        font-weight: 600;
+        line-height: 1.15;
+        margin: 0 0 2rem 0;
+    }
+    .audio-listen-prompt {
+        font-family: var(--font-sans);
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Player Controls - STACKING FIX */
+    .audio-player-controls {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem; /* Reduced gap for stacking */
+        margin-bottom: 3rem;
+    }
+    .play-pause-btn {
+        background: var(--color-accent);
+        color: var(--color-text);
+        border: none;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+        padding: 0;
+        margin-bottom: 10px; /* Space above the visualizer */
+    }
+    .play-pause-btn:hover {
+        transform: scale(1.05);
+    }
+    .play-pause-btn .icon-lg {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        transform: translateX(2px);
+    }
+    
+    /* Large Visualizer */
+    .sound-bar-animation.large {
+        width: 150px;
+        height: 30px;
+        gap: 3px;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+    }
+    .sound-bar-animation.large span {
+        width: 4px;
+        background-color: var(--color-background);
+        animation: none;
+    }
+    .sound-bar-animation.large.is-playing {
+        opacity: 1;
+    }
+    .sound-bar-animation.large.is-playing span {
+        animation: sound-wave-large 1.2s ease-in-out infinite alternate;
+    }
+    .sound-bar-animation.large.is-playing span:nth-child(2) { animation-delay: -0.1s; }
+    .sound-bar-animation.large.is-playing span:nth-child(20) { animation-delay: -1.9s; }
+    @keyframes sound-wave-large {
+        0% { height: 4px; }
+        100% { height: 30px; }
+    }
+    
+    /* === PAST EPISODES SECTION STYLES (Integrated Dark Carousel) === */
+    .past-episodes-section {
+        background-color: #000000; 
+        padding: 0 0 5rem 0;
+        border-top: none; 
+        width: 100%;
+    }
+    .past-episodes-section h2 {
+        font-family: var(--font-serif);
+        font-size: 2.2rem;
+        font-weight: 400;
+        color: var(--color-background);
+        margin: 0 0 1.5rem 0;
+        padding-left: 30px; 
+    }
+    
+    /* The scrolling container */
+    .episode-scroll-container {
+        display: flex;
+        overflow-x: scroll;
+        padding: 0 30px 20px 30px;
+        gap: 20px;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+    }
+    .episode-scroll-container::-webkit-scrollbar {
+        display: none;
+    }
 
-    </style>
+    .episode-card {
+        flex: 0 0 auto;
+        width: 300px;
+        background-color: #1a1a1a;
+        border: 1px solid #333333;
+        border-radius: 4px;
+        padding: 1.2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .episode-card:hover {
+         box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
+         transform: translateY(-5px);
+    }
+
+    .episode-card .eyebrow {
+        font-size: 0.8rem;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        color: #aaaaaa;
+    }
+    .episode-card h3 {
+        font-family: var(--font-serif);
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--color-background);
+        margin: 0.5rem 0 0.5rem 0;
+        line-height: 1.3;
+    }
+    .episode-card p {
+        font-family: var(--font-sans);
+        font-size: 0.95rem;
+        color: #cccccc;
+        margin: 0;
+    }
+    
+    /* === FOOTER STYLES === */
+    .audio-footer {
+        border-top: 1px solid #333333;
+        padding: 3rem 1rem;
+        background-color: #000000;
+        color: var(--color-background);
+        text-align: center;
+    }
+    .audio-footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .audio-footer-logo {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: -0.06em;
+        color: var(--color-background);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .audio-footer-copyright {
+        margin-top: 1rem;
+        font-family: var(--font-sans);
+        font-size: 0.9rem;
+        color: #aaaaaa;
+    }
+</style>
 </head>
 <body class="audio-page">
 
