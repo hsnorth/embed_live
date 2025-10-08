@@ -71,15 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const controlCentreOverlay = document.getElementById('control-centre-overlay');
     const controlCentreCloseBtn = document.getElementById('control-centre-close-btn');
     const deepnoteToggle = document.getElementById('deepnote-toggle');
-    // ADDED: New Control Centre elements
     const commentsToggle = document.getElementById('comments-toggle');
     const digipadToggle = document.getElementById('digipad-toggle');
+    const layoutToggleContainer = document.querySelector('.layout-toggle-container');
+    const pageContentWrapper = document.getElementById('page-content-wrapper');
+    const socialFeedView = document.getElementById('social-feed-view');
 
     let typeInterval;
     let joinEmailValue = '';
     let weekdayEmailValue = '';
     let scrollLockPosition = 0;
     let isScrollLocked = false;
+    let isSocialFeedGenerated = false;
     
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
@@ -419,7 +422,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { showToast(error.message, 'error'); }
     };
 
-    /* ADDED: Function to update user preference in Firestore */
+    const updateLayoutPreference = async (layout) => {
+        const user = auth.currentUser;
+        if (!user) return;
+        try {
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { layoutPreference: layout });
+            showToast(`Layout set to ${layout === 'social' ? 'Social Feed' : 'Magazine'}.`, 'info');
+        } catch (error) {
+            showToast(`Error saving preference: ${error.message}`, 'error');
+        }
+    };
+
     const updateCommentsPreference = async (isEnabled) => {
         const user = auth.currentUser;
         if (!user) return;
@@ -498,6 +512,88 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- LAYOUT SWITCHING LOGIC ---
+    function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false) {
+        const post = document.createElement('div');
+        post.className = `social-post ${isThread ? 'post-thread' : ''}`;
+
+        const avatarContent = `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`;
+        const threadConnector = `<div class="post-thread-connector"></div>`;
+
+        post.innerHTML = `
+            ${isThread ? threadConnector : avatarContent}
+            <div class="post-content">
+                <div class="post-header">
+                    <span class="post-author-name">${authorName}</span>
+                    <span class="post-author-handle">@${authorHandle}</span>
+                </div>
+                <div class="post-body"><p>${content.replace(/\n\n/g, '</p><p>')}</p></div>
+            </div>
+        `;
+        return post;
+    }
+
+    function generateSocialFeed() {
+        if (isSocialFeedGenerated || !pageContentWrapper) return;
+
+        socialFeedView.innerHTML = ''; // Clear previous content
+
+        // Post 1: Main Welcome + Harry's Note as a thread
+        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
+        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+        const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
+        const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
+
+        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
+        socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody, true));
+
+        // Post 2: Essentials
+        const essentialItems = pageContentWrapper.querySelectorAll('#essentials .essential-item');
+        essentialItems.forEach((item, index) => {
+            const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
+            const description = item.querySelector('.item-description')?.innerText || '';
+            const paragraphs = description.split(/\n\s*\n/);
+
+            const firstPostContent = `Essential #${index + 1}: ${title}\n\n${paragraphs.shift()}`;
+            socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, firstPostContent));
+
+            paragraphs.forEach(para => {
+                if (para.trim()) {
+                    socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, para.trim(), true));
+                }
+            });
+        });
+        
+        isSocialFeedGenerated = true;
+    }
+
+
+    function applyLayoutPreference(layout) {
+        if (layout === 'social') {
+            document.body.classList.add('social-layout');
+            generateSocialFeed();
+        } else {
+            document.body.classList.remove('social-layout');
+        }
+
+        // Update active button in control centre
+        if (layoutToggleContainer) {
+            layoutToggleContainer.querySelector('.active')?.classList.remove('active');
+            layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
+        }
+    }
+
+    if (layoutToggleContainer) {
+        layoutToggleContainer.addEventListener('click', (e) => {
+            if (e.target.matches('.layout-toggle-btn')) {
+                const layout = e.target.dataset.layout;
+                applyLayoutPreference(layout);
+                updateLayoutPreference(layout);
+            }
+        });
+    }
+
     // --- AUTH STATE LISTENER (runs on every page) ---
     onAuthStateChanged(auth, async (user) => { // NOTE: made the function ASYNC
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
@@ -514,26 +610,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userDoc = await getDoc(userDocRef);
     
                 let commentsEnabled = true; // Default state
-                let deepnotesEnabled = true; // --- NEW: Default state for deepnotes
+                let deepnotesEnabled = true;
+                let layoutPreference = 'magazine';
     
                 if (userDoc.exists()) {
-                    commentsEnabled = userDoc.data().commentsEnabled !== false;
-                    deepnotesEnabled = userDoc.data().deepnotesEnabled !== false; // --- NEW ---
+                    const userData = userDoc.data();
+                    commentsEnabled = userData.commentsEnabled !== false;
+                    deepnotesEnabled = userData.deepnotesEnabled !== false;
+                    layoutPreference = userData.layoutPreference || 'magazine';
                 }
     
                 // Set the toggle states in the control center
                 if (commentsToggle) commentsToggle.checked = commentsEnabled;
-                if (deepnoteToggle) deepnoteToggle.checked = deepnotesEnabled; // --- NEW ---
+                if (deepnoteToggle) deepnoteToggle.checked = deepnotesEnabled;
+                applyLayoutPreference(layoutPreference);
     
                 // Apply classes to the body to control UI features
                 document.body.classList.toggle('commenting-disabled', !commentsEnabled);
-                document.body.classList.toggle('deepnote-disabled', !deepnotesEnabled); // --- NEW ---
+                document.body.classList.toggle('deepnote-disabled', !deepnotesEnabled);
 
             } catch(e) {
                 console.error("Error fetching user preferences:", e);
                 // Default to ON if fetching fails, and ensure UI reflects this
                 document.body.classList.remove('commenting-disabled');
                 if (commentsToggle) commentsToggle.checked = true;
+                applyLayoutPreference('magazine'); // Default layout on error
             }
             // --- END ADDED CODE ---
 
@@ -550,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else {
             document.body.classList.remove('logged-in');
+            applyLayoutPreference('magazine'); // Reset to default when logged out
             
             // ADDED: When logged out, comments are always OFF
             document.body.classList.add('commenting-disabled'); 
