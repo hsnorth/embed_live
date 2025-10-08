@@ -1420,6 +1420,105 @@ body.logged-in #mobile-account-trigger {
     color: #888;
 }
 
+/* --- LAYOUT TOGGLE STYLES --- */
+.layout-toggle-container {
+    display: flex;
+    width: 100%;
+    border: 1px solid var(--color-border);
+}
+.layout-toggle-btn {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #888;
+    transition: background-color 0.2s, color 0.2s;
+}
+.layout-toggle-btn.active {
+    background-color: var(--color-text);
+    color: var(--color-background);
+}
+
+/* --- SOCIAL FEED VIEW STYLES --- */
+#social-feed-view {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: var(--font-sans);
+}
+.social-post {
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    margin-bottom: -1px; /* Overlap borders */
+}
+.social-post:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.social-post:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin-bottom: 2rem;
+}
+.post-avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.post-author-name {
+    font-weight: 700;
+    color: var(--color-text);
+}
+.post-author-handle {
+    color: #555;
+}
+.post-body p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 1rem;
+    white-space: pre-wrap; /* Respects line breaks */
+    word-wrap: break-word;
+}
+.post-thread-connector {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+.post-thread-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--color-border);
+    left: 23px; /* Center in the 48px avatar space */
+}
+.post-thread .post-avatar {
+    opacity: 0;
+}
+
+/* --- LAYOUT VISIBILITY CONTROL --- */
+body.social-layout #page-content-wrapper {
+    display: none;
+}
+body:not(.social-layout) #social-feed-view {
+    display: none;
+}
+
 /* --- Responsive Styles --- */
 @media (max-width: 900px) {
     .welcome-grid {
