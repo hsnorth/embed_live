@@ -499,29 +499,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // main.js - REPLACEMENT 1
 
-    function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false) {
-        const post = document.createElement('div');
-        post.className = `social-post ${isThread ? 'post-thread' : ''}`;
-    
-        // Use a class for colored avatars if no image source is provided
-        const avatarContent = avatarSrc.startsWith('https')
-            ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
-            : `<div class="post-avatar ${avatarSrc}"></div>`;
-    
-        const threadConnector = `<div class="post-thread-connector"></div>`;
-    
-        post.innerHTML = `
-            ${isThread ? threadConnector : avatarContent}
-            <div class="post-content">
-                <div class="post-header">
-                    <span class="post-author-name">${authorName}</span>
-                    <span class="post-author-handle">${authorHandle}</span>
-                </div>
-                <div class="post-body"><p>${content.replace(/\n\n/g, '</p><p>')}</p></div>
+// main.js - REPLACEMENT 1
+
+function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false, imageSrc = null) {
+    const post = document.createElement('div');
+    post.className = `social-post ${isThread ? 'post-thread' : ''}`;
+
+    const avatarContent = avatarSrc.startsWith('https')
+        ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
+        : `<div class="post-avatar ${avatarSrc}"></div>`;
+
+    const threadConnector = `<div class="post-thread-connector"></div>`;
+
+    // Create the image HTML only if an image source is provided
+    const imageHTML = imageSrc 
+        ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` 
+        : '';
+
+    post.innerHTML = `
+        ${isThread ? threadConnector : avatarContent}
+        <div class="post-content">
+            <div class="post-header">
+                <span class="post-author-name">${authorName}</span>
+                <span class="post-author-handle">${authorHandle}</span>
             </div>
-        `;
-        return post;
-    }
+            <div class="post-body"><p>${content.replace(/\n\n/g, '</p><p>')}</p></div>
+            ${imageHTML}
+        </div>
+    `;
+    return post;
+}
+
+// main.js - REPLACEMENT 2
 
 // main.js - REPLACEMENT 2
 
@@ -532,7 +541,8 @@ function generateSocialFeed() {
     const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
     const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
 
-    const processSectionItems = (selector, titlePrefix, avatarClass) => {
+    // This function is now smarter and can handle an image for the whole section
+    const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
         const items = pageContentWrapper.querySelectorAll(selector);
         items.forEach((item, index) => {
             const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
@@ -542,14 +552,13 @@ function generateSocialFeed() {
             const firstPara = paragraphs.shift()?.trim();
             if (!firstPara) return;
 
-            // Use the prefix and index for the author name
             const postAuthorName = titlePrefix.replace('#', index + 1);
             const firstPostContent = `${title}\n\n${firstPara}`;
-            
-            // The first post of a section gets the colored avatar
-            socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, firstPostContent));
 
-            // Subsequent paragraphs become a thread from the same author
+            // Add the main section image ONLY to the first post of that section
+            const imageForPost = (index === 0) ? sectionImageSrc : null;
+            socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, firstPostContent, false, imageForPost));
+
             paragraphs.forEach(para => {
                 if (para.trim()) {
                     socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, para.trim(), true));
@@ -561,22 +570,24 @@ function generateSocialFeed() {
     const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
     const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
     const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
-    
-    // First Post: The News Haul
+
     socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
-    
-    // Second Post: Harry North
+
     if (harrysNoteBody) {
         socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody));
     }
 
-    // Section posts with dynamic names and colored avatars
+    // Find the images for the sections that have them
+    const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
+    const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
+
+    // Process all sections, passing the images where available
     processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
-    processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import');
+    processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
     processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
-    processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli');
+    processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
     processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
-    
+
     isSocialFeedGenerated = true;
 }
 
