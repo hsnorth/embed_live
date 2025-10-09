@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 2;
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Monday to Friday
 
     if (isWeekday) {
         const closedOverlay = document.getElementById('weekday-closed-overlay');
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 name: name,
                                 createdAt: serverTimestamp(),
                                 newsletter: true,
-                                commentsEnabled: true // ADDED: Default to true on signup
+                                commentsEnabled: true
                             });
                             
                             const contentWrapper = document.querySelector('.weekday-closed-content');
@@ -211,11 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (modalCloseBtns.length > 0) {
-        // Loop through each 'X' button
         modalCloseBtns.forEach(btn => {
-            // Add a click listener
             btn.addEventListener('click', () => {
-                // Find the closest parent modal overlay and close it
                 const modal = btn.closest('.modal-overlay');
                 if (modal) {
                     closeModal(modal);
@@ -223,23 +220,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-    // --- MOBILE TOP BAR LINK EVENT LISTENERS ---
+
     if (mobileJoinLink) {
         mobileJoinLink.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the link from jumping to the top of the page
-            openModal(joinModal); // Open the 'Join' modal
+            e.preventDefault();
+            openModal(joinModal);
         });
     }
 
     if (mobileSignInLink) {
         mobileSignInLink.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the link from jumping to the top of the page
-            openModal(signInModal); // Open the 'Sign In' modal
+            e.preventDefault();
+            openModal(signInModal);
         });
     }
-
     
-    // --- "SHOW MORE" FUNCTIONALITY FOR HARRY'S NOTE ---
     const harrysNoteWrapper = document.getElementById('harrys-note-wrapper');
     const showMoreBtn = document.getElementById('show-more-btn');
 
@@ -251,7 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LIVE DATE ---
     function setLiveDate() {
         const dateElement = document.getElementById('header-date-placeholder');
         if (dateElement) {
@@ -262,16 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setLiveDate();
     
-    // --- HEADER SCROLL EFFECT ---
     const headerTopBar = document.querySelector('.header-top-bar');
     
     if (headerTopBar && headerBranding) {
         window.addEventListener('scroll', () => {
-            // Calculate the trigger point: when the bottom of the branding section
-            // hits the top of the viewport.
             const scrollThreshold = headerBranding.offsetTop + headerBranding.offsetHeight;
-            
-            // Add the 'scrolled' class to the top bar (not the whole header)
             if (window.scrollY > scrollThreshold) {
                 headerTopBar.classList.add('scrolled');
             } else {
@@ -280,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- SEARCH MODAL ---
     function openSearch() {
         if (!searchOverlay) return;
         searchOverlay.classList.add('is-open');
@@ -300,8 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeSearchBtn) closeSearchBtn.addEventListener('click', closeSearch);
     if (searchOverlay) searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeSearch(); });
 
-
-    // --- CUSTOM NOTIFICATION FUNCTION ---
     function showToast(message, type = 'info', duration = 4000) {
         if (!toastContainer) return;
         const toast = document.createElement('div');
@@ -314,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, duration);
     }
 
-    /* ADDED: Helper to remove the sticky banner and scroll lock */
     function removeStickyBannerLock() {
         if (stickyBanner && stickyBanner.classList.contains('is-visible')) {
             stickyBanner.classList.remove('is-visible');
@@ -326,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- MODAL FUNCTIONS ---
     function openModal(modal) {
         if (!modal) return;
         modal.setAttribute('aria-hidden', 'false');
@@ -384,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- AUTHENTICATION FUNCTIONS ---
     const signUp = async (email, password, name, wantsNewsletter) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -393,13 +376,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 name, 
                 createdAt: serverTimestamp(), 
                 newsletter: wantsNewsletter,
-                commentsEnabled: true // ADDED: Default to true
+                commentsEnabled: true
             });
             showToast('Welcome to the community!', 'success');
             closeModal(joinModal);
             removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
+
     const signIn = async (email, password) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
@@ -408,12 +392,14 @@ document.addEventListener('DOMContentLoaded', () => {
             removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
+
     const handleSignOut = async () => {
         try {
             await signOut(auth);
             showToast('You have been signed out.', 'info');
         } catch (error) { showToast(error.message, 'error'); }
     };
+
     const handleForgotPassword = async (email) => {
         if (!email) { showToast("Please enter an email to reset password.", 'error'); return; }
         try {
@@ -446,18 +432,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     const updateDeepnotePreference = async (isEnabled) => {
-    const user = auth.currentUser;
-    if (!user) return;
-    try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await updateDoc(userDocRef, { deepnotesEnabled: isEnabled });
-        showToast(`Deepnotes have been ${isEnabled ? 'turned ON' : 'turned OFF'}.`, 'info');
-    } catch (error) {
-        showToast(`Error saving preference: ${error.message}`, 'error');
+        const user = auth.currentUser;
+        if (!user) return;
+        try {
+            const userDocRef = doc(db, 'users', user.uid);
+            await updateDoc(userDocRef, { deepnotesEnabled: isEnabled });
+            showToast(`Deepnotes have been ${isEnabled ? 'turned ON' : 'turned OFF'}.`, 'info');
+        } catch (error) {
+            showToast(`Error saving preference: ${error.message}`, 'error');
         }
     };
 
-    // --- FORM SUBMISSION HANDLERS ---
     if (signInForm) {
         signInForm.addEventListener('submit', (e) => { e.preventDefault(); signIn(signInForm.elements['signInEmail'].value, signInForm.elements['signInPassword'].value); });
     }
@@ -512,7 +497,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LAYOUT SWITCHING LOGIC ---
     function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false) {
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
@@ -535,39 +519,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateSocialFeed() {
         if (isSocialFeedGenerated || !pageContentWrapper) return;
+        socialFeedView.innerHTML = '';
 
-        socialFeedView.innerHTML = ''; // Clear previous content
-
-        // Post 1: Main Welcome + Harry's Note as a thread
-        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
-        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
-        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
         const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
         const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
 
-        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
-        socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody, true));
+        const processSectionItems = (selector, titlePrefix) => {
+            const items = pageContentWrapper.querySelectorAll(selector);
+            items.forEach((item, index) => {
+                const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
+                const description = item.querySelector('.item-description')?.innerText || '';
+                const paragraphs = description.split(/\n\s*\n/);
 
-        // Post 2: Essentials
-        const essentialItems = pageContentWrapper.querySelectorAll('#essentials .essential-item');
-        essentialItems.forEach((item, index) => {
-            const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
-            const description = item.querySelector('.item-description')?.innerText || '';
-            const paragraphs = description.split(/\n\s*\n/);
+                const firstPara = paragraphs.shift()?.trim();
+                if (!firstPara) return;
 
-            const firstPostContent = `Essential #${index + 1}: ${title}\n\n${paragraphs.shift()}`;
-            socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, firstPostContent));
+                const postTitle = titlePrefix.replace('#', index + 1);
+                const firstPostContent = `${postTitle} ${title}\n\n${firstPara}`;
+                socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, firstPostContent));
 
-            paragraphs.forEach(para => {
-                if (para.trim()) {
-                    socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, para.trim(), true));
-                }
+                paragraphs.forEach(para => {
+                    if (para.trim()) {
+                        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, para.trim(), true));
+                    }
+                });
             });
+        };
+
+        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
+        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+        
+        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
+        if (harrysNoteBody) {
+            socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody, true));
+        }
+
+        processSectionItems('#essentials .essential-item', 'Essential #');
+        processSectionItems('#imports .essential-item', 'Import:');
+        processSectionItems('#deliveries .essential-item', 'Next Delivery:');
+
+        const cannoliItems = pageContentWrapper.querySelectorAll('#cannoli .essential-item');
+        cannoliItems.forEach((item, index) => {
+            const title = item.querySelector('.item-title')?.innerText || '';
+            const description = item.querySelector('.item-description')?.innerText || '';
+            const content = `The Cannoli: ${title}\n\n${description}`;
+            const isThread = index > 0;
+            socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, content, isThread));
         });
+
+        processSectionItems('#coffee .essential-item', 'Coffee Review:');
         
         isSocialFeedGenerated = true;
     }
-
 
     function applyLayoutPreference(layout) {
         if (layout === 'social') {
@@ -577,7 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('social-layout');
         }
 
-        // Update active button in control centre
         if (layoutToggleContainer) {
             layoutToggleContainer.querySelector('.active')?.classList.remove('active');
             layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
@@ -594,8 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- AUTH STATE LISTENER (runs on every page) ---
-    onAuthStateChanged(auth, async (user) => { // NOTE: made the function ASYNC
+    onAuthStateChanged(auth, async (user) => {
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
         const mobileAccountTrigger = document.getElementById('mobile-account-trigger'); 
 
@@ -609,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
     
-                let commentsEnabled = true; // Default state
+                let commentsEnabled = true;
                 let deepnotesEnabled = true;
                 let layoutPreference = 'magazine';
     
@@ -620,23 +622,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     layoutPreference = userData.layoutPreference || 'magazine';
                 }
     
-                // Set the toggle states in the control center
                 if (commentsToggle) commentsToggle.checked = commentsEnabled;
                 if (deepnoteToggle) deepnoteToggle.checked = deepnotesEnabled;
                 applyLayoutPreference(layoutPreference);
     
-                // Apply classes to the body to control UI features
                 document.body.classList.toggle('commenting-disabled', !commentsEnabled);
                 document.body.classList.toggle('deepnote-disabled', !deepnotesEnabled);
 
             } catch(e) {
                 console.error("Error fetching user preferences:", e);
-                // Default to ON if fetching fails, and ensure UI reflects this
                 document.body.classList.remove('commenting-disabled');
                 if (commentsToggle) commentsToggle.checked = true;
-                applyLayoutPreference('magazine'); // Default layout on error
+                applyLayoutPreference('magazine');
             }
-            // --- END ADDED CODE ---
 
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = ``;
@@ -651,11 +649,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else {
             document.body.classList.remove('logged-in');
-            applyLayoutPreference('magazine'); // Reset to default when logged out
+            applyLayoutPreference('magazine');
             
-            // ADDED: When logged out, comments are always OFF
             document.body.classList.add('commenting-disabled'); 
-            document.body.classList.add('deepnote-disabled'); // --- NEW: Also disable deepnotes when logged out
+            document.body.classList.add('deepnote-disabled');
 
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
@@ -665,7 +662,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- CONTROL CENTRE PANEL LOGIC ---
     function openControlCentrePanel() {
         if (!controlCentreOverlay) return;
         controlCentreOverlay.classList.add('is-open');
@@ -682,26 +678,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (controlCentreOverlay) controlCentreOverlay.addEventListener('click', (e) => { if (e.target === controlCentreOverlay) closeControlCentrePanel(); });
     if (controlCentreCloseBtn) controlCentreCloseBtn.addEventListener('click', closeControlCentrePanel);
 
-    /* ADDED: Comments Toggle Listener */
     if (commentsToggle) {
         commentsToggle.addEventListener('change', () => {
             const isEnabled = commentsToggle.checked;
             updateCommentsPreference(isEnabled);
-            // Toggle a class on body to control commenting feature UI visibility
             document.body.classList.toggle('commenting-disabled', !isEnabled);
         });
     }
 
-        /* ADDED: Deepnote Toggle Listener */
     if (deepnoteToggle) {
         deepnoteToggle.addEventListener('change', () => {
             const isEnabled = deepnoteToggle.checked;
             updateDeepnotePreference(isEnabled);
-            // Toggle a class on the body to control the feature's UI
             document.body.classList.toggle('deepnote-disabled', !isEnabled);
         });
     }
-    // --- ACCOUNT PANEL LOGIC ---
+
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
     const accountPanelCloseBtn = document.getElementById('account-panel-close-btn');
     const newsletterCheckbox = document.getElementById('newsletter-checkbox');
@@ -817,7 +809,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // --- HOW IT WORKS PANEL LOGIC ---
     function openHowItWorksPanel() {
         if (!howItWorksPanelOverlay) return;
         howItWorksPanelOverlay.classList.add('is-open');
@@ -853,7 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
         howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
     }
 
-    // --- Simple Menu Toggle ---
     const menuToggle = document.querySelector('.menu-toggle');
     const mobileNav = document.querySelector('.mobile-nav');
     const closeMenuBtn = document.querySelector('.close-menu-btn');
@@ -869,7 +859,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMenuBtn.addEventListener('click', toggleMenu);
     }
 
-    // --- STICKY BANNER LOGIC ---
     function handleScrollLock() {
         if (isScrollLocked && window.scrollY > scrollLockPosition) {
             window.scrollTo(0, scrollLockPosition);
