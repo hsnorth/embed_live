@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 2; // Monday to Friday
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Monday to Friday
 
     if (isWeekday) {
         const closedOverlay = document.getElementById('weekday-closed-overlay');
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-
+    
     if (mobileJoinLink) {
         mobileJoinLink.addEventListener('click', (e) => {
             e.preventDefault();
