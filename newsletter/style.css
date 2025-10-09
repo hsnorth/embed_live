@@ -1447,34 +1447,35 @@ body.logged-in #mobile-account-trigger {
 #social-feed-view {
     max-width: 600px;
     margin: 2rem auto;
-    padding: 0 1rem;
+    padding: 0; /* No padding on the main container */
     font-family: var(--font-sans);
 }
 .social-post {
     border: 1px solid var(--color-border);
+    border-bottom: none; /* Borders are handled by the next post */
     padding: 1rem;
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 1rem;
-    margin-bottom: -1px; /* Overlap borders */
 }
 .social-post:first-child {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 .social-post:last-child {
+    border-bottom: 1px solid var(--color-border); /* Add border to the very last one */
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     margin-bottom: 2rem;
 }
-.post-avatar img {
-    width: 100%;
-    height: 100%;
+
+/* Avatar Styles */
+.social-post .post-avatar {
+    /* IMPORTANT: Fixed size for the avatar container */
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     border-radius: 50%;
-    object-fit: cover; /* Ensures images fill the circle nicely */
-    background-color: #f0f0f0;
-}
-.post-avatar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1483,26 +1484,30 @@ body.logged-in #mobile-account-trigger {
     color: white;
     font-size: 1.5rem;
 }
+.social-post .post-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #f0f0f0;
+}
 .post-avatar--essential { background-color: #d32f2f; }
 .post-avatar--essential::before { content: 'E'; }
-
 .post-avatar--import { background-color: #1976d2; }
 .post-avatar--import::before { content: 'I'; }
-
 .post-avatar--delivery { background-color: #388e3c; }
 .post-avatar--delivery::before { content: 'D'; }
-
 .post-avatar--cannoli { background-color: #af7f33; }
 .post-avatar--cannoli::before { content: 'C'; }
-
 .post-avatar--coffee { background-color: #6d4c41; }
 .post-avatar--coffee::before { content: 'R'; }
 
+/* Post Content Styles */
 .post-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 .post-author-name {
     font-weight: 700;
@@ -1515,7 +1520,7 @@ body.logged-in #mobile-account-trigger {
     margin: 0;
     line-height: 1.6;
     font-size: 1rem;
-    white-space: pre-wrap; /* Respects line breaks */
+    white-space: pre-wrap;
     word-wrap: break-word;
 }
 .post-thread-connector {
@@ -1526,17 +1531,21 @@ body.logged-in #mobile-account-trigger {
 .post-thread-connector::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: -1rem; /* IMPROVEMENT: Better spacing for the thread line */
     bottom: 0;
     width: 2px;
     background-color: var(--color-border);
-    left: 23px; /* Center in the 48px avatar space */
+    left: 23px;
 }
 .post-thread .post-avatar {
     opacity: 0;
 }
 
+
 /* --- LAYOUT VISIBILITY CONTROL --- */
+body.social-layout .main-header {
+    display: none;
+}
 body.social-layout #page-content-wrapper {
     display: none;
 }
