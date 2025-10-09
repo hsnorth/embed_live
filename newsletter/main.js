@@ -497,19 +497,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+// main.js - REPLACEMENT 1
+
     function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false) {
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
-
-        const avatarContent = `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`;
+    
+        // Use a class for colored avatars if no image source is provided
+        const avatarContent = avatarSrc.startsWith('https')
+            ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
+            : `<div class="post-avatar ${avatarSrc}"></div>`;
+    
         const threadConnector = `<div class="post-thread-connector"></div>`;
-
+    
         post.innerHTML = `
             ${isThread ? threadConnector : avatarContent}
             <div class="post-content">
                 <div class="post-header">
                     <span class="post-author-name">${authorName}</span>
-                    <span class="post-author-handle">@${authorHandle}</span>
+                    <span class="post-author-handle">${authorHandle}</span>
                 </div>
                 <div class="post-body"><p>${content.replace(/\n\n/g, '</p><p>')}</p></div>
             </div>
