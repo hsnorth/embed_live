@@ -575,8 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyLayoutPreference(layout) {
         if (layout === 'social') {
-            document.body.classList.add('social-layout');
-            generateSocialFeed();
+            generateSocialFeed(); // Generate the content FIRST
+            document.body.classList.add('social-layout'); // THEN switch the view
         } else {
             document.body.classList.remove('social-layout');
         }
