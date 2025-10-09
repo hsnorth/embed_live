@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 3 && dayOfWeek <= 4;
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 2;
 
     if (isWeekday) {
         const closedOverlay = document.getElementById('weekday-closed-overlay');
