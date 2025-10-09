@@ -1541,6 +1541,19 @@ body.logged-in #mobile-account-trigger {
     opacity: 0;
 }
 
+.post-image {
+    margin-top: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 16px; /* This creates the rounded corners */
+    overflow: hidden; /* This makes the image conform to the rounded corners */
+    line-height: 0; /* Fixes extra space below the image */
+}
+.post-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 
 /* --- LAYOUT VISIBILITY CONTROL --- */
 body.social-layout .main-header {
