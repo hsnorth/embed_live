@@ -2009,3 +2009,16 @@ body.commenting-disabled #comment-view {
     line-height: 1.7;
     color: #333;
 }
+/* This sets a fixed 48x48 pixel size for the avatar's container div. */
+.social-post > .post-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0; /* Prevents the avatar from shrinking */
+}
+
+/* This ensures the image itself fills that container perfectly and remains circular. */
+.social-post > .post-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Scales the image to fill the space without distortion */
+}
