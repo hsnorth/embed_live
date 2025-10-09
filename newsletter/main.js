@@ -517,61 +517,62 @@ document.addEventListener('DOMContentLoaded', () => {
         return post;
     }
 
-    function generateSocialFeed() {
-        if (isSocialFeedGenerated || !pageContentWrapper) return;
-        socialFeedView.innerHTML = '';
+// main.js - REPLACEMENT 2
 
-        const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
-        const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
+function generateSocialFeed() {
+    if (isSocialFeedGenerated || !pageContentWrapper) return;
+    socialFeedView.innerHTML = '';
 
-        const processSectionItems = (selector, titlePrefix) => {
-            const items = pageContentWrapper.querySelectorAll(selector);
-            items.forEach((item, index) => {
-                const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
-                const description = item.querySelector('.item-description')?.innerText || '';
-                const paragraphs = description.split(/\n\s*\n/);
+    const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
+    const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
 
-                const firstPara = paragraphs.shift()?.trim();
-                if (!firstPara) return;
-
-                const postTitle = titlePrefix.replace('#', index + 1);
-                const firstPostContent = `${postTitle} ${title}\n\n${firstPara}`;
-                socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, firstPostContent));
-
-                paragraphs.forEach(para => {
-                    if (para.trim()) {
-                        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, para.trim(), true));
-                    }
-                });
-            });
-        };
-
-        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
-        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
-        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
-        
-        socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
-        if (harrysNoteBody) {
-            socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody, true));
-        }
-
-        processSectionItems('#essentials .essential-item', 'Essential #');
-        processSectionItems('#imports .essential-item', 'Import:');
-        processSectionItems('#deliveries .essential-item', 'Next Delivery:');
-
-        const cannoliItems = pageContentWrapper.querySelectorAll('#cannoli .essential-item');
-        cannoliItems.forEach((item, index) => {
-            const title = item.querySelector('.item-title')?.innerText || '';
+    const processSectionItems = (selector, titlePrefix, avatarClass) => {
+        const items = pageContentWrapper.querySelectorAll(selector);
+        items.forEach((item, index) => {
+            const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
             const description = item.querySelector('.item-description')?.innerText || '';
-            const content = `The Cannoli: ${title}\n\n${description}`;
-            const isThread = index > 0;
-            socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, content, isThread));
-        });
+            const paragraphs = description.split(/\n\s*\n/);
 
-        processSectionItems('#coffee .essential-item', 'Coffee Review:');
-        
-        isSocialFeedGenerated = true;
+            const firstPara = paragraphs.shift()?.trim();
+            if (!firstPara) return;
+
+            // Use the prefix and index for the author name
+            const postAuthorName = titlePrefix.replace('#', index + 1);
+            const firstPostContent = `${title}\n\n${firstPara}`;
+            
+            // The first post of a section gets the colored avatar
+            socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, firstPostContent));
+
+            // Subsequent paragraphs become a thread from the same author
+            paragraphs.forEach(para => {
+                if (para.trim()) {
+                    socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, para.trim(), true));
+                }
+            });
+        });
+    };
+
+    const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+    const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
+    const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+    
+    // First Post: The News Haul
+    socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, `${welcomeTitle}\n\n${welcomeBody}`));
+    
+    // Second Post: Harry North
+    if (harrysNoteBody) {
+        socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, harrysNoteBody));
     }
+
+    // Section posts with dynamic names and colored avatars
+    processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
+    processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import');
+    processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
+    processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli');
+    processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
+    
+    isSocialFeedGenerated = true;
+}
 
     function applyLayoutPreference(layout) {
         if (layout === 'social') {
