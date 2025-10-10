@@ -481,12 +481,20 @@ body.logged-in #mobile-account-trigger {
     height: 30px;
 }
 
-/* Updated selectors for the scrolled state */
+/* Default scrolled state: show text logo (for magazine layout) */
 .header-top-bar.scrolled .scrolled-logo-link {
     display: block;
 }
-.header-top-bar.scrolled .how-it-works {
+.header-top-bar.scrolled .scrolled-icon-link {
     display: none;
+}
+
+/* --- Social Layout Navbar Override (All Screens) --- */
+body.social-layout .header-top-bar.scrolled .scrolled-logo-link {
+    display: none;
+}
+body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
+    display: block;
 }
 
 
@@ -540,10 +548,6 @@ body.logged-in #mobile-account-trigger {
 
 
 /* --- UPDATED LIVE TICKER BAR STYLES --- */
-
-/* --- UPDATED LIVE TICKER BAR STYLES --- */
-
-/* This rule centers the ticker and sets its max-width */
 .live-ticker-container {
     max-width: 1000px; /* Matches your site's main content width */
     margin: 1rem auto; /* Centers the bar on the page */
@@ -562,13 +566,10 @@ body.logged-in #mobile-account-trigger {
     padding: 0.75rem 1.25rem;
     box-sizing: border-box;
     overflow: hidden;
-
-    /* --- ADJUSTMENTS --- */
-    border-bottom: 3px solid var(--color-text); /* Made the line slightly thicker */
-    border-top-left-radius: 6px;                /* Added a slight curve to the top-left corner */
-    border-top-right-radius: 6px;               /* Added a slight curve to the top-right corner */
+    border-bottom: 3px solid var(--color-text);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
-/* --- Responsive Rule for Live Ticker --- */
 @media (max-width: 500px) {
     .live-ticker-container {
         max-width: 100%;
@@ -578,25 +579,22 @@ body.logged-in #mobile-account-trigger {
     }
 
     .live-ticker-bar {
-        /* Removes the rounded corners for a clean, edge-to-edge look on mobile */
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
 }
 
-/* New wrapper for the static content (play icon, title, sound bar) */
 .ticker-static-section {
     display: flex;
     align-items: center;
-    gap: 0.6rem;    /* Adjusts space between icon, title, and sound bar */
-    flex-shrink: 0; /* Prevents this section from shrinking */
+    gap: 0.6rem;
+    flex-shrink: 0;
 }
 
-/* New style for the black play icon */
 .play-icon {
     width: 18px;
     height: 18px;
-    fill: var(--color-text); /* Makes the SVG icon black */
+    fill: var(--color-text);
 }
 
 .ticker-title {
@@ -625,10 +623,9 @@ body.logged-in #mobile-account-trigger {
 }
 
 .ticker-separator {
-    opacity: 1; /* Ensures separator is solid black */
+    opacity: 1;
 }
 
-/* Styles for the scrolling text section */
 .headlines-container {
     flex-grow: 1;
     min-width: 0;
@@ -1445,153 +1442,6 @@ body.logged-in #mobile-account-trigger {
 
 /* --- START: COMPLETE SOCIAL FEED STYLES --- */
 
-/* --- START: COMPLETE SOCIAL FEED STYLES --- */
-
-/* --- Layout Visibility Control --- */
-body.social-layout .main-header {
-    display: none;
-}
-body.social-layout #page-content-wrapper {
-    display: none;
-}
-body:not(.social-layout) #social-feed-view {
-    display: none;
-}
-
-/* --- Social Feed View Container --- */
-#social-feed-view {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 0;
-    font-family: var(--font-sans);
-}
-
-/* --- Basic Post Structure & BORDERS --- */
-.social-post {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
-    align-items: start;
-    position: relative; /* Important for the new line positioning */
-}
-
-/* Add a top border to any NEW thread that isn't a reply */
-.social-post:not(.post-thread) {
-    border-top: 1px solid var(--color-border);
-}
-
-/* Remove the top border from the very first post to avoid a double border later */
-.social-post:first-child {
-    border-top: none;
-}
-
-/* Apply container border and rounded corners ONLY to the first post in the entire feed */
-#social-feed-view > .social-post:first-child {
-    border-top: 1px solid var(--color-border);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-/* Apply container border and rounded corners ONLY to the last post in the entire feed */
-#social-feed-view > .social-post:last-child {
-    border-bottom: 1px solid var(--color-border);
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-
-/* --- Avatar & Threading Line Styles --- */
-.social-post .post-avatar {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    border-radius: 50%;
-}
-
-/* This is the line that drops DOWN from the FIRST post's avatar */
-.social-post:has(+ .social-post.post-thread) .post-avatar::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    background-color: var(--color-border);
-    left: 50%;
-    transform: translateX(-50%);
-    top: 100%;
-    /* This height perfectly spans the bottom padding */
-    height: 9rem;
-}
-
-
-/* --- Avatar & Post Content Styles --- */
-.social-post .post-avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-sans);
-    font-weight: 700;
-    color: white;
-    font-size: 1.5rem;
-}
-.social-post .post-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    background-color: #f0f0f0;
-}
-.post-avatar--essential { background-color: #d32f2f; }
-.post-avatar--essential::before { content: 'E'; }
-.post-avatar--import { background-color: #1976d2; }
-.post-avatar--import::before { content: 'I'; }
-.post-avatar--delivery { background-color: #388e3c; }
-.post-avatar--delivery::before { content: 'D'; }
-.post-avatar--cannoli { background-color: #af7f33; }
-.post-avatar--cannoli::before { content: 'C'; }
-.post-avatar--coffee { background-color: #6d4c41; }
-.post-avatar--coffee::before { content: 'R'; }
-
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-}
-.post-author-name {
-    font-weight: 700;
-    color: var(--color-text);
-}
-.post-author-handle {
-    color: #555;
-}
-.post-body p {
-    margin: 0;
-    line-height: 1.6;
-    font-size: 1rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-/* We no longer need the post-thread-connector, but we still need to hide the avatar slot */
-.post-thread .post-avatar {
-    opacity: 0;
-}
-
-.post-image {
-    margin-top: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    overflow: hidden;
-    line-height: 0;
-}
-.post-image img {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
 /* --- END: COMPLETE SOCIAL FEED STYLES --- */
 
 /* --- Responsive Styles --- */
@@ -1632,17 +1482,16 @@ body:not(.social-layout) #social-feed-view {
     .branding-col-left, .branding-col-right { display: none; }
     .logo { font-size: clamp(2.8rem, 12vw, 4rem); }
     
-    /* Hide the desktop auth buttons on screens this size and smaller */
     .desktop-only {
         display: none;
     }
-    /* On mobile, show the bag icon */
-    .header-top-bar.scrolled .scrolled-icon-link {
-        display: block;
-    }
-    /* And hide the text logo */
-    .header-top-bar.scrolled .scrolled-logo-link {
+
+    .how-it-works {
         display: none;
+    }
+    
+    .header-top-bar.scrolled .scrolled-logo-link {
+        font-size: 1.8rem;
     }
     
 }
