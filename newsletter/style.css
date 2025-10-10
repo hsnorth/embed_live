@@ -1440,9 +1440,6 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     color: var(--color-background);
 }
 
-/* --- START: COMPLETE SOCIAL FEED STYLES --- */
-
-/* --- END: COMPLETE SOCIAL FEED STYLES --- */
 
 /* --- Responsive Styles --- */
 @media (max-width: 900px) {
