@@ -1586,20 +1586,7 @@ body:not(.social-layout) #social-feed-view {
 /* This adds the short vertical line extending DOWN from the first post's avatar */
 /* Replace your existing .post-thread-connector::before rule with this one */
 
-.post-thread-connector::before {
-    content: '';
-    position: absolute;
-    width: 2px;
-    background-color: var(--color-border);
-    
-    /* Center the line in the avatar column */
-    left: 50%;
-    transform: translateX(-50%);
 
-    /* Make the line span the entire post, including top and bottom padding */
-    top: -2rem; 
-    bottom: -2rem; /* <-- THIS IS THE FIX (changed from 0) */
-}
 .post-thread .post-avatar {
     opacity: 0;
 }
