@@ -1464,26 +1464,30 @@ body:not(.social-layout) #social-feed-view {
     font-family: var(--font-sans);
 }
 
-/* --- Basic Post Structure --- */
 .social-post {
     display: grid;
     grid-template-columns: 48px 1fr;
     gap: 1rem;
     padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-bottom: none;
+    /* Apply only the side borders to every post */
+    border-left: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
     align-items: start; /* Aligns avatar and content to the top */
 }
+
+/* Apply top border and rounded corners ONLY to the first post */
 .social-post:first-child {
+    border-top: 1px solid var(--color-border);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
+
+/* Apply bottom border and rounded corners ONLY to the last post */
 .social-post:last-child {
     border-bottom: 1px solid var(--color-border);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
-
 /* --- Avatar Styles --- */
 .social-post .post-avatar {
     position: relative; /* Crucial for positioning the line */
