@@ -1528,14 +1528,18 @@ body.logged-in #mobile-account-trigger {
     display: flex;
     justify-content: center;
 }
+/* style.css - REPLACE THIS RULE */
+
 .post-thread-connector::before {
     content: '';
     position: absolute;
-    top: -1rem; /* IMPROVEMENT: Better spacing for the thread line */
-    bottom: 0;
     width: 2px;
     background-color: var(--color-border);
-    left: 23px;
+    left: 23px; /* Centers the line in the 48px avatar space */
+
+    /* These two lines make the line connect seamlessly between posts */
+    top: -1rem; 
+    bottom: -1rem;
 }
 .post-thread .post-avatar {
     opacity: 0;
