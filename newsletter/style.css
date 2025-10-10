@@ -1528,6 +1528,7 @@ body:not(.social-layout) #social-feed-view {
 }
 
 /* This is the continuous vertical line for subsequent posts in a thread */
+/* This is the continuous vertical line for subsequent posts in a thread */
 .post-thread-connector::before {
     content: '';
     position: absolute;
@@ -1535,9 +1536,10 @@ body:not(.social-layout) #social-feed-view {
     background-color: var(--color-border);
     left: 50%;
     transform: translateX(-50%);
-    /* These values make the line span the entire post, including padding */
+    /* Start the line at the top border (spanning the top padding) */
     top: -1rem;
-    bottom: -1rem;
+    /* Set the height to the full post height plus top and bottom padding */
+    height: calc(100% + 2rem);
 }
 
 
