@@ -1521,23 +1521,10 @@ body:not(.social-layout) #social-feed-view {
     left: 50%;
     transform: translateX(-50%);
     top: 100%;
-    /* Make the line long enough to span the padding and connect */
-    height: 100%;
+    /* This height perfectly spans the bottom padding */
+    height: 1rem;
 }
 
-/* This is the NEW continuous vertical line for subsequent posts in a thread */
-.social-post.post-thread::before {
-    content: '';
-    position: absolute;
-    background-color: var(--color-border);
-    width: 2px;
-    /* Position the line in the center of the 48px avatar column */
-    left: 24px;
-    transform: translateX(-50%);
-    /* Make the line span the entire height of the post */
-    top: 0;
-    bottom: 0;
-}
 
 /* --- Avatar & Post Content Styles --- */
 .social-post .post-avatar {
