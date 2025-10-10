@@ -1512,7 +1512,8 @@ body:not(.social-layout) #social-feed-view {
 
 /* The container for the vertical line in threaded posts */
 .post-thread-connector {
-    position: relative; /* ESSENTIAL for positioning the line */
+    position: relative;
+    align-self: stretch; /* This forces the line's container to fill the full post height */
 }
 
 /* This is the line that drops DOWN from the first post's avatar */
