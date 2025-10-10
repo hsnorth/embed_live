@@ -1525,21 +1525,23 @@ body.logged-in #mobile-account-trigger {
 }
 .post-thread-connector {
     position: relative;
-    display: flex;
-    justify-content: center;
 }
 /* style.css - REPLACE THIS RULE */
 
+/* This creates and positions the visible vertical line */
 .post-thread-connector::before {
     content: '';
     position: absolute;
     width: 2px;
     background-color: var(--color-border);
-    left: 23px; /* Centers the line in the 48px avatar space */
+    
+    /* Center the line within the avatar column */
+    left: 50%;
+    transform: translateX(-50%);
 
-    /* These two lines make the line connect seamlessly between posts */
+    /* Make the line extend up to meet the post above it */
     top: -1rem; 
-    bottom: -1rem;
+    bottom: 0;
 }
 .post-thread .post-avatar {
     opacity: 0;
