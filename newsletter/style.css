@@ -1451,7 +1451,6 @@ body.logged-in #mobile-account-trigger {
     font-family: var(--font-sans);
 }
 
-
 /* 1. Basic Post Structure */
 .social-post {
     display: grid;
@@ -1544,15 +1543,15 @@ body.logged-in #mobile-account-trigger {
     content: '';
     position: absolute;
     width: 2px;
-    background-color: var(--color-border); /* The color of the line */
-
-    /* Horizontally center the line in the 48px avatar column */
+    background-color: var(--color-border);
+    
+    /* Center the line in the avatar column */
     left: 50%;
     transform: translateX(-50%);
 
-    /* Make the line span from the post above, through this post's entire height */
-    top: -1rem; /* Extends 1rem up to cross the padding/border of the post above */
-    bottom: 0;
+    /* Make the line span the entire post, including top and bottom padding */
+    top: -1rem; 
+    bottom: -1rem; /* <-- THIS IS THE FIX (changed from 0) */
 }
 .post-thread .post-avatar {
     opacity: 0;
