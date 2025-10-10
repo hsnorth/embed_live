@@ -1450,24 +1450,33 @@ body.logged-in #mobile-account-trigger {
     padding: 0; /* No padding on the main container */
     font-family: var(--font-sans);
 }
+
+
+/* 1. Basic Post Structure */
 .social-post {
-    border: 1px solid var(--color-border);
-    border-bottom: none; /* Borders are handled by the next post */
-    padding: 1rem;
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 48px 1fr;
     gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    align-items: start; /* <-- THIS IS THE FIX */
 }
 .social-post:first-child {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 .social-post:last-child {
-    border-bottom: 1px solid var(--color-border); /* Add border to the very last one */
+    border-bottom: 1px solid var(--color-border);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
-    margin-bottom: 2rem;
 }
+
+/* 2. Thread-Specific Adjustments */
+.social-post.post-thread {
+    border-top: none; /* Hides border to allow the vertical line to connect */
+}
+
 
 /* Avatar Styles */
 .social-post .post-avatar {
@@ -2017,26 +2026,4 @@ body.commenting-disabled #comment-view {
     line-height: 1.7;
     color: #333;
 }
-/* 1. Basic Post Structure */
-.social-post {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-bottom: none;
-}
-.social-post:first-child {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-.social-post:last-child {
-    border-bottom: 1px solid var(--color-border);
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
 
-/* 2. Thread-Specific Adjustments */
-.social-post.post-thread {
-    border-top: none; /* Hides border to allow the vertical line to connect */
-}
