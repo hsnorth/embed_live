@@ -1522,7 +1522,7 @@ body:not(.social-layout) #social-feed-view {
     transform: translateX(-50%);
     top: 100%;
     /* This height perfectly spans the bottom padding */
-    height: 7rem;
+    height: 9rem;
 }
 
 
