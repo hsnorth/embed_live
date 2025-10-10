@@ -498,6 +498,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+// In main.js
+
 function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false, imageSrc = null) {
     const post = document.createElement('div');
     post.className = `social-post ${isThread ? 'post-thread' : ''}`;
@@ -509,7 +511,7 @@ function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread
     const threadConnector = `<div class="post-thread-connector"></div>`;
     const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
 
-    // This is the key change: The header is now ONLY created for the first post in a thread.
+    // This ensures the header (e.g., "Essential 1") only appears on the first post of a thread
     const headerHTML = !isThread ? `
         <div class="post-header">
             <span class="post-author-name">${authorName}</span>
