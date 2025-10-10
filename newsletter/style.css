@@ -1540,21 +1540,21 @@ body.logged-in #mobile-account-trigger {
 
 /* We use the ::before pseudo-element to draw the line */
 /* This adds the short vertical line extending DOWN from the first post's avatar */
-.social-post:has(+ .social-post.post-thread) .post-avatar::after {
+/* Replace your existing .post-thread-connector::before rule with this one */
+
+.post-thread-connector::before {
     content: '';
     position: absolute;
     width: 2px;
     background-color: var(--color-border);
-
-    /* Center the line horizontally */
+    
+    /* Center the line in the avatar column */
     left: 50%;
     transform: translateX(-50%);
-    
-    /* Start the line at the bottom of the avatar */
-    top: 100%;
 
-    /* Make the line 1rem long, enough to cross the bottom padding */
-    height: 1rem; 
+    /* Make the line span the entire post, including top and bottom padding */
+    top: 1rem; 
+    bottom: -1rem; /* <-- THIS IS THE FIX (changed from 0) */
 }
 .post-thread .post-avatar {
     opacity: 0;
