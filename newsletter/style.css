@@ -1445,6 +1445,8 @@ body.logged-in #mobile-account-trigger {
 
 /* --- START: COMPLETE SOCIAL FEED STYLES --- */
 
+/* --- START: COMPLETE SOCIAL FEED STYLES --- */
+
 /* --- Layout Visibility Control --- */
 body.social-layout .main-header {
     display: none;
@@ -1470,10 +1472,10 @@ body:not(.social-layout) #social-feed-view {
     grid-template-columns: 48px 1fr;
     gap: 1rem;
     padding: 1rem;
-    /* Apply only the side borders to every post */
     border-left: 1px solid var(--color-border);
     border-right: 1px solid var(--color-border);
     align-items: start;
+    position: relative; /* Important for the new line positioning */
 }
 
 /* Add a top border to any NEW thread that isn't a reply */
@@ -1503,20 +1505,14 @@ body:not(.social-layout) #social-feed-view {
 
 /* --- Avatar & Threading Line Styles --- */
 .social-post .post-avatar {
-    position: relative; /* Crucial for positioning the line */
+    position: relative;
     width: 48px;
     height: 48px;
     flex-shrink: 0;
     border-radius: 50%;
 }
 
-/* The container for the vertical line in threaded posts */
-.post-thread-connector {
-    position: relative;
-    align-self: stretch; /* This forces the line's container to fill the full post height */
-}
-
-/* This is the line that drops DOWN from the first post's avatar */
+/* This is the line that drops DOWN from the FIRST post's avatar */
 .social-post:has(+ .social-post.post-thread) .post-avatar::after {
     content: '';
     position: absolute;
@@ -1524,25 +1520,24 @@ body:not(.social-layout) #social-feed-view {
     background-color: var(--color-border);
     left: 50%;
     transform: translateX(-50%);
-    top: 100%; /* Starts at the bottom of the avatar */
-    height: 1rem; /* Spans the post's bottom padding */
+    top: 100%;
+    /* Make the line long enough to span the padding and connect */
+    height: 100%;
 }
 
-/* This is the continuous vertical line for subsequent posts in a thread */
-/* This is the continuous vertical line for subsequent posts in a thread */
-.post-thread-connector::before {
+/* This is the NEW continuous vertical line for subsequent posts in a thread */
+.social-post.post-thread::before {
     content: '';
     position: absolute;
-    width: 2px;
     background-color: var(--color-border);
-    left: 50%;
+    width: 2px;
+    /* Position the line in the center of the 48px avatar column */
+    left: 24px;
     transform: translateX(-50%);
-    /* Start the line at the top border (spanning the top padding) */
-    top: -1rem;
-    /* Set the height to the full post height plus top and bottom padding */
-    height: calc(100% + 2rem);
+    /* Make the line span the entire height of the post */
+    top: 0;
+    bottom: 0;
 }
-
 
 /* --- Avatar & Post Content Styles --- */
 .social-post .post-avatar {
@@ -1592,6 +1587,7 @@ body:not(.social-layout) #social-feed-view {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+/* We no longer need the post-thread-connector, but we still need to hide the avatar slot */
 .post-thread .post-avatar {
     opacity: 0;
 }
@@ -1610,7 +1606,6 @@ body:not(.social-layout) #social-feed-view {
 }
 
 /* --- END: COMPLETE SOCIAL FEED STYLES --- */
-
 
 /* --- Responsive Styles --- */
 @media (max-width: 900px) {
