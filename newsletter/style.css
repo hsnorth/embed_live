@@ -1443,15 +1443,28 @@ body.logged-in #mobile-account-trigger {
     color: var(--color-background);
 }
 
-/* --- SOCIAL FEED VIEW STYLES --- */
+/* --- START: COMPLETE SOCIAL FEED STYLES (REPLACE OLD CODE WITH THIS) --- */
+
+/* --- Layout Visibility Control --- */
+body.social-layout .main-header {
+    display: none;
+}
+body.social-layout #page-content-wrapper {
+    display: none;
+}
+body:not(.social-layout) #social-feed-view {
+    display: none;
+}
+
+/* --- Social Feed View Container --- */
 #social-feed-view {
     max-width: 600px;
     margin: 2rem auto;
-    padding: 0; /* No padding on the main container */
+    padding: 0;
     font-family: var(--font-sans);
 }
 
-/* 1. Basic Post Structure */
+/* --- Basic Post Structure --- */
 .social-post {
     display: grid;
     grid-template-columns: 48px 1fr;
@@ -1459,7 +1472,7 @@ body.logged-in #mobile-account-trigger {
     padding: 1rem;
     border: 1px solid var(--color-border);
     border-bottom: none;
-    align-items: start; /* <-- THIS IS THE FIX */
+    align-items: start; /* Aligns avatar and content to the top */
 }
 .social-post:first-child {
     border-top-left-radius: 8px;
@@ -1471,10 +1484,41 @@ body.logged-in #mobile-account-trigger {
     border-bottom-right-radius: 8px;
 }
 
-/* 2. Thread-Specific Adjustments */
-.social-post.post-thread {
-    border-top: none; /* Hides border to allow the vertical line to connect */
+/* --- Avatar Styles --- */
+.social-post .post-avatar {
+    position: relative; /* Crucial for positioning the line */
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
 }
+
+/* --- Threading & Vertical Line Styles --- */
+
+/* This is the continuous line on subsequent posts in a thread */
+.post-thread-connector::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: var(--color-border);
+    left: 50%;
+    transform: translateX(-50%);
+    top: -1rem;
+    bottom: -1rem; /* Extends through top and bottom padding */
+}
+
+/* This is the initial line starting from the FIRST post's avatar */
+.social-post:has(+ .social-post.post-thread) .post-avatar::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: var(--color-border);
+    left: 50%;
+    transform: translateX(-50%);
+    top: 100%; /* Starts at the bottom of the avatar */
+    height: 1rem; /* Spans the post's bottom padding */
+}
+
 
 
 /* Avatar Styles */
@@ -1574,16 +1618,7 @@ body.logged-in #mobile-account-trigger {
 }
 
 
-/* --- LAYOUT VISIBILITY CONTROL --- */
-body.social-layout .main-header {
-    display: none;
-}
-body.social-layout #page-content-wrapper {
-    display: none;
-}
-body:not(.social-layout) #social-feed-view {
-    display: none;
-}
+
 
 /* --- Responsive Styles --- */
 @media (max-width: 900px) {
