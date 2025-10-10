@@ -1443,7 +1443,7 @@ body.logged-in #mobile-account-trigger {
     color: var(--color-background);
 }
 
-/* --- START: COMPLETE SOCIAL FEED STYLES (REPLACE OLD CODE WITH THIS) --- */
+/* --- START: COMPLETE SOCIAL FEED STYLES --- */
 
 /* --- Layout Visibility Control --- */
 body.social-layout .main-header {
@@ -1464,6 +1464,7 @@ body:not(.social-layout) #social-feed-view {
     font-family: var(--font-sans);
 }
 
+/* --- Basic Post Structure & BORDERS --- */
 .social-post {
     display: grid;
     grid-template-columns: 48px 1fr;
@@ -1472,23 +1473,35 @@ body:not(.social-layout) #social-feed-view {
     /* Apply only the side borders to every post */
     border-left: 1px solid var(--color-border);
     border-right: 1px solid var(--color-border);
-    align-items: start; /* Aligns avatar and content to the top */
+    align-items: start;
 }
 
-/* Apply top border and rounded corners ONLY to the first post */
+/* Add a top border to any NEW thread that isn't a reply */
+.social-post:not(.post-thread) {
+    border-top: 1px solid var(--color-border);
+}
+
+/* Remove the top border from the very first post to avoid a double border later */
 .social-post:first-child {
+    border-top: none;
+}
+
+/* Apply container border and rounded corners ONLY to the first post in the entire feed */
+#social-feed-view > .social-post:first-child {
     border-top: 1px solid var(--color-border);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 
-/* Apply bottom border and rounded corners ONLY to the last post */
-.social-post:last-child {
+/* Apply container border and rounded corners ONLY to the last post in the entire feed */
+#social-feed-view > .social-post:last-child {
     border-bottom: 1px solid var(--color-border);
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
-/* --- Avatar Styles --- */
+
+
+/* --- Avatar & Threading Line Styles --- */
 .social-post .post-avatar {
     position: relative; /* Crucial for positioning the line */
     width: 48px;
@@ -1497,21 +1510,12 @@ body:not(.social-layout) #social-feed-view {
     border-radius: 50%;
 }
 
-/* --- Threading & Vertical Line Styles --- */
-
-/* This is the continuous line on subsequent posts in a thread */
-.post-thread-connector::before {
-    content: '';
-    position: absolute;
-    width: 2px;
-    background-color: var(--color-border);
-    left: 50%;
-    transform: translateX(-50%);
-    top: -1rem;
-    bottom: -1rem; /* Extends through top and bottom padding */
+/* The container for the vertical line in threaded posts */
+.post-thread-connector {
+    position: relative; /* ESSENTIAL for positioning the line */
 }
 
-/* This is the initial line starting from the FIRST post's avatar */
+/* This is the line that drops DOWN from the first post's avatar */
 .social-post:has(+ .social-post.post-thread) .post-avatar::after {
     content: '';
     position: absolute;
@@ -1523,15 +1527,22 @@ body:not(.social-layout) #social-feed-view {
     height: 1rem; /* Spans the post's bottom padding */
 }
 
+/* This is the continuous vertical line for subsequent posts in a thread */
+.post-thread-connector::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: var(--color-border);
+    left: 50%;
+    transform: translateX(-50%);
+    /* These values make the line span the entire post, including padding */
+    top: -1rem;
+    bottom: -1rem;
+}
 
 
-/* Avatar Styles */
+/* --- Avatar & Post Content Styles --- */
 .social-post .post-avatar {
-    /* IMPORTANT: Fixed size for the avatar container */
-    width: 48px;
-    height: 48px;
-    flex-shrink: 0;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1558,7 +1569,6 @@ body:not(.social-layout) #social-feed-view {
 .post-avatar--coffee { background-color: #6d4c41; }
 .post-avatar--coffee::before { content: 'R'; }
 
-/* Post Content Styles */
 .post-header {
     display: flex;
     align-items: center;
@@ -1579,18 +1589,6 @@ body:not(.social-layout) #social-feed-view {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-/* The connector is the container that holds the vertical line */
-.post-thread-connector {
-    position: relative; /* This is ESSENTIAL for positioning the line */
-}
-
-/* 3. The Vertical Line Itself */
-
-/* We use the ::before pseudo-element to draw the line */
-/* This adds the short vertical line extending DOWN from the first post's avatar */
-/* Replace your existing .post-thread-connector::before rule with this one */
-
-
 .post-thread .post-avatar {
     opacity: 0;
 }
@@ -1598,9 +1596,9 @@ body:not(.social-layout) #social-feed-view {
 .post-image {
     margin-top: 1rem;
     border: 1px solid var(--color-border);
-    border-radius: 16px; /* This creates the rounded corners */
-    overflow: hidden; /* This makes the image conform to the rounded corners */
-    line-height: 0; /* Fixes extra space below the image */
+    border-radius: 16px;
+    overflow: hidden;
+    line-height: 0;
 }
 .post-image img {
     display: block;
@@ -1608,7 +1606,7 @@ body:not(.social-layout) #social-feed-view {
     height: auto;
 }
 
-
+/* --- END: COMPLETE SOCIAL FEED STYLES --- */
 
 
 /* --- Responsive Styles --- */
@@ -2054,4 +2052,3 @@ body.commenting-disabled #comment-view {
     line-height: 1.7;
     color: #333;
 }
-
