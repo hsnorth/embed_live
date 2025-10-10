@@ -508,10 +508,10 @@ function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread
         ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
         : `<div class="post-avatar ${avatarSrc}"></div>`;
 
-    const threadConnector = `<div class="post-thread-connector"></div>`;
+    // A simple placeholder to maintain the grid structure in threaded posts
+    const avatarPlaceholder = `<div class="post-avatar"></div>`;
     const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
 
-    // This ensures the header (e.g., "Essential 1") only appears on the first post of a thread
     const headerHTML = !isThread ? `
         <div class="post-header">
             <span class="post-author-name">${authorName}</span>
@@ -519,7 +519,7 @@ function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread
         </div>` : '';
 
     post.innerHTML = `
-        ${isThread ? threadConnector : avatarContent}
+        ${isThread ? avatarPlaceholder : avatarContent}
         <div class="post-content">
             ${headerHTML}
             <div class="post-body">${content}</div>
