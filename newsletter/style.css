@@ -1553,8 +1553,8 @@ body.logged-in #mobile-account-trigger {
     transform: translateX(-50%);
 
     /* Make the line span the entire post, including top and bottom padding */
-    top: 1rem; 
-    bottom: -1rem; /* <-- THIS IS THE FIX (changed from 0) */
+    top: -2rem; 
+    bottom: -2rem; /* <-- THIS IS THE FIX (changed from 0) */
 }
 .post-thread .post-avatar {
     opacity: 0;
