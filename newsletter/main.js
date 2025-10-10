@@ -536,6 +536,8 @@ function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread
 
 // main.js - REPLACEMENT 2
 
+// main.js - REPLACEMENT
+
 function generateSocialFeed() {
     if (isSocialFeedGenerated || !pageContentWrapper) return;
     socialFeedView.innerHTML = '';
@@ -543,23 +545,30 @@ function generateSocialFeed() {
     const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
     const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
 
-    // This function now combines paragraphs into a single post.
     const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
         const items = pageContentWrapper.querySelectorAll(selector);
         items.forEach((item, index) => {
             const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
             const description = item.querySelector('.item-description')?.innerText || '';
+            const paragraphs = description.split(/\n\s*\n/);
 
-            // Format the description with paragraph tags and dividers
-            const formattedDescription = `<p>${description.replace(/\n\s*\n/g, '</p><hr class="post-paragraph-divider"><p>')}</p>`;
+            const firstPara = paragraphs.shift()?.trim();
+            if (!firstPara) return;
 
             const postAuthorName = titlePrefix.replace('#', index + 1);
-            const fullContent = `<p><strong>${title}</strong></p>${formattedDescription}`;
+            const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
 
             const imageForPost = (index === 0) ? sectionImageSrc : null;
+            // Create the main post with no handle (the '' argument)
+            socialFeedView.appendChild(createSocialPost(postAuthorName, '', avatarClass, firstPostContent, false, imageForPost));
 
-            // Create just ONE post per item
-            socialFeedView.appendChild(createSocialPost(postAuthorName, 'newshaul', avatarClass, fullContent, false, imageForPost));
+            // Create threaded posts for the rest of the paragraphs
+            paragraphs.forEach(para => {
+                if (para.trim()) {
+                    // Create thread posts with no handle
+                    socialFeedView.appendChild(createSocialPost(postAuthorName, '', avatarClass, `<p>${para.trim()}</p>`, true));
+                }
+            });
         });
     };
 
@@ -567,12 +576,13 @@ function generateSocialFeed() {
     const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
     const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
 
-    // Format content for the first two posts
     const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
-    socialFeedView.appendChild(createSocialPost('The News Haul', 'newshaul', haulAvatar, welcomeContent));
+    // Note the empty '' for the handle here
+    socialFeedView.appendChild(createSocialPost('The News Haul', '', haulAvatar, welcomeContent));
 
     if (harrysNoteBody) {
-        socialFeedView.appendChild(createSocialPost('Harry North', 'harrynorth', harryAvatar, `<p>${harrysNoteBody}</p>`));
+         // And here
+        socialFeedView.appendChild(createSocialPost('Harry North', '', harryAvatar, `<p>${harrysNoteBody}</p>`));
     }
 
     const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
