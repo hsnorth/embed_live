@@ -2022,3 +2022,19 @@ body.commenting-disabled #comment-view {
     height: 100%;
     object-fit: cover; /* Scales the image to fill the space without distortion */
 }
+/* style.css - ADD THIS CODE */
+
+.post-paragraph-divider {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 1rem 0;
+}
+.post-body > p {
+    margin: 0;
+}
+.post-body > p:not(:first-child) {
+    margin-top: 1em;
+}
+.post-body > p strong {
+    font-weight: 700;
+}
