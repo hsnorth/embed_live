@@ -2137,31 +2137,45 @@ body.social-layout #social-feed-view {
 }
 
 
-/* --- Pinned Post Styles (Final) --- */
+/* --- Pinned Post Styles (Final Polished Version) --- */
 .pinned-post {
-    background-color: #f7f9f9; /* A light, neutral grey */
-    border-top: none !important; /* Pinned post should never have a top border */
+    position: relative; /* Add positioning context for the header */
+    background-color: #f7f9f9;
+    border-top: none !important;
+    /* Add space at the top to make room for the "PINNED" text */
+    padding-top: 2.5rem !important; 
+    /* Use negative margins to stretch the background edge-to-edge */
+    margin-left: -1rem;
+    margin-right: -1rem;
 }
 
 .pinned-header {
+    position: absolute; /* Lifts the header out of the normal flow */
+    top: 0.75rem;     /* Positions it in the new space at the top */
+    left: 1rem;       /* Aligns it with the container's edge padding */
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding-bottom: 0.75rem;
     font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 700;
     color: #5b7083;
     text-transform: uppercase;
-    /* This negative margin aligns the "PINNED" text with the start of the avatar column */
-    margin-left: calc(-60px - 1rem); 
-    padding-left: 1rem;
 }
 
-/* On mobile, adjust pinned header alignment for the smaller layout */
+.pinned-header svg {
+    width: 14px;
+    height: 14px;
+    fill: #5b7083;
+}
+
+/* On mobile, remove the negative margins since the container is already edge-to-edge */
 @media (max-width: 600px) {
+    .pinned-post {
+        margin-left: 0;
+        margin-right: 0;
+    }
     .pinned-header {
-        margin-left: calc(-48px - 0.75rem);
-        padding-left: 0.75rem;
+        left: 0.75rem; /* Align with mobile padding */
     }
 }
