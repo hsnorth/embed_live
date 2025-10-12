@@ -2137,40 +2137,31 @@ body.social-layout #social-feed-view {
 }
 
 
-/* --- Pinned Post Styles (Corrected) --- */
+/* --- Pinned Post Styles (Final) --- */
 .pinned-post {
     background-color: #f7f9f9; /* A light, neutral grey */
     border-top: none !important; /* Pinned post should never have a top border */
-}
-
-/* This rule prevents the unwanted thread line from appearing on the pinned post */
-.pinned-post .post-avatar::after {
-    display: none !important;
 }
 
 .pinned-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    /* This calculation precisely aligns the header to the left edge */
-    margin-left: calc(-60px - 1rem); 
     padding-bottom: 0.75rem;
     font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 700;
-    color: #5b7083; /* A more standard muted blue/grey */
+    color: #5b7083;
     text-transform: uppercase;
+    /* This negative margin aligns the "PINNED" text with the start of the avatar column */
+    margin-left: calc(-60px - 1rem); 
+    padding-left: 1rem;
 }
 
-.pinned-header svg {
-    width: 14px;
-    height: 14px;
-    fill: #5b7083;
-}
-
-/* On mobile, adjust pinned header alignment for the smaller avatar/gap */
+/* On mobile, adjust pinned header alignment for the smaller layout */
 @media (max-width: 600px) {
     .pinned-header {
         margin-left: calc(-48px - 0.75rem);
+        padding-left: 0.75rem;
     }
 }
