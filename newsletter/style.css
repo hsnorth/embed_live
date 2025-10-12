@@ -2135,32 +2135,42 @@ body.social-layout #social-feed-view {
         line-height: 1.6;
     }
 }
-/* --- Pinned Post Styles --- */
+
+
+/* --- Pinned Post Styles (Corrected) --- */
 .pinned-post {
     background-color: #f7f9f9; /* A light, neutral grey */
-    border-top: none; /* No top border for the pinned post */
+    border-top: none !important; /* Pinned post should never have a top border */
+}
+
+/* This rule prevents the unwanted thread line from appearing on the pinned post */
+.pinned-post .post-avatar::after {
+    display: none !important;
 }
 
 .pinned-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-left: -60px; /* Aligns with the avatar column */
-    padding-bottom: 0.5rem;
+    /* This calculation precisely aligns the header to the left edge */
+    margin-left: calc(-60px - 1rem); 
+    padding-bottom: 0.75rem;
     font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 700;
-    color: #555;
+    color: #5b7083; /* A more standard muted blue/grey */
     text-transform: uppercase;
 }
 
 .pinned-header svg {
-    stroke: #555;
+    width: 14px;
+    height: 14px;
+    fill: #5b7083;
 }
 
-/* On mobile, adjust pinned header alignment */
+/* On mobile, adjust pinned header alignment for the smaller avatar/gap */
 @media (max-width: 600px) {
     .pinned-header {
-        margin-left: -48px;
+        margin-left: calc(-48px - 0.75rem);
     }
 }
