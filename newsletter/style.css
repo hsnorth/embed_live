@@ -1883,3 +1883,98 @@ body.commenting-disabled #comment-view {
     line-height: 1.7;
     color: #333;
 }
+/* --- SOCIAL FEED LAYOUT STYLES --- */
+#social-feed-view {
+    display: none; /* Hidden by default */
+    max-width: 750px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+}
+
+body.social-layout #page-content-wrapper {
+    display: none; /* Hide original content when social layout is active */
+}
+
+body.social-layout #social-feed-view {
+    display: block; /* Show social feed when active */
+}
+
+.social-post {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.post-avatar, .post-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+
+.post-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Placeholder Avatars with initials/colors */
+.post-avatar--essential { background-color: #f2e8cf; }
+.post-avatar--import { background-color: #d4e7f5; }
+.post-avatar--delivery { background-color: #e1d4f5; }
+.post-avatar--cannoli { background-color: #f5d4d4; }
+.post-avatar--coffee { background-color: #d4f5e7; }
+
+/* Thread styling */
+.post-thread .post-avatar-placeholder::before {
+    content: '';
+    position: absolute;
+    top: -1rem; /* Extends up to the post above */
+    bottom: -1rem; /* Extends down to the post below */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background-color: var(--color-border);
+}
+
+.post-header {
+    margin-bottom: 0.25rem;
+}
+
+.post-author-name {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.post-body p {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-text);
+}
+
+.post-body p:last-child {
+    margin-bottom: 0;
+}
+
+.post-body strong {
+    font-family: var(--font-serif);
+    font-weight: 700;
+}
+
+.post-image {
+    margin-top: 1rem;
+}
+
+.post-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+}
