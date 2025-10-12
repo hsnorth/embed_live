@@ -1890,7 +1890,7 @@ body.commenting-disabled #comment-view {
     margin: 3rem auto;
     padding: 0 1rem;
     border: 1px solid var(--color-border);
-    border-bottom: none;
+    border-top: none; /* Clean look */
 }
 
 body.social-layout #page-content-wrapper {
@@ -1906,13 +1906,17 @@ body.social-layout #social-feed-view {
     grid-template-columns: 60px 1fr;
     gap: 1rem;
     padding: 1rem;
-    border-bottom: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+}
+
+#social-feed-view .social-post:first-child {
+    border-top: none; /* No border on the very first post */
 }
 
 .post-avatar, .post-avatar-placeholder {
     width: 48px;
     height: 48px;
-    position: relative;
+    position: relative; /* Crucial for positioning the thread line */
 }
 
 .post-avatar img {
@@ -1922,19 +1926,41 @@ body.social-layout #social-feed-view {
     object-fit: cover;
 }
 
-/* Placeholder Avatars with initials/colors */
+/* Placeholder Avatars with colors */
 .post-avatar--essential { background-color: #f2e8cf; }
 .post-avatar--import { background-color: #d4e7f5; }
 .post-avatar--delivery { background-color: #e1d4f5; }
 .post-avatar--cannoli { background-color: #f5d4d4; }
 .post-avatar--coffee { background-color: #d4f5e7; }
 
-/* Thread styling */
+/* --- SOCIAL FEED THREADING REFINEMENTS --- */
+
+/* Rule 1: For the post that STARTS a thread, remove its top border (since it shouldn't be separated from its replies) and add the vertical line below its avatar. */
+.social-post:has(+ .post-thread) {
+    border-top: none;
+}
+
+.social-post:has(+ .post-thread) .post-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem; /* Extends into the next post's top padding to connect */
+    top: 48px;     /* Starts just below the 48px avatar */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background-color: var(--color-border);
+}
+
+/* Rule 2: For threaded replies, remove the top border and add a vertical line that connects top-to-bottom */
+.post-thread {
+    border-top: none;
+}
+
 .post-thread .post-avatar-placeholder::before {
     content: '';
     position: absolute;
-    top: -1rem; /* Extends up to the post above */
-    bottom: -1rem; /* Extends down to the post below */
+    top: 0;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
