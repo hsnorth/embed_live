@@ -497,107 +497,101 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /**
+     * Creates a social post element.
+     * @param {string} authorName - The name of the author.
+     * @param {string} avatarSrc - URL for an image avatar or a class name for a placeholder.
+     * @param {string} content - The HTML content of the post body.
+     * @param {boolean} isThread - Whether this post is part of a thread.
+     * @param {string|null} imageSrc - Optional URL for an image in the post.
+     * @returns {HTMLElement} The created post element.
+     */
+    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null) {
+        const post = document.createElement('div');
+        post.className = `social-post ${isThread ? 'post-thread' : ''}`;
 
-// In main.js
+        const avatarContent = avatarSrc.startsWith('https')
+            ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
+            : `<div class="post-avatar ${avatarSrc}"></div>`;
 
-function createSocialPost(authorName, authorHandle, avatarSrc, content, isThread = false, imageSrc = null) {
-    const post = document.createElement('div');
-    post.className = `social-post ${isThread ? 'post-thread' : ''}`;
+        const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
+        const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
 
-    const avatarContent = avatarSrc.startsWith('https')
-        ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
-        : `<div class="post-avatar ${avatarSrc}"></div>`;
+        const headerHTML = !isThread ? `
+            <div class="post-header">
+                <span class="post-author-name">${authorName}</span>
+            </div>` : '';
 
-    // A simple placeholder to maintain the grid structure in threaded posts
-    const avatarPlaceholder = `<div class="post-avatar"></div>`;
-    const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
-
-    const headerHTML = !isThread ? `
-        <div class="post-header">
-            <span class="post-author-name">${authorName}</span>
-            <span class="post-author-handle">${authorHandle}</span>
-        </div>` : '';
-
-    post.innerHTML = `
-        ${isThread ? avatarPlaceholder : avatarContent}
-        <div class="post-content">
-            ${headerHTML}
-            <div class="post-body">${content}</div>
-            ${imageHTML}
-        </div>
-    `;
-    return post;
-}
-// main.js - REPLACEMENT 2
-
-// main.js - REPLACEMENT 2
-
-// main.js - REPLACEMENT 2
-
-// main.js - REPLACEMENT
-
-function generateSocialFeed() {
-    if (isSocialFeedGenerated || !pageContentWrapper) return;
-    socialFeedView.innerHTML = '';
-
-    const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
-    const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
-
-    const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
-        const items = pageContentWrapper.querySelectorAll(selector);
-        items.forEach((item, index) => {
-            const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
-            const description = item.querySelector('.item-description')?.innerText || '';
-            const paragraphs = description.split(/\n\s*\n/);
-
-            const firstPara = paragraphs.shift()?.trim();
-            if (!firstPara) return;
-
-            const postAuthorName = titlePrefix.replace('#', index + 1);
-            const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
-
-            const imageForPost = (index === 0) ? sectionImageSrc : null;
-            // Create the main post with no handle (the '' argument)
-            socialFeedView.appendChild(createSocialPost(postAuthorName, '', avatarClass, firstPostContent, false, imageForPost));
-
-            // Create threaded posts for the rest of the paragraphs
-            paragraphs.forEach(para => {
-                if (para.trim()) {
-                    // Create thread posts with no handle
-                    socialFeedView.appendChild(createSocialPost(postAuthorName, '', avatarClass, `<p>${para.trim()}</p>`, true));
-                }
-            });
-        });
-    };
-
-    const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
-    const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
-    const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
-
-    const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
-    // Note the empty '' for the handle here
-    socialFeedView.appendChild(createSocialPost('The News Haul', '', haulAvatar, welcomeContent));
-
-    if (harrysNoteBody) {
-         // And here
-        socialFeedView.appendChild(createSocialPost('Harry North', '', harryAvatar, `<p>${harrysNoteBody}</p>`));
+        post.innerHTML = `
+            ${isThread ? avatarPlaceholder : avatarContent}
+            <div class="post-content">
+                ${headerHTML}
+                <div class="post-body">${content}</div>
+                ${imageHTML}
+            </div>
+        `;
+        return post;
     }
 
-    const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
-    const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
+    /**
+     * Parses the magazine content and generates a social feed view.
+     */
+    function generateSocialFeed() {
+        if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
+        socialFeedView.innerHTML = '';
 
-    processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
-    processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
-    processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
-    processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
-    processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
+        const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
+        const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
 
-    isSocialFeedGenerated = true;
-}
+        const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
+            const items = pageContentWrapper.querySelectorAll(selector);
+            items.forEach((item, index) => {
+                const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
+                const description = item.querySelector('.item-description')?.innerText || '';
+                const paragraphs = description.split(/\n\s*\n/).filter(p => p.trim());
+
+                if (paragraphs.length === 0) return;
+
+                const firstPara = paragraphs.shift().trim();
+                const postAuthorName = titlePrefix.replace('#', index + 1);
+                const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
+
+                const imageForPost = (index === 0) ? sectionImageSrc : null;
+                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost));
+
+                paragraphs.forEach(para => {
+                    socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true));
+                });
+            });
+        };
+
+        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
+        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+
+        const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
+        socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent));
+
+        if (harrysNoteBody) {
+            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`));
+        }
+
+        const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
+        const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
+
+        processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
+        processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
+        processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
+        processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
+        processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
+
+        isSocialFeedGenerated = true;
+    }
+
     function applyLayoutPreference(layout) {
         if (layout === 'social') {
-            generateSocialFeed(); // Generate the content FIRST
-            document.body.classList.add('social-layout'); // THEN switch the view
+            document.body.classList.add('social-layout');
+            generateSocialFeed();
         } else {
             document.body.classList.remove('social-layout');
         }
