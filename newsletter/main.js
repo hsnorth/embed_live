@@ -506,25 +506,35 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string|null} imageSrc - Optional URL for an image in the post.
      * @returns {HTMLElement} The created post element.
      */
-    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null) {
+    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, isPinned = false) {
         const post = document.createElement('div');
-        post.className = `social-post ${isThread ? 'post-thread' : ''}`;
-
+        // Add the 'pinned-post' class if the post is pinned
+        post.className = `social-post ${isThread ? 'post-thread' : ''} ${isPinned ? 'pinned-post' : ''}`;
+    
         const avatarContent = avatarSrc.startsWith('https')
             ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
             : `<div class="post-avatar ${avatarSrc}"></div>`;
-
+    
         const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
         const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
-
+    
         const headerHTML = !isThread ? `
             <div class="post-header">
                 <span class="post-author-name">${authorName}</span>
             </div>` : '';
-
+    
+        // Create the HTML for the "PINNED" header
+        const pinnedHeaderHTML = isPinned ? `
+            <div class="pinned-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>PINNED</span>
+            </div>` : '';
+    
+        // Assemble the final post HTML
         post.innerHTML = `
             ${isThread ? avatarPlaceholder : avatarContent}
             <div class="post-content">
+                ${pinnedHeaderHTML}
                 ${headerHTML}
                 <div class="post-body">${content}</div>
                 ${imageHTML}
@@ -532,7 +542,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         return post;
     }
-
     /**
      * Parses the magazine content and generates a social feed view.
      */
