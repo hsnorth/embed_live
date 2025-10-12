@@ -2050,7 +2050,7 @@ body.social-layout #social-feed-view {
 
     /* This is the magic: */
     /* 1. Start the line far above the element, ensuring it connects visually to the avatar above. */
-    top: -2rem; 
+    top: -7rem; 
     /* 2. End the line exactly halfway down its own container, as you requested. */
     bottom: 50%;
 }
