@@ -589,27 +589,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyLayoutPreference(layout) {
+        const commentsToggleContainer = commentsToggle ? commentsToggle.closest('.newsletter-toggle') : null;
+        const deepnoteToggleContainer = deepnoteToggle ? deepnoteToggle.closest('.newsletter-toggle') : null;
+    
         if (layout === 'social') {
             document.body.classList.add('social-layout');
             generateSocialFeed();
-        } else {
+    
+            // Disable feature toggles for social view
+            if (commentsToggle) commentsToggle.disabled = true;
+            if (deepnoteToggle) deepnoteToggle.disabled = true;
+            if (commentsToggleContainer) commentsToggleContainer.classList.add('feature-disabled');
+            if (deepnoteToggleContainer) deepnoteToggleContainer.classList.add('feature-disabled');
+    
+        } else { // layout is 'magazine'
             document.body.classList.remove('social-layout');
+    
+            // Enable feature toggles for magazine view
+            if (commentsToggle) commentsToggle.disabled = false;
+            if (deepnoteToggle) deepnoteToggle.disabled = false;
+            if (commentsToggleContainer) commentsToggleContainer.classList.remove('feature-disabled');
+            if (deepnoteToggleContainer) deepnoteToggleContainer.classList.remove('feature-disabled');
         }
-
+    
         if (layoutToggleContainer) {
             layoutToggleContainer.querySelector('.active')?.classList.remove('active');
             layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
         }
-    }
-
-    if (layoutToggleContainer) {
-        layoutToggleContainer.addEventListener('click', (e) => {
-            if (e.target.matches('.layout-toggle-btn')) {
-                const layout = e.target.dataset.layout;
-                applyLayoutPreference(layout);
-                updateLayoutPreference(layout);
-            }
-        });
     }
 
     onAuthStateChanged(auth, async (user) => {
