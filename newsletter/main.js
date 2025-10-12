@@ -587,36 +587,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         isSocialFeedGenerated = true;
     }
-
+    
+    // --- NEW, MORE ROBUST LAYOUT SWITCHING LOGIC ---
+    
     function applyLayoutPreference(layout) {
         const commentsToggleContainer = commentsToggle ? commentsToggle.closest('.newsletter-toggle') : null;
         const deepnoteToggleContainer = deepnoteToggle ? deepnoteToggle.closest('.newsletter-toggle') : null;
-    
+
+        // Update the active button state
+        if (layoutToggleContainer) {
+            layoutToggleContainer.querySelector('.active')?.classList.remove('active');
+            layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
+        }
+
         if (layout === 'social') {
             document.body.classList.add('social-layout');
             generateSocialFeed();
-    
+
             // Disable feature toggles for social view
             if (commentsToggle) commentsToggle.disabled = true;
             if (deepnoteToggle) deepnoteToggle.disabled = true;
             if (commentsToggleContainer) commentsToggleContainer.classList.add('feature-disabled');
             if (deepnoteToggleContainer) deepnoteToggleContainer.classList.add('feature-disabled');
-    
+
         } else { // layout is 'magazine'
             document.body.classList.remove('social-layout');
-    
+
             // Enable feature toggles for magazine view
             if (commentsToggle) commentsToggle.disabled = false;
             if (deepnoteToggle) deepnoteToggle.disabled = false;
             if (commentsToggleContainer) commentsToggleContainer.classList.remove('feature-disabled');
             if (deepnoteToggleContainer) deepnoteToggleContainer.classList.remove('feature-disabled');
         }
-    
-        if (layoutToggleContainer) {
-            layoutToggleContainer.querySelector('.active')?.classList.remove('active');
-            layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
-        }
     }
+
+    // Set up the single, reliable event listener for the layout toggle
+    if (layoutToggleContainer) {
+        layoutToggleContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('.layout-toggle-btn');
+            if (button) {
+                const newLayout = button.dataset.layout;
+                applyLayoutPreference(newLayout);
+                updateLayoutPreference(newLayout);
+            }
+        });
+    }
+
 
     onAuthStateChanged(auth, async (user) => {
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
@@ -645,6 +661,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
                 if (commentsToggle) commentsToggle.checked = commentsEnabled;
                 if (deepnoteToggle) deepnoteToggle.checked = deepnotesEnabled;
+                
+                // Apply the saved layout preference on page load
                 applyLayoutPreference(layoutPreference);
     
                 document.body.classList.toggle('commenting-disabled', !commentsEnabled);
