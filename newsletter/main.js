@@ -594,12 +594,12 @@ function generateSocialFeed() {
         const contentDiv = firstPost.querySelector('.post-content');
         if (contentDiv) {
                 const pinnedHeaderHTML = `
-                                <div class="pinned-header">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" aria-hidden="true">
-                                        <path d="M32 32C32 14.3 46.3 0 64 0H320c17.7 0 32 14.3 32 32s-14.3 32-32 32H293.5L240 179.3V416c0 17.7-14.3 32-32 32s-32-14.3-32-32V179.3L124.5 64H64C46.3 64 32 49.7 32 32z"/>
-                                    </svg>
-                                    <span>PINNED</span>
-                                </div>`;
+                    <div class="pinned-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+                        </svg>
+                        <span>PINNED</span>
+                    </div>`;
             contentDiv.insertAdjacentHTML('afterbegin', pinnedHeaderHTML);
         }
     }
