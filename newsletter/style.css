@@ -1983,39 +1983,77 @@ body.social-layout #social-feed-view {
 .post-avatar--cannoli { background-color: #f5d4d4; }
 .post-avatar--coffee { background-color: #d4f5e7; }
 
-/* --- SOCIAL FEED THREADING REFINEMENTS (FINAL) --- */
+/* --- SOCIAL FEED LAYOUT STYLES (FINAL) --- */
+#social-feed-view {
+    display: none; /* Hidden by default */
+    max-width: 750px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+    border: 1px solid var(--color-border);
+    border-top: none;
+}
 
-/* For threaded replies, remove their top border to connect them to the parent post. */
+body.social-layout #page-content-wrapper {
+    display: none;
+}
+
+body.social-layout #social-feed-view {
+    display: block;
+}
+
+.social-post {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+#social-feed-view .social-post:first-child {
+    border-top: none;
+}
+
+.post-avatar, .post-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+
+.post-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-avatar--essential { background-color: #f2e8cf; }
+.post-avatar--import { background-color: #d4e7f5; }
+.post-avatar--delivery { background-color: #e1d4f5; }
+.post-avatar--cannoli { background-color: #f5d4d4; }
+.post-avatar--coffee { background-color: #d4f5e7; }
+
+/* --- THREADING REFINEMENT (SIMPLIFIED) --- */
+
+/* For threaded replies, simply remove their top border to tuck them under the parent post. */
 .post-thread {
     border-top: none;
 }
 
-/* Rule 1: For the post that STARTS a thread, add a vertical line that starts below its avatar and extends down into its own bottom padding. */
-.social-post:has(+ .post-thread) .post-avatar::after {
-    content: '';
-    position: absolute;
-    /* This is the key change: The line now extends to the bottom of the parent's padding area. */
-    bottom: -1rem;
-    top: 48px; /* Starts just below the 48px avatar */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    background-color: var(--color-border);
-}
-
-/* Rule 2: For the threaded replies themselves, make their vertical line extend UP into the padding of the post above it to ensure a perfect connection. */
+/* The ONLY line is now drawn by the threaded reply itself. This one element does all the work. */
 .post-thread .post-avatar-placeholder::before {
     content: '';
     position: absolute;
-    /* This is the key change: The line now starts in the padding area ABOVE, connecting seamlessly. */
-    top: -1rem;
-    bottom: -1rem; /* Extends fully top-to-bottom to connect to replies below it */
-    left: 50%;
-    transform: translateX(-50%);
     width: 2px;
     background-color: var(--color-border);
-}
+    left: 50%;
+    transform: translateX(-50%);
 
+    /* This is the magic: */
+    /* 1. Start the line far above the element, ensuring it connects visually to the avatar above. */
+    top: -2rem; 
+    /* 2. End the line exactly halfway down its own container, as you requested. */
+    bottom: 50%;
+}
 
 .post-header {
     margin-bottom: 0.25rem;
