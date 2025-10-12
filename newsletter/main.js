@@ -566,8 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
 
                 const imageForPost = (index === 0) ? sectionImageSrc : null;
-                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost));
-
+                socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent, false, null, true));
                 paragraphs.forEach(para => {
                     socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true));
                 });
