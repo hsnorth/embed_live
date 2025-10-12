@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | The News Haul</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            background-color: #f7f9fa; /* A slightly different background for the admin area */
+        }
+
+        .dashboard-header {
+            background-color: var(--color-background);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: -0.04em;
+        }
+        
+        .dashboard-header h1 span {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .dashboard-grid .full-width {
+             grid-column: 1 / -1;
+        }
+
+        .dashboard-card {
+            background-color: var(--color-background);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        
+        .dashboard-card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .dashboard-card-header h2 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .dashboard-card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .metrics-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-around;
+        }
+
+        .metric-box {
+            text-align: center;
+            padding: 1rem;
+            flex: 1;
+        }
+
+        .metric-box .count {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .metric-box .label {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 0.5rem;
+        }
+
+        /* Form styles */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .form-input-admin {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        textarea.form-input-admin {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        textarea#how-it-works-editor {
+            min-height: 400px;
+        }
+
+        .btn-primary-admin {
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            background-color: var(--color-text);
+            color: var(--color-background);
+            border: none;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+        
+        .btn-secondary-admin {
+            background: none;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+        
+        .divider {
+            border: 0;
+            border-top: 1px solid var(--color-border);
+            margin: 0;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <h1>The News Haul <span>Admin</span></h1>
+        <a href="#" id="admin-logout-btn" class="btn-secondary-admin">Log Out</a>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card full-width">
+                <div class="dashboard-card-header">
+                    <h2>At a Glance</h2>
+                </div>
+                <div class="dashboard-card-content">
+                    <div class="metrics-container">
+                        <div class="metric-box">
+                            <div id="total-users-count" class="count">...</div>
+                            <div class="label">Total Accounts Created</div>
+                        </div>
+                        <div class="metric-box">
+                            <div id="newsletter-subscribers-count" class="count">...</div>
+                            <div class="label">Email Newsletter Signups</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card full-width">
+                <div class="dashboard-card-header">
+                    <h2>Create New Newsletter</h2>
+                </div>
+                <div class="dashboard-card-content">
+                    <form id="newsletter-form">
+                        <div class="form-group">
+                            <label for="issue-number">Issue Number (e.g., 4)</label>
+                            <input type="number" id="issue-number" class="form-input-admin" placeholder="4">
+                        </div>
+                        <div class="form-group">
+                            <label for="issue-title">Main Title</label>
+                            <input type="text" id="issue-title" class="form-input-admin" placeholder="What mattered most this week in Montreal">
+                        </div>
+                        <hr class="divider">
+                        
+                        <div class="form-group">
+                            <label for="harrys-note">Harry's Note</label>
+                            <textarea id="harrys-note" class="form-input-admin"></textarea>
+                        </div>
+                        <hr class="divider">
+                        
+                        <h3>Content Sections</h3>
+                        <div class="form-group">
+                            <label>Essential #1 Title & Content</label>
+                            <input type="text" class="form-input-admin" placeholder="Title for the first essential story">
+                            <textarea class="form-input-admin" placeholder="Content for the first essential story..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Import #1 Title & Content</label>
+                            <input type="text" class="form-input-admin" placeholder="Title for the first import story">
+                            <textarea class="form-input-admin" placeholder="Content for the first import story..."></textarea>
+                        </div>
+
+                         <div class="form-group">
+                            <label>The Cannoli Title & Content</label>
+                            <input type="text" class="form-input-admin" placeholder="Title for the cannoli story">
+                            <textarea class="form-input-admin" placeholder="Content for the cannoli story..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary-admin">Publish Newsletter</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <h2>Manage Audio Episodes</h2>
+                </div>
+                <div class="dashboard-card-content">
+                    <form id="audio-form">
+                        <div class="form-group">
+                            <label for="episode-title">Episode Title</label>
+                            <input type="text" id="episode-title" class="form-input-admin" placeholder="The Montreal Weekly: Episode 4">
+                        </div>
+                        <div class="form-group">
+                            <label for="audio-url">Audio File URL (e.g., from Spotify, SoundCloud)</label>
+                            <input type="url" id="audio-url" class="form-input-admin" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label for="ticker-headlines">Ticker Headlines (separate with '•')</label>
+                            <textarea id="ticker-headlines" class="form-input-admin" placeholder="Headline one • Headline two • ..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary-admin">Add Episode</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <h2>Edit "How The Haul Works"</h2>
+                </div>
+                <div class="dashboard-card-content">
+                    <form id="how-it-works-form">
+                        <div class="form-group">
+                            <label for="how-it-works-editor">Page Content (HTML or Markdown)</label>
+                            <textarea id="how-it-works-editor" class="form-input-admin"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary-admin">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    
+    </body>
+</html>
