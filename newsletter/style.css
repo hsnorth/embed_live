@@ -2098,3 +2098,10 @@ body.social-layout #social-feed-view {
     pointer-events: none;
     user-select: none;
 }
+/* --- Responsive Scrolled Nav Bar Title --- */
+@media (max-width: 480px) {
+    .header-top-bar.scrolled .scrolled-logo-link {
+        font-size: 1.4rem; /* Further reduce font size for small mobile screens */
+        letter-spacing: -0.06em; /* Adjust spacing for the smaller size */
+    }
+}
