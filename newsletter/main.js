@@ -506,96 +506,104 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string|null} imageSrc - Optional URL for an image in the post.
      * @returns {HTMLElement} The created post element.
      */
-    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, isPinned = false) {
-        const post = document.createElement('div');
-        // Add the 'pinned-post' class if the post is pinned
-        post.className = `social-post ${isThread ? 'post-thread' : ''} ${isPinned ? 'pinned-post' : ''}`;
-    
-        const avatarContent = avatarSrc.startsWith('https')
-            ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
-            : `<div class="post-avatar ${avatarSrc}"></div>`;
-    
-        const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
-        const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
-    
-        const headerHTML = !isThread ? `
-            <div class="post-header">
-                <span class="post-author-name">${authorName}</span>
-            </div>` : '';
-    
-        // Create the HTML for the "PINNED" header
-        const pinnedHeaderHTML = isPinned ? `
-                <div class="pinned-header">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M13.32 3.68l-1.34 1.34 2.11 2.11 1.34-1.34-2.11-2.11zM11.63 7.5l-3.5 3.5c-.98.98-.98 2.56 0 3.54s2.56.98 3.54 0l3.5-3.5-3.54-3.54zM16 3c-1.1 0-2.1.4-2.83 1.17l-1.41 1.41-2.12 2.12-1.41 1.41-2.47 2.47-2.12 2.12 1.41 1.41 2.12-2.12 2.47-2.47 1.41-1.41 2.12-2.12 1.41-1.41C13.9 4.1 14.9 3.7 16 3.7c1.48 0 2.7 1.22 2.7 2.7s-1.22 2.7-2.7 2.7-2.7-1.22-2.7-2.7c0-.4.1-.78.27-1.12L12.16 9l-4.6 4.6c-1.37 1.37-1.37 3.58 0 4.95s3.58 1.37 4.95 0l4.6-4.6-1.41-1.41-2.12-2.12-1.41-1.41c.34-.17.72-.27 1.12-.27 2.04 0 3.7 1.66 3.7 3.7s-1.66 3.7-3.7 3.7-3.7-1.66-3.7-3.7c0-.4.1-.78.27-1.12L9.84 15l-4.6 4.6-1.41-1.41 4.6-4.6c.34-.17.72-.27 1.12-.27.4 0 .78.1 1.12.27l1.41-1.41-4.24-4.24c-1.37-1.37-3.58-1.37-4.95 0s-1.37 3.58 0 4.95l4.24 4.24 1.41-1.41-2.12-2.12-1.41-1.41c-.17.34-.27.72-.27 1.12 0 2.04 1.66 3.7 3.7 3.7s3.7-1.66 3.7-3.7-1.66-3.7-3.7-3.7c-.4 0-.78.1-1.12.27l-1.41-1.41 4.24-4.24 1.41 1.41-2.12 2.12-1.41 1.41c.17-.34.27-.72.27-1.12 0-2.04-1.66-3.7-3.7-3.7s-3.7 1.66-3.7 3.7.1 1.12.27 1.12l-1.41 1.41 2.12 2.12 1.41 1.41 4.24-4.24C12.1 4.1 13.1 3.7 14 3.7c1.48 0 2.7 1.22 2.7 2.7S15.48 9 14 9s-2.7-1.22-2.7-2.7c0-.4.1-.78.27-1.12L10.16 5l4.6-4.6C12.92 3.23 11.51 3 10 3c-1.93 0-3.68.78-4.95 2.05S3 8.07 3 10s.78 3.68 2.05 4.95 3.02 2.05 4.95 2.05 3.68-.78 4.95-2.05l4.6-4.6-1.41-1.41L18.16 9c.17.34.27.72.27 1.12 0 1.48-1.22 2.7-2.7 2.7s-2.7-1.22-2.7-2.7.1-1.12.27-1.12L14.57 9l-2.11-2.11-1.34-1.34C10.34 4.77 9.21 4.3 8 4.3c-1.48 0-2.7 1.22-2.7 2.7s1.22 2.7 2.7 2.7 2.7-1.22 2.7-2.7c0-.4-.1-.78-.27-1.12L11.84 5l3.5-3.5C14.56 3.23 15.25 3 16 3z"></path></g></svg>
-                    <span>PINNED</span>
-                </div>` : '';
-    
-        // Assemble the final post HTML
-        post.innerHTML = `
-            ${isThread ? avatarPlaceholder : avatarContent}
-            <div class="post-content">
-                ${pinnedHeaderHTML}
-                ${headerHTML}
-                <div class="post-body">${content}</div>
-                ${imageHTML}
-            </div>
-        `;
-        return post;
-    }
-    /**
-     * Parses the magazine content and generates a social feed view.
-     */
-    function generateSocialFeed() {
-        if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
-        socialFeedView.innerHTML = '';
+// REPLACE your old createSocialPost function with this:
+function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null) {
+    const post = document.createElement('div');
+    post.className = `social-post ${isThread ? 'post-thread' : ''}`;
 
-        const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
-        const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
+    const avatarContent = avatarSrc.startsWith('https')
+        ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`
+        : `<div class="post-avatar ${avatarSrc}"></div>`;
 
-        const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
-            const items = pageContentWrapper.querySelectorAll(selector);
-            items.forEach((item, index) => {
-                const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
-                const description = item.querySelector('.item-description')?.innerText || '';
-                const paragraphs = description.split(/\n\s*\n/).filter(p => p.trim());
+    const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
+    const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
 
-                if (paragraphs.length === 0) return;
+    const headerHTML = !isThread ? `
+        <div class="post-header">
+            <span class="post-author-name">${authorName}</span>
+        </div>` : '';
 
-                const firstPara = paragraphs.shift().trim();
-                const postAuthorName = titlePrefix.replace('#', index + 1);
-                const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
+    post.innerHTML = `
+        ${isThread ? avatarPlaceholder : avatarContent}
+        <div class="post-content">
+            ${headerHTML}
+            <div class="post-body">${content}</div>
+            ${imageHTML}
+        </div>
+    `;
+    return post;
+}
 
-                const imageForPost = (index === 0) ? sectionImageSrc : null;
-                socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent, false, null, true));
-                paragraphs.forEach(para => {
-                    socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true));
-                });
+
+// REPLACE your old generateSocialFeed function with this:
+function generateSocialFeed() {
+    if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
+    socialFeedView.innerHTML = '';
+
+    const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
+    const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
+
+    const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
+        const items = pageContentWrapper.querySelectorAll(selector);
+        items.forEach((item, index) => {
+            const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
+            const description = item.querySelector('.item-description')?.innerText || '';
+            const paragraphs = description.split(/\n\s*\n/).filter(p => p.trim());
+
+            if (paragraphs.length === 0) return;
+
+            const firstPara = paragraphs.shift().trim();
+            const postAuthorName = titlePrefix.replace('#', index + 1);
+            const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
+
+            const imageForPost = (index === 0) ? sectionImageSrc : null;
+            socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost));
+
+            paragraphs.forEach(para => {
+                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true));
             });
-        };
+        });
+    };
 
-        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
-        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
-        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+    const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+    const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
+    const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
 
-        const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
-        socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent));
+    // --- Feed Generation ---
+    const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
+    socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent)); // Create the first post normally
 
-        if (harrysNoteBody) {
-            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`));
-        }
-
-        const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
-        const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
-
-        processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
-        processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
-        processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
-        processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
-        processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
-
-        isSocialFeedGenerated = true;
+    if (harrysNoteBody) {
+        socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`));
     }
+
+    const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
+    const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
+
+    processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
+    processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
+    processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
+    processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
+    processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
     
+    // --- THIS IS THE NEW, FOOLPROOF PINNING LOGIC ---
+    // After the entire feed is built, find the very first post and apply the pinned style.
+    const firstPost = socialFeedView.querySelector('.social-post:first-child');
+    if (firstPost) {
+        firstPost.classList.add('pinned-post');
+        const contentDiv = firstPost.querySelector('.post-content');
+        if (contentDiv) {
+            const pinnedHeaderHTML = `
+                <div class="pinned-header">
+                     <svg viewBox="0 0 24 24" aria-hidden="true" fill="#5b7083" width="14" height="14"><g><path d="M13.32 3.68l-1.34 1.34 2.11 2.11 1.34-1.34-2.11-2.11zM11.63 7.5l-3.5 3.5c-.98.98-.98 2.56 0 3.54s2.56.98 3.54 0l3.5-3.5-3.54-3.54zM16 3c-1.1 0-2.1.4-2.83 1.17l-1.41 1.41-2.12 2.12-1.41 1.41-2.47 2.47-2.12 2.12 1.41 1.41 2.12-2.12 2.47-2.47 1.41-1.41 2.12-2.12 1.41-1.41C13.9 4.1 14.9 3.7 16 3.7c1.48 0 2.7 1.22 2.7 2.7s-1.22 2.7-2.7 2.7-2.7-1.22-2.7-2.7c0-.4.1-.78.27-1.12L12.16 9l-4.6 4.6c-1.37 1.37-1.37 3.58 0 4.95s3.58 1.37 4.95 0l4.6-4.6-1.41-1.41-2.12-2.12-1.41-1.41c.34-.17.72-.27 1.12-.27 2.04 0 3.7 1.66 3.7 3.7s-1.66 3.7-3.7 3.7-3.7-1.66-3.7-3.7c0-.4.1-.78.27-1.12L9.84 15l-4.6 4.6-1.41-1.41 4.6-4.6c.34-.17.72-.27 1.12-.27.4 0 .78.1 1.12.27l1.41-1.41-4.24-4.24c-1.37-1.37-3.58-1.37-4.95 0s-1.37 3.58 0 4.95l4.24 4.24 1.41-1.41-2.12-2.12-1.41-1.41c-.17.34-.27.72-.27 1.12 0 2.04 1.66 3.7 3.7 3.7s3.7-1.66 3.7-3.7-1.66-3.7-3.7-3.7c-.4 0-.78.1-1.12.27l-1.41-1.41 4.24-4.24 1.41 1.41-2.12 2.12-1.41 1.41c.17-.34.27-.72.27-1.12 0-2.04-1.66-3.7-3.7-3.7s-3.7 1.66-3.7 3.7.1 1.12.27 1.12l-1.41 1.41 2.12 2.12 1.41 1.41 4.24-4.24C12.1 4.1 13.1 3.7 14 3.7c1.48 0 2.7 1.22 2.7 2.7S15.48 9 14 9s-2.7-1.22-2.7-2.7c0-.4.1-.78.27-1.12L10.16 5l4.6-4.6C12.92 3.23 11.51 3 10 3c-1.93 0-3.68.78-4.95 2.05S3 8.07 3 10s.78 3.68 2.05 4.95 3.02 2.05 4.95 2.05 3.68-.78 4.95-2.05l4.6-4.6-1.41-1.41L18.16 9c.17.34.27.72.27 1.12 0 1.48-1.22 2.7-2.7 2.7s-2.7-1.22-2.7-2.7.1-1.12.27-1.12L14.57 9l-2.11-2.11-1.34-1.34C10.34 4.77 9.21 4.3 8 4.3c-1.48 0-2.7 1.22-2.7 2.7s1.22 2.7 2.7 2.7 2.7-1.22 2.7-2.7c0-.4-.1-.78-.27-1.12L11.84 5l3.5-3.5C14.56 3.23 15.25 3 16 3z"></path></g></svg>
+                    <span>PINNED</span>
+                </div>`;
+            contentDiv.insertAdjacentHTML('afterbegin', pinnedHeaderHTML);
+        }
+    }
+
+    isSocialFeedGenerated = true;
+}
     // --- NEW, MORE ROBUST LAYOUT SWITCHING LOGIC ---
     
     function applyLayoutPreference(layout) {
