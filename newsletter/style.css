@@ -2105,3 +2105,8 @@ body.social-layout #social-feed-view {
         letter-spacing: -0.06em; /* Adjust spacing for the smaller size */
     }
 }
+/* Ensures the layout switcher is always interactive, even in social mode. */
+#control-centre-panel .layout-toggle-container {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
