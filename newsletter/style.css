@@ -2139,20 +2139,25 @@ body.social-layout #social-feed-view {
 
 /* --- Pinned Post Styles (Final Polished Version) --- */
 .pinned-post {
-    position: relative; /* Add positioning context for the header */
+    position: relative; /* Establishes a positioning context for the header */
     background-color: #f7f9f9;
     border-top: none !important;
-    /* Add space at the top to make room for the "PINNED" text */
-    padding-top: 2.5rem !important; 
-    /* Use negative margins to stretch the background edge-to-edge */
+    
+    /* Use negative margins to stretch the background to the edges of the container */
     margin-left: -1rem;
     margin-right: -1rem;
+    
+    /* Add padding to the post itself to create space for the header */
+    padding-top: 2.5rem;
 }
 
 .pinned-header {
-    position: absolute; /* Lifts the header out of the normal flow */
-    top: 0.75rem;     /* Positions it in the new space at the top */
-    left: 1rem;       /* Aligns it with the container's edge padding */
+    position: absolute; /* Lifts the header out of the content flow */
+    top: 0.75rem;       /* Positions it vertically in the new space */
+    
+    /* This calculation perfectly aligns the icon with the avatar's column */
+    left: 1rem;         
+    
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -2169,13 +2174,13 @@ body.social-layout #social-feed-view {
     fill: #5b7083;
 }
 
-/* On mobile, remove the negative margins since the container is already edge-to-edge */
+/* On mobile, remove the negative margins and adjust the header position */
 @media (max-width: 600px) {
     .pinned-post {
         margin-left: 0;
         margin-right: 0;
     }
     .pinned-header {
-        left: 0.75rem; /* Align with mobile padding */
+        left: 0.75rem; /* Align with mobile's inner padding */
     }
 }
