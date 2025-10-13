@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview | The News Haul</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .preview-banner { background: #ffde3f; text-align: center; padding: 0.5rem; font-family: var(--font-sans); font-weight: 700; position: sticky; top: 0; z-index: 9999; }
+    </style>
+</head>
+<body>
+    <div class="preview-banner">PREVIEW MODE</div>
+
+    <div class="header-top-bar">
+        <a href="#" class="scrolled-logo-link">THE NEWS HAUL</a>
+    </div>
+    
+    <header class="main-header">
+        <div class="header-branding">
+            <div class="branding-col branding-col-center">
+                <h1 class="logo">The News Haul</h1>
+                <p class="header-date" id="header-date-placeholder"></p>
+            </div>
+        </div>
+    </header>
+
+    <div id="page-content-wrapper">
+        <main id="welcome" class="content-wrapper">
+             <article class="main-article">
+                <div class="welcome-grid">
+                    <div class="welcome-main-content">
+                        <span class="eyebrow" id="eyebrow-placeholder"></span>
+                        <h2 class="article-title" id="main-title-placeholder"></h2>
+                        <div class="article-body-wrapper">
+                            <p id="main-summary-placeholder"></p>
+                        </div>
+                    </div>
+                    <div class="welcome-sidebar">
+                        <div class="eyebrow-container"><span class="eyebrow">Harry's Note</span></div>
+                        <div class="article-body-wrapper"><p id="harrys-note-placeholder"></p></div>
+                    </div>
+                </div>
+            </article>
+        </main>
+        
+        <section id="essentials" class="content-section"><h2 class="section-title">Five essentials</h2><div class="essentials-container"></div></section>
+        <section id="imports" class="content-section"><h2 class="section-title">The Imports</h2><div class="essentials-container"></div></section>
+        <section id="deliveries" class="content-section"><h2 class="section-title">Next Deliveries</h2><div class="essentials-container"></div></section>
+        <section id="cannoli" class="content-section"><h2 class="section-title">The Cannoli</h2><div class="essentials-container"></div></section>
+        <section id="coffee" class="content-section"><h2 class="section-title">Coffee Review</h2><div class="essentials-container"></div></section>
+    </div>
+
+    <div id="social-feed-view"></div>
+
+    <script type="module" src="preview.js"></script>
+</body>
+</html>
