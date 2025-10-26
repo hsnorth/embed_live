@@ -3,86 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montreal Mayor's Alignment Quiz</title>
+    <title>Montreal Mayoral Alignment Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- NYT-Inspired Design --- */
+        /* --- Bloomberg-Inspired Design --- */
         :root {
-            --font-serif: 'Merriweather', 'Georgia', serif;
-            --font-sans: 'Roboto', 'Arial', sans-serif;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             
-            --color-text: #121212; /* NYT Black */
-            --color-text-secondary: #333;
-            --color-text-light: #666;
-            --color-border: #e0e0e0;
+            --color-text: #191919;
+            --color-text-light: #5b5b5b;
+            --color-accent: #e0007a; /* Bloomberg Magenta */
+            --color-border: #dcdcdc;
             --color-bg: #ffffff;
-            --color-bg-light: #fdfdfd;
-            --color-error: #c90000;
-            --color-success: #198754;
+            --color-bg-light: #f4f4f4;
+            --color-error: #d90000;
+            --color-success: #008a1e;
         }
         
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: var(--font-sans);
             margin: 0;
-            padding: 2.5rem 1rem;
+            padding: 2rem 1rem;
             background-color: var(--color-bg-light);
-            color: var(--color-text-secondary);
-            line-height: 1.7;
+            color: var(--color-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 760px;
             margin: auto;
             background: var(--color-bg);
-            padding: 2rem 3rem;
-            border-top: 10px solid var(--color-text);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
         
-        /* --- Header --- */
-        header {
-            text-align: center;
-            border-bottom: 2px solid var(--color-text);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2.5rem;
+        .card-content {
+            padding: 2.5rem 3rem 3rem 3rem;
         }
 
-        h1 {
-            font-family: var(--font-serif);
-            font-weight: 900;
-            color: var(--color-text);
-            margin: 0;
-            font-size: 2.75rem;
-            line-height: 1.2;
+        /* --- Card Visibility --- */
+        .quiz-card {
+            display: none; /* All cards hidden by default */
+        }
+        .quiz-card.active {
+            display: block; /* Active card is shown */
         }
         
-        header p {
+        /* --- Header & Start Card --- */
+        #start-card h1 {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            color: var(--color-text);
+            margin: 0 0 1rem 0;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            text-align: center;
+        }
+        
+        #start-card p {
             font-size: 1.1rem;
             color: var(--color-text-light);
-            margin: 1rem 0 0;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 1.5rem 0;
+            text-align: center;
         }
 
-        /* --- NEW: How It Works Section --- */
         .how-it-works {
             background: var(--color-bg-light);
             border: 1px solid var(--color-border);
             border-radius: 4px;
-            padding: 1rem 2.5rem 1.5rem 2.5rem;
-            margin-bottom: 2.5rem;
+            padding: 1.5rem 2.5rem;
+            margin-top: 2.5rem;
         }
         
         .how-it-works h2 {
-            font-family: var(--font-serif);
             font-weight: 700;
             color: var(--color-text);
             text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
+            margin: 0.5rem 0 1.5rem 0;
+            font-size: 1.25rem;
         }
         
         .how-it-works ol {
@@ -97,99 +104,74 @@
             line-height: 1.6;
         }
         
-        .how-it-works li:last-child {
-            margin-bottom: 0;
-        }
-        
-        .how-it-works strong {
-            color: var(--color-text);
-        }
-        /* --- End New Section --- */
-        
-        /* --- Points Tracker --- */
-        .points-tracker {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(5px);
-            padding: 1.5rem;
-            margin: -2.5rem -3rem 2rem -3rem; /* Extends to container edges */
-            border-bottom: 1px solid var(--color-border);
-            z-index: 10;
-            text-align: center;
-        }
-        
-        .points-tracker-label {
-            font-size: 1.3rem; /* Made larger */
+        .how-it-works li:last-child { margin-bottom: 0; }
+        .how-it-works strong { color: var(--color-text); }
+
+        #start-btn {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--color-text);
-            display: block; /* Placed on its own line */
-            margin-bottom: 0.5rem;
+            width: 100%;
+            margin-top: 2rem;
         }
         
-        #total-points-display {
-            font-size: 1.75rem; /* Made much larger */
-            font-family: var(--font-serif);
-            font-weight: 700;
-            color: var(--color-success);
-            transition: color 0.3s ease;
+        /* --- Quiz Progress Bar --- */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--color-border);
         }
         
-        #total-points-display.error {
-            color: var(--color-error);
-        }
-        
-        #points-helper {
-            font-size: 1rem; /* Made larger */
-            color: var(--color-text-light);
-            margin-top: 0.5rem;
-            line-height: 1.5;
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--color-accent);
+            transition: width 0.3s ease;
         }
 
-        /* --- Question Styling --- */
-        .question-block {
-            border-bottom: 1px solid var(--color-border);
-            padding: 2.5rem 0;
-            margin-bottom: 0;
+        /* --- Question Card Styling --- */
+        .question-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
         }
         
         .question-text {
-            font-family: var(--font-serif);
             font-weight: 700;
-            font-size: 1.5rem; /* Larger, like a sub-headline */
+            font-size: 1.75rem;
             line-height: 1.4;
             color: var(--color-text);
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
         
-        /* --- Controls & Inputs --- */
-        .controls-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 600px) {
-            .controls-container {
-                grid-template-columns: 3fr 1fr; /* 3 parts for agreement, 1 part for points */
-                align-items: flex-start;
-            }
-        }
-        
-        .controls-group > label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--color-text);
-            font-size: 1rem;
-        }
-        
-        /* --- Custom Radio Buttons --- */
+        /* --- Custom Radio Buttons (Bloomberg Style) --- */
         .radio-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
         }
+        
+        @media (min-width: 600px) {
+            .radio-group {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .radio-group .radio-label:nth-child(1),
+            .radio-group .radio-label:nth-child(2) { grid-column: span 3; }
+            .radio-group .radio-label:nth-child(3),
+            .radio-group .radio-label:nth-child(4),
+            .radio-group .radio-label:nth-child(5) { grid-column: span 1; }
+            
+            /* Re-order for SD/D/N/A/SA on desktop */
+            .radio-group .radio-label:nth-child(1) { order: 1; grid-column: 1 / 2; }
+            .radio-group .radio-label:nth-child(2) { order: 2; grid-column: 2 / 3; }
+            .radio-group .radio-label:nth-child(3) { order: 3; grid-column: 3 / 4; }
+            .radio-group .radio-label:nth-child(4) { order: 4; grid-column: 4 / 5; }
+            .radio-group .radio-label:nth-child(5) { order: 5; grid-column: 5 / 6; }
+            .radio-group { grid-template-columns: repeat(5, 1fr); }
+        }
+
 
         .radio-group input[type="radio"] {
             display: none;
@@ -197,7 +179,7 @@
 
         .radio-group label {
             text-align: center;
-            padding: 0.75rem 0.5rem;
+            padding: 0.85rem 0.5rem;
             border: 2px solid var(--color-border);
             border-radius: 4px;
             cursor: pointer;
@@ -207,44 +189,25 @@
         }
         
         .radio-group label:hover {
-            border-color: var(--color-text-secondary);
+            border-color: var(--color-accent);
+            color: var(--color-accent);
         }
 
         .radio-group input[type="radio"]:checked + label {
-            background-color: var(--color-text);
-            color: var(--color-bg);
-            border-color: var(--color-text);
-        }
-        
-        /* --- Point Allocation Input --- */
-        .point-input {
-            width: 100%;
-            height: 48px;
-            font-size: 1.25rem;
-            font-weight: 700;
-            text-align: center;
-            border: 2px solid var(--color-border);
-            border-radius: 4px;
-            box-sizing: border-box; 
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        .point-input:focus {
-            outline: none;
-            border-color: var(--color-text);
-            box-shadow: 0 0 0 3px rgba(18,18,18,0.1);
+            background-color: var(--color-bg);
+            color: var(--color-accent);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px var(--color-accent);
         }
         
         /* --- Accordion --- */
         .accordion-container {
-            margin-top: 2rem;
-            border-top: 1px dashed var(--color-border);
+            margin-top: 2.5rem;
+            border-top: 1px solid var(--color-border);
             padding-top: 1.5rem;
         }
         
-        details {
-            margin-bottom: 0.5rem;
-        }
+        details { margin-bottom: 0.5rem; }
         
         summary {
             font-weight: 700;
@@ -255,23 +218,19 @@
             padding-left: 1.75rem;
         }
         
-        summary::before, summary::after {
-            content: '';
+        summary::before {
+            content: '+';
+            font-weight: 700;
             position: absolute;
             left: 0.5rem;
-            top: 0.7rem;
-            width: 10px;
-            height: 2px;
-            background: var(--color-text-light);
-            transition: transform 0.3s ease;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-accent);
+            font-size: 1.2rem;
         }
         
-        summary::after {
-            transform: rotate(90deg);
-        }
-        
-        details[open] summary::after {
-            transform: rotate(180deg);
+        details[open] summary::before {
+            content: '–';
         }
         
         .accordion-content {
@@ -281,32 +240,147 @@
             line-height: 1.6;
         }
         
-        /* --- Button & Results --- */
-        #calculate-btn {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--color-text);
-            color: var(--color-bg);
-            font-family: var(--font-sans);
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        /* --- Navigation --- */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
             margin-top: 3rem;
-            transition: background-color 0.3s;
+            border-top: 1px solid var(--color-border);
+            padding-top: 2rem;
+        }
+
+        .nav-btn, #start-btn, #submit-quiz-btn {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--color-text);
+            border-radius: 4px;
+            background: var(--color-text);
+            color: var(--color-bg);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         
-        #calculate-btn:hover {
-            background-color: #333;
+        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover {
+            background: #333;
+            border-color: #333;
         }
         
-        #calculate-btn:disabled {
-            background-color: #ccc;
+        .nav-btn.secondary {
+            background: var(--color-bg);
+            color: var(--color-text);
+        }
+        
+        .nav-btn.secondary:hover {
+            background: #f4f4f4;
+        }
+        
+        .nav-btn:disabled, #submit-quiz-btn:disabled {
+            background: #ccc;
+            border-color: #ccc;
             color: #888;
             cursor: not-allowed;
         }
+
+        /* --- Weighting Card --- */
+        #weighting-card h2 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: var(--color-text);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        #weighting-card .card-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .points-tracker {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(5px);
+            padding: 1.5rem;
+            z-index: 10;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+            margin: -2.5rem -3rem 2rem -3rem;
+        }
+        
+        .points-tracker-label {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-text);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        #total-points-display {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-success);
+            transition: color 0.3s ease;
+        }
+        #total-points-display.error { color: var(--color-error); }
+        
+        #points-helper {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+        
+        .weighting-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .weighting-list-item:last-child { border-bottom: none; }
+        
+        .weighting-q-text {
+            font-weight: 500;
+            padding-right: 1rem;
+            flex-grow: 1;
+        }
+        
+        .weighting-q-text strong {
+            font-weight: 700;
+            color: var(--color-text);
+        }
+        
+        .point-input {
+            width: 70px;
+            height: 48px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid var(--color-border);
+            border-radius: 4px;
+            box-sizing: border-box; 
+            transition: border-color 0.3s, box-shadow 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .point-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px var(--color-accent);
+        }
+
+        #submit-quiz-btn {
+            width: 100%;
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: var(--color-bg);
+            margin-top: 2rem;
+        }
+        #submit-quiz-btn:hover { background: #b90062; border-color: #b90062; }
         
         #error-message {
             color: var(--color-error);
@@ -317,23 +391,16 @@
             display: none; /* Hidden by default */
         }
 
-        #results-container {
-            margin-top: 4rem;
-            padding: 2.5rem 0;
-            border-top: 2px solid var(--color-text);
-            display: none; /* Hidden initially */
-        }
-
-        #results-container h2 {
-            font-family: var(--font-serif);
-            font-weight: 700;
+        /* --- Results Card --- */
+        #results-card h2 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1.2;
             color: var(--color-text);
             text-align: center;
-            margin-top: 0;
             margin-bottom: 2.5rem;
-            font-size: 2rem;
         }
-
+        
         .result-bar { margin-bottom: 1.5rem; }
         .result-bar-info {
             display: flex;
@@ -352,54 +419,71 @@
         }
         .bar-fill {
             height: 100%;
-            background: var(--color-text-secondary);
+            background: var(--color-text-light);
             width: 0%; /* Set by JS */
             transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         .result-bar.top-match .bar-fill {
-            background: var(--color-text); /* Top match is darkest */
+            background: var(--color-accent); /* Top match is accent color */
         }
         .result-bar.top-match .candidate-name,
         .result-bar.top-match .result-percent {
             font-weight: 700;
-            color: var(--color-text);
+            color: var(--color-accent);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1>Which Montreal Mayoral Candidate Thinks Like You?</h1>
-            <p>Answer 20 questions on key city issues to find out which 2025 mayoral platform best matches your priorities.</p>
-        </header>
+        
+        <div id="start-card" class="quiz-card active">
+            <div class="card-content">
+                <h1>Which Montreal Mayoral Candidate Thinks Like You?</h1>
+                <p>Answer 20 questions on key city issues to find out which 2025 mayoral platform best matches your priorities.</p>
 
-        <div class="how-it-works">
-            <h2>How It Works</h2>
-            <ol>
-                <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel (from "Strongly Disagree" to "Strongly Agree").</li>
-                <li><strong>Show What Matters Most:</strong> You have 100 "Importance Points." Give more points to the topics you <em>really</em> care about, and fewer to the ones you don't. You must use exactly 100!</li>
-                <li><strong>Find Your Match!</strong> We'll instantly compare your answers to the candidates' platforms and show you who you align with most.</li>
-            </ol>
-        </div>
-
-        <div class="points-tracker">
-            <span class="points-tracker-label">Your Importance Budget</span>
-            <span id="total-points-display">0 / 100</span>
-            <div id="points-helper">You must use <strong>exactly 100 points</strong>. All questions start at 5. Take points from questions you don't care about and add them to ones you do!</div>
-        </div>
-
-        <form id="quiz-form">
-            </form>
-
-        <button id="calculate-btn" disabled>Calculate My Alignment</button>
-        <p id="error-message"></p>
-
-        <div id="results-container">
-            <h2>Your Closest Alignments</h2>
-            <div id="results-output">
+                <div class="how-it-works">
+                    <h2>How It Works</h2>
+                    <ol>
+                        <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel (from "Strongly Disagree" to "Strongly Agree").</li>
+                        <li><strong>Show What Matters Most:</strong> After, you'll get 100 "Importance Points." You must spend all 100 points across the questions to show which ones are most important to you.</li>
+                        <li><strong>Find Your Match!</strong> We'll instantly compare your answers and priorities to the candidates' platforms and show you who you align with most.</li>
+                    </ol>
                 </div>
+                
+                <button id="start-btn">Start Quiz</button>
+            </div>
         </div>
+        
+        <div id="question-card-container"></div>
+        
+        <div id="weighting-card" class="quiz-card">
+            <div class="card-content">
+                <h2>How important is each question?</h2>
+                <p class="card-subtitle">You have 100 points to show what matters most. Give more points to the questions you care about, and fewer to the ones you don't.</p>
+                
+                <div class="points-tracker">
+                    <span class="points-tracker-label">Your Importance Budget</span>
+                    <span id="total-points-display">0 / 100</span>
+                    <div id="points-helper">All questions start at 5 points. You must use <strong>exactly 100</strong>.</div>
+                </div>
+
+                <div id="weighting-list">
+                    </div>
+
+                <button id="submit-quiz-btn" disabled>Calculate My Alignment</button>
+                <p id="error-message"></p>
+            </div>
+        </div>
+
+        <div id="results-card" class="quiz-card">
+            <div class="card-content">
+                <h2>Your Closest Alignments</h2>
+                <div id="results-output">
+                    </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -578,15 +662,15 @@
             }
         ];
         
+        // --- App State ---
+        let currentQuestionIndex = 0;
+        let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
+        
         // --- Helper Functions ---
 
         /**
          * Calculates the agreement score for one question.
          * The formula is: (5 - |User Score - Candidate Score|) * Importance Multiplier
-         * @param {number} userScore - The user's score for the question (-2 to 2).
-         * @param {number} candidateScore - The candidate's canonical score for the question (-2 to 2).
-         * @param {number} points - The user's allocated points for this question.
-         * @returns {number} The weighted agreement score.
          */
         function calculateAgreement(userScore, candidateScore, points) {
             const scoreDifference = Math.abs(userScore - candidateScore);
@@ -606,90 +690,205 @@
 
             const display = document.getElementById('total-points-display');
             const helper = document.getElementById('points-helper');
-            const calculateBtn = document.getElementById('calculate-btn');
+            const calculateBtn = document.getElementById('submit-quiz-btn');
 
             display.textContent = `${totalPoints} / 100`;
 
             if (totalPoints === 100) {
                 display.classList.remove('error');
-                // UPDATED LANGUAGE
                 helper.textContent = "Perfect! Your total is 100. You're ready to calculate!";
                 helper.style.color = 'var(--color-success)';
                 calculateBtn.disabled = false;
             } else {
                 display.classList.add('error');
-                // UPDATED LANGUAGE
-                helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}. Please adjust.`;
+                helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
                 helper.style.color = 'var(--color-error)';
                 calculateBtn.disabled = true;
             }
         }
+        
+        /**
+         * Shows a specific card by its ID and hides all others
+         */
+         function showCard(cardId) {
+            document.querySelectorAll('.quiz-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(cardId).classList.add('active');
+         }
+
+        /**
+         * Updates the progress bar
+         */
+         function updateProgressBar(questionIndex, totalQuestions = QUESTIONS.length + 1) { // +1 for weighting card
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                const percentage = ((questionIndex + 1) / totalQuestions) * 100;
+                progressBar.style.width = `${percentage}%`;
+            }
+         }
 
         // --- Main Logic ---
 
         /**
-         * Renders the quiz questions to the form.
+         * Renders all 20 question cards into the DOM (hidden)
          */
-        function renderQuiz() {
-            const form = document.getElementById('quiz-form');
+        function renderQuestionCards() {
+            const container = document.getElementById('question-card-container');
             let html = '';
 
-            QUESTIONS.forEach(q => {
+            QUESTIONS.forEach((q, index) => {
                 // Build Accordion HTML
                 let detailsHtml = '';
                 if (q.details && q.details.length > 0) {
                     detailsHtml += '<div class="accordion-container">';
-                    detailsHtml += `
-                        <details>
-                            <summary>Learn More</summary>
-                            <div class="accordion-content">
-                    `;
                     q.details.forEach(detail => {
                         detailsHtml += `
-                            <strong>${detail.summary}</strong>
-                            <p style="margin-top: 0.25rem; margin-bottom: 1rem;">${detail.content}</p>
+                            <details>
+                                <summary>${detail.summary}</summary>
+                                <div class="accordion-content">
+                                    <p style="margin-top: 0.25rem; margin-bottom: 1rem;">${detail.content}</p>
+                                </div>
+                            </details>
                         `;
                     });
-                    detailsHtml = detailsHtml.slice(0, -18); // Remove last margin
-                    detailsHtml += '</p></div></details></div>';
+                    detailsHtml += '</div>';
                 }
                 
-                // Build Full Question Block
+                // Build Full Question Card
                 html += `
-                    <div class="question-block" data-question-id="${q.id}">
-                        <div class="question-text">${q.id}. ${q.text.replace(/<strong>/g, '<strong>')}</div>
-                        
-                        <div class="controls-container">
-                            <div class="controls-group">
-                                <label>Your Agreement:</label>
-                                <div class="radio-group">
-                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label for="q${q.id}-sd">Strongly Disagree</label>
-                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label for="q${q.id}-d">Disagree</label>
-                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label for="q${q.id}-n">Neutral</label>
-                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label for="q${q.id}-a">Agree</label>
-                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label for="q${q.id}-sa">Strongly Agree</label>
-                                </div>
+                    <div class="quiz-card" id="question-card-${index}">
+                        <div class="progress-container">
+                            <div id="progress-bar-${index}" class="progress-bar"></div>
+                        </div>
+                        <div class="card-content">
+                            <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
+                            <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
+                            
+                            <div class="radio-group" id="radio-group-${index}">
+                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
                             </div>
                             
-                            <div class="controls-group">
-                                <label for="points-${q.id}">Importance Points:</label>
-                                <input type="number" class="point-input" id="points-${q.id}" name="points-${q.id}" value="5" min="0" max="100">
+                            ${detailsHtml}
+
+                            <div class="navigation-buttons">
+                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}" ${index === 0 ? 'disabled' : ''}>Previous</button>
+                                <button type="button" class="nav-btn" id="next-btn-${index}">Next</button>
                             </div>
                         </div>
-                        
-                        ${detailsHtml} </div>
+                    </div>
                 `;
             });
+            container.innerHTML = html;
+        }
 
-            form.innerHTML = html;
+        /**
+         * Renders the list of 20 questions into the weighting card
+         */
+        function renderWeightingCard() {
+            const listContainer = document.getElementById('weighting-list');
+            let html = '';
+            
+            QUESTIONS.forEach((q, index) => {
+                const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text;
+                html += `
+                    <div class="weighting-list-item">
+                        <label for="points-${index}" class="weighting-q-text">
+                            ${q.id}. <strong>${questionShortText}</strong>
+                        </label>
+                        <input type="number" class="point-input" id="points-${index}" name="points-${index}" value="5" min="0" max="100">
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+            
+            // Add progress bar to weighting card
+            const weightingCard = document.getElementById('weighting-card');
+            weightingCard.insertAdjacentHTML('afterbegin', `
+                <div class="progress-container">
+                    <div id="progress-bar-weighting" class="progress-bar" style="width: ${ (QUESTIONS.length / (QUESTIONS.length + 1)) * 100 }%;"></div>
+                </div>
+            `);
+        }
+        
+        /**
+         * Attaches all the necessary event listeners after rendering
+         */
+        function attachListeners() {
+            // Start button
+            document.getElementById('start-btn').addEventListener('click', () => {
+                showCard('question-card-0');
+                updateProgressBar(0);
+            });
+            
+            // Next/Prev buttons
+            QUESTIONS.forEach((q, index) => {
+                const nextBtn = document.getElementById(`next-btn-${index}`);
+                const prevBtn = document.getElementById(`prev-btn-${index}`);
+
+                nextBtn.addEventListener('click', () => {
+                    // 1. Validate and save answer
+                    const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
+                    if (!selected) {
+                        alert('Please select an answer to continue.');
+                        return;
+                    }
+                    userAgreementAnswers[index] = parseInt(selected.value);
+                    
+                    // 2. Move to next card
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < QUESTIONS.length) {
+                        showCard(`question-card-${currentQuestionIndex}`);
+                        updateProgressBar(currentQuestionIndex);
+                        // Check if this next question has a stored answer
+                        if (userAgreementAnswers[currentQuestionIndex] !== null) {
+                            document.querySelector(`#q${QUESTIONS[currentQuestionIndex].id}-${userAgreementAnswers[currentQuestionIndex]}`).checked = true;
+                        }
+                    } else {
+                        // Finished last question, move to weighting card
+                        showCard('weighting-card');
+                        updateProgressBar(currentQuestionIndex); // This will be 20/21
+                        updatePointTotal();
+                    }
+                });
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        currentQuestionIndex--;
+                        showCard(`question-card-${currentQuestionIndex}`);
+                        updateProgressBar(currentQuestionIndex);
+                    });
+                }
+            });
+            
+            // Weighting card listeners
+            document.getElementById('weighting-list').addEventListener('input', (event) => {
+                if (event.target.classList.contains('point-input')) {
+                    // Sanitize input
+                    let value = parseInt(event.target.value.replace(/[^0-9]/g, ''));
+                    if (isNaN(value) || value < 0) {
+                        event.target.value = 0;
+                    } else if (value > 100) {
+                        event.target.value = 100;
+                    } else {
+                        event.target.value = value;
+                    }
+                    updatePointTotal();
+                }
+            });
+            
+            // Submit button
+            document.getElementById('submit-quiz-btn').addEventListener('click', calculateResults);
         }
 
         /**
          * Calculates the final results and displays them.
          */
         function calculateResults() {
-            const form = document.getElementById('quiz-form');
-            const formData = new FormData(form);
             const results = {};
             const errorMsg = document.getElementById('error-message');
             errorMsg.style.display = 'none';
@@ -702,23 +901,13 @@
             let currentTotalPoints = 0;
 
             for (let i = 0; i < QUESTIONS.length; i++) {
-                const qId = QUESTIONS[i].id;
+                const userScore = userAgreementAnswers[i]; // Get stored answer
+                const userPointsStr = document.getElementById(`points-${i}`).value;
                 
-                const userAgreement = formData.get(`agreement-${qId}`);
-                const userPointsStr = formData.get(`points-${q.id}`);
-
-                if (userAgreement === null) {
-                    errorMsg.textContent = `Please select your agreement for Question ${qId}.`;
-                    errorMsg.style.display = 'block';
-                    document.querySelector(`[data-question-id="${qId}"]`).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return; 
-                }
-                
-                const userScore = parseInt(userAgreement);
                 const userPoints = parseInt(userPointsStr) || 0;
                 
                 currentTotalPoints += userPoints;
-                totalPerfectScore += (5 * userPoints);
+                totalPerfectScore += (5 * userPoints); // Max possible score for this q
                 
                 for (const candidate in CANDIDATE_SCORES) {
                     const candidateScore = CANDIDATE_SCORES[candidate][i];
@@ -728,9 +917,8 @@
             }
             
             if (currentTotalPoints !== 100) {
-                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust your point allocation.`;
+                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
                  errorMsg.style.display = 'block';
-                 document.querySelector('.points-tracker').scrollIntoView({ behavior: 'smooth', block: 'center' });
                  return;
             }
 
@@ -754,7 +942,6 @@
          */
         function renderResults(results) {
             const outputDiv = document.getElementById('results-output');
-            const resultsContainer = document.getElementById('results-container');
             let html = '';
 
             results.forEach((r, index) => {
@@ -772,45 +959,29 @@
                     </div>
                 `;
             });
-
             outputDiv.innerHTML = html;
-            resultsContainer.style.display = 'block';
+            
+            // Show the results card
+            showCard('results-card');
 
+            // Animate bars
             setTimeout(() => {
                 document.querySelectorAll('.bar-fill').forEach(bar => {
                     bar.style.width = bar.getAttribute('data-width') + '%';
                 });
             }, 100);
 
-            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            // Scroll to top of container
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
         }
 
 
         // --- Event Listeners and Initialization ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderQuiz();
-            updatePointTotal(); 
-
-            document.getElementById('quiz-form').addEventListener('input', (event) => {
-                if (event.target.classList.contains('point-input')) {
-                    // Sanitize input
-                    let value = parseInt(event.target.value.replace(/[^0-9]/g, ''));
-                    if (isNaN(value) || value < 0) {
-                        event.target.value = 0;
-                    } else if (value > 100) {
-                        event.target.value = 100;
-                    } else {
-                        event.target.value = value; // Set the sanitized value
-                    }
-                    updatePointTotal();
-                }
-            });
-
-            document.getElementById('calculate-btn').addEventListener('click', (event) => {
-                event.preventDefault(); 
-                calculateResults();
-            });
+            renderQuestionCards();
+            renderWeightingCard();
+            attachListeners();
         });
     </script>
 </body>
