@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montreal Mayoral Alignment Quiz</title>
+    <title>Montreal Mayor's Alignment Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -66,6 +66,45 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* --- NEW: How It Works Section --- */
+        .how-it-works {
+            background: var(--color-bg-light);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 1rem 2.5rem 1.5rem 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .how-it-works h2 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            color: var(--color-text);
+            text-align: center;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .how-it-works ol {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .how-it-works li {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .how-it-works li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .how-it-works strong {
+            color: var(--color-text);
+        }
+        /* --- End New Section --- */
         
         /* --- Points Tracker --- */
         .points-tracker {
@@ -331,9 +370,18 @@
 
     <div class="container">
         <header>
-            <h1>Montreal Mayoral Alignment Quiz</h1>
-            <p>Tell us how you feel. You have <strong>100 "importance points"</strong> to spend across all 20 questions. Give more points to the questions that matter most to you!</p>
+            <h1>Which Montreal Mayoral Candidate Thinks Like You?</h1>
+            <p>Answer 20 questions on key city issues to find out which 2025 mayoral platform best matches your priorities.</p>
         </header>
+
+        <div class="how-it-works">
+            <h2>How It Works</h2>
+            <ol>
+                <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel (from "Strongly Disagree" to "Strongly Agree").</li>
+                <li><strong>Show What Matters Most:</strong> You have 100 "Importance Points." Give more points to the topics you <em>really</em> care about, and fewer to the ones you don't. You must use exactly 100!</li>
+                <li><strong>Find Your Match!</strong> We'll instantly compare your answers to the candidates' platforms and show you who you align with most.</li>
+            </ol>
+        </div>
 
         <div class="points-tracker">
             <span class="points-tracker-label">Your Importance Budget</span>
@@ -599,16 +647,17 @@
                     q.details.forEach(detail => {
                         detailsHtml += `
                             <strong>${detail.summary}</strong>
-                            <p>${detail.content}</p>
+                            <p style="margin-top: 0.25rem; margin-bottom: 1rem;">${detail.content}</p>
                         `;
                     });
-                    detailsHtml += '</div></details></div>';
+                    detailsHtml = detailsHtml.slice(0, -18); // Remove last margin
+                    detailsHtml += '</p></div></details></div>';
                 }
                 
                 // Build Full Question Block
                 html += `
                     <div class="question-block" data-question-id="${q.id}">
-                        <div class="question-text">${q.id}. ${q.text}</div>
+                        <div class="question-text">${q.id}. ${q.text.replace(/<strong>/g, '<strong>')}</div>
                         
                         <div class="controls-container">
                             <div class="controls-group">
@@ -746,16 +795,14 @@
             document.getElementById('quiz-form').addEventListener('input', (event) => {
                 if (event.target.classList.contains('point-input')) {
                     // Sanitize input
-                    let value = parseInt(event.target.value);
+                    let value = parseInt(event.target.value.replace(/[^0-9]/g, ''));
                     if (isNaN(value) || value < 0) {
                         event.target.value = 0;
-                    }
-                    if (value > 100) {
+                    } else if (value > 100) {
                         event.target.value = 100;
+                    } else {
+                        event.target.value = value; // Set the sanitized value
                     }
-                    // Prevent non-numeric characters
-                    event.target.value = event.target.value.replace(/[^0-9]/g, '');
-                    
                     updatePointTotal();
                 }
             });
