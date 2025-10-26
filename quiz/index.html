@@ -62,15 +62,18 @@
             font-size: 1.1rem;
             color: var(--color-text-light);
             margin: 1rem 0 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         /* --- Points Tracker --- */
         .points-tracker {
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             backdrop-filter: blur(5px);
-            padding: 1.25rem;
+            padding: 1.5rem;
             margin: -2.5rem -3rem 2rem -3rem; /* Extends to container edges */
             border-bottom: 1px solid var(--color-border);
             z-index: 10;
@@ -78,13 +81,16 @@
         }
         
         .points-tracker-label {
-            font-size: 1.1rem;
+            font-size: 1.3rem; /* Made larger */
             font-weight: 700;
             color: var(--color-text);
+            display: block; /* Placed on its own line */
+            margin-bottom: 0.5rem;
         }
         
         #total-points-display {
-            font-size: 1.1rem;
+            font-size: 1.75rem; /* Made much larger */
+            font-family: var(--font-serif);
             font-weight: 700;
             color: var(--color-success);
             transition: color 0.3s ease;
@@ -95,9 +101,10 @@
         }
         
         #points-helper {
-            font-size: 0.9rem;
+            font-size: 1rem; /* Made larger */
             color: var(--color-text-light);
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
+            line-height: 1.5;
         }
 
         /* --- Question Styling --- */
@@ -325,13 +332,13 @@
     <div class="container">
         <header>
             <h1>Montreal Mayoral Alignment Quiz</h1>
-            <p>Select your agreement, then allocate a total of 100 points across all questions to weigh their importance to you.</p>
+            <p>Tell us how you feel. You have <strong>100 "importance points"</strong> to spend across all 20 questions. Give more points to the questions that matter most to you!</p>
         </header>
 
         <div class="points-tracker">
-            <span class="points-tracker-label">Total Points Allocated: </span>
+            <span class="points-tracker-label">Your Importance Budget</span>
             <span id="total-points-display">0 / 100</span>
-            <div id="points-helper">All questions start at 5 points. Adjust them to match your priorities.</div>
+            <div id="points-helper">You must use <strong>exactly 100 points</strong>. All questions start at 5. Take points from questions you don't care about and add them to ones you do!</div>
         </div>
 
         <form id="quiz-form">
@@ -557,12 +564,14 @@
 
             if (totalPoints === 100) {
                 display.classList.remove('error');
-                helper.textContent = "You're all set! You can now calculate your alignment.";
+                // UPDATED LANGUAGE
+                helper.textContent = "Perfect! Your total is 100. You're ready to calculate!";
                 helper.style.color = 'var(--color-success)';
                 calculateBtn.disabled = false;
             } else {
                 display.classList.add('error');
-                helper.textContent = `You need to allocate exactly 100 points. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
+                // UPDATED LANGUAGE
+                helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}. Please adjust.`;
                 helper.style.color = 'var(--color-error)';
                 calculateBtn.disabled = true;
             }
@@ -582,17 +591,18 @@
                 let detailsHtml = '';
                 if (q.details && q.details.length > 0) {
                     detailsHtml += '<div class="accordion-container">';
+                    detailsHtml += `
+                        <details>
+                            <summary>Learn More</summary>
+                            <div class="accordion-content">
+                    `;
                     q.details.forEach(detail => {
                         detailsHtml += `
-                            <details>
-                                <summary>${detail.summary}</summary>
-                                <div class="accordion-content">
-                                    ${detail.content}
-                                </div>
-                            </details>
+                            <strong>${detail.summary}</strong>
+                            <p>${detail.content}</p>
                         `;
                     });
-                    detailsHtml += '</div>';
+                    detailsHtml += '</div></details></div>';
                 }
                 
                 // Build Full Question Block
@@ -613,7 +623,7 @@
                             </div>
                             
                             <div class="controls-group">
-                                <label for="points-${q.id}">Points (of 100):</label>
+                                <label for="points-${q.id}">Importance Points:</label>
                                 <input type="number" class="point-input" id="points-${q.id}" name="points-${q.id}" value="5" min="0" max="100">
                             </div>
                         </div>
@@ -646,7 +656,7 @@
                 const qId = QUESTIONS[i].id;
                 
                 const userAgreement = formData.get(`agreement-${qId}`);
-                const userPointsStr = formData.get(`points-${qId}`);
+                const userPointsStr = formData.get(`points-${q.id}`);
 
                 if (userAgreement === null) {
                     errorMsg.textContent = `Please select your agreement for Question ${qId}.`;
@@ -743,6 +753,9 @@
                     if (value > 100) {
                         event.target.value = 100;
                     }
+                    // Prevent non-numeric characters
+                    event.target.value = event.target.value.replace(/[^0-9]/g, '');
+                    
                     updatePointTotal();
                 }
             });
