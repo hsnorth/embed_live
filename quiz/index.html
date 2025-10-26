@@ -9,18 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Bloomberg-Inspired Design --- */
+        /* --- Professional Navy Theme --- */
         :root {
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             
             --color-text: #191919;
             --color-text-light: #5b5b5b;
-            --color-accent: #e0007a; /* Bloomberg Magenta */
+            --color-accent: #004a99; /* Navy Blue Accent */
             --color-border: #dcdcdc;
+            --color-border-light: #f0f0f0;
             --color-bg: #ffffff;
             --color-bg-light: #f4f4f4;
             --color-error: #d90000;
             --color-success: #008a1e;
+            
+            --card-min-height: 650px; /* Uniform card height */
         }
         
         * {
@@ -30,11 +33,29 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            padding: 2rem 1rem;
+            padding: 5rem 1rem 2rem 1rem; /* Added padding-top for fixed progress bar */
             background-color: var(--color-bg-light);
             color: var(--color-text);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- NEW: Fixed Progress Tracker --- */
+        .progress-container-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: var(--color-border);
+            z-index: 20;
+        }
+        
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--color-accent);
+            transition: width 0.4s ease;
         }
 
         .container {
@@ -44,23 +65,27 @@
             border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            position: relative;
         }
         
         .card-content {
             padding: 2.5rem 3rem 3rem 3rem;
+            /* NEW: Uniform card height */
+            min-height: var(--card-min-height); 
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Card Visibility --- */
-        .quiz-card {
-            display: none; /* All cards hidden by default */
-        }
-        .quiz-card.active {
-            display: block; /* Active card is shown */
-        }
+        /* Card Visibility */
+        .quiz-card { display: none; }
+        .quiz-card.active { display: block; }
         
         /* --- Header & Start Card --- */
+        #start-card .card-content {
+            min-height: 0; /* Start card can be any height */
+        }
+        
         #start-card h1 {
-            font-family: var(--font-sans);
             font-weight: 800;
             color: var(--color-text);
             margin: 0 0 1rem 0;
@@ -78,7 +103,7 @@
 
         .how-it-works {
             background: var(--color-bg-light);
-            border: 1px solid var(--color-border);
+            border: 1px solid var(--color-border-light);
             border-radius: 4px;
             padding: 1.5rem 2.5rem;
             margin-top: 2.5rem;
@@ -92,18 +117,13 @@
             font-size: 1.25rem;
         }
         
-        .how-it-works ol {
-            padding-left: 20px;
-            margin: 0;
-        }
-        
+        .how-it-works ol { padding-left: 20px; margin: 0; }
         .how-it-works li {
             font-size: 1rem;
             color: var(--color-text-secondary);
             margin-bottom: 1rem;
             line-height: 1.6;
         }
-        
         .how-it-works li:last-child { margin-bottom: 0; }
         .how-it-works strong { color: var(--color-text); }
 
@@ -116,20 +136,6 @@
             margin-top: 2rem;
         }
         
-        /* --- Quiz Progress Bar --- */
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--color-border);
-        }
-        
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: var(--color-accent);
-            transition: width 0.3s ease;
-        }
-
         /* --- Question Card Styling --- */
         .question-header {
             font-size: 1rem;
@@ -144,66 +150,58 @@
             line-height: 1.4;
             color: var(--color-text);
             margin-bottom: 2.5rem;
+            flex-grow: 1; /* Pushes content down */
         }
         
-        /* --- Custom Radio Buttons (Bloomberg Style) --- */
+        /* --- NEW: Segmented Control Radio Buttons --- */
         .radio-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-        
-        @media (min-width: 600px) {
-            .radio-group {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .radio-group .radio-label:nth-child(1),
-            .radio-group .radio-label:nth-child(2) { grid-column: span 3; }
-            .radio-group .radio-label:nth-child(3),
-            .radio-group .radio-label:nth-child(4),
-            .radio-group .radio-label:nth-child(5) { grid-column: span 1; }
-            
-            /* Re-order for SD/D/N/A/SA on desktop */
-            .radio-group .radio-label:nth-child(1) { order: 1; grid-column: 1 / 2; }
-            .radio-group .radio-label:nth-child(2) { order: 2; grid-column: 2 / 3; }
-            .radio-group .radio-label:nth-child(3) { order: 3; grid-column: 3 / 4; }
-            .radio-group .radio-label:nth-child(4) { order: 4; grid-column: 4 / 5; }
-            .radio-group .radio-label:nth-child(5) { order: 5; grid-column: 5 / 6; }
-            .radio-group { grid-template-columns: repeat(5, 1fr); }
+            display: flex;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
         }
 
-
-        .radio-group input[type="radio"] {
-            display: none;
-        }
+        .radio-group input[type="radio"] { display: none; }
 
         .radio-group label {
+            flex: 1; /* Each button takes equal space */
             text-align: center;
             padding: 0.85rem 0.5rem;
-            border: 2px solid var(--color-border);
-            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
-            color: var(--color-text-secondary);
+            color: var(--color-text-light);
+            background: var(--color-bg);
+            border-left: 1px solid var(--color-border);
             transition: all 0.2s ease-in-out;
+            font-size: 0.9rem;
         }
+        .radio-group label:first-of-type { border-left: none; }
         
+        @media (max-width: 600px) {
+            .radio-group { flex-wrap: wrap; }
+            .radio-group label {
+                flex-basis: 33.33%;
+                border: 1px solid var(--color-border);
+            }
+        }
+
         .radio-group label:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
+            background: var(--color-bg-light);
+            color: var(--color-text);
         }
 
         .radio-group input[type="radio"]:checked + label {
-            background-color: var(--color-bg);
-            color: var(--color-accent);
+            background-color: var(--color-accent);
+            color: var(--color-bg);
             border-color: var(--color-accent);
-            box-shadow: 0 0 0 2px var(--color-accent);
+            font-weight: 700;
         }
         
         /* --- Accordion --- */
         .accordion-container {
             margin-top: 2.5rem;
-            border-top: 1px solid var(--color-border);
+            border-top: 1px solid var(--color-border-light);
             padding-top: 1.5rem;
         }
         
@@ -229,9 +227,7 @@
             font-size: 1.2rem;
         }
         
-        details[open] summary::before {
-            content: '–';
-        }
+        details[open] summary::before { content: '–'; }
         
         .accordion-content {
             padding: 0.75rem 0 0.5rem 1.75rem;
@@ -245,7 +241,7 @@
             display: flex;
             justify-content: space-between;
             margin-top: 3rem;
-            border-top: 1px solid var(--color-border);
+            border-top: 1px solid var(--color-border-light);
             padding-top: 2rem;
         }
 
@@ -254,26 +250,27 @@
             font-size: 1rem;
             font-weight: 700;
             padding: 0.75rem 1.5rem;
-            border: 2px solid var(--color-text);
+            border: 2px solid var(--color-accent);
             border-radius: 4px;
-            background: var(--color-text);
+            background: var(--color-accent);
             color: var(--color-bg);
             cursor: pointer;
             transition: all 0.2s ease;
         }
         
         .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover {
-            background: #333;
-            border-color: #333;
+            background: #003366; /* Darker navy */
+            border-color: #003366;
         }
         
         .nav-btn.secondary {
             background: var(--color-bg);
-            color: var(--color-text);
+            color: var(--color-accent);
         }
         
         .nav-btn.secondary:hover {
             background: #f4f4f4;
+            border-color: var(--color-accent);
         }
         
         .nav-btn:disabled, #submit-quiz-btn:disabled {
@@ -282,8 +279,18 @@
             color: #888;
             cursor: not-allowed;
         }
+        
+        .nav-btn.secondary:disabled {
+            background: var(--color-bg);
+            border-color: #ccc;
+            color: #ccc;
+        }
 
         /* --- Weighting Card --- */
+        #weighting-card .card-content {
+            padding-top: 0; /* Remove top padding as tracker is there */
+        }
+        
         #weighting-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -308,7 +315,7 @@
             z-index: 10;
             text-align: center;
             border-bottom: 1px solid var(--color-border);
-            margin: -2.5rem -3rem 2rem -3rem;
+            margin: 0 -3rem 2rem -3rem; /* Adjusted margins */
         }
         
         .points-tracker-label {
@@ -334,12 +341,20 @@
             line-height: 1.5;
         }
         
+        /* NEW: Scrolling container for weighting list */
+        .weighting-list-container {
+            max-height: 350px; /* Adjust as needed */
+            overflow-y: auto;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+        
         .weighting-list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem 0;
-            border-bottom: 1px solid var(--color-border);
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--color-border-light);
         }
         .weighting-list-item:last-child { border-bottom: none; }
         
@@ -375,12 +390,8 @@
 
         #submit-quiz-btn {
             width: 100%;
-            background: var(--color-accent);
-            border-color: var(--color-accent);
-            color: var(--color-bg);
             margin-top: 2rem;
         }
-        #submit-quiz-btn:hover { background: #b90062; border-color: #b90062; }
         
         #error-message {
             color: var(--color-error);
@@ -392,6 +403,10 @@
         }
 
         /* --- Results Card --- */
+        #results-card .card-content {
+            min-height: 0; /* Results card can be any height */
+        }
+        
         #results-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -435,6 +450,10 @@
 </head>
 <body>
 
+    <div class="progress-container-fixed">
+        <div id="progress-bar"></div>
+    </div>
+
     <div class="container">
         
         <div id="start-card" class="quiz-card active">
@@ -445,13 +464,13 @@
                 <div class="how-it-works">
                     <h2>How It Works</h2>
                     <ol>
-                        <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel (from "Strongly Disagree" to "Strongly Agree").</li>
+                        <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel.</li>
                         <li><strong>Show What Matters Most:</strong> After, you'll get 100 "Importance Points." You must spend all 100 points across the questions to show which ones are most important to you.</li>
                         <li><strong>Find Your Match!</strong> We'll instantly compare your answers and priorities to the candidates' platforms and show you who you align with most.</li>
                     </ol>
                 </div>
                 
-                <button id="start-btn">Start Quiz</button>
+                <button id="start-btn" class="nav-btn">Start Quiz</button>
             </div>
         </div>
         
@@ -464,14 +483,16 @@
                 
                 <div class="points-tracker">
                     <span class="points-tracker-label">Your Importance Budget</span>
-                    <span id="total-points-display">0 / 100</span>
+                    <span id="total-points-display">100 / 100</span>
                     <div id="points-helper">All questions start at 5 points. You must use <strong>exactly 100</strong>.</div>
                 </div>
 
-                <div id="weighting-list">
-                    </div>
+                <div class="weighting-list-container">
+                    <div id="weighting-list">
+                        </div>
+                </div>
 
-                <button id="submit-quiz-btn" disabled>Calculate My Alignment</button>
+                <button id="submit-quiz-btn" class="nav-btn">Calculate My Alignment</button>
                 <p id="error-message"></p>
             </div>
         </div>
@@ -663,7 +684,8 @@
         ];
         
         // --- App State ---
-        let currentQuestionIndex = 0;
+        let currentStep = 0; // 0 = start, 1-20 = questions, 21 = weighting, 22 = results
+        const totalSteps = QUESTIONS.length + 2; // 20 questions + weighting card + results card
         let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
         
         // --- Helper Functions ---
@@ -715,15 +737,16 @@
                 card.classList.remove('active');
             });
             document.getElementById(cardId).classList.add('active');
+            window.scrollTo(0, 0); // Scroll to top on every card change
          }
 
         /**
-         * Updates the progress bar
+         * Updates the fixed progress bar
          */
-         function updateProgressBar(questionIndex, totalQuestions = QUESTIONS.length + 1) { // +1 for weighting card
+         function updateProgressBar(step, total = totalSteps) {
             const progressBar = document.getElementById('progress-bar');
             if (progressBar) {
-                const percentage = ((questionIndex + 1) / totalQuestions) * 100;
+                const percentage = (step / total) * 100;
                 progressBar.style.width = `${percentage}%`;
             }
          }
@@ -758,9 +781,6 @@
                 // Build Full Question Card
                 html += `
                     <div class="quiz-card" id="question-card-${index}">
-                        <div class="progress-container">
-                            <div id="progress-bar-${index}" class="progress-bar"></div>
-                        </div>
                         <div class="card-content">
                             <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
                             <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
@@ -776,8 +796,8 @@
                             ${detailsHtml}
 
                             <div class="navigation-buttons">
-                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}" ${index === 0 ? 'disabled' : ''}>Previous</button>
-                                <button type="button" class="nav-btn" id="next-btn-${index}">Next</button>
+                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}" ${index === 0 ? 'style="visibility: hidden;"' : ''}>Previous</button>
+                                <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
                             </div>
                         </div>
                     </div>
@@ -794,7 +814,7 @@
             let html = '';
             
             QUESTIONS.forEach((q, index) => {
-                const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text;
+                const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text.split('<')[0];
                 html += `
                     <div class="weighting-list-item">
                         <label for="points-${index}" class="weighting-q-text">
@@ -805,14 +825,6 @@
                 `;
             });
             listContainer.innerHTML = html;
-            
-            // Add progress bar to weighting card
-            const weightingCard = document.getElementById('weighting-card');
-            weightingCard.insertAdjacentHTML('afterbegin', `
-                <div class="progress-container">
-                    <div id="progress-bar-weighting" class="progress-bar" style="width: ${ (QUESTIONS.length / (QUESTIONS.length + 1)) * 100 }%;"></div>
-                </div>
-            `);
         }
         
         /**
@@ -821,46 +833,56 @@
         function attachListeners() {
             // Start button
             document.getElementById('start-btn').addEventListener('click', () => {
+                currentStep = 1;
                 showCard('question-card-0');
-                updateProgressBar(0);
+                updateProgressBar(currentStep);
             });
             
             // Next/Prev buttons
             QUESTIONS.forEach((q, index) => {
                 const nextBtn = document.getElementById(`next-btn-${index}`);
                 const prevBtn = document.getElementById(`prev-btn-${index}`);
+                
+                // UX: Listen to radio group to enable Next button
+                document.getElementById(`radio-group-${index}`).addEventListener('change', () => {
+                    nextBtn.disabled = false;
+                });
 
                 nextBtn.addEventListener('click', () => {
                     // 1. Validate and save answer
                     const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
-                    if (!selected) {
-                        alert('Please select an answer to continue.');
-                        return;
-                    }
+                    if (!selected) { return; } // Should be blocked by 'disabled' but good to have
+                    
                     userAgreementAnswers[index] = parseInt(selected.value);
                     
                     // 2. Move to next card
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex < QUESTIONS.length) {
-                        showCard(`question-card-${currentQuestionIndex}`);
-                        updateProgressBar(currentQuestionIndex);
+                    currentStep++;
+                    if (currentStep <= QUESTIONS.length) { // Moving to the next question
+                        const nextQuestionIndex = currentStep - 1;
+                        showCard(`question-card-${nextQuestionIndex}`);
+                        updateProgressBar(currentStep);
+                        
                         // Check if this next question has a stored answer
-                        if (userAgreementAnswers[currentQuestionIndex] !== null) {
-                            document.querySelector(`#q${QUESTIONS[currentQuestionIndex].id}-${userAgreementAnswers[currentQuestionIndex]}`).checked = true;
+                        if (userAgreementAnswers[nextQuestionIndex] !== null) {
+                            // Find the value, not the complex ID
+                            const val = userAgreementAnswers[nextQuestionIndex];
+                            document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
+                            document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
                         }
                     } else {
                         // Finished last question, move to weighting card
                         showCard('weighting-card');
-                        updateProgressBar(currentQuestionIndex); // This will be 20/21
+                        updateProgressBar(currentStep); // This will be 21/22
                         updatePointTotal();
                     }
                 });
 
                 if (prevBtn) {
                     prevBtn.addEventListener('click', () => {
-                        currentQuestionIndex--;
-                        showCard(`question-card-${currentQuestionIndex}`);
-                        updateProgressBar(currentQuestionIndex);
+                        currentStep--;
+                        const prevQuestionIndex = currentStep - 1;
+                        showCard(`question-card-${prevQuestionIndex}`);
+                        updateProgressBar(currentStep);
                     });
                 }
             });
@@ -934,6 +956,10 @@
             }
 
             finalResults.sort((a, b) => b.percentage - a.percentage);
+            
+            // Final step
+            currentStep++;
+            updateProgressBar(currentStep); // This will be 22/22 (100%)
             renderResults(finalResults);
         }
 
@@ -970,9 +996,6 @@
                     bar.style.width = bar.getAttribute('data-width') + '%';
                 });
             }, 100);
-
-            // Scroll to top of container
-            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
         }
 
 
@@ -982,6 +1005,7 @@
             renderQuestionCards();
             renderWeightingCard();
             attachListeners();
+            updateProgressBar(0); // Set initial progress to 0
         });
     </script>
 </body>
