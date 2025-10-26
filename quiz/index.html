@@ -13,6 +13,7 @@
         :root {
             --primary-blue: #007bff;
             --primary-green: #28a745;
+            --primary-red: #dc3545;
             --light-green: #e9f7eb;
             --dark-text: #2c3e50;
             --light-text: #5f6b7a;
@@ -61,6 +62,43 @@
             margin: 0.5rem 0 0;
         }
         
+        /* --- Points Tracker --- */
+        .points-tracker {
+            position: sticky;
+            top: 0;
+            background: var(--bg-white);
+            padding: 1.25rem;
+            margin: -2.5rem -2.5rem 2rem -2.5rem; /* Extends to container edges */
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .points-tracker-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+        
+        #total-points-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            transition: color 0.3s ease;
+        }
+        
+        #total-points-display.error {
+            color: var(--primary-red);
+        }
+        
+        #points-helper {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-top: 0.25rem;
+        }
+
         /* --- Question Styling --- */
         .question-block {
             border: 1px solid var(--border-color);
@@ -69,10 +107,6 @@
             border-radius: 8px;
             background-color: #fff;
             transition: box-shadow 0.3s;
-        }
-
-        .question-block:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .question-text {
@@ -85,11 +119,21 @@
             color: var(--primary-blue);
             font-weight: 700;
         }
-
-        .controls-group {
-            margin-bottom: 1rem;
+        
+        /* --- Controls & Inputs --- */
+        .controls-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
+        @media (min-width: 600px) {
+            .controls-container {
+                grid-template-columns: 3fr 1fr; /* 3 parts for agreement, 1 part for points */
+                align-items: flex-start;
+            }
+        }
+        
         .controls-group > label {
             display: block;
             font-weight: 700;
@@ -100,7 +144,7 @@
         /* --- Custom Radio Buttons --- */
         .radio-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 0.5rem;
         }
 
@@ -119,68 +163,35 @@
         }
 
         .radio-group input[type="radio"]:checked + label {
-            background-color: var(--primary-blue);
             color: white;
-            border-color: var(--primary-blue);
-            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
-        /* Different colors for agree/disagree */
         .radio-group input[value="-2"]:checked + label { background-color: #dc3545; border-color: #dc3545; }
         .radio-group input[value="-1"]:checked + label { background-color: #fd7e14; border-color: #fd7e14; }
         .radio-group input[value="0"]:checked + label { background-color: #6c757d; border-color: #6c757d; }
         .radio-group input[value="1"]:checked + label { background-color: #198754; border-color: #198754; }
         .radio-group input[value="2"]:checked + label { background-color: #0d6efd; border-color: #0d6efd; }
 
-        /* --- Importance Slider --- */
-        .importance-slider {
+        /* --- Point Allocation Input --- */
+        .point-input {
             width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 8px;
-            background: var(--border-color);
-            border-radius: 5px;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity .2s;
-        }
-        
-        .importance-slider:hover {
-            opacity: 1;
-        }
-
-        .importance-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--primary-green);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .importance-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: var(--primary-green);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        .importance-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: var(--light-text);
-            margin-top: 0.5rem;
-        }
-        
-        .importance-value {
+            height: 48px;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary-green);
-            font-size: 1rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box; /* Important for layout */
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-
+        
+        .point-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+        }
+        
         /* --- Button & Results --- */
         #calculate-btn {
             display: block;
@@ -194,7 +205,7 @@
             border-radius: 8px;
             cursor: pointer;
             margin-top: 2rem;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: background-color 0.3s, transform 0.1s, opacity 0.3s;
         }
         
         #calculate-btn:hover {
@@ -205,8 +216,14 @@
             transform: scale(0.99);
         }
         
+        #calculate-btn:disabled {
+            background-color: #9c9c9c;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
         #error-message {
-            color: #dc3545;
+            color: var(--primary-red);
             text-align: center;
             font-weight: 500;
             margin-top: 1rem;
@@ -230,10 +247,7 @@
             font-size: 1.75rem;
         }
 
-        .result-bar {
-            margin-bottom: 1.25rem;
-        }
-        
+        .result-bar { margin-bottom: 1.25rem; }
         .result-bar-info {
             display: flex;
             justify-content: space-between;
@@ -241,16 +255,8 @@
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
-        
-        .candidate-name {
-            font-size: 1.1rem;
-        }
-        
-        .result-percent {
-            font-size: 1.1rem;
-            color: var(--dark-text);
-        }
-        
+        .candidate-name { font-size: 1.1rem; }
+        .result-percent { font-size: 1.1rem; color: var(--dark-text); }
         .bar-wrapper {
             height: 28px;
             background: #e9ecef;
@@ -258,34 +264,20 @@
             overflow: hidden;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
-
         .bar-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary-blue) 0%, #00c6ff 100%);
             width: 0%; /* Set by JS */
             transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9em;
-            overflow: hidden;
-            white-space: nowrap;
         }
-
-        /* Style for the top match */
         .result-bar.top-match .bar-fill {
             background: linear-gradient(90deg, var(--primary-green) 0%, #a5e69c 100%);
         }
-        
         .result-bar.top-match .candidate-name,
         .result-bar.top-match .result-percent {
             color: var(--primary-green);
             font-weight: 700;
         }
-
     </style>
 </head>
 <body>
@@ -293,13 +285,19 @@
     <div class="container">
         <header>
             <h1>Montreal Mayor's Alignment Quiz</h1>
-            <p>Select your agreement and how important each issue is to you.</p>
+            <p>Select your agreement, then allocate a total of 100 points across all questions.</p>
         </header>
+
+        <div class="points-tracker">
+            <span class="points-tracker-label">Total Points Allocated: </span>
+            <span id="total-points-display">0 / 100</span>
+            <div id="points-helper">All questions start at 5 points. Adjust them to match your priorities.</div>
+        </div>
 
         <form id="quiz-form">
             </form>
 
-        <button id="calculate-btn">Calculate My Alignment</button>
+        <button id="calculate-btn" disabled>Calculate My Alignment</button>
         <p id="error-message"></p>
 
         <div id="results-container">
@@ -312,39 +310,54 @@
     <script>
         // --- Data Setup ---
 
-        // Scoring Scale: SD=-2, D=-1, N=0, A=1, SA=2
-        const SCORE_SCALE = {
-            'SD': -2, 'D': -1, 'N': 0, 'A': 1, 'SA': 2
-        };
-
-        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q16
+        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q20
         // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
         const CANDIDATE_SCORES = {
-            'Luc Rabouin (Projet Montréal)': [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1],
-            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2],
-            'Craig Sauvé (Transition Montréal)': [2, -2, -1, 2, 2, -2, 2, 2, 2, 2, 2, 2, 2, 2, -2, 2],
-            'Gilbert Thibodeau (Action Montréal)': [-2, 2, 2, -2, 0, 2, -1, -2, -2, -1, 1, -1, 2, -2, 2, -2],
-            'Jean-François Kacou (Futur Montréal)': [-2, 2, 0, -1, 0, -1, -1, 0, 1, -1, 0, -1, 1, -1, -1, -2]
+            'Luc Rabouin (Projet Montréal)':              [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1,  2,  2,  2,  2],
+            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2, -2, -1, -1,  1],
+            'Craig Sauvé (Transition Montréal)':           [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
+            'Gilbert Thibodeau (Action Montréal)':         [-2,  2,  2, -2,  0,  2, -1, -2, -2, -1, 1, -1,  2, -2,  2, -2, -2, -2,  0, -2],
+            'Jean-François Kacou (Futur Montréal)':      [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
         };
 
-        // Quiz Questions: LaTeX removed, <strong> added for emphasis
+        // Quiz Questions: 20 total
         const QUESTIONS = [
+            // --- Mobility (1-2) ---
             { id: 1, text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries." },
             { id: 2, text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses." },
+            // --- Cleanliness (3) ---
             { id: 3, text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer." },
+            // --- Climate (4) ---
             { id: 4, text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032." },
+            // --- Cost of Living (5-6) ---
             { id: 5, text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>." },
             { id: 6, text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM)." },
+            // --- Culture (7) ---
             { id: 7, text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues." },
+            // --- Democratic Reform (8) ---
             { id: 8, text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions." },
+            // --- Economy/Taxes (9) ---
             { id: 9, text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts." },
+            // --- Homelessness (10) ---
             { id: 10, text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments." },
+            // --- Housing (11-12) ---
             { id: 11, text: "The city must **eliminate the current affordable housing bylaw** and replace it with a system that focuses on creating a large-scale public/community housing corporation." },
             { id: 12, text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families." },
+            // --- Public Transit (13) ---
             { id: 13, text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines." },
+            // --- Safety/Policing (14-15) ---
             { id: 14, text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues." },
             { id: 15, text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space." },
-            { id: 16, text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**." }
+            // --- Israel-Gaza (16) ---
+            { id: 16, text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**." },
+            // --- NEW Q17 (Traffic) ---
+            { id: 17, text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal." },
+            // --- NEW Q18 (Culture) ---
+            { id: 18, text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund (social utility trust) to help local venues acquire their own spaces." },
+            // --- NEW Q19 (Economy) ---
+            { id: 19, text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects." },
+            // --- NEW Q20 (Public Transit) ---
+            { id: 20, text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions." }
         ];
 
         
@@ -353,18 +366,46 @@
         /**
          * Calculates the agreement score for one question.
          * The formula is: (5 - |User Score - Candidate Score|) * Importance Multiplier
-         * Max agreement (5 - 0) * 5 = 25. Min agreement (5 - 4) * 1 = 1.
          * @param {number} userScore - The user's score for the question (-2 to 2).
          * @param {number} candidateScore - The candidate's canonical score for the question (-2 to 2).
-         * @param {number} importance - The user's importance rating (1 to 5).
+         * @param {number} points - The user's allocated points for this question.
          * @returns {number} The weighted agreement score.
          */
-        function calculateAgreement(userScore, candidateScore, importance) {
+        function calculateAgreement(userScore, candidateScore, points) {
             const scoreDifference = Math.abs(userScore - candidateScore);
             // scoreDifference will be between 0 (perfect match) and 4 (max disagreement: 2 vs -2)
             // Agreement is 5 - scoreDifference (5 for max match, 1 for min match)
             const rawAgreement = 5 - scoreDifference;
-            return rawAgreement * importance;
+            return rawAgreement * points;
+        }
+
+        /**
+         * Updates the total points display and enables/disables the calculate button.
+         */
+        function updatePointTotal() {
+            const pointInputs = document.querySelectorAll('.point-input');
+            let totalPoints = 0;
+            pointInputs.forEach(input => {
+                totalPoints += parseInt(input.value) || 0;
+            });
+
+            const display = document.getElementById('total-points-display');
+            const helper = document.getElementById('points-helper');
+            const calculateBtn = document.getElementById('calculate-btn');
+
+            display.textContent = `${totalPoints} / 100`;
+
+            if (totalPoints === 100) {
+                display.classList.remove('error');
+                helper.textContent = "You're all set!";
+                helper.style.color = 'var(--primary-green)';
+                calculateBtn.disabled = false;
+            } else {
+                display.classList.add('error');
+                helper.textContent = `You need to allocate exactly 100 points. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
+                helper.style.color = 'var(--primary-red)';
+                calculateBtn.disabled = true;
+            }
         }
 
         // --- Main Logic ---
@@ -375,30 +416,27 @@
         function renderQuiz() {
             const form = document.getElementById('quiz-form');
             let html = '';
-            const importanceLabels = { 1: 'Low', 2: 'Low-Med', 3: 'Medium', 4: 'High', 5: 'Very High' };
 
             QUESTIONS.forEach(q => {
                 html += `
                     <div class="question-block" data-question-id="${q.id}">
                         <div class="question-text">${q.id}. ${q.text}</div>
-
-                        <div class="controls-group">
-                            <label>Your Agreement:</label>
-                            <div class="radio-group">
-                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label for="q${q.id}-sd">Strongly Disagree</label>
-                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label for="q${q.id}-d">Disagree</label>
-                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label for="q${q.id}-n">Neutral</label>
-                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label for="q${q.id}-a">Agree</label>
-                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label for="q${q.id}-sa">Strongly Agree</label>
+                        
+                        <div class="controls-container">
+                            <div class="controls-group">
+                                <label>Your Agreement:</label>
+                                <div class="radio-group">
+                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label for="q${q.id}-sd">Strongly Disagree</label>
+                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label for="q${q.id}-d">Disagree</label>
+                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label for="q${q.id}-n">Neutral</label>
+                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label for="q${q.id}-a">Agree</label>
+                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label for="q${q.id}-sa">Strongly Agree</label>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="controls-group">
-                            <label>Importance: <span id="importance-value-${q.id}" class="importance-value">3 - Medium</span></label>
-                            <input type_="range" id="importance-${q.id}" name="importance-${q.id}" min="1" max="5" value="3" class="importance-slider" oninput="updateImportanceLabel(${q.id}, this.value)">
-                            <div class="importance-label">
-                                <span>1 (Low)</span>
-                                <span>5 (Very High)</span>
+                            
+                            <div class="controls-group">
+                                <label for="points-${q.id}">Points:</label>
+                                <input type="number" class="point-input" id="points-${q.id}" name="points-${q.id}" value="5" min="0" max="100">
                             </div>
                         </div>
                     </div>
@@ -409,26 +447,12 @@
         }
 
         /**
-         * Updates the text label for the importance slider
-         * This function is called from the 'oninput' attribute in the HTML
-         */
-        window.updateImportanceLabel = function(qId, value) {
-            const importanceLabels = { 1: 'Low', 2: 'Low-Med', 3: 'Medium', 4: 'High', 5: 'Very High' };
-            const label = document.getElementById(`importance-value-${qId}`);
-            if (label) {
-                label.textContent = `${value} - ${importanceLabels[value]}`;
-            }
-        }
-        
-        /**
          * Calculates the final results and displays them.
          */
         function calculateResults() {
             const form = document.getElementById('quiz-form');
             const formData = new FormData(form);
             const results = {};
-            const maxScorePerQuestion = 5 * 5; // Max agreement (5) * Max importance (5)
-            let totalMaxScore = 0;
             const errorMsg = document.getElementById('error-message');
             errorMsg.style.display = 'none'; // Hide error initially
 
@@ -437,13 +461,16 @@
                 results[candidate] = 0;
             }
 
+            let totalPerfectScore = 0;
+            let currentTotalPoints = 0;
+
             // Process all questions
             for (let i = 0; i < QUESTIONS.length; i++) {
                 const qId = QUESTIONS[i].id;
                 
                 // Retrieve user inputs
                 const userAgreement = formData.get(`agreement-${qId}`);
-                const userImportance = formData.get(`importance-${qId}`);
+                const userPointsStr = formData.get(`points-${qId}`);
 
                 // Check if all questions have been answered
                 if (userAgreement === null) {
@@ -452,39 +479,30 @@
                     document.querySelector(`[data-question-id="${qId}"]`).scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return; // Stop calculation
                 }
-
+                
                 const userScore = parseInt(userAgreement);
-                const importanceMultiplier = parseInt(userImportance);
+                const userPoints = parseInt(userPointsStr) || 0;
+                
+                currentTotalPoints += userPoints;
 
-                // Add to the total possible score *based on the user's weighting*
-                // This makes the percentage relative to the user's own priorities.
-                totalMaxScore += maxScorePerQuestion * importanceMultiplier;
+                // Add to the total *possible* score for normalization
+                // A perfect match (raw score 5) * this question's points
+                totalPerfectScore += (5 * userPoints);
                 
                 // Calculate weighted agreement for each candidate
                 for (const candidate in CANDIDATE_SCORES) {
                     const candidateScore = CANDIDATE_SCORES[candidate][i];
-                    
-                    // We need to calculate the *best possible score* for this question,
-                    // and the *worst possible score*, to normalize the result from 0-100%
-                    
-                    // User's weighted score for this candidate:
-                    const agreementScore = calculateAgreement(userScore, candidateScore, importanceMultiplier);
+                    const agreementScore = calculateAgreement(userScore, candidateScore, userPoints);
                     results[candidate] += agreementScore;
                 }
             }
             
-            // --- Normalization ---
-            // To make it a true % match, we must compare the user's score for a candidate
-            // against the *best possible score* the user could have gotten *with their own weightings*.
-            // Best possible score = The user perfectly matches a candidate on every question.
-            // A perfect match on one question is (5 - 0) * importance = 5 * importance.
-            // So, the totalMaxScore is the sum of (5 * importance) for all questions.
-
-            let totalPerfectScore = 0;
-             for (let i = 0; i < QUESTIONS.length; i++) {
-                const qId = QUESTIONS[i].id;
-                const userImportance = parseInt(formData.get(`importance-${qId}`));
-                totalPerfectScore += 5 * userImportance; // 5 is max raw agreement
+            // Final check on points total
+            if (currentTotalPoints !== 100) {
+                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust your point allocation.`;
+                 errorMsg.style.display = 'block';
+                 document.querySelector('.points-tracker').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 return;
             }
 
             // Calculate percentage alignment
@@ -492,7 +510,8 @@
             for (const candidate in results) {
                 const score = results[candidate];
                 // The percentage is the candidate's actual score divided by the perfect score
-                const percentage = (score / totalPerfectScore) * 100;
+                // Handle division by zero if user allocates 0 points to all questions
+                const percentage = (totalPerfectScore === 0) ? 0 : (score / totalPerfectScore) * 100;
                 finalResults.push({
                     name: candidate.replace(/ \(.*\)/, ''), // Remove party name
                     party: candidate.match(/\(([^)]+)\)/)[1], // Extract party name
@@ -518,9 +537,7 @@
             let html = '';
 
             results.forEach((r, index) => {
-                // Add 'top-match' class to the first item
                 const topMatchClass = (index === 0) ? 'top-match' : '';
-                
                 html += `
                     <div class="result-bar ${topMatchClass}">
                         <div class="result-bar-info">
@@ -539,7 +556,6 @@
             resultsContainer.style.display = 'block';
 
             // Trigger bar-fill animation
-            // Needs a slight delay for the browser to register the elements
             setTimeout(() => {
                 document.querySelectorAll('.bar-fill').forEach(bar => {
                     bar.style.width = bar.getAttribute('data-width') + '%';
@@ -555,7 +571,26 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             renderQuiz();
+            
+            // Set initial point total
+            updatePointTotal(); 
 
+            // Add a single event listener to the form to catch all input changes
+            document.getElementById('quiz-form').addEventListener('input', (event) => {
+                if (event.target.classList.contains('point-input')) {
+                    // Sanitize input
+                    let value = parseInt(event.target.value);
+                    if (isNaN(value) || value < 0) {
+                        event.target.value = 0;
+                    }
+                    if (value > 100) {
+                        event.target.value = 100;
+                    }
+                    updatePointTotal();
+                }
+            });
+
+            // Listen for click on the calculate button
             document.getElementById('calculate-btn').addEventListener('click', (event) => {
                 event.preventDefault(); // Prevent form submission
                 calculateResults();
