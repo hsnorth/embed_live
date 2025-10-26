@@ -3,128 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montreal Mayor's Alignment Quiz</title>
+    <title>Montreal Mayoral Alignment Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Base & Layout --- */
+        /* --- NYT-Inspired Design --- */
         :root {
-            --primary-blue: #007bff;
-            --primary-green: #28a745;
-            --primary-red: #dc3545;
-            --light-green: #e9f7eb;
-            --dark-text: #2c3e50;
-            --light-text: #5f6b7a;
-            --border-color: #dee2e6;
-            --bg-light: #f8f9fa;
-            --bg-white: #ffffff;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --font-serif: 'Merriweather', 'Georgia', serif;
+            --font-sans: 'Roboto', 'Arial', sans-serif;
+            
+            --color-text: #121212; /* NYT Black */
+            --color-text-secondary: #333;
+            --color-text-light: #666;
+            --color-border: #e0e0e0;
+            --color-bg: #ffffff;
+            --color-bg-light: #fdfdfd;
+            --color-error: #c90000;
+            --color-success: #198754;
         }
         
         body {
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            font-family: var(--font-sans);
             margin: 0;
             padding: 2.5rem 1rem;
-            background-color: var(--bg-light);
-            color: var(--dark-text);
-            line-height: 1.6;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-secondary);
+            line-height: 1.7;
         }
 
         .container {
             max-width: 800px;
             margin: auto;
-            background: var(--bg-white);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
+            background: var(--color-bg);
+            padding: 2rem 3rem;
+            border-top: 10px solid var(--color-text);
         }
         
         /* --- Header --- */
         header {
             text-align: center;
-            border-bottom: 2px solid var(--primary-blue);
+            border-bottom: 2px solid var(--color-text);
             padding-bottom: 1.5rem;
             margin-bottom: 2.5rem;
         }
 
         h1 {
-            color: var(--primary-blue);
+            font-family: var(--font-serif);
+            font-weight: 900;
+            color: var(--color-text);
             margin: 0;
-            font-weight: 700;
-            font-size: 2.25rem;
+            font-size: 2.75rem;
+            line-height: 1.2;
         }
         
         header p {
             font-size: 1.1rem;
-            color: var(--light-text);
-            margin: 0.5rem 0 0;
+            color: var(--color-text-light);
+            margin: 1rem 0 0;
         }
         
         /* --- Points Tracker --- */
         .points-tracker {
             position: sticky;
             top: 0;
-            background: var(--bg-white);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
             padding: 1.25rem;
-            margin: -2.5rem -2.5rem 2rem -2.5rem; /* Extends to container edges */
-            border-bottom: 1px solid var(--border-color);
+            margin: -2.5rem -3rem 2rem -3rem; /* Extends to container edges */
+            border-bottom: 1px solid var(--color-border);
             z-index: 10;
             text-align: center;
-            border-radius: 12px 12px 0 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
         .points-tracker-label {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--dark-text);
+            color: var(--color-text);
         }
         
         #total-points-display {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--primary-green);
+            color: var(--color-success);
             transition: color 0.3s ease;
         }
         
         #total-points-display.error {
-            color: var(--primary-red);
+            color: var(--color-error);
         }
         
         #points-helper {
             font-size: 0.9rem;
-            color: var(--light-text);
+            color: var(--color-text-light);
             margin-top: 0.25rem;
         }
 
         /* --- Question Styling --- */
         .question-block {
-            border: 1px solid var(--border-color);
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            background-color: #fff;
-            transition: box-shadow 0.3s;
+            border-bottom: 1px solid var(--color-border);
+            padding: 2.5rem 0;
+            margin-bottom: 0;
         }
         
         .question-text {
-            font-size: 1.15rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-        }
-        
-        .question-text strong {
-            color: var(--primary-blue);
+            font-family: var(--font-serif);
             font-weight: 700;
+            font-size: 1.5rem; /* Larger, like a sub-headline */
+            line-height: 1.4;
+            color: var(--color-text);
+            margin-bottom: 2rem;
         }
         
         /* --- Controls & Inputs --- */
         .controls-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
         @media (min-width: 600px) {
@@ -138,7 +134,8 @@
             display: block;
             font-weight: 700;
             margin-bottom: 0.75rem;
-            color: var(--dark-text);
+            color: var(--color-text);
+            font-size: 1rem;
         }
         
         /* --- Custom Radio Buttons --- */
@@ -155,24 +152,24 @@
         .radio-group label {
             text-align: center;
             padding: 0.75rem 0.5rem;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
+            border: 2px solid var(--color-border);
+            border-radius: 4px;
             cursor: pointer;
             font-weight: 500;
+            color: var(--color-text-secondary);
             transition: all 0.2s ease-in-out;
+        }
+        
+        .radio-group label:hover {
+            border-color: var(--color-text-secondary);
         }
 
         .radio-group input[type="radio"]:checked + label {
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            background-color: var(--color-text);
+            color: var(--color-bg);
+            border-color: var(--color-text);
         }
         
-        .radio-group input[value="-2"]:checked + label { background-color: #dc3545; border-color: #dc3545; }
-        .radio-group input[value="-1"]:checked + label { background-color: #fd7e14; border-color: #fd7e14; }
-        .radio-group input[value="0"]:checked + label { background-color: #6c757d; border-color: #6c757d; }
-        .radio-group input[value="1"]:checked + label { background-color: #198754; border-color: #198754; }
-        .radio-group input[value="2"]:checked + label { background-color: #0d6efd; border-color: #0d6efd; }
-
         /* --- Point Allocation Input --- */
         .point-input {
             width: 100%;
@@ -180,16 +177,62 @@
             font-size: 1.25rem;
             font-weight: 700;
             text-align: center;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box; /* Important for layout */
+            border: 2px solid var(--color-border);
+            border-radius: 4px;
+            box-sizing: border-box; 
             transition: border-color 0.3s, box-shadow 0.3s;
         }
         
         .point-input:focus {
             outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+            border-color: var(--color-text);
+            box-shadow: 0 0 0 3px rgba(18,18,18,0.1);
+        }
+        
+        /* --- Accordion --- */
+        .accordion-container {
+            margin-top: 2rem;
+            border-top: 1px dashed var(--color-border);
+            padding-top: 1.5rem;
+        }
+        
+        details {
+            margin-bottom: 0.5rem;
+        }
+        
+        summary {
+            font-weight: 700;
+            color: var(--color-text);
+            cursor: pointer;
+            list-style: none; /* Remove default marker */
+            position: relative;
+            padding-left: 1.75rem;
+        }
+        
+        summary::before, summary::after {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.7rem;
+            width: 10px;
+            height: 2px;
+            background: var(--color-text-light);
+            transition: transform 0.3s ease;
+        }
+        
+        summary::after {
+            transform: rotate(90deg);
+        }
+        
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            padding: 0.75rem 0 0.5rem 1.75rem;
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
         
         /* --- Button & Results --- */
@@ -197,57 +240,55 @@
             display: block;
             width: 100%;
             padding: 1rem;
-            background-color: var(--primary-green);
-            color: white;
-            font-size: 1.25rem;
+            background-color: var(--color-text);
+            color: var(--color-bg);
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
             font-weight: 700;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            margin-top: 2rem;
-            transition: background-color 0.3s, transform 0.1s, opacity 0.3s;
+            margin-top: 3rem;
+            transition: background-color 0.3s;
         }
         
         #calculate-btn:hover {
-            background-color: #218838;
-        }
-        
-        #calculate-btn:active {
-            transform: scale(0.99);
+            background-color: #333;
         }
         
         #calculate-btn:disabled {
-            background-color: #9c9c9c;
+            background-color: #ccc;
+            color: #888;
             cursor: not-allowed;
-            opacity: 0.7;
         }
         
         #error-message {
-            color: var(--primary-red);
+            color: var(--color-error);
             text-align: center;
-            font-weight: 500;
-            margin-top: 1rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
             display: none; /* Hidden by default */
         }
 
         #results-container {
-            margin-top: 3rem;
-            padding: 2rem;
-            border: 2px solid var(--primary-green);
-            border-radius: 10px;
-            background-color: var(--light-green);
+            margin-top: 4rem;
+            padding: 2.5rem 0;
+            border-top: 2px solid var(--color-text);
             display: none; /* Hidden initially */
         }
 
         #results-container h2 {
-            color: var(--primary-green);
+            font-family: var(--font-serif);
+            font-weight: 700;
+            color: var(--color-text);
             text-align: center;
             margin-top: 0;
-            margin-bottom: 2rem;
-            font-size: 1.75rem;
+            margin-bottom: 2.5rem;
+            font-size: 2rem;
         }
 
-        .result-bar { margin-bottom: 1.25rem; }
+        .result-bar { margin-bottom: 1.5rem; }
         .result-bar-info {
             display: flex;
             justify-content: space-between;
@@ -255,28 +296,27 @@
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
-        .candidate-name { font-size: 1.1rem; }
-        .result-percent { font-size: 1.1rem; color: var(--dark-text); }
+        .candidate-name { font-size: 1.1rem; color: var(--color-text); }
+        .result-percent { font-size: 1.1rem; color: var(--color-text-secondary); }
         .bar-wrapper {
             height: 28px;
-            background: #e9ecef;
-            border-radius: 5px;
+            background: #f0f0f0;
+            border-radius: 2px;
             overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
         .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue) 0%, #00c6ff 100%);
+            background: var(--color-text-secondary);
             width: 0%; /* Set by JS */
             transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         .result-bar.top-match .bar-fill {
-            background: linear-gradient(90deg, var(--primary-green) 0%, #a5e69c 100%);
+            background: var(--color-text); /* Top match is darkest */
         }
         .result-bar.top-match .candidate-name,
         .result-bar.top-match .result-percent {
-            color: var(--primary-green);
             font-weight: 700;
+            color: var(--color-text);
         }
     </style>
 </head>
@@ -284,8 +324,8 @@
 
     <div class="container">
         <header>
-            <h1>Montreal Mayor's Alignment Quiz</h1>
-            <p>Select your agreement, then allocate a total of 100 points across all questions.</p>
+            <h1>Montreal Mayoral Alignment Quiz</h1>
+            <p>Select your agreement, then allocate a total of 100 points across all questions to weigh their importance to you.</p>
         </header>
 
         <div class="points-tracker">
@@ -301,7 +341,7 @@
         <p id="error-message"></p>
 
         <div id="results-container">
-            <h2>Your Best Match!</h2>
+            <h2>Your Closest Alignments</h2>
             <div id="results-output">
                 </div>
         </div>
@@ -320,46 +360,168 @@
             'Jean-François Kacou (Futur Montréal)':      [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
         };
 
-        // Quiz Questions: 20 total
+        // Quiz Questions: 20 total, now with accordion details
         const QUESTIONS = [
             // --- Mobility (1-2) ---
-            { id: 1, text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries." },
-            { id: 2, text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses." },
+            { 
+                id: 1, 
+                text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries.",
+                details: [
+                    { summary: "What is the REV?", content: "The Réseau express vélo is a network of high-capacity, protected bike lanes, many of which are designed to be clear and safe for year-round cycling." },
+                    { summary: "Why 'specialized options'?", content: "This refers to proposals to add features like baby seats to the Bixi bike-share service, making it more accessible for families." }
+                ]
+            },
+            { 
+                id: 2, 
+                text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses.",
+                details: [
+                    { summary: "What's the argument for this?", content: "Some candidates argue that bike lanes on commercial streets (like Ste-Catherine or Saint-Denis) hurt local businesses by removing parking, and that bike routes should be prioritized on residential streets or in parks instead." },
+                    { summary: "What's the argument against this?", content: "Opponents argue that bike lanes bring more foot (and bike) traffic to businesses, reduce traffic, and are essential for creating a connected, safe transportation network." }
+                ]
+            },
             // --- Cleanliness (3) ---
-            { id: 3, text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer." },
+            { 
+                id: 3, 
+                text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer.",
+                details: [
+                    { summary: "Why is this an issue?", content: "Some boroughs have moved to bi-weekly (every two weeks) garbage collection to encourage composting and recycling. This has led to complaints about smells and overflowing bins, especially during summer." }
+                ]
+            },
             // --- Climate (4) ---
-            { id: 4, text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032." },
+            { 
+                id: 4, 
+                text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032.",
+                details: [
+                    { summary: "What is a kilometre tax?", content: "This is a 'user-pay' system where drivers are taxed based on the distance they drive, rather than (or in addition to) a gas tax. It's proposed as a way to strongly discourage car use and fund public transit." }
+                ]
+            },
             // --- Cost of Living (5-6) ---
-            { id: 5, text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>." },
-            { id: 6, text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM)." },
+            { 
+                id: 5, 
+                text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>.",
+                details: [
+                    { summary: "What are the different proposals?", content: "Candidates have proposed different income thresholds for this discount. This question uses the highest proposed threshold ($47,500 from Transition Montréal). Projet Montréal proposed a lower threshold ($30,000)." }
+                ]
+            },
+            { 
+                id: 6, 
+                text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM).",
+                details: [
+                    { summary: "What's the context?", content: "This is a proposal from Action Montréal aimed at reducing the financial burden on car owners, who they feel are unfairly taxed by the current administration." }
+                ]
+            },
             // --- Culture (7) ---
-            { id: 7, text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues." },
+            { 
+                id: 7, 
+                text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues.",
+                details: [
+                    { summary: "What would a 'Night Mayor' do?", content: "This person and their council would manage the city's nightlife economy, working to resolve conflicts between venues (bars, concert halls) and residents through mediation, rather than immediately involving police for noise complaints." }
+                ]
+            },
             // --- Democratic Reform (8) ---
-            { id: 8, text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions." },
+            { 
+                id: 8, 
+                text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions.",
+                details: [
+                    { summary: "What is a preferential ballot?", content: "Instead of picking just one candidate, you would rank your choices (1st, 2nd, 3rd, etc.). If no one wins 50% of the 1st-choice votes, the candidate with the fewest votes is eliminated, and their votes go to their voters' 2nd choice. This continues until one candidate has a majority." }
+                ]
+            },
             // --- Economy/Taxes (9) ---
-            { id: 9, text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts." },
+            { 
+                id: 9, 
+                text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts.",
+                details: [
+                    { summary: "What kind of tax is this?", content: "This is a 'mansion tax' or 'luxury tax' proposed by Transition Montréal. It would apply only to the city's most expensive homes to create a dedicated fund for social programs." }
+                ]
+            },
             // --- Homelessness (10) ---
-            { id: 10, text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments." },
+            { 
+                id: 10, 
+                text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments.",
+                details: [
+                    { summary: "What does 'requisition' mean?", content: "This would involve the city taking temporary control of empty buildings (like unused hotels) to provide immediate shelter for the homeless, particularly during winter." },
+                    { summary: "Why ban police?", content: "This proposal suggests that police dismantling encampments is harmful and ineffective. Instead, it advocates for sending social service teams to support people on-site." }
+                ]
+            },
             // --- Housing (11-12) ---
-            { id: 11, text: "The city must **eliminate the current affordable housing bylaw** and replace it with a system that focuses on creating a large-scale public/community housing corporation." },
-            { id: 12, text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families." },
+            { 
+                id: 11, 
+                text: "The city must **eliminate the current affordable housing bylaw** (the '20-20-20' rule) and replace it with a new system.",
+                details: [
+                    { summary: "What is the current bylaw?", content: "Known as the '20-20-20' bylaw, it requires new developments to include 20% social housing, 20% affordable housing, and 20% family-sized units. Many candidates (from all sides) argue it has failed and actually stalled construction." }
+                ]
+            },
+            { 
+                id: 12, 
+                text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families.",
+                details: [
+                    { summary: "How is this different from other proposals?", content: "This is the strictest position, proposed by Transition Montréal. Other candidates propose limiting short-term rentals to 90 days/year or banning only *commercial* operators, rather than a total ban." }
+                ]
+            },
             // --- Public Transit (13) ---
-            { id: 13, text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines." },
+            { 
+                id: 13, 
+                text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines.",
+                details: [
+                    { summary: "What is the debate?", content: "There's a major debate over which is better: expanding the existing, high-capacity Metro system (which is very expensive) or building new, more flexible tramway lines on the surface (which is cheaper but can be slowed by traffic)." }
+                ]
+            },
             // --- Safety/Policing (14-15) ---
-            { id: 14, text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues." },
-            { id: 15, text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space." },
+            { 
+                id: 14, 
+                text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues.",
+                details: [
+                    { summary: "Is this 'defunding the police'?", content: "This proposal (from Transition Montréal) aims to re-allocate a portion of the police budget—specifically from overtime—to fund social workers, prevention programs, and civilian response teams, rather than cutting officer positions." }
+                ]
+            },
+            { 
+                id: 15, 
+                text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space.",
+                details: [
+                    { summary: "What does this mean?", content: "This proposal from Action Montréal would require any religious gathering in a public space (like a street prayer) to get a permit. It also calls for increased police enforcement at protests that are deemed 'disruptive' or 'unruly'." }
+                ]
+            },
             // --- Israel-Gaza (16) ---
-            { id: 16, text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**." },
+            { 
+                id: 16, 
+                text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**.",
+                details: [
+                    { summary: "Why is this a municipal issue?", content: "Some candidates (Rabouin, Sauvé) believe the city has a moral duty to take a stand on international human rights issues. Others (Ferrada, Thibodeau, Kacou) argue this is 'importing a foreign conflict' and is outside municipal jurisdiction." }
+                ]
+            },
             // --- NEW Q17 (Traffic) ---
-            { id: 17, text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal." },
+            { 
+                id: 17, 
+                text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal.",
+                details: [
+                    { summary: "What's the 'Camillien-Houde' debate?", content: "This is a long-standing, heated debate. Projet Montréal (Rabouin) wants to close the road that cuts across the mountain to cars. Others (Ferrada, Thibodeau) are strongly opposed, arguing it's a vital link for drivers." }
+                ]
+            },
             // --- NEW Q18 (Culture) ---
-            { id: 18, text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund (social utility trust) to help local venues acquire their own spaces." },
+            { 
+                id: 18, 
+                text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund to help local venues acquire their own spaces.",
+                details: [
+                    { summary: "Why 'reserved housing'?", content: "This proposal from Projet Montréal aims to keep artists from being pushed out of the city by gentrification, ensuring they can live and work affordably. The fund would help independent venues (like small theatres or music halls) buy their buildings." }
+                ]
+            },
             // --- NEW Q19 (Economy) ---
-            { id: 19, text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects." },
+            { 
+                id: 19, 
+                text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects.",
+                details: [
+                    { summary: "What is the 'East End' focus?", content: "Many candidates have a plan for Montreal's East End. This specific proposal from Projet Montréal focuses on economic development through education (a new university) and the 'green' economy (clean tech)." }
+                ]
+            },
             // --- NEW Q20 (Public Transit) ---
-            { id: 20, text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions." }
+            { 
+                id: 20, 
+                text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions.",
+                details: [
+                    { summary: "What's the tramway plan?", content: "This proposal (strongly supported by Projet Montréal) involves building three new tram lines: in the East End, the Southwest, and a 'loop' connecting Côte-des-Neiges, Jean-Talon, and du Parc. This is in direct contrast to candidates who favor Metro expansion." }
+                ]
+            }
         ];
-
         
         // --- Helper Functions ---
 
@@ -373,8 +535,6 @@
          */
         function calculateAgreement(userScore, candidateScore, points) {
             const scoreDifference = Math.abs(userScore - candidateScore);
-            // scoreDifference will be between 0 (perfect match) and 4 (max disagreement: 2 vs -2)
-            // Agreement is 5 - scoreDifference (5 for max match, 1 for min match)
             const rawAgreement = 5 - scoreDifference;
             return rawAgreement * points;
         }
@@ -397,13 +557,13 @@
 
             if (totalPoints === 100) {
                 display.classList.remove('error');
-                helper.textContent = "You're all set!";
-                helper.style.color = 'var(--primary-green)';
+                helper.textContent = "You're all set! You can now calculate your alignment.";
+                helper.style.color = 'var(--color-success)';
                 calculateBtn.disabled = false;
             } else {
                 display.classList.add('error');
                 helper.textContent = `You need to allocate exactly 100 points. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
-                helper.style.color = 'var(--primary-red)';
+                helper.style.color = 'var(--color-error)';
                 calculateBtn.disabled = true;
             }
         }
@@ -418,6 +578,24 @@
             let html = '';
 
             QUESTIONS.forEach(q => {
+                // Build Accordion HTML
+                let detailsHtml = '';
+                if (q.details && q.details.length > 0) {
+                    detailsHtml += '<div class="accordion-container">';
+                    q.details.forEach(detail => {
+                        detailsHtml += `
+                            <details>
+                                <summary>${detail.summary}</summary>
+                                <div class="accordion-content">
+                                    ${detail.content}
+                                </div>
+                            </details>
+                        `;
+                    });
+                    detailsHtml += '</div>';
+                }
+                
+                // Build Full Question Block
                 html += `
                     <div class="question-block" data-question-id="${q.id}">
                         <div class="question-text">${q.id}. ${q.text}</div>
@@ -435,11 +613,12 @@
                             </div>
                             
                             <div class="controls-group">
-                                <label for="points-${q.id}">Points:</label>
+                                <label for="points-${q.id}">Points (of 100):</label>
                                 <input type="number" class="point-input" id="points-${q.id}" name="points-${q.id}" value="5" min="0" max="100">
                             </div>
                         </div>
-                    </div>
+                        
+                        ${detailsHtml} </div>
                 `;
             });
 
@@ -454,9 +633,8 @@
             const formData = new FormData(form);
             const results = {};
             const errorMsg = document.getElementById('error-message');
-            errorMsg.style.display = 'none'; // Hide error initially
+            errorMsg.style.display = 'none';
 
-            // Initialize candidate scores
             for (const candidate in CANDIDATE_SCORES) {
                 results[candidate] = 0;
             }
@@ -464,32 +642,25 @@
             let totalPerfectScore = 0;
             let currentTotalPoints = 0;
 
-            // Process all questions
             for (let i = 0; i < QUESTIONS.length; i++) {
                 const qId = QUESTIONS[i].id;
                 
-                // Retrieve user inputs
                 const userAgreement = formData.get(`agreement-${qId}`);
                 const userPointsStr = formData.get(`points-${qId}`);
 
-                // Check if all questions have been answered
                 if (userAgreement === null) {
                     errorMsg.textContent = `Please select your agreement for Question ${qId}.`;
                     errorMsg.style.display = 'block';
                     document.querySelector(`[data-question-id="${qId}"]`).scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    return; // Stop calculation
+                    return; 
                 }
                 
                 const userScore = parseInt(userAgreement);
                 const userPoints = parseInt(userPointsStr) || 0;
                 
                 currentTotalPoints += userPoints;
-
-                // Add to the total *possible* score for normalization
-                // A perfect match (raw score 5) * this question's points
                 totalPerfectScore += (5 * userPoints);
                 
-                // Calculate weighted agreement for each candidate
                 for (const candidate in CANDIDATE_SCORES) {
                     const candidateScore = CANDIDATE_SCORES[candidate][i];
                     const agreementScore = calculateAgreement(userScore, candidateScore, userPoints);
@@ -497,7 +668,6 @@
                 }
             }
             
-            // Final check on points total
             if (currentTotalPoints !== 100) {
                  errorMsg.textContent = `Your total points must be exactly 100. Please adjust your point allocation.`;
                  errorMsg.style.display = 'block';
@@ -505,31 +675,23 @@
                  return;
             }
 
-            // Calculate percentage alignment
             const finalResults = [];
             for (const candidate in results) {
                 const score = results[candidate];
-                // The percentage is the candidate's actual score divided by the perfect score
-                // Handle division by zero if user allocates 0 points to all questions
                 const percentage = (totalPerfectScore === 0) ? 0 : (score / totalPerfectScore) * 100;
                 finalResults.push({
-                    name: candidate.replace(/ \(.*\)/, ''), // Remove party name
-                    party: candidate.match(/\(([^)]+)\)/)[1], // Extract party name
-                    score: score,
+                    name: candidate.replace(/ \(.*\)/, ''), 
+                    party: candidate.match(/\(([^)]+)\)/)[1], 
                     percentage: parseFloat(percentage.toFixed(1))
                 });
             }
 
-            // Sort by percentage (highest first)
             finalResults.sort((a, b) => b.percentage - a.percentage);
-
-            // Render results
             renderResults(finalResults);
         }
 
         /**
          * Renders the final results as percentage bars.
-         * @param {Array<Object>} results - The calculated and sorted results.
          */
         function renderResults(results) {
             const outputDiv = document.getElementById('results-output');
@@ -555,14 +717,12 @@
             outputDiv.innerHTML = html;
             resultsContainer.style.display = 'block';
 
-            // Trigger bar-fill animation
             setTimeout(() => {
                 document.querySelectorAll('.bar-fill').forEach(bar => {
                     bar.style.width = bar.getAttribute('data-width') + '%';
                 });
             }, 100);
 
-            // Scroll to the results
             resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -571,11 +731,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             renderQuiz();
-            
-            // Set initial point total
             updatePointTotal(); 
 
-            // Add a single event listener to the form to catch all input changes
             document.getElementById('quiz-form').addEventListener('input', (event) => {
                 if (event.target.classList.contains('point-input')) {
                     // Sanitize input
@@ -590,9 +747,8 @@
                 }
             });
 
-            // Listen for click on the calculate button
             document.getElementById('calculate-btn').addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent form submission
+                event.preventDefault(); 
                 calculateResults();
             });
         });
