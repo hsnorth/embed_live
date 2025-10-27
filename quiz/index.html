@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            /* Consistent FIXED height for main cards */
-            --card-fixed-height: 720px; /* Increased slightly */
+            /* Consistent MINIMUM height for main cards */
+            --card-min-height: 680px; /* Adjusted min height */
         }
         
         * {
@@ -71,22 +71,24 @@
         }
         
         .card-content {
-            padding: 2.5rem 3rem 3rem 3rem;
+            padding: 3rem 3.5rem 3.5rem 3.5rem; /* Increased padding */
             display: flex;
             flex-direction: column;
         }
         
-        /* Apply fixed height to quiz, weighting, and results cards */
+        /* Apply min-height to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
-            height: var(--card-fixed-height); 
+            min-height: var(--card-min-height); 
         }
-         /* Intro cards size naturally but centered */
+        /* REMOVED fixed height from questions */
+         
+        /* Intro cards size naturally but centered */
         #start-card .card-content,
         #how-to-play-card .card-content {
              height: auto; 
-             min-height: 90vh; 
+             min-height: 95vh; /* Increase min height slightly */
              justify-content: center; 
         }
 
@@ -103,14 +105,14 @@
             body {
                  padding: 0 0 2rem 0; 
             }
-             /* Adjust fixed height slightly for smaller screens */
+             /* Adjust min height slightly for smaller screens */
              :root {
-                 --card-fixed-height: 680px; 
+                 --card-min-height: 650px; 
              }
              #start-card .card-content,
              #how-to-play-card .card-content {
-                 min-height: 85vh; 
-                 padding-top: 4rem; /* More top padding for centering */
+                 min-height: 90vh; 
+                 padding-top: 4rem; 
                  padding-bottom: 4rem;
              }
         }
@@ -189,11 +191,11 @@
             font-size: 1.1rem; 
             font-weight: 500;
             color: var(--color-text-light); 
-            margin: 1rem auto 2.5rem auto; /* Center block */ 
+            margin: 1rem auto 2.5rem auto; 
             text-align: center;
-            position: relative; /* Context for badge */
-            display: inline-block; /* Fit content */
-            padding-right: 45px; /* Space for badge */
+            position: relative; 
+            display: inline-block; 
+            padding-right: 50px; /* More space */
         }
         /* 5 Minute Badge */
         .time-badge {
@@ -207,10 +209,9 @@
             border: 1px solid var(--color-border);
             white-space: nowrap;
             position: absolute;
-            /* NEW: Position top-right relative to tagline */
-            top: -0.5rem; 
+            top: -0.8rem; /* Higher */
             right: 0; 
-            transform: rotate(10deg); /* Adjust tilt */
+            transform: rotate(10deg); 
         }
          @media (max-width: 600px) {
              #start-card h1 { 
@@ -218,16 +219,16 @@
              } 
             #start-card .tagline { 
                 font-size: 1rem; 
-                display: block; /* Stack on mobile */
-                padding-right: 0; /* No padding needed */
+                display: block; 
+                padding-right: 0; 
                 margin-bottom: 1rem;
             }
             .time-badge {
-                 position: static; /* Reset position */
-                 transform: none; /* Reset transform */
-                 display: block; /* Make it block */
-                 width: fit-content; /* Size to content */
-                 margin: 0.5rem auto 2rem auto; /* Center below tagline */
+                 position: static; 
+                 transform: none; 
+                 display: block; 
+                 width: fit-content; 
+                 margin: 0.5rem auto 2rem auto; 
                  font-size: 0.8rem;
             }
          }
@@ -354,23 +355,8 @@
             .question-text { font-size: 1.3rem; } 
         }
         
-        /* quiz-body provides internal scroll */
-        .quiz-body {
-            flex-grow: 1; 
-            min-height: 0; 
-            overflow-y: auto; 
-            padding-right: 15px; 
-            margin-right: -15px; 
-            scrollbar-width: thin; 
-            scrollbar-color: var(--color-border) transparent; 
-        }
-        .quiz-body::-webkit-scrollbar { width: 8px; }
-        .quiz-body::-webkit-scrollbar-track { background: transparent; }
-        .quiz-body::-webkit-scrollbar-thumb {
-            background-color: var(--color-border);
-            border-radius: 4px;
-        }
-
+        /* REMOVED .quiz-body scroll container */
+        
         /* --- Segmented Control Radio Buttons --- */
         .radio-group {
             display: flex;
@@ -379,7 +365,7 @@
             overflow: hidden;
             width: 100%;
             margin-bottom: 1.5rem; 
-            flex-shrink: 0; 
+            flex-shrink: 0; /* Prevent shrinking */
         }
         .radio-group input[type="radio"] { display: none; }
         .radio-group label {
@@ -441,7 +427,21 @@
             margin-top: 1.5rem; 
             border-top: 1px solid var(--color-border-light);
             padding-top: 1rem; 
+             /* flex-shrink allows it to take less space if needed, but flex-grow on card ensures base height */
+             flex-grow: 1; 
+             min-height: 0; /* Needed for flex-grow */
+             overflow-y: auto; /* Scroll if content exceeds space */
+             padding-right: 10px; /* Space for scrollbar */
+             margin-right: -10px;
+             scrollbar-width: thin; 
+             scrollbar-color: var(--color-border) transparent; 
         }
+         .accordion-container::-webkit-scrollbar { width: 8px; }
+         .accordion-container::-webkit-scrollbar-track { background: transparent; }
+         .accordion-container::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 4px;
+         }
         
         details { margin-bottom: 0.5rem; }
         
@@ -471,7 +471,7 @@
         .accordion-content {
             padding: 0.5rem 0 0.5rem 1.75rem; /* Reduced padding */
             color: var(--color-text-secondary);
-            font-size: 0.9rem; /* Smaller content text */
+            font-size: 0.85rem; /* Smaller content text */
             line-height: 1.5; /* Tighter line height */
         }
         
@@ -479,10 +479,10 @@
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: auto; /* Push buttons to bottom */
+            margin-top: 2rem; /* Ensure space above nav */
             border-top: 1px solid var(--color-border-light);
             padding-top: 2rem;
-            flex-shrink: 0; 
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
@@ -541,6 +541,7 @@
         /* --- Weighting Card --- */
         #weighting-card .card-content {
             padding-top: 2.5rem;
+            height: var(--card-fixed-height); /* Explicitly set height */
         }
         
         #weighting-card h2 {
@@ -549,7 +550,7 @@
             line-height: 1.2;
             color: var(--color-text);
             text-align: center;
-            margin-bottom: 0.75rem; 
+            margin-bottom: 0.5rem; /* Reduced margin */
             flex-shrink: 0;
         }
         #weighting-card .card-subtitle {
@@ -694,10 +695,7 @@
         /* --- Results Card --- */
         #results-card .card-content {
              justify-content: center; 
-             /* min-height: var(--card-fixed-height); Ensure it uses fixed height */
-             /* Results card can be shorter if needed */
-             min-height: auto; 
-             height: auto;
+             height: var(--card-fixed-height); /* Also fixed height */
         }
         
         #results-card h2 {
@@ -742,9 +740,15 @@
         #restart-btn {
             width: 100%;
             max-width: 300px; /* Limit width */
-            margin: 2rem auto 0 auto; /* Adjusted margin */
+            margin: auto auto 0 auto; /* Push to bottom */
             display: block;
+            padding-top: 1rem; /* Space above */
         }
+         @media (max-width: 600px) {
+             #restart-btn {
+                 margin-top: 1.5rem; 
+             }
+         }
     </style>
 </head>
 <body>
@@ -764,7 +768,7 @@
                         <span class="stack-icon icon-match">🎯</span>
                     </div>
                     <h1>Mayoral Matchmaker</h1>
-                    </div>
+                </div>
                 
                 <p class="tagline">
                     See which Montreal party you are most aligned to
@@ -1117,18 +1121,15 @@
                             <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
                             <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
                             
-                            <div class="quiz-body"> 
-                                <div class="radio-group" id="radio-group-${index}">
-                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
-                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
-                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
-                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
-                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
-                                </div>
-                                
-                                ${detailsHtml}
+                            <div class="radio-group" id="radio-group-${index}">
+                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
                             </div>
-
+                            
+                            ${detailsHtml}
                             <div class="navigation-buttons">
                                 <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
                                 <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
@@ -1361,7 +1362,7 @@
             
             const restartBtn = document.createElement('button');
             restartBtn.id = 'restart-btn';
-            restartBtn.className = 'nav-btn secondary'; // Use secondary style
+            restartBtn.className = 'nav-btn secondary'; 
             restartBtn.textContent = 'Restart Quiz';
             restartBtn.onclick = () => location.reload(); 
             // Append restart button *after* the results list
