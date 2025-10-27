@@ -822,31 +822,30 @@
 
                 <button id="start-btn" class="nav-btn">Start Quiz</button>
 
-                <div class="quiz-author">Quiz by The Gazette's Harry North</div>
+                <div class="quiz-author">Quiz by The Gazette.</div>
             </div>
         </div>
 
         <div id="how-to-play-card" class="quiz-card">
             <div class="card-content">
-                <h2>How It Works</h2>
+                <h2>How it works</h2>
 
                 <ol class="how-to-list">
                     <li>
-                        <strong>Answer questions:</strong> Share your opinion on 20 key Montreal issues.
+                        <strong>Answer questions:</strong> Choose from disagree to agree on 20 statements.
                     </li>
                     <li>
-                        <strong>Wager your points:</strong> Allocate 100 points to show what matters most to you.
+                        <strong>Weight importance:</strong> Decide which questions matters most to you.
                     </li>
                     <li>
-                        <strong>Find your match:</strong> See which mayoral candidate aligns with your views.
+                        <strong>Find your match:</strong> See which mayoral party aligns with your views.
                     </li>
                 </ol>
 
                 <button id="got-it-btn" class="nav-btn">Got it</button>
 
                 <div class="privacy-notice">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.5A5.25 5.25 0 0 0 6.75 6.75v3.75H6a2.25 2.25 0 0 0-2.25 2.25v8.25A2.25 2.25 0 0 0 6 23.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.25A2.25 2.25 0 0 0 18 10.5h-.75V6.75A5.25 5.25 0 0 0 12 1.5Zm0 1.5a3.75 3.75 0 0 1 3.75 3.75v3.75H8.25V6.75A3.75 3.75 0 0 1 12 3Zm-4.5 9h9v8.25a.75.75 0 0 1-.75.75H8.25a.75.75 0 0 1-.75-.75V12Z"></path></svg>
-                    <span><strong>We respect your privacy.</strong> No data is collected or stored.</span>
+                    <span>No data is collected or stored.</span>
                 </div>
             </div>
         </div>
@@ -856,7 +855,7 @@
         <div id="weighting-card" class="quiz-card">
             <div class="card-content">
                 <h2>How important is each question?</h2>
-                <p class="card-subtitle">You have 100 points to show what matters most. Give more points to the questions you care about, and fewer to the ones you don't.</p>
+                <p class="card-subtitle">Give more points to the questions you care about.</p>
 
                 <div class="points-tracker">
                     <span id="total-points-display">100 / 100</span>
@@ -873,7 +872,7 @@
                     <span id="weighting-page-indicator">1 / 5</span>
                     <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
                 </div>
-                <button id="submit-quiz-btn" class="nav-btn">Calculate My Alignment</button>
+                <button id="submit-quiz-btn" class="nav-btn">Calculate</button>
                 <p id="error-message"></p>
             </div>
         </div>
@@ -918,7 +917,6 @@
                 text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries.",
                 details: [
                     { summary: "What is the REV?", content: "The Réseau express vélo is a network of high-capacity, protected bike lanes, many of which are designed to be clear and safe for year-round cycling." },
-                    { summary: "Why 'specialized options'?", content: "This refers to proposals to add features like baby seats to the Bixi bike-share service, making it more accessible for families." }
                 ]
             },
             {
@@ -926,7 +924,6 @@
                 text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses.",
                 details: [
                     { summary: "What's the argument for this?", content: "Some candidates argue that bike lanes on commercial streets (like Ste-Catherine or Saint-Denis) hurt local businesses by removing parking, and that bike routes should be prioritized on residential streets or in parks instead." },
-                    { summary: "What's the argument against this?", content: "Opponents argue that bike lanes bring more foot (and bike) traffic to businesses, reduce traffic, and are essential for creating a connected, safe transportation network." }
                 ]
             },
             // --- Cleanliness (3) ---
@@ -990,7 +987,6 @@
                 text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments.",
                 details: [
                     { summary: "What does 'requisition' mean?", content: "This would involve the city taking temporary control of empty buildings (like unused hotels) to provide immediate shelter for the homeless, particularly during winter." },
-                    { summary: "Why ban police?", content: "This proposal suggests that police dismantling encampments is harmful and ineffective. Instead, it advocates for sending social service teams to support people on-site." }
                 ]
             },
             // --- Housing (11-12) ---
