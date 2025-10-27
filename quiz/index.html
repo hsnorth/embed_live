@@ -50,14 +50,14 @@
             left: 0;
             width: 100%;
             height: 8px;
-            background-color: var(--color-border-light);
+            background-color: #ffc106;
             z-index: 20;
         }
 
         #progress-bar {
             width: 0%;
             height: 100%;
-            background-color: var(--color-accent);
+            background-color: #ffc106;
             transition: width 0.4s ease;
         }
 
@@ -476,7 +476,7 @@
             flex-shrink: 0; /* Prevent shrinking */
         }
 
-        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
+        .nav-btn, #start-btn, #submit-quiz-btn, #got-it-btn {
             font-family: var(--font-sans);
             font-size: 1rem;
             font-weight: 700;
@@ -488,18 +488,19 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
-        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover, #got-it-btn:hover {
+        
+        /* Separate restart btn from this rule */
+        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #got-it-btn:hover {
             background: #003366;
             border-color: #003366;
         }
 
-        .nav-btn.secondary, #restart-btn {
+        .nav-btn.secondary {
             background: var(--color-bg);
             color: var(--color-accent);
         }
 
-        .nav-btn.secondary:hover, #restart-btn:hover {
+        .nav-btn.secondary:hover {
             background: #f4f4f4;
             border-color: var(--color-accent);
         }
@@ -719,7 +720,7 @@
             font-weight: 800;
             font-size: 2.5rem;
             line-height: 1.2;
-            color: var(--color-text); /* Default text color, will be overridden by JS */
+            color: var(--color-text); /* Default text color */
             text-align: center;
             margin-bottom: 2.5rem;
         }
@@ -749,26 +750,44 @@
         }
         .bar-fill {
             height: 100%;
-            background: var(--color-text-light);
+            background: var(--color-text-light); /* Default, will be overridden */
             width: 0%; /* Set by JS */
             transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
         /* --- CHANGED: Top Match now only applies font-weight --- */
-        /* Colors are applied via inline styles from JS */
         .result-bar.top-match .candidate-name,
         .result-bar.top-match .result-percent {
             font-weight: 700;
-            /* color: var(--color-accent); - REMOVED */
         }
         
+        /* --- CHANGED: Restart Button Style --- */
         #restart-btn {
+            /* Remove all button styles */
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+
+            /* Keep layout styles */
             width: 100%;
-            max-width: 300px; /* Limit width */
-            margin: auto auto 0 auto; /* Push to bottom */
+            max-width: 300px; 
+            margin: 2rem auto 0 auto; /* Add more margin-top, remove bottom */
             display: block;
-            padding-top: 1rem; /* Space above */
+            padding-top: 1rem;
+            text-align: center;
         }
+        #restart-btn:hover {
+            color: var(--color-text);
+            text-decoration: underline;
+            background: none; /* Ensure no hover background */
+            border: none; /* Ensure no hover border */
+        }
+
          @media (max-width: 600px) {
                #restart-btn {
                    margin-top: 1.5rem;
@@ -1430,29 +1449,28 @@
 
             let html = '';
 
-            // --- NEW: Get top match and color ---
+            // --- Get top match and color ---
             const topMatch = results[0];
             const topColor = PARTY_COLORS[topMatch.party] || 'var(--color-accent)'; // Fallback
 
-            // --- NEW: Update title dynamically ---
+            // --- CHANGED: Update title dynamically with party name ---
             const resultsTitle = document.getElementById('results-title');
             if (resultsTitle && topMatch) {
-                resultsTitle.textContent = `You are closest to ${topMatch.name}`;
-                resultsTitle.style.color = topColor; // Apply color to title
+                // Set innerHTML to allow for a styled span
+                resultsTitle.innerHTML = `You are closest to <span style="color: ${topColor};">${topMatch.party}</span>`;
             }
 
 
             results.forEach((r, index) => {
                 const topMatchClass = (index === 0) ? 'top-match' : '';
                 
-                // --- NEW: Add inline styles for colors ---
-                let barFillStyle = `style="width: 0%;"`; // Default
-                let textStyle = '';
+                // --- CHANGED: Get color for *every* bar ---
+                const barColor = PARTY_COLORS[r.party] || 'var(--color-text-light)'; // Fallback
+                
+                // --- CHANGED: Add inline styles for colors for *every* bar ---
+                let barFillStyle = `style="width: 0%; background-color: ${barColor};"`;
+                let textStyle = `style="color: ${barColor};"`;
 
-                if (index === 0) { // If it's the top match
-                    barFillStyle = `style="width: 0%; background-color: ${topColor};"`; // Combined
-                    textStyle = `style="color: ${topColor};"`;
-                }
 
                 html += `
                     <div class="result-bar ${topMatchClass}">
@@ -1471,8 +1489,11 @@
 
             const restartBtn = document.createElement('button');
             restartBtn.id = 'restart-btn';
-            restartBtn.className = 'nav-btn secondary';
-            restartBtn.textContent = 'Restart Quiz';
+            
+            // --- CHANGED: Remove button classes and change text ---
+            restartBtn.className = ''; // No classes
+            restartBtn.textContent = 'Click back to start';
+            
             restartBtn.onclick = () => location.reload();
             // Append restart button *after* the results list
             outputDiv.parentElement.appendChild(restartBtn);
