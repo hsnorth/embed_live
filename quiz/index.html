@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Professional Navy Theme --- */
+        /* --- Professional Navy Theme (with Pointed influence) --- */
         :root {
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             
@@ -23,8 +23,9 @@
             --color-error: #d90000;
             --color-success: #008a1e;
             
-            /* NEW: Uniform card height */
-            --card-min-height: 680px; 
+            /* NEW: Uniform card height for quiz, weighting. Start/How-to can be shorter. */
+            --card-min-height-quiz: 680px; 
+            --card-min-height-intro: 550px;
         }
         
         * {
@@ -34,7 +35,7 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            /* NEW: Reduced top padding */
+            /* NEW: Minimal top padding as progress bar is fixed */
             padding: 2rem 1rem 3rem 1rem; 
             background-color: var(--color-bg-light);
             color: var(--color-text);
@@ -79,57 +80,62 @@
         /* Apply uniform height only to quiz and weighting cards */
         #question-card-container .card-content,
         #weighting-card .card-content {
-            min-height: var(--card-min-height);
+            min-height: var(--card-min-height-quiz);
         }
+        /* New intro cards also get a min-height */
+        #start-card .card-content,
+        #how-to-play-card .card-content {
+             min-height: var(--card-min-height-intro);
+             justify-content: space-between; /* Push bottom elements down */
+        }
+
 
         /* Card Visibility */
         .quiz-card { display: none; }
         .quiz-card.active { display: block; }
         
-        /* --- Header & Start Card --- */
+        /* --- Start Card --- */
         #start-card h1 {
             font-weight: 800;
             color: var(--color-text);
-            margin: 0 0 1rem 0;
+            margin: 0 0 0.5rem 0;
             font-size: 2.5rem;
             line-height: 1.2;
             text-align: center;
         }
-        
-        #start-card p {
+        #start-card .quiz-date {
             font-size: 1.1rem;
             color: var(--color-text-light);
-            margin: 1.5rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            display: block;
+        }
+        
+        #start-card .tagline {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--color-text);
+            margin: 2rem 0 3rem 0;
             text-align: center;
         }
 
-        .how-it-works {
-            background: var(--color-bg-light);
-            border: 1px solid var(--color-border-light);
-            border-radius: 4px;
-            padding: 1.5rem 2.5rem;
-            margin-top: 2.5rem;
-        }
-        
-        .how-it-works h2 {
+        #start-btn {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--color-text);
+            width: 100%;
+            margin-top: 2rem;
+        }
+        
+        .quiz-author {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
             text-align: center;
-            margin: 0.5rem 0 1.5rem 0;
-            font-size: 1.25rem;
+            margin-top: 2rem;
         }
         
-        .how-it-works ol { padding-left: 20px; margin: 0; }
-        .how-it-works li {
-            font-size: 1rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        .how-it-works li:last-child { margin-bottom: 0; }
-        .how-it-works strong { color: var(--color-text); }
-        
-        /* NEW: Privacy Notice */
+        /* NEW: Privacy Notice on Start Card */
         .privacy-notice {
             display: flex;
             align-items: center;
@@ -141,6 +147,10 @@
             border-radius: 4px;
             color: var(--color-text-light);
             font-size: 0.9rem;
+            width: 100%; /* Ensure it spans full width of card content */
+            max-width: 400px; /* Limit width */
+            margin-left: auto;
+            margin-right: auto;
         }
         .privacy-notice svg {
             width: 20px;
@@ -153,15 +163,64 @@
             color: var(--color-text);
         }
 
-        #start-btn {
-            background-color: var(--color-accent);
-            color: var(--color-bg);
-            font-size: 1.1rem;
+        /* --- How To Play Card --- */
+        #how-to-play-card h2 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: var(--color-text);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .how-to-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2.5rem;
+        }
+        .how-to-icon {
+            font-size: 2.5rem; /* Larger for visual emphasis */
+            line-height: 1;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+            width: 50px; /* Fixed width for alignment */
+            text-align: center;
+        }
+        .how-to-icon.points { color: var(--color-accent); }
+        .how-to-icon.multiplier { color: #5cb85c; } /* Green for multiplier */
+        .how-to-icon.answer { 
+            font-size: 2.2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d90000; /* Red for X */
+        }
+        .how-to-icon.answer::before {
+            content: '✓';
+            position: absolute;
+            color: var(--color-success); /* Green for Check */
+            left: 50%;
+            transform: translateX(-50%) translateY(50%);
+            top: -10px; /* Adjust position */
+            font-size: 1.6rem;
+        }
+
+        .how-to-item h3 {
+            font-size: 1.3rem;
             font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+        .how-to-item p {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            margin: 0;
+        }
+        #how-to-play-card #got-it-btn {
             width: 100%;
             margin-top: 2rem;
         }
-        
+
+
         /* --- Question Card Styling --- */
         .question-header {
             font-size: 1rem;
@@ -299,7 +358,7 @@
             flex-shrink: 0; /* Prevent shrinking */
         }
 
-        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn {
+        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
             font-family: var(--font-sans);
             font-size: 1rem;
             font-weight: 700;
@@ -312,7 +371,7 @@
             transition: all 0.2s ease;
         }
         
-        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover {
+        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover, #got-it-btn:hover {
             background: #003366; /* Darker navy */
             border-color: #003366;
         }
@@ -327,7 +386,7 @@
             border-color: var(--color-accent);
         }
         
-        .nav-btn:disabled, #submit-quiz-btn:disabled {
+        .nav-btn:disabled, #submit-quiz-btn:disabled, #got-it-btn:disabled {
             background: #ccc;
             border-color: #ccc;
             color: #888;
@@ -445,6 +504,9 @@
             line-height: 0; /* Aligns + sign */
             padding: 0;
             transition: all 0.2s;
+            display: flex; /* Center +/- */
+            align-items: center;
+            justify-content: center;
         }
         .point-btn:hover {
             background: var(--color-accent);
@@ -538,24 +600,63 @@
         
         <div id="start-card" class="quiz-card active">
             <div class="card-content">
-                <h1>Which Montreal Mayoral Candidate Thinks Like You?</h1>
-                <p>Answer 20 questions on key city issues to find out which 2025 mayoral platform best matches your priorities.</p>
-
-                <div class="how-it-works">
-                    <h2>How It Works</h2>
-                    <ol>
-                        <li><strong>Share Your Opinion:</strong> For 20 questions, pick the answer that best fits how you feel.</li>
-                        <li><strong>Show What Matters Most:</strong> After, you'll get 100 "Importance Points." You must spend all 100 points across the questions to show which ones are most important to you.</li>
-                        <li><strong>Find Your Match!</strong> We'll instantly compare your answers and priorities to the candidates' platforms and show you who you align with most.</li>
-                    </ol>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="display:inline-block; position:relative; width: 60px; height: 60px; background: #5cb85c; transform: rotate(-15deg); border-radius: 8px; margin: 0 10px;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.5rem;">3x</span>
+                    </div>
+                    <div style="display:inline-block; position:relative; width: 60px; height: 60px; background: #d9534f; transform: rotate(10deg); border-radius: 8px; margin: 0 10px;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.5rem;">&#x2716;</span>
+                    </div>
+                    <div style="display:inline-block; position:relative; width: 60px; height: 60px; background: #5cb85c; transform: rotate(-5deg); border-radius: 8px; margin: 0 10px;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: 800; font-size: 1.5rem;">&#x2713;</span>
+                    </div>
                 </div>
+
+                <h1 style="font-size: 3.5rem; margin-bottom: 0.25rem;">Mayoral Matchmaker</h1>
+                <span class="quiz-date">November 1, 2025</span>
                 
+                <p class="tagline">Find the Party That Fits You Best</p>
+
                 <button id="start-btn" class="nav-btn">Start Quiz</button>
                 
+                <div class="quiz-author">A quiz by Harry North</div>
+
                 <div class="privacy-notice">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.5A5.25 5.25 0 0 0 6.75 6.75v3.75H6a2.25 2.25 0 0 0-2.25 2.25v8.25A2.25 2.25 0 0 0 6 23.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.25A2.25 2.25 0 0 0 18 10.5h-.75V6.75A5.25 5.25 0 0 0 12 1.5Zm0 1.5a3.75 3.75 0 0 1 3.75 3.75v3.75H8.25V6.75A3.75 3.75 0 0 1 12 3Zm-4.5 9h9v8.25a.75.75 0 0 1-.75.75H8.25a.75.75 0 0 1-.75-.75V12Z"></path></svg>
-                    <span><strong>We respect your privacy.</strong> This quiz is 100% anonymous. No data is collected or stored.</span>
+                    <span><strong>We respect your privacy.</strong> No data is collected or stored.</span>
                 </div>
+            </div>
+        </div>
+
+        <div id="how-to-play-card" class="quiz-card">
+            <div class="card-content">
+                <h2>How to Play</h2>
+
+                <div class="how-to-item">
+                    <span class="how-to-icon points">●●●</span>
+                    <div>
+                        <h3>Answer questions</h3>
+                        <p>Share your opinion on 20 key Montreal issues.</p>
+                    </div>
+                </div>
+
+                <div class="how-to-item">
+                    <span class="how-to-icon multiplier">3x</span>
+                    <div>
+                        <h3>Wager your points</h3>
+                        <p>Allocate 100 points to show what matters most to you.</p>
+                    </div>
+                </div>
+
+                <div class="how-to-item">
+                    <span class="how-to-icon answer">&#x2716;</span>
+                    <div>
+                        <h3>Find your match</h3>
+                        <p>See which mayoral candidate aligns with your views.</p>
+                    </div>
+                </div>
+
+                <button id="got-it-btn" class="nav-btn">Got it</button>
             </div>
         </div>
         
@@ -587,7 +688,7 @@
                 <h2>Your 2025 Montreal Match</h2>
                 <div id="results-output">
                     </div>
-                </div>
+            </div>
         </div>
 
     </div>
@@ -769,8 +870,11 @@
         ];
         
         // --- App State ---
-        let currentStep = 0; // 0 = start, 1-20 = questions, 21 = weighting, 22 = results
-        const totalSteps = QUESTIONS.length + 2; // 20 questions + weighting card + results card
+        // 0 = Start, 1 = How to Play, 2-21 = Questions, 22 = Weighting, 23 = Results
+        let currentStep = 0; 
+        const totalQuizQuestions = QUESTIONS.length;
+        // Total steps now includes Start, How-to-Play, Questions, Weighting, Results
+        const totalSteps = 2 + totalQuizQuestions + 2; 
         let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
         
         // --- Helper Functions ---
@@ -831,7 +935,9 @@
          function updateProgressBar(step, total = totalSteps) {
             const progressBar = document.getElementById('progress-bar');
             if (progressBar) {
-                const percentage = (step / total) * 100;
+                // Ensure step is never 0 for percentage calculation unless it's the very start
+                const effectiveStep = Math.max(0, step); 
+                const percentage = (effectiveStep / total) * 100;
                 progressBar.style.width = `${percentage}%`;
             }
          }
@@ -883,7 +989,7 @@
                             </div>
 
                             <div class="navigation-buttons">
-                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}" ${index === 0 ? 'style="visibility: hidden;"' : ''}>Previous</button>
+                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
                                 <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
                             </div>
                         </div>
@@ -908,7 +1014,7 @@
                             ${q.id}. <strong>${questionShortText}</strong>
                         </label>
                         <div class="point-allocator">
-                            <button type="button" class="point-btn minus" data-index="${index}" aria-label="Decrease points" ${index === 0 ? 'data-first-minus="true"' : ''}>-</button>
+                            <button type="button" class="point-btn minus" data-index="${index}" aria-label="Decrease points">-</button>
                             <input type="text" class="point-input" id="points-${index}" value="5" readonly>
                             <button type="button" class="point-btn plus" data-index="${index}" aria-label="Increase points">+</button>
                         </div>
@@ -924,9 +1030,18 @@
         function attachListeners() {
             // Start button
             document.getElementById('start-btn').addEventListener('click', () => {
-                currentStep = 1;
+                currentStep = 1; // Now goes to 'How to Play' card
+                showCard('how-to-play-card');
+                updateProgressBar(currentStep);
+            });
+
+            // NEW: "Got it" button for How to Play card
+            document.getElementById('got-it-btn').addEventListener('click', () => {
+                currentStep = 2; // Now goes to the first question
                 showCard('question-card-0');
                 updateProgressBar(currentStep);
+                // Ensure prev button is hidden on first question
+                document.getElementById('prev-btn-0').style.visibility = 'hidden';
             });
             
             // Next/Prev buttons
@@ -934,6 +1049,11 @@
                 const nextBtn = document.getElementById(`next-btn-${index}`);
                 const prevBtn = document.getElementById(`prev-btn-${index}`);
                 
+                // Set visibility for first question's prev button initially
+                if (index === 0) {
+                    prevBtn.style.visibility = 'hidden';
+                }
+
                 // UX: Listen to radio group to enable Next button
                 document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
                     nextBtn.disabled = false;
@@ -952,21 +1072,29 @@
                     
                     // 2. Move to next card
                     currentStep++;
-                    if (currentStep <= QUESTIONS.length) { // Moving to the next question
-                        const nextQuestionIndex = currentStep - 1;
+                    if (currentStep <= totalQuizQuestions + 1) { // Moving to the next question (2 for intro cards)
+                        const nextQuestionIndex = currentStep - 2; // Adjust for 2 intro cards
                         showCard(`question-card-${nextQuestionIndex}`);
                         updateProgressBar(currentStep);
+                        
+                        // Show previous button for all questions after the first
+                        if (nextQuestionIndex > 0) {
+                            document.getElementById(`prev-btn-${nextQuestionIndex}`).style.visibility = 'visible';
+                        }
                         
                         // Check if this next question has a stored answer
                         if (userAgreementAnswers[nextQuestionIndex] !== null) {
                             const val = userAgreementAnswers[nextQuestionIndex];
                             document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
+                        } else {
+                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = true; // Disable if no answer yet
                         }
+
                     } else {
                         // Finished last question, move to weighting card
                         showCard('weighting-card');
-                        updateProgressBar(currentStep); // This will be 21/22
+                        updateProgressBar(currentStep); // This will be (totalQuizQuestions + 2) + 1 = 23 steps
                         updatePointTotal();
                     }
                 });
@@ -974,9 +1102,25 @@
                 if (prevBtn) {
                     prevBtn.addEventListener('click', () => {
                         currentStep--;
-                        const prevQuestionIndex = currentStep - 1;
-                        showCard(`question-card-${prevQuestionIndex}`);
-                        updateProgressBar(currentStep);
+                        if (currentStep <= 1) { // Back to How-to-Play card
+                            showCard('how-to-play-card');
+                            updateProgressBar(currentStep);
+                        } else { // Back to a question card
+                            const prevQuestionIndex = currentStep - 2; // Adjust for 2 intro cards
+                            showCard(`question-card-${prevQuestionIndex}`);
+                            updateProgressBar(currentStep);
+
+                            // Re-select the answer on the previous card
+                            const val = userAgreementAnswers[prevQuestionIndex];
+                            if (val !== null) {
+                                document.querySelector(`#question-card-${prevQuestionIndex} input[value="${val}"]`).checked = true;
+                                document.getElementById(`next-btn-${prevQuestionIndex}`).disabled = false;
+                            }
+                            // Hide prev button if it's the first question
+                            if (prevQuestionIndex === 0) {
+                                document.getElementById(`prev-btn-0`).style.visibility = 'hidden';
+                            }
+                        }
                     });
                 }
             });
@@ -1056,7 +1200,7 @@
             
             // Final step
             currentStep++;
-            updateProgressBar(currentStep); // This will be 22/22 (100%)
+            updateProgressBar(currentStep); // This will be 23/23 (100%)
             renderResults(finalResults);
         }
 
@@ -1065,6 +1209,12 @@
          */
         function renderResults(results) {
             const outputDiv = document.getElementById('results-output');
+            // Clear previous results and restart button if any
+            outputDiv.innerHTML = ''; 
+            const existingRestartBtn = document.getElementById('restart-btn');
+            if (existingRestartBtn) existingRestartBtn.remove();
+
+
             let html = '';
 
             results.forEach((r, index) => {
@@ -1087,7 +1237,7 @@
             // NEW: Add Restart Button
             const restartBtn = document.createElement('button');
             restartBtn.id = 'restart-btn';
-            restartBtn.className = 'nav-btn secondary'; // Use secondary style
+            restartBtn.className = 'nav-btn'; // Use primary style for restart
             restartBtn.textContent = 'Restart Quiz';
             restartBtn.onclick = () => location.reload(); // Easiest way to reset state
             outputDiv.parentElement.appendChild(restartBtn);
@@ -1110,7 +1260,7 @@
             renderQuestionCards();
             renderWeightingCard();
             attachListeners();
-            updateProgressBar(0, totalSteps); // Set initial progress to 0
+            updateProgressBar(currentStep, totalSteps); // Set initial progress to 0
         });
     </script>
 </body>
