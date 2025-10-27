@@ -26,7 +26,7 @@
             --color-info: #0dcaf0;   /* Teal */
             
             /* Consistent FIXED height for main cards */
-            --card-fixed-height: 700px; /* Adjusted slightly */
+            --card-fixed-height: 700px; 
         }
         
         * {
@@ -76,7 +76,7 @@
             flex-direction: column;
         }
         
-        /* Apply fixed height to quiz, weighting, and results cards */
+        /* Apply fixed height only to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
@@ -119,6 +119,7 @@
         .start-card-header {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative; /* Needed for badge positioning context */
         }
         .icon-stack {
             position: relative;
@@ -177,25 +178,36 @@
             font-size: 3rem; 
             line-height: 1.1;
             text-align: center;
-            display: inline-block; /* To allow badge placement */
-            position: relative; /* For badge positioning */
+            display: inline-block; 
+            position: relative; 
         }
-        /* NEW: 5 Minute Badge */
+        /* 5 Minute Badge */
         .time-badge {
             display: inline-block;
             background-color: var(--color-bg-light);
             color: var(--color-text-light);
-            font-size: 0.75rem;
+            font-size: 0.7rem; /* Smaller */
             font-weight: 700;
-            padding: 0.25rem 0.6rem;
+            padding: 0.2rem 0.5rem; /* Smaller padding */
             border-radius: 1rem;
             border: 1px solid var(--color-border);
             position: absolute;
-            top: -0.5rem; /* Adjust position */
-            right: -1rem; /* Adjust position */
+            top: -0.2rem; /* Adjusted position */
+            right: -0.5rem; /* Adjusted position */
             white-space: nowrap;
-             transform: translateX(100%) rotate(10deg); /* Tilt effect */
+            transform: translateX(100%) rotate(10deg); 
         }
+        /* Adjust badge on mobile */
+         @media (max-width: 600px) {
+             #start-card h1 { font-size: 2.5rem; } /* Slightly smaller title */
+            .time-badge {
+                 top: 0.1rem; 
+                 right: -0.8rem; /* Nudge further right */
+                 font-size: 0.65rem;
+                 padding: 0.15rem 0.4rem;
+            }
+         }
+
 
         #start-card .quiz-date {
             font-size: 1rem; 
@@ -388,7 +400,9 @@
                 border-radius: 6px; 
                 margin-bottom: 0.5rem; 
                 border-left: 2px solid var(--color-border); 
-                font-size: 1rem;
+                /* NEW: Slightly smaller buttons */
+                font-size: 0.9rem; 
+                padding: 0.75rem 0.5rem;
             }
             .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
             
@@ -523,39 +537,39 @@
         
         #weighting-card h2 {
             font-weight: 800;
-            font-size: 2.5rem;
+            font-size: 2rem; /* Slightly smaller header */
             line-height: 1.2;
             color: var(--color-text);
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem; /* Reduced margin */
             flex-shrink: 0;
         }
         #weighting-card .card-subtitle {
-            font-size: 1.1rem;
+            font-size: 1rem; /* Slightly smaller subtitle */
             color: var(--color-text-light);
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem; /* Reduced margin */
             flex-shrink: 0;
         }
 
         .points-tracker {
             text-align: center;
             border-bottom: 1px solid var(--color-border);
-            padding-bottom: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding-bottom: 1rem; /* Reduced padding */
+            margin-bottom: 1rem; /* Reduced margin */
             flex-shrink: 0;
         }
         
         .points-tracker-label {
-            font-size: 1.3rem;
+            font-size: 1.1rem; /* Smaller label */
             font-weight: 700;
             color: var(--color-text);
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         
         #total-points-display {
-            font-size: 1.75rem;
+            font-size: 1.5rem; /* Smaller display */
             font-weight: 700;
             color: var(--color-success);
             transition: color 0.3s ease;
@@ -563,9 +577,9 @@
         #total-points-display.error { color: var(--color-error); }
         
         #points-helper {
-            font-size: 1rem;
+            font-size: 0.9rem; /* Smaller helper */
             color: var(--color-text-light);
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
             line-height: 1.5;
         }
         
@@ -591,7 +605,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.25rem;
+            padding: 0.8rem 1rem; /* Reduced padding */
             border-bottom: 1px solid var(--color-border-light);
         }
         .weighting-list-item:last-child { border-bottom: none; }
@@ -600,7 +614,7 @@
             font-weight: 500;
             padding-right: 1rem;
             flex-grow: 1;
-            font-size: 0.95rem;
+            font-size: 0.9rem; /* Smaller text */
         }
         
         .weighting-q-text strong {
@@ -616,19 +630,19 @@
         }
         
         .point-btn {
-            width: 32px;
-            height: 32px;
-            font-size: 1.5rem;
+            width: 30px; /* Smaller buttons */
+            height: 30px;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--color-accent);
             background: var(--color-bg);
             border: 2px solid var(--color-border);
             border-radius: 50%;
             cursor: pointer;
-            line-height: 0; /* Aligns + sign */
+            line-height: 0; 
             padding: 0;
             transition: all 0.2s;
-            display: flex; /* Center +/- */
+            display: flex; 
             align-items: center;
             justify-content: center;
         }
@@ -639,15 +653,15 @@
         }
         
         .point-input {
-            width: 50px;
-            height: 48px;
-            font-size: 1.1rem;
+            width: 45px; /* Smaller input */
+            height: 40px;
+            font-size: 1rem; /* Smaller font */
             font-weight: 700;
             text-align: center;
             border: none;
             background: transparent;
             color: var(--color-text);
-            margin: 0 0.25rem;
+            margin: 0 0.2rem;
             -webkit-appearance: none;
             -moz-appearance: textfield;
             pointer-events: none; /* Make readonly visually */
@@ -655,17 +669,17 @@
         
         #submit-quiz-btn {
             width: 100%;
-            margin-top: 2rem;
-            flex-shrink: 0; /* Prevent shrinking */
+            margin-top: 1.5rem; /* Reduced margin */
+            flex-shrink: 0; 
         }
         
         #error-message {
             color: var(--color-error);
             text-align: center;
             font-weight: 700;
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
-            display: none; /* Hidden by default */
+            margin-top: 1rem; /* Reduced margin */
+            font-size: 1rem; /* Slightly smaller */
+            display: none; 
             flex-shrink: 0;
         }
 
@@ -712,9 +726,14 @@
         #restart-btn {
             width: 100%;
             max-width: 300px; /* Limit width */
-            margin: 2.5rem auto 0 auto; /* Center button */
+            margin: 2rem auto 0 auto; /* Adjusted margin */
             display: block;
         }
+         @media (max-width: 600px) {
+             #restart-btn {
+                 margin-top: 1.5rem; /* Even less margin on mobile */
+             }
+         }
     </style>
 </head>
 <body>
@@ -740,11 +759,11 @@
                     <span class="quiz-date">November 1, 2025</span>
                 </div>
                 
-                <p class="tagline">See which Montreal party you best align with</p>
+                <p class="tagline">Montreal's Mayoral Alignment Quiz: <br>Find your political match.</p>
 
                 <button id="start-btn" class="nav-btn">Start Quiz</button>
                 
-                <div class="quiz-author">Questions by Harry North</div> 
+                <div class="quiz-author">Questions by Aimee Lucido</div> 
             </div>
         </div>
 
