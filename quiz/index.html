@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            /* Consistent FIXED height for main cards */
-            --card-fixed-height: 700px; 
+            /* Consistent MINIMUM height for main cards */
+            --card-min-height: 650px; /* Reduced slightly */
         }
         
         * {
@@ -76,11 +76,11 @@
             flex-direction: column;
         }
         
-        /* Apply fixed height only to quiz, weighting, and results cards */
+        /* Apply min-height to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
-            height: var(--card-fixed-height); 
+            min-height: var(--card-min-height); 
         }
          /* Intro cards size naturally */
         #start-card .card-content,
@@ -94,8 +94,7 @@
         /* Remove side padding on mobile */
         @media (max-width: 600px) {
             .card-content {
-                padding-left: 1rem;
-                padding-right: 1rem;
+                padding: 2rem 1.5rem 2.5rem 1.5rem; /* Adjusted padding */
             }
              .container {
                  margin-left: 0;
@@ -104,9 +103,13 @@
             body {
                  padding: 0 0 2rem 0; 
             }
-             /* Adjust fixed height slightly for smaller screens if needed */
+             /* Adjust min height slightly for smaller screens */
              :root {
-                 --card-fixed-height: 680px; 
+                 --card-min-height: 620px; 
+             }
+             #start-card .card-content,
+             #how-to-play-card .card-content {
+                 min-height: 85vh; /* Shorter min-height for intro */
              }
         }
 
@@ -119,7 +122,7 @@
         .start-card-header {
             text-align: center;
             margin-bottom: 2rem;
-            position: relative; /* Needed for badge positioning context */
+            position: relative; 
         }
         .icon-stack {
             position: relative;
@@ -178,33 +181,33 @@
             font-size: 3rem; 
             line-height: 1.1;
             text-align: center;
-            display: inline-block; 
-            position: relative; 
         }
         /* 5 Minute Badge */
         .time-badge {
             display: inline-block;
             background-color: var(--color-bg-light);
             color: var(--color-text-light);
-            font-size: 0.7rem; /* Smaller */
+            font-size: 0.7rem; 
             font-weight: 700;
-            padding: 0.2rem 0.5rem; /* Smaller padding */
+            padding: 0.2rem 0.5rem; 
             border-radius: 1rem;
             border: 1px solid var(--color-border);
-            position: absolute;
-            top: -0.2rem; /* Adjusted position */
-            right: -0.5rem; /* Adjusted position */
             white-space: nowrap;
-            transform: translateX(100%) rotate(10deg); 
+            margin-left: 0.5rem; /* Space from title */
+            vertical-align: middle; /* Align with text */
         }
-        /* Adjust badge on mobile */
+         /* Move badge below on mobile */
          @media (max-width: 600px) {
-             #start-card h1 { font-size: 2.5rem; } /* Slightly smaller title */
+             #start-card h1 { 
+                 font-size: 2.5rem; 
+                 display: block; /* Stack title and badge */
+                 margin-bottom: 0.5rem;
+             } 
             .time-badge {
-                 top: 0.1rem; 
-                 right: -0.8rem; /* Nudge further right */
-                 font-size: 0.65rem;
-                 padding: 0.15rem 0.4rem;
+                 display: block; /* Make it a block element */
+                 margin: 0 auto 1rem auto; /* Center it */
+                 width: fit-content; /* Size to content */
+                 font-size: 0.8rem;
             }
          }
 
@@ -335,34 +338,20 @@
         
         .question-text {
             font-weight: 700;
-            font-size: 1.6rem; 
+            font-size: 1.5rem; /* Further reduced */
             line-height: 1.4;
             color: var(--color-text);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem; /* Reduced */
             flex-shrink: 0;
         }
         
         /* Responsive font size */
         @media (max-width: 600px) {
-            .question-text { font-size: 1.4rem; }
+            .question-text { font-size: 1.3rem; } /* Further reduced */
         }
         
-        .quiz-body {
-            flex-grow: 1; 
-            min-height: 0; 
-            overflow-y: auto; 
-            padding-right: 15px; 
-            margin-right: -15px; 
-            scrollbar-width: thin; 
-            scrollbar-color: var(--color-border) transparent; 
-        }
-        .quiz-body::-webkit-scrollbar { width: 8px; }
-        .quiz-body::-webkit-scrollbar-track { background: transparent; }
-        .quiz-body::-webkit-scrollbar-thumb {
-            background-color: var(--color-border);
-            border-radius: 4px;
-        }
-
+        /* REMOVED .quiz-body scroll container */
+        
         /* --- Segmented Control Radio Buttons --- */
         .radio-group {
             display: flex;
@@ -370,19 +359,21 @@
             border-radius: 6px;
             overflow: hidden;
             width: 100%;
+            margin-bottom: 1.5rem; /* Added margin */
+            flex-shrink: 0; /* Prevent shrinking */
         }
         .radio-group input[type="radio"] { display: none; }
         .radio-group label {
             flex: 1; 
             text-align: center;
-            padding: 0.85rem 0.5rem;
+            padding: 0.8rem 0.5rem; /* Reduced padding */
             cursor: pointer;
             font-weight: 500;
             color: var(--color-text-light);
             background: var(--color-bg);
             border-left: 1px solid var(--color-border);
             transition: all 0.2s ease-in-out;
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Reduced font size */
             line-height: 1.3;
         }
         .radio-group label:first-of-type { border-left: none; }
@@ -400,9 +391,8 @@
                 border-radius: 6px; 
                 margin-bottom: 0.5rem; 
                 border-left: 2px solid var(--color-border); 
-                /* NEW: Slightly smaller buttons */
-                font-size: 0.9rem; 
-                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem; /* Reduced mobile font size */
+                padding: 0.7rem 0.5rem; /* Reduced mobile padding */
             }
             .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
             
@@ -429,9 +419,10 @@
         
         /* --- Accordion --- */
         .accordion-container {
-            margin-top: 2.5rem;
+            margin-top: 1.5rem; /* Reduced margin */
             border-top: 1px solid var(--color-border-light);
-            padding-top: 1.5rem;
+            padding-top: 1rem; /* Reduced padding */
+             flex-shrink: 0; /* Allow shrinking if needed, but low priority */
         }
         
         details { margin-bottom: 0.5rem; }
@@ -443,6 +434,7 @@
             list-style: none; /* Remove default marker */
             position: relative;
             padding-left: 1.75rem;
+            font-size: 0.9rem; /* Smaller summary */
         }
         
         summary::before {
@@ -453,26 +445,26 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--color-accent);
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* Smaller icon */
         }
         
         details[open] summary::before { content: '–'; }
         
         .accordion-content {
-            padding: 0.75rem 0 0.5rem 1.75rem;
+            padding: 0.5rem 0 0.5rem 1.75rem; /* Reduced padding */
             color: var(--color-text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.9rem; /* Smaller content text */
+            line-height: 1.5; /* Tighter line height */
         }
         
         /* --- Navigation --- */
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
+            margin-top: auto; /* Push buttons to bottom */
             border-top: 1px solid var(--color-border-light);
             padding-top: 2rem;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0; 
         }
 
         .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
@@ -489,7 +481,7 @@
         }
         
         .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover, #got-it-btn:hover {
-            background: #003366; /* Darker navy */
+            background: #003366; 
             border-color: #003366;
         }
         
@@ -503,12 +495,10 @@
             border-color: var(--color-accent);
         }
         
-        /* Overwrite start button hover */
         #start-btn:hover {
             background-color: #333;
             border-color: #333;
         }
-        /* Style start button */
         #start-btn {
             background-color: var(--color-text); 
             border-color: var(--color-text);
@@ -537,31 +527,31 @@
         
         #weighting-card h2 {
             font-weight: 800;
-            font-size: 2rem; /* Slightly smaller header */
+            font-size: 2rem; 
             line-height: 1.2;
             color: var(--color-text);
             text-align: center;
-            margin-bottom: 0.75rem; /* Reduced margin */
+            margin-bottom: 0.75rem; 
             flex-shrink: 0;
         }
         #weighting-card .card-subtitle {
-            font-size: 1rem; /* Slightly smaller subtitle */
+            font-size: 1rem; 
             color: var(--color-text-light);
             text-align: center;
-            margin-bottom: 1rem; /* Reduced margin */
+            margin-bottom: 1rem; 
             flex-shrink: 0;
         }
 
         .points-tracker {
             text-align: center;
             border-bottom: 1px solid var(--color-border);
-            padding-bottom: 1rem; /* Reduced padding */
-            margin-bottom: 1rem; /* Reduced margin */
+            padding-bottom: 1rem; 
+            margin-bottom: 1rem; 
             flex-shrink: 0;
         }
         
         .points-tracker-label {
-            font-size: 1.1rem; /* Smaller label */
+            font-size: 1.1rem; 
             font-weight: 700;
             color: var(--color-text);
             display: block;
@@ -569,7 +559,7 @@
         }
         
         #total-points-display {
-            font-size: 1.5rem; /* Smaller display */
+            font-size: 1.5rem; 
             font-weight: 700;
             color: var(--color-success);
             transition: color 0.3s ease;
@@ -577,7 +567,7 @@
         #total-points-display.error { color: var(--color-error); }
         
         #points-helper {
-            font-size: 0.9rem; /* Smaller helper */
+            font-size: 0.9rem; 
             color: var(--color-text-light);
             margin-top: 0.25rem;
             line-height: 1.5;
@@ -605,7 +595,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 1rem; /* Reduced padding */
+            padding: 0.8rem 1rem; 
             border-bottom: 1px solid var(--color-border-light);
         }
         .weighting-list-item:last-child { border-bottom: none; }
@@ -614,7 +604,7 @@
             font-weight: 500;
             padding-right: 1rem;
             flex-grow: 1;
-            font-size: 0.9rem; /* Smaller text */
+            font-size: 0.9rem; 
         }
         
         .weighting-q-text strong {
@@ -630,7 +620,7 @@
         }
         
         .point-btn {
-            width: 30px; /* Smaller buttons */
+            width: 30px; 
             height: 30px;
             font-size: 1.4rem;
             font-weight: 700;
@@ -653,9 +643,9 @@
         }
         
         .point-input {
-            width: 45px; /* Smaller input */
+            width: 45px; 
             height: 40px;
-            font-size: 1rem; /* Smaller font */
+            font-size: 1rem; 
             font-weight: 700;
             text-align: center;
             border: none;
@@ -669,7 +659,7 @@
         
         #submit-quiz-btn {
             width: 100%;
-            margin-top: 1.5rem; /* Reduced margin */
+            margin-top: 1.5rem; 
             flex-shrink: 0; 
         }
         
@@ -677,13 +667,17 @@
             color: var(--color-error);
             text-align: center;
             font-weight: 700;
-            margin-top: 1rem; /* Reduced margin */
-            font-size: 1rem; /* Slightly smaller */
+            margin-top: 1rem; 
+            font-size: 1rem; 
             display: none; 
             flex-shrink: 0;
         }
 
         /* --- Results Card --- */
+        #results-card .card-content {
+             justify-content: center; /* Center content */
+        }
+        
         #results-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -729,11 +723,6 @@
             margin: 2rem auto 0 auto; /* Adjusted margin */
             display: block;
         }
-         @media (max-width: 600px) {
-             #restart-btn {
-                 margin-top: 1.5rem; /* Even less margin on mobile */
-             }
-         }
     </style>
 </head>
 <body>
@@ -1107,18 +1096,15 @@
                             <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
                             <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
                             
-                            <div class="quiz-body">
-                                <div class="radio-group" id="radio-group-${index}">
-                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
-                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
-                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
-                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
-                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
-                                </div>
-                                
-                                ${detailsHtml}
+                            <div class="radio-group" id="radio-group-${index}">
+                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
                             </div>
-
+                            
+                            ${detailsHtml}
                             <div class="navigation-buttons">
                                 <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
                                 <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
@@ -1161,17 +1147,16 @@
         function attachListeners() {
             // Start button
             document.getElementById('start-btn').addEventListener('click', () => {
-                currentStep = 1; // Now goes to 'How to Play' card
+                currentStep = 1; 
                 showCard('how-to-play-card');
                 updateProgressBar(currentStep);
             });
 
             // "Got it" button for How to Play card
             document.getElementById('got-it-btn').addEventListener('click', () => {
-                currentStep = 2; // Now goes to the first question
+                currentStep = 2; 
                 showCard('question-card-0');
                 updateProgressBar(currentStep);
-                // Ensure prev button is hidden on first question
                 document.getElementById('prev-btn-0').style.visibility = 'hidden';
             });
             
@@ -1180,34 +1165,28 @@
                 const nextBtn = document.getElementById(`next-btn-${index}`);
                 const prevBtn = document.getElementById(`prev-btn-${index}`);
                 
-                // Set visibility for first question's prev button initially
                 if (index === 0) {
                     prevBtn.style.visibility = 'hidden';
                 }
 
-                // UX: Listen to radio group to enable Next button
                 document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
                     nextBtn.disabled = false;
-                    // REMOVED Auto-advance 
                 });
 
                 nextBtn.addEventListener('click', () => {
-                    // 1. Validate and save answer
                     const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
                     if (!selected) { return; } 
                     
                     userAgreementAnswers[index] = parseInt(selected.value);
                     
-                    // 2. Move to next card
                     currentStep++;
-                    if (currentStep <= totalQuizQuestions + 1) { // Still on a question card (+1 for How To Play card)
-                        const nextQuestionIndex = currentStep - 2; // Adjust index
+                    if (currentStep <= totalQuizQuestions + 1) { 
+                        const nextQuestionIndex = currentStep - 2; 
                         showCard(`question-card-${nextQuestionIndex}`);
                         updateProgressBar(currentStep);
                         
                         document.getElementById(`prev-btn-${nextQuestionIndex}`).style.visibility = 'visible';
                         
-                        // Check if this next question has a stored answer
                         if (userAgreementAnswers[nextQuestionIndex] !== null) {
                             const val = userAgreementAnswers[nextQuestionIndex];
                             document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
@@ -1217,9 +1196,8 @@
                         }
 
                     } else {
-                        // Finished last question, move to weighting card
                         showCard('weighting-card');
-                        updateProgressBar(currentStep); // This will be step 22
+                        updateProgressBar(currentStep); 
                         updatePointTotal();
                     }
                 });
@@ -1227,11 +1205,11 @@
                 if (prevBtn) {
                     prevBtn.addEventListener('click', () => {
                         currentStep--;
-                        if (currentStep <= 1) { // Back to How-to-Play card
+                        if (currentStep <= 1) { 
                             showCard('how-to-play-card');
                             updateProgressBar(currentStep);
-                        } else { // Back to a question card
-                            const prevQuestionIndex = currentStep - 2; // Adjust index
+                        } else { 
+                            const prevQuestionIndex = currentStep - 2; 
                             showCard(`question-card-${prevQuestionIndex}`);
                             updateProgressBar(currentStep);
 
@@ -1305,7 +1283,6 @@
             if (currentTotalPoints !== 100) {
                  errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
                  errorMsg.style.display = 'block';
-                 // Scroll to the error message or tracker if needed
                  errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center'}); 
                  return;
             }
