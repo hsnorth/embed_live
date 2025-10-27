@@ -23,7 +23,8 @@
             --color-error: #d90000;
             --color-success: #008a1e;
             
-            --card-min-height: 650px; /* Uniform card height */
+            /* NEW: Uniform card height */
+            --card-min-height: 680px; 
         }
         
         * {
@@ -33,7 +34,8 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            padding: 5rem 1rem 2rem 1rem; /* Added padding-top for fixed progress bar */
+            /* NEW: Reduced top padding */
+            padding: 2rem 1rem 3rem 1rem; 
             background-color: var(--color-bg-light);
             color: var(--color-text);
             line-height: 1.6;
@@ -47,7 +49,7 @@
             left: 0;
             width: 100%;
             height: 8px;
-            background-color: var(--color-border);
+            background-color: var(--color-border-light);
             z-index: 20;
         }
         
@@ -70,10 +72,14 @@
         
         .card-content {
             padding: 2.5rem 3rem 3rem 3rem;
-            /* NEW: Uniform card height */
-            min-height: var(--card-min-height); 
             display: flex;
             flex-direction: column;
+        }
+        
+        /* Apply uniform height only to quiz and weighting cards */
+        #question-card-container .card-content,
+        #weighting-card .card-content {
+            min-height: var(--card-min-height);
         }
 
         /* Card Visibility */
@@ -81,10 +87,6 @@
         .quiz-card.active { display: block; }
         
         /* --- Header & Start Card --- */
-        #start-card .card-content {
-            min-height: 0; /* Start card can be any height */
-        }
-        
         #start-card h1 {
             font-weight: 800;
             color: var(--color-text);
@@ -126,6 +128,30 @@
         }
         .how-it-works li:last-child { margin-bottom: 0; }
         .how-it-works strong { color: var(--color-text); }
+        
+        /* NEW: Privacy Notice */
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: 2.5rem;
+            padding: 1rem;
+            background-color: var(--color-bg-light);
+            border-radius: 4px;
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+        }
+        .privacy-notice svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            fill: var(--color-text-light);
+        }
+        .privacy-notice strong {
+            color: var(--color-text);
+        }
 
         #start-btn {
             background-color: var(--color-accent);
@@ -142,6 +168,7 @@
             font-weight: 700;
             color: var(--color-accent);
             margin-bottom: 1rem;
+            flex-shrink: 0; /* Prevent shrinking */
         }
         
         .question-text {
@@ -149,10 +176,19 @@
             font-size: 1.75rem;
             line-height: 1.4;
             color: var(--color-text);
-            margin-bottom: 2.5rem;
-            flex-grow: 1; /* Pushes content down */
+            margin-bottom: 2rem;
+            flex-shrink: 0;
         }
         
+        /* NEW: Scrolling container for main question content */
+        .quiz-body {
+            flex-grow: 1; /* This takes up all available space */
+            min-height: 0; /* Critical for flex-grow to work */
+            overflow-y: auto; /* Adds scrollbar ONLY if accordion opens */
+            padding-right: 10px; /* Space for scrollbar */
+            margin-right: -10px;
+        }
+
         /* --- NEW: Segmented Control Radio Buttons --- */
         .radio-group {
             display: flex;
@@ -161,9 +197,7 @@
             overflow: hidden;
             width: 100%;
         }
-
         .radio-group input[type="radio"] { display: none; }
-
         .radio-group label {
             flex: 1; /* Each button takes equal space */
             text-align: center;
@@ -175,27 +209,46 @@
             border-left: 1px solid var(--color-border);
             transition: all 0.2s ease-in-out;
             font-size: 0.9rem;
+            line-height: 1.3;
         }
         .radio-group label:first-of-type { border-left: none; }
         
+        /* NEW: Mobile stacked buttons */
         @media (max-width: 600px) {
-            .radio-group { flex-wrap: wrap; }
+            .radio-group {
+                flex-direction: column; /* Stack vertically */
+                border: none; /* Remove group border */
+                border-radius: 0;
+            }
             .radio-group label {
-                flex-basis: 33.33%;
-                border: 1px solid var(--color-border);
+                width: 100%;
+                border: 2px solid var(--color-border); /* Give each its own border */
+                border-radius: 6px; /* Rounded corners for each */
+                margin-bottom: 0.5rem; /* Space between buttons */
+                border-left: 2px solid var(--color-border); /* Reset border */
+                font-size: 1rem;
+            }
+            .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
+            
+            .radio-group input[type="radio"]:checked + label {
+                border-color: var(--color-accent);
+                background: var(--color-accent);
+                color: var(--color-bg);
             }
         }
-
-        .radio-group label:hover {
-            background: var(--color-bg-light);
-            color: var(--color-text);
-        }
-
-        .radio-group input[type="radio"]:checked + label {
-            background-color: var(--color-accent);
-            color: var(--color-bg);
-            border-color: var(--color-accent);
-            font-weight: 700;
+        
+        /* Desktop hover/checked states */
+        @media (min-width: 601px) {
+            .radio-group label:hover {
+                background: var(--color-bg-light);
+                color: var(--color-text);
+            }
+            .radio-group input[type="radio"]:checked + label {
+                background-color: var(--color-accent);
+                color: var(--color-bg);
+                border-color: var(--color-accent);
+                font-weight: 700;
+            }
         }
         
         /* --- Accordion --- */
@@ -240,12 +293,13 @@
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 3rem;
+            margin-top: 2rem;
             border-top: 1px solid var(--color-border-light);
             padding-top: 2rem;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
-        .nav-btn, #start-btn, #submit-quiz-btn {
+        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn {
             font-family: var(--font-sans);
             font-size: 1rem;
             font-weight: 700;
@@ -258,17 +312,17 @@
             transition: all 0.2s ease;
         }
         
-        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover {
+        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover {
             background: #003366; /* Darker navy */
             border-color: #003366;
         }
         
-        .nav-btn.secondary {
+        .nav-btn.secondary, #restart-btn {
             background: var(--color-bg);
             color: var(--color-accent);
         }
         
-        .nav-btn.secondary:hover {
+        .nav-btn.secondary:hover, #restart-btn:hover {
             background: #f4f4f4;
             border-color: var(--color-accent);
         }
@@ -278,17 +332,19 @@
             border-color: #ccc;
             color: #888;
             cursor: not-allowed;
+            opacity: 0.7;
         }
         
         .nav-btn.secondary:disabled {
             background: var(--color-bg);
             border-color: #ccc;
             color: #ccc;
+            opacity: 0.7;
         }
 
         /* --- Weighting Card --- */
         #weighting-card .card-content {
-            padding-top: 0; /* Remove top padding as tracker is there */
+            padding-top: 2.5rem;
         }
         
         #weighting-card h2 {
@@ -298,24 +354,22 @@
             color: var(--color-text);
             text-align: center;
             margin-bottom: 1rem;
+            flex-shrink: 0;
         }
         #weighting-card .card-subtitle {
             font-size: 1.1rem;
             color: var(--color-text-light);
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
         }
 
         .points-tracker {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(5px);
-            padding: 1.5rem;
-            z-index: 10;
             text-align: center;
             border-bottom: 1px solid var(--color-border);
-            margin: 0 -3rem 2rem -3rem; /* Adjusted margins */
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
         }
         
         .points-tracker-label {
@@ -343,7 +397,8 @@
         
         /* NEW: Scrolling container for weighting list */
         .weighting-list-container {
-            max-height: 350px; /* Adjust as needed */
+            flex-grow: 1; /* Takes up remaining space */
+            min-height: 0; /* Critical for flex */
             overflow-y: auto;
             border: 1px solid var(--color-border);
             border-radius: 4px;
@@ -353,7 +408,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
+            padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--color-border-light);
         }
         .weighting-list-item:last-child { border-bottom: none; }
@@ -362,6 +417,7 @@
             font-weight: 500;
             padding-right: 1rem;
             flex-grow: 1;
+            font-size: 0.95rem;
         }
         
         .weighting-q-text strong {
@@ -369,28 +425,51 @@
             color: var(--color-text);
         }
         
-        .point-input {
-            width: 70px;
-            height: 48px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-align: center;
-            border: 2px solid var(--color-border);
-            border-radius: 4px;
-            box-sizing: border-box; 
-            transition: border-color 0.3s, box-shadow 0.3s;
+        /* NEW: Point Allocator (+/- buttons) */
+        .point-allocator {
+            display: flex;
+            align-items: center;
             flex-shrink: 0;
         }
         
-        .point-input:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 2px var(--color-accent);
+        .point-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            cursor: pointer;
+            line-height: 0; /* Aligns + sign */
+            padding: 0;
+            transition: all 0.2s;
         }
-
+        .point-btn:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+            border-color: var(--color-accent);
+        }
+        
+        .point-input {
+            width: 50px;
+            height: 48px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: var(--color-text);
+            margin: 0 0.25rem;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        
         #submit-quiz-btn {
             width: 100%;
             margin-top: 2rem;
+            flex-shrink: 0; /* Prevent shrinking */
         }
         
         #error-message {
@@ -400,13 +479,10 @@
             margin-top: 1.5rem;
             font-size: 1.1rem;
             display: none; /* Hidden by default */
+            flex-shrink: 0;
         }
 
         /* --- Results Card --- */
-        #results-card .card-content {
-            min-height: 0; /* Results card can be any height */
-        }
-        
         #results-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -446,6 +522,10 @@
             font-weight: 700;
             color: var(--color-accent);
         }
+        #restart-btn {
+            width: 100%;
+            margin-top: 2.5rem;
+        }
     </style>
 </head>
 <body>
@@ -471,6 +551,11 @@
                 </div>
                 
                 <button id="start-btn" class="nav-btn">Start Quiz</button>
+                
+                <div class="privacy-notice">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.5A5.25 5.25 0 0 0 6.75 6.75v3.75H6a2.25 2.25 0 0 0-2.25 2.25v8.25A2.25 2.25 0 0 0 6 23.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.25A2.25 2.25 0 0 0 18 10.5h-.75V6.75A5.25 5.25 0 0 0 12 1.5Zm0 1.5a3.75 3.75 0 0 1 3.75 3.75v3.75H8.25V6.75A3.75 3.75 0 0 1 12 3Zm-4.5 9h9v8.25a.75.75 0 0 1-.75.75H8.25a.75.75 0 0 1-.75-.75V12Z"></path></svg>
+                    <span><strong>We respect your privacy.</strong> This quiz is 100% anonymous. No data is collected or stored.</span>
+                </div>
             </div>
         </div>
         
@@ -499,10 +584,10 @@
 
         <div id="results-card" class="quiz-card">
             <div class="card-content">
-                <h2>Your Closest Alignments</h2>
+                <h2>Your 2025 Montreal Match</h2>
                 <div id="results-output">
                     </div>
-            </div>
+                </div>
         </div>
 
     </div>
@@ -785,15 +870,17 @@
                             <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
                             <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
                             
-                            <div class="radio-group" id="radio-group-${index}">
-                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
-                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
-                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
-                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
-                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
+                            <div class="quiz-body">
+                                <div class="radio-group" id="radio-group-${index}">
+                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
+                                </div>
+                                
+                                ${detailsHtml}
                             </div>
-                            
-                            ${detailsHtml}
 
                             <div class="navigation-buttons">
                                 <button type="button" class="nav-btn secondary" id="prev-btn-${index}" ${index === 0 ? 'style="visibility: hidden;"' : ''}>Previous</button>
@@ -820,7 +907,11 @@
                         <label for="points-${index}" class="weighting-q-text">
                             ${q.id}. <strong>${questionShortText}</strong>
                         </label>
-                        <input type="number" class="point-input" id="points-${index}" name="points-${index}" value="5" min="0" max="100">
+                        <div class="point-allocator">
+                            <button type="button" class="point-btn minus" data-index="${index}" aria-label="Decrease points" ${index === 0 ? 'data-first-minus="true"' : ''}>-</button>
+                            <input type="text" class="point-input" id="points-${index}" value="5" readonly>
+                            <button type="button" class="point-btn plus" data-index="${index}" aria-label="Increase points">+</button>
+                        </div>
                     </div>
                 `;
             });
@@ -844,8 +935,12 @@
                 const prevBtn = document.getElementById(`prev-btn-${index}`);
                 
                 // UX: Listen to radio group to enable Next button
-                document.getElementById(`radio-group-${index}`).addEventListener('change', () => {
+                document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
                     nextBtn.disabled = false;
+                    // Auto-advance on mobile for a slicker feel
+                    if (window.innerWidth <= 600) {
+                        setTimeout(() => nextBtn.click(), 250);
+                    }
                 });
 
                 nextBtn.addEventListener('click', () => {
@@ -864,7 +959,6 @@
                         
                         // Check if this next question has a stored answer
                         if (userAgreementAnswers[nextQuestionIndex] !== null) {
-                            // Find the value, not the complex ID
                             const val = userAgreementAnswers[nextQuestionIndex];
                             document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
@@ -887,20 +981,23 @@
                 }
             });
             
-            // Weighting card listeners
-            document.getElementById('weighting-list').addEventListener('input', (event) => {
-                if (event.target.classList.contains('point-input')) {
-                    // Sanitize input
-                    let value = parseInt(event.target.value.replace(/[^0-9]/g, ''));
-                    if (isNaN(value) || value < 0) {
-                        event.target.value = 0;
-                    } else if (value > 100) {
-                        event.target.value = 100;
-                    } else {
-                        event.target.value = value;
-                    }
-                    updatePointTotal();
+            // NEW: Weighting card +/- button listener
+            document.getElementById('weighting-list').addEventListener('click', (event) => {
+                const target = event.target;
+                if (!target.classList.contains('point-btn')) return;
+
+                const index = target.dataset.index;
+                const input = document.getElementById(`points-${index}`);
+                let currentValue = parseInt(input.value);
+
+                if (target.classList.contains('plus')) {
+                    if (currentValue < 100) currentValue++;
+                } else if (target.classList.contains('minus')) {
+                    if (currentValue > 0) currentValue--;
                 }
+                
+                input.value = currentValue;
+                updatePointTotal();
             });
             
             // Submit button
@@ -987,6 +1084,14 @@
             });
             outputDiv.innerHTML = html;
             
+            // NEW: Add Restart Button
+            const restartBtn = document.createElement('button');
+            restartBtn.id = 'restart-btn';
+            restartBtn.className = 'nav-btn secondary'; // Use secondary style
+            restartBtn.textContent = 'Restart Quiz';
+            restartBtn.onclick = () => location.reload(); // Easiest way to reset state
+            outputDiv.parentElement.appendChild(restartBtn);
+            
             // Show the results card
             showCard('results-card');
 
@@ -1005,7 +1110,7 @@
             renderQuestionCards();
             renderWeightingCard();
             attachListeners();
-            updateProgressBar(0); // Set initial progress to 0
+            updateProgressBar(0, totalSteps); // Set initial progress to 0
         });
     </script>
 </body>
