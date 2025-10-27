@@ -86,9 +86,9 @@
         /* Intro cards size naturally but centered */
         #start-card .card-content,
         #how-to-play-card .card-content {
-              height: auto;
-              min-height: 100vh; /* Increase min height slightly */
-              justify-content: center;
+             height: auto;
+             min-height: 100vh; /* Increase min height slightly */
+             justify-content: center;
         }
 
 
@@ -213,18 +213,18 @@
             transform: rotate(10deg);
         }
          @media (max-width: 600px) {
-              #start-card h1 {
-                  font-size: 2.5rem;
-              }
-             #start-card .tagline {
+               #start-card h1 {
+                   font-size: 2.5rem;
+               }
+              #start-card .tagline {
                  font-size: 1rem;
                  display: in-line-block;
                  padding-right: 10px;
                  padding-left:10px;
                  margin-bottom: 1rem;
-             }
+              }
 
-         }
+        }
 
 
         #start-btn {
@@ -719,12 +719,13 @@
             font-weight: 800;
             font-size: 2.5rem;
             line-height: 1.2;
-            color: var(--color-text);
+            color: var(--color-text); /* Default text color, will be overridden by JS */
             text-align: center;
             margin-bottom: 2.5rem;
         }
 
-        .result-bar { margin-bottom: 1.5rem; }
+        /* --- NEW: Smaller Result Lines --- */
+        .result-bar { margin-bottom: 1rem; } /* Was 1.5rem */
         .result-bar-info {
             display: flex;
             justify-content: space-between;
@@ -732,10 +733,16 @@
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
-        .candidate-name { font-size: 1.1rem; color: var(--color-text); }
-        .result-percent { font-size: 1.1rem; color: var(--color-text-secondary); }
+        .candidate-name { 
+            font-size: 1rem; /* Was 1.1rem */
+            color: var(--color-text); 
+        }
+        .result-percent { 
+            font-size: 1rem; /* Was 1.1rem */
+            color: var(--color-text-secondary); 
+        }
         .bar-wrapper {
-            height: 28px;
+            height: 24px; /* Was 28px */
             background: #f0f0f0;
             border-radius: 2px;
             overflow: hidden;
@@ -746,14 +753,15 @@
             width: 0%; /* Set by JS */
             transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .result-bar.top-match .bar-fill {
-            background: var(--color-accent); /* Top match is accent color */
-        }
+        
+        /* --- CHANGED: Top Match now only applies font-weight --- */
+        /* Colors are applied via inline styles from JS */
         .result-bar.top-match .candidate-name,
         .result-bar.top-match .result-percent {
             font-weight: 700;
-            color: var(--color-accent);
+            /* color: var(--color-accent); - REMOVED */
         }
+        
         #restart-btn {
             width: 100%;
             max-width: 300px; /* Limit width */
@@ -762,9 +770,9 @@
             padding-top: 1rem; /* Space above */
         }
          @media (max-width: 600px) {
-              #restart-btn {
-                  margin-top: 1.5rem;
-              }
+               #restart-btn {
+                   margin-top: 1.5rem;
+               }
          }
     </style>
 </head>
@@ -852,9 +860,9 @@
 
         <div id="results-card" class="quiz-card">
             <div class="card-content">
-                <h2>Your 2025 Montreal Match</h2>
+                <h2 id="results-title">Your 2025 Montreal Match</h2>
                 <div id="results-output">
-                </div>
+                    </div>
             </div>
         </div>
 
@@ -868,9 +876,18 @@
         const CANDIDATE_SCORES = {
             'Luc Rabouin (Projet Montréal)':              [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1,  2,  2,  2,  2],
             'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2, -2, -1, -1,  1],
-            'Craig Sauvé (Transition Montréal)':           [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
+            'Craig Sauvé (Transition Montréal)':          [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
             'Gilbert Thibodeau (Action Montréal)':         [-2,  2,  2, -2,  0,  2, -1, -2, -2, -1, 1, -1,  2, -2,  2, -2, -2, -2,  0, -2],
-            'Jean-François Kacou (Futur Montréal)':      [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
+            'Jean-François Kacou (Futur Montréal)':       [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
+        };
+
+        // --- NEW: Party Colors ---
+        const PARTY_COLORS = {
+            'Projet Montréal': '#4ea33e',
+            'Transition Montréal': '#ff4f19',
+            'Action Montréal': '#2157aa',
+            'Ensemble Montréal': '#32004a',
+            'Futur Montréal': '#3399cc'
         };
 
         // Quiz Questions: 20 total, now with accordion details
@@ -1094,23 +1111,23 @@
          * Shows a specific card by its ID and hides all others
          */
          function showCard(cardId) {
-            document.querySelectorAll('.quiz-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            document.getElementById(cardId).classList.add('active');
-            window.scrollTo(0, 0); // Scroll to top on every card change
+             document.querySelectorAll('.quiz-card').forEach(card => {
+                 card.classList.remove('active');
+             });
+             document.getElementById(cardId).classList.add('active');
+             window.scrollTo(0, 0); // Scroll to top on every card change
          }
 
         /**
          * Updates the fixed progress bar
          */
          function updateProgressBar(step, total = totalSteps) {
-            const progressBar = document.getElementById('progress-bar');
-            if (progressBar) {
-                const effectiveStep = Math.max(0, step);
-                const percentage = (effectiveStep / (total -1)) * 100; // -1 because results is the end
-                progressBar.style.width = `${percentage}%`;
-            }
+             const progressBar = document.getElementById('progress-bar');
+             if (progressBar) {
+                 const effectiveStep = Math.max(0, step);
+                 const percentage = (effectiveStep / (total -1)) * 100; // -1 because results is the end
+                 progressBar.style.width = `${percentage}%`;
+             }
          }
 
         // --- Main Logic ---
@@ -1413,16 +1430,38 @@
 
             let html = '';
 
+            // --- NEW: Get top match and color ---
+            const topMatch = results[0];
+            const topColor = PARTY_COLORS[topMatch.party] || 'var(--color-accent)'; // Fallback
+
+            // --- NEW: Update title dynamically ---
+            const resultsTitle = document.getElementById('results-title');
+            if (resultsTitle && topMatch) {
+                resultsTitle.textContent = `You are closest to ${topMatch.name}`;
+                resultsTitle.style.color = topColor; // Apply color to title
+            }
+
+
             results.forEach((r, index) => {
                 const topMatchClass = (index === 0) ? 'top-match' : '';
+                
+                // --- NEW: Add inline styles for colors ---
+                let barFillStyle = `style="width: 0%;"`; // Default
+                let textStyle = '';
+
+                if (index === 0) { // If it's the top match
+                    barFillStyle = `style="width: 0%; background-color: ${topColor};"`; // Combined
+                    textStyle = `style="color: ${topColor};"`;
+                }
+
                 html += `
                     <div class="result-bar ${topMatchClass}">
                         <div class="result-bar-info">
-                            <span class="candidate-name">${r.name} (${r.party})</span>
-                            <span class="result-percent">${r.percentage}%</span>
+                            <span class="candidate-name" ${textStyle}>${r.name} (${r.party})</span>
+                            <span class="result-percent" ${textStyle}>${r.percentage}%</span>
                         </div>
                         <div class="bar-wrapper">
-                            <div class="bar-fill" style="width: 0%;" data-width="${r.percentage}">
+                            <div class="bar-fill" ${barFillStyle} data-width="${r.percentage}">
                             </div>
                         </div>
                     </div>
