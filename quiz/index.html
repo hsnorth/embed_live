@@ -26,7 +26,7 @@
             --color-info: #0dcaf0;   /* Teal */
             
             /* Consistent FIXED height for main cards */
-            --card-fixed-height: 700px; 
+            --card-fixed-height: 720px; /* Increased slightly */
         }
         
         * {
@@ -82,7 +82,7 @@
         #results-card .card-content {
             height: var(--card-fixed-height); 
         }
-         /* Intro cards size naturally */
+         /* Intro cards size naturally but centered */
         #start-card .card-content,
         #how-to-play-card .card-content {
              height: auto; 
@@ -99,7 +99,7 @@
              .container {
                  margin-left: 0;
                  margin-right: 0;
-            }
+             }
             body {
                  padding: 0 0 2rem 0; 
             }
@@ -110,6 +110,8 @@
              #start-card .card-content,
              #how-to-play-card .card-content {
                  min-height: 85vh; 
+                 padding-top: 4rem; /* More top padding for centering */
+                 padding-bottom: 4rem;
              }
         }
 
@@ -183,37 +185,50 @@
             text-align: center;
         }
         
-        /* Removed .quiz-date */
-        
         #start-card .tagline {
             font-size: 1.1rem; 
             font-weight: 500;
             color: var(--color-text-light); 
-            margin: 1rem 0 2.5rem 0; /* Adjusted top margin */
+            margin: 1rem auto 2.5rem auto; /* Center block */ 
             text-align: center;
+            position: relative; /* Context for badge */
+            display: inline-block; /* Fit content */
+            padding-right: 45px; /* Space for badge */
         }
-        /* 5 Minute Badge moved to tagline */
+        /* 5 Minute Badge */
         .time-badge {
             display: inline-block;
             background-color: var(--color-bg-light);
             color: var(--color-text-light);
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             font-weight: 700;
-            padding: 0.2rem 0.6rem; 
+            padding: 0.2rem 0.5rem; 
             border-radius: 1rem;
             border: 1px solid var(--color-border);
             white-space: nowrap;
-            margin-left: 0.5rem; 
-            vertical-align: baseline; /* Align with text better */
+            position: absolute;
+            /* NEW: Position top-right relative to tagline */
+            top: -0.5rem; 
+            right: 0; 
+            transform: rotate(10deg); /* Adjust tilt */
         }
          @media (max-width: 600px) {
              #start-card h1 { 
                  font-size: 2.5rem; 
              } 
-            #start-card .tagline { font-size: 1rem; }
+            #start-card .tagline { 
+                font-size: 1rem; 
+                display: block; /* Stack on mobile */
+                padding-right: 0; /* No padding needed */
+                margin-bottom: 1rem;
+            }
             .time-badge {
-                 font-size: 0.7rem;
-                 padding: 0.15rem 0.4rem;
+                 position: static; /* Reset position */
+                 transform: none; /* Reset transform */
+                 display: block; /* Make it block */
+                 width: fit-content; /* Size to content */
+                 margin: 0.5rem auto 2rem auto; /* Center below tagline */
+                 font-size: 0.8rem;
             }
          }
 
@@ -335,12 +350,11 @@
             flex-shrink: 0;
         }
         
-        /* Responsive font size */
         @media (max-width: 600px) {
             .question-text { font-size: 1.3rem; } 
         }
         
-        /* NEW: quiz-body for internal scrolling is back */
+        /* quiz-body provides internal scroll */
         .quiz-body {
             flex-grow: 1; 
             min-height: 0; 
@@ -365,7 +379,7 @@
             overflow: hidden;
             width: 100%;
             margin-bottom: 1.5rem; 
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0; 
         }
         .radio-group input[type="radio"] { display: none; }
         .radio-group label {
@@ -678,10 +692,13 @@
         }
 
         /* --- Results Card --- */
-         #results-card .card-content {
-             justify-content: center; /* Center content vertically */
-             min-height: var(--card-fixed-height); /* Ensure it uses fixed height */
-         }
+        #results-card .card-content {
+             justify-content: center; 
+             /* min-height: var(--card-fixed-height); Ensure it uses fixed height */
+             /* Results card can be shorter if needed */
+             min-height: auto; 
+             height: auto;
+        }
         
         #results-card h2 {
             font-weight: 800;
