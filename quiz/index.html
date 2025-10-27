@@ -1,1391 +1,1466 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montreal Mayoral Alignment Quiz</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- Professional Navy Theme --- */
-        :root {
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            
-            --color-text: #191919;
-            --color-text-light: #5b5b5b;
-            --color-accent: #004a99; /* Navy Blue Accent */
-            --color-border: #dcdcdc;
-            --color-border-light: #f0f0f0;
-            --color-bg: #ffffff;
-            --color-bg-light: #f4f4f4;
-            --color-error: #d90000;
-            --color-success: #008a1e; /* Green */
-            --color-warning: #ffc107; /* Yellow */
-            --color-info: #0dcaf0;   /* Teal */
-            
-            /* Consistent MINIMUM height for main cards */
-            --card-min-height: 680px; /* Adjusted min height */
-        }
-        
-        * {
-            box-sizing: border-box;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montreal Mayoral Alignment Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Professional Navy Theme --- */
+        :root {
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            
+            --color-text: #191919;
+            --color-text-light: #5b5b5b;
+            --color-accent: #004a99; /* Navy Blue Accent */
+            --color-border: #dcdcdc;
+            --color-border-light: #f0f0f0;
+            --color-bg: #ffffff;
+            --color-bg-light: #f4f4f4;
+            --color-error: #d90000;
+            --color-success: #008a1e; /* Green */
+            --color-warning: #ffc107; /* Yellow */
+            --color-info: #0dcaf0;   /* Teal */
+            
+            /* Consistent MINIMUM height for main cards */
+            --card-min-height: 680px; /* Adjusted min height */
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
 
-        body {
-            font-family: var(--font-sans);
-            margin: 0;
-            padding: 0 0 3rem 0; 
-            background-color: var(--color-bg-light);
-            color: var(--color-text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
+        body {
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 0 0 3rem 0; 
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        /* --- Fixed Progress Tracker --- */
-        .progress-container-fixed {
-            position: sticky; 
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background-color: var(--color-border-light);
-            z-index: 20;
-        }
-        
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: var(--color-accent);
-            transition: width 0.4s ease;
-        }
+        /* --- Fixed Progress Tracker --- */
+        .progress-container-fixed {
+            position: sticky; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background-color: var(--color-border-light);
+            z-index: 20;
+        }
+        
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--color-accent);
+            transition: width 0.4s ease;
+        }
 
-        .container {
-            max-width: 760px;
-            margin: 0 auto; 
-            background: var(--color-bg);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .card-content {
-            padding: 3rem 3.5rem 3.5rem 3.5rem; /* Increased padding */
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Apply min-height to quiz, weighting, and results cards */
-        #question-card-container .card-content,
-        #weighting-card .card-content,
-        #results-card .card-content {
-            min-height: var(--card-min-height); 
-        }
-        /* REMOVED fixed height from questions */
-         
-        /* Intro cards size naturally but centered */
-        #start-card .card-content,
-        #how-to-play-card .card-content {
-             height: auto; 
-             min-height: 95vh; /* Increase min height slightly */
-             justify-content: center; 
-        }
-
-
-        /* Remove side padding on mobile */
-        @media (max-width: 600px) {
-            .card-content {
-                padding: 2rem 1.5rem 2.5rem 1.5rem; 
-            }
-             .container {
-                 margin-left: 0;
-                 margin-right: 0;
-             }
-            body {
-                 padding: 0 0 2rem 0; 
-            }
-             /* Adjust min height slightly for smaller screens */
-             :root {
-                 --card-min-height: 650px; 
-             }
-             #start-card .card-content,
-             #how-to-play-card .card-content {
-                 min-height: 90vh; 
-                 padding-top: 4rem; 
-                 padding-bottom: 4rem;
-             }
-        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto; 
+            background: var(--color-bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .card-content {
+            padding: 3rem 3.5rem 3.5rem 3.5rem; /* Increased padding */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Apply min-height to quiz, weighting, and results cards (Request 1 REVERTED) */
+        #question-card-container .card-content,
+        #weighting-card .card-content,
+        #results-card .card-content {
+            min-height: var(--card-min-height); 
+        }
+         
+        /* Intro cards size naturally but centered */
+        #start-card .card-content,
+        #how-to-play-card .card-content {
+             height: auto; 
+             min-height: 95vh; /* Increase min height slightly */
+             justify-content: center; 
+        }
 
 
-        /* Card Visibility */
-        .quiz-card { display: none; }
-        .quiz-card.active { display: block; }
-        
-        /* --- Start Card --- */
-        .start-card-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative; 
-        }
-        .icon-stack {
-            position: relative;
-            width: 100px; 
-            height: 80px; 
-            margin: 1rem auto 2rem auto; 
-        }
-        .stack-icon {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            font-size: 1.8rem; 
-            font-weight: 700;
-            color: var(--color-text);
-            background: var(--color-bg-light);
-            border: 2px solid var(--color-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .stack-icon.icon-answer { 
-            transform: rotate(-15deg);
-            background-color: var(--color-success);
-            color: white;
-            border-color: var(--color-success);
-            top: 0;
-            left: 25px; 
-            z-index: 3;
-        }
-        .stack-icon.icon-weight { 
-            transform: rotate(10deg);
-            background-color: var(--color-info); 
-            color: white;
-            border-color: var(--color-info);
-            top: 20px;
-            left: 5px;
-            z-index: 2;
-        }
-        .stack-icon.icon-match { 
-            transform: rotate(-5deg);
-            background-color: var(--color-warning); 
-             color: white;
-            border-color: var(--color-warning);
-            top: 20px;
-            left: 45px;
-            z-index: 1;
-        }
+        /* Remove side padding on mobile */
+        @media (max-width: 600px) {
+            .card-content {
+                padding: 2rem 1.5rem 2.5rem 1.5rem; 
+            }
+             .container {
+                 margin-left: 0;
+                 margin-right: 0;
+             }
+            body {
+                 padding: 0 0 2rem 0; 
+            }
+             /* Adjust min height slightly for smaller screens */
+             :root {
+                 --card-min-height: 650px; 
+             }
+             #start-card .card-content,
+             #how-to-play-card .card-content {
+                 min-height: 90vh; 
+                 padding-top: 4rem; 
+                 padding-bottom: 4rem;
+             }
+        }
 
 
-        #start-card h1 { /* Mayoral Matchmaker */
-            font-weight: 800;
-            color: var(--color-text);
-            margin: 0; 
-            font-size: 3rem; 
-            line-height: 1.1;
-            text-align: center;
-        }
-        
-        #start-card .tagline {
-            font-size: 1.1rem; 
-            font-weight: 500;
-            color: var(--color-text-light); 
-            margin: 1rem auto 2.5rem auto; 
-            text-align: center;
-            position: relative; 
-            display: inline-block; 
-            padding-right: 50px; /* More space */
-        }
-        /* 5 Minute Badge */
-        .time-badge {
-            display: inline-block;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-light);
-            font-size: 0.7rem; 
-            font-weight: 700;
-            padding: 0.2rem 0.5rem; 
-            border-radius: 1rem;
-            border: 1px solid var(--color-border);
-            white-space: nowrap;
-            position: absolute;
-            top: -0.8rem; /* Higher */
-            right: 0; 
-            transform: rotate(10deg); 
-        }
-         @media (max-width: 600px) {
-             #start-card h1 { 
-                 font-size: 2.5rem; 
-             } 
-            #start-card .tagline { 
-                font-size: 1rem; 
-                display: block; 
-                padding-right: 0; 
-                margin-bottom: 1rem;
-            }
-            .time-badge {
-                 position: static; 
-                 transform: none; 
-                 display: block; 
-                 width: fit-content; 
-                 margin: 0.5rem auto 2rem auto; 
-                 font-size: 0.8rem;
-            }
-         }
+        /* Card Visibility */
+        .quiz-card { display: none; }
+        .quiz-card.active { display: block; }
+        
+        /* --- Start Card --- */
+        .start-card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative; 
+        }
+        .icon-stack {
+            position: relative;
+            width: 100px; 
+            height: 80px; 
+            margin: 1rem auto 2rem auto; 
+        }
+        .stack-icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            font-size: 1.8rem; 
+            font-weight: 700;
+            color: var(--color-text);
+            background: var(--color-bg-light);
+            border: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stack-icon.icon-answer { 
+            transform: rotate(-15deg);
+            background-color: var(--color-success);
+            color: white;
+            border-color: var(--color-success);
+            top: 0;
+            left: 25px; 
+            z-index: 3;
+        }
+        .stack-icon.icon-weight { 
+            transform: rotate(10deg);
+            background-color: var(--color-info); 
+            color: white;
+            border-color: var(--color-info);
+            top: 20px;
+            left: 5px;
+            z-index: 2;
+        }
+        .stack-icon.icon-match { 
+            transform: rotate(-5deg);
+            background-color: var(--color-warning); 
+             color: white;
+            border-color: var(--color-warning);
+            top: 20px;
+            left: 45px;
+            z-index: 1;
+        }
 
 
-        #start-btn {
-            background-color: var(--color-text); 
-            border-color: var(--color-text);
-            color: var(--color-bg);
-            font-size: 1.1rem;
-            font-weight: 700;
-            width: 100%;
-            max-width: 300px; 
-            display: block;
-            margin: 1rem auto; 
-        }
-         #start-btn:hover {
-            background-color: #333;
-            border-color: #333;
-         }
-        
-        .quiz-author {
-            font-size: 0.85rem; 
-            color: var(--color-text-light);
-            text-align: center;
-            margin-top: auto; 
-            padding-top: 2rem; 
-        }
-
-        /* --- How To Play Card --- */
-        #how-to-play-card h2 {
-            font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1.2;
-            color: var(--color-text);
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .how-to-list {
-            padding-left: 0;
-            list-style: none; 
-            counter-reset: how-to-counter; 
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .how-to-list li {
-            counter-increment: how-to-counter; 
-            font-size: 1.1rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-            position: relative;
-            padding-left: 50px; 
-        }
-        .how-to-list li::before {
-            content: counter(how-to-counter); 
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--color-accent);
-            background: var(--color-bg-light);
-            border: 2px solid var(--color-border);
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            text-align: center;
-            line-height: 33px; 
-        }
-        .how-to-list strong { color: var(--color-text); }
-
-        #got-it-btn {
-            width: 100%;
-            max-width: 300px; 
-            display: block; 
-            margin: auto auto 2rem auto; 
-        }
-        
-        #how-to-play-card .privacy-notice {
-             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            margin-top: auto; 
-            padding: 1rem;
-            background-color: var(--color-bg-light);
-            border-radius: 4px;
-            color: var(--color-text-light);
-            font-size: 0.9rem;
-        }
-        #how-to-play-card .privacy-notice svg {
-            width: 20px;
-            height: 20px;
-            margin-right: 0.75rem;
-            flex-shrink: 0;
-            fill: var(--color-text-light);
-        }
-        #how-to-play-card .privacy-notice strong {
-            color: var(--color-text);
-        }
+        #start-card h1 { /* Mayoral Matchmaker */
+            font-weight: 800;
+            color: var(--color-text);
+            margin: 0; 
+            font-size: 3rem; 
+            line-height: 1.1;
+            text-align: center;
+        }
+        
+        #start-card .tagline {
+            font-size: 1.1rem; 
+            font-weight: 500;
+            color: var(--color-text-light); 
+            margin: 1rem auto 2.5rem auto; 
+            text-align: center;
+            position: relative; 
+            display: inline-block; 
+            padding-right: 50px; /* More space */
+        }
+        /* 5 Minute Badge */
+        .time-badge {
+            display: inline-block;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+            font-size: 0.7rem; 
+            font-weight: 700;
+            padding: 0.2rem 0.5rem; 
+            border-radius: 1rem;
+            border: 1px solid var(--color-border);
+            white-space: nowrap;
+            position: absolute;
+            top: -0.8rem; /* Higher */
+            right: 0; 
+            transform: rotate(10deg); 
+        }
+         @media (max-width: 600px) {
+             #start-card h1 { 
+                 font-size: 2.5rem; 
+             } 
+            #start-card .tagline { 
+                font-size: 1rem; 
+                display: block; 
+                padding-right: 0; 
+                margin-bottom: 1rem;
+            }
+            .time-badge {
+                 position: static; 
+                 transform: none; 
+                 display: block; 
+                 width: fit-content; 
+                 margin: 0.5rem auto 2rem auto; 
+                 font-size: 0.8rem;
+            }
+         }
 
 
-        /* --- Question Card Styling --- */
-        .question-header {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--color-accent);
-            margin-bottom: 1rem;
-            flex-shrink: 0; 
-        }
-        
-        .question-text {
-            font-weight: 700;
-            font-size: 1.5rem; 
-            line-height: 1.4;
-            color: var(--color-text);
-            margin-bottom: 1.5rem; 
-            flex-shrink: 0;
-        }
-        
-        @media (max-width: 600px) {
-            .question-text { font-size: 1.3rem; } 
-        }
-        
-        /* REMOVED .quiz-body scroll container */
-        
-        /* --- Segmented Control Radio Buttons --- */
-        .radio-group {
-            display: flex;
-            border: 2px solid var(--color-border);
-            border-radius: 6px;
-            overflow: hidden;
-            width: 100%;
-            margin-bottom: 1.5rem; 
-            flex-shrink: 0; /* Prevent shrinking */
-        }
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group label {
-            flex: 1; 
-            text-align: center;
-            padding: 0.8rem 0.5rem; 
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--color-text-light);
-            background: var(--color-bg);
-            border-left: 1px solid var(--color-border);
-            transition: all 0.2s ease-in-out;
-            font-size: 0.85rem; 
-            line-height: 1.3;
-        }
-        .radio-group label:first-of-type { border-left: none; }
-        
-        /* Mobile stacked buttons */
-        @media (max-width: 600px) {
-            .radio-group {
-                flex-direction: column; 
-                border: none; 
-                border-radius: 0;
-            }
-            .radio-group label {
-                width: 100%;
-                border: 2px solid var(--color-border); 
-                border-radius: 6px; 
-                margin-bottom: 0.5rem; 
-                border-left: 2px solid var(--color-border); 
-                font-size: 0.9rem; 
-                padding: 0.7rem 0.5rem; 
-            }
-            .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
-            
-            .radio-group input[type="radio"]:checked + label {
-                border-color: var(--color-accent);
-                background: var(--color-accent);
-                color: var(--color-bg);
-            }
-        }
-        
-        /* Desktop hover/checked states */
-        @media (min-width: 601px) {
-            .radio-group label:hover {
-                background: var(--color-bg-light);
-                color: var(--color-text);
-            }
-            .radio-group input[type="radio"]:checked + label {
-                background-color: var(--color-accent);
-                color: var(--color-bg);
-                border-color: var(--color-accent);
-                font-weight: 700;
-            }
-        }
-        
-        /* --- Accordion --- */
-        .accordion-container {
-            margin-top: 1.5rem; 
-            border-top: 1px solid var(--color-border-light);
-            padding-top: 1rem; 
-             /* flex-shrink allows it to take less space if needed, but flex-grow on card ensures base height */
-             flex-grow: 1; 
-             min-height: 0; /* Needed for flex-grow */
-             overflow-y: auto; /* Scroll if content exceeds space */
-             padding-right: 10px; /* Space for scrollbar */
-             margin-right: -10px;
-             scrollbar-width: thin; 
-             scrollbar-color: var(--color-border) transparent; 
-        }
-         .accordion-container::-webkit-scrollbar { width: 8px; }
-         .accordion-container::-webkit-scrollbar-track { background: transparent; }
-         .accordion-container::-webkit-scrollbar-thumb {
-            background-color: var(--color-border);
-            border-radius: 4px;
-         }
-        
-        details { margin-bottom: 0.5rem; }
-        
-        summary {
-            font-weight: 700;
-            color: var(--color-text);
-            cursor: pointer;
-            list-style: none; /* Remove default marker */
-            position: relative;
-            padding-left: 1.75rem;
-            font-size: 0.9rem; /* Smaller summary */
-        }
-        
-        summary::before {
-            content: '+';
-            font-weight: 700;
-            position: absolute;
-            left: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-accent);
-            font-size: 1.1rem; /* Smaller icon */
-        }
-        
-        details[open] summary::before { content: '–'; }
-        
-        .accordion-content {
-            padding: 0.5rem 0 0.5rem 1.75rem; /* Reduced padding */
-            color: var(--color-text-secondary);
-            font-size: 0.85rem; /* Smaller content text */
-            line-height: 1.5; /* Tighter line height */
-        }
-        
-        /* --- Navigation --- */
-        .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem; /* Ensure space above nav */
-            border-top: 1px solid var(--color-border-light);
-            padding-top: 2rem;
-            flex-shrink: 0; /* Prevent shrinking */
-        }
+        #start-btn {
+            background-color: var(--color-text); 
+            border-color: var(--color-text);
+            color: var(--color-bg);
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 100%;
+            max-width: 300px; 
+            display: block;
+            margin: 1rem auto;nbsp;
+        }
+         #start-btn:hover {
+            background-color: #333;
+            border-color: #333;
+         }
+        
+        .quiz-author {
+            font-size: 0.85rem; 
+            color: var(--color-text-light);
+            text-align: center;
+            margin-top: auto; 
+            padding-top: 2rem; 
+        }
 
-        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            font-weight: 700;
-            padding: 0.75rem 1.5rem;
-            border: 2px solid var(--color-accent);
-            border-radius: 4px;
-            background: var(--color-accent);
-            color: var(--color-bg);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover, #got-it-btn:hover {
-            background: #003366; 
-            border-color: #003366;
-        }
-        
-        .nav-btn.secondary, #restart-btn {
-            background: var(--color-bg);
-            color: var(--color-accent);
-        }
-        
-        .nav-btn.secondary:hover, #restart-btn:hover {
-            background: #f4f4f4;
-            border-color: var(--color-accent);
-        }
-        
-        #start-btn:hover {
-            background-color: #333;
-            border-color: #333;
-        }
-        #start-btn {
-            background-color: var(--color-text); 
-            border-color: var(--color-text);
-        }
+        /* --- How To Play Card --- */
+        #how-to-play-card h2 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: var(--color-text);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .how-to-list {
+            padding-left: 0;
+            list-style: none; 
+            counter-reset: how-to-counter; 
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .how-to-list li {
+            counter-increment: how-to-counter; 
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            position: relative;
+            padding-left: 50px; 
+        }
+        .how-to-list li::before {
+            content: counter(how-to-counter); 
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            background: var(--color-bg-light);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            line-height: 33px; 
+        }
+        .how-to-list strong { color: var(--color-text); }
 
-        
-        .nav-btn:disabled, #submit-quiz-btn:disabled, #got-it-btn:disabled {
-            background: #ccc;
-            border-color: #ccc;
-            color: #888;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        .nav-btn.secondary:disabled {
-            background: var(--color-bg);
-            border-color: #ccc;
-            color: #ccc;
-            opacity: 0.7;
-        }
+        #got-it-btn {
+            width: 100%;
+            max-width: 300px; 
+            display: block; 
+            margin: auto auto 2rem auto; 
+        }
+        
+        #how-to-play-card .privacy-notice {
+             display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: auto; 
+            padding: 1rem;
+            background-color: var(--color-bg-light);
+            border-radius: 4px;
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+        }
+        #how-to-play-card .privacy-notice svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            fill: var(--color-text-light);
+        }
+        #how-to-play-card .privacy-notice strong {
+            color: var(--color-text);
+        }
 
-        /* --- Weighting Card --- */
-        #weighting-card .card-content {
-            padding-top: 2.5rem;
-            height: var(--card-fixed-height); /* Explicitly set height */
-        }
-        
-        #weighting-card h2 {
-            font-weight: 800;
-            font-size: 2rem; 
-            line-height: 1.2;
-            color: var(--color-text);
-            text-align: center;
-            margin-bottom: 0.5rem; /* Reduced margin */
-            flex-shrink: 0;
-        }
-        #weighting-card .card-subtitle {
-            font-size: 1rem; 
-            color: var(--color-text-light);
-            text-align: center;
-            margin-bottom: 1rem; 
-            flex-shrink: 0;
-        }
 
-        .points-tracker {
-            text-align: center;
-            border-bottom: 1px solid var(--color-border);
-            padding-bottom: 1rem; 
-            margin-bottom: 1rem; 
-            flex-shrink: 0;
-        }
-        
-        .points-tracker-label {
-            font-size: 1.1rem; 
-            font-weight: 700;
-            color: var(--color-text);
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-        
-        #total-points-display {
-            font-size: 1.5rem; 
-            font-weight: 700;
-            color: var(--color-success);
-            transition: color 0.3s ease;
-        }
-        #total-points-display.error { color: var(--color-error); }
-        
-        #points-helper {
-            font-size: 0.9rem; 
-            color: var(--color-text-light);
-            margin-top: 0.25rem;
-            line-height: 1.5;
-        }
-        
-        /* Scrolling container for weighting list */
-        .weighting-list-container {
-            flex-grow: 1; /* Takes up remaining space */
-            min-height: 0; /* Critical for flex */
-            overflow-y: auto;
-            border: 1px solid var(--color-border);
-            border-radius: 4px;
-            /* Scrollbar styling */
-            scrollbar-width: thin;
-            scrollbar-color: var(--color-border) transparent;
-        }
-        .weighting-list-container::-webkit-scrollbar { width: 8px; }
-        .weighting-list-container::-webkit-scrollbar-track { background: transparent; }
-        .weighting-list-container::-webkit-scrollbar-thumb {
-            background-color: var(--color-border);
-            border-radius: 4px;
-        }
-        
-        .weighting-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 1rem; 
-            border-bottom: 1px solid var(--color-border-light);
-        }
-        .weighting-list-item:last-child { border-bottom: none; }
-        
-        .weighting-q-text {
-            font-weight: 500;
-            padding-right: 1rem;
-            flex-grow: 1;
-            font-size: 0.9rem; 
-        }
-        
-        .weighting-q-text strong {
-            font-weight: 700;
-            color: var(--color-text);
-        }
-        
-        /* Point Allocator (+/- buttons) */
-        .point-allocator {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        
-        .point-btn {
-            width: 30px; 
-            height: 30px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--color-accent);
-            background: var(--color-bg);
-            border: 2px solid var(--color-border);
-            border-radius: 50%;
-            cursor: pointer;
-            line-height: 0; 
-            padding: 0;
-            transition: all 0.2s;
-            display: flex; 
-            align-items: center;
-            justify-content: center;
-        }
-        .point-btn:hover {
-            background: var(--color-accent);
-            color: var(--color-bg);
-            border-color: var(--color-accent);
-        }
-        
-        .point-input {
-            width: 45px; 
-            height: 40px;
-            font-size: 1rem; 
-            font-weight: 700;
-            text-align: center;
-            border: none;
-            background: transparent;
-            color: var(--color-text);
-            margin: 0 0.2rem;
-            -webkit-appearance: none;
-            -moz-appearance: textfield;
-            pointer-events: none; /* Make readonly visually */
-        }
-        
-        #submit-quiz-btn {
-            width: 100%;
-            margin-top: 1.5rem; 
-            flex-shrink: 0; 
-        }
-        
-        #error-message {
-            color: var(--color-error);
-            text-align: center;
-            font-weight: 700;
-            margin-top: 1rem; 
-            font-size: 1rem; 
-            display: none; 
-            flex-shrink: 0;
-        }
+        /* --- Question Card Styling --- */
+        .question-header {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            flex-shrink: 0; 
+        }
+        
+        .question-text {
+            font-weight: 700;
+            font-size: 1.5rem; 
+            line-height: 1.4;
+            color: var(--color-text);
+            margin-bottom: 1.5rem; 
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 600px) {
+            .question-text { font-size: 1.3rem; } 
+        }
+        
+        /* --- Segmented Control Radio Buttons --- */
+        .radio-group {
+            display: flex;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 1.5rem; 
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label {
+            flex: 1; 
+            text-align: center;
+            padding: 0.8rem 0.5rem; 
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--color-text-light);
+            background: var(--color-bg);
+            border-left: 1px solid var(--color-border);
+            transition: all 0.2s ease-in-out;
+            font-size: 0.85rem; 
+            line-height: 1.3;
+        }
+        .radio-group label:first-of-type { border-left: none; }
+        
+        /* Mobile stacked buttons */
+        @media (max-width: 600px) {
+            .radio-group {
+                flex-direction: column; 
+                border: none; 
+                border-radius: 0;
+            }
+            .radio-group label {
+                width: 100%;
+                border: 2px solid var(--color-border); 
+                border-radius: 6px; 
+                margin-bottom: 0.5rem; 
+                border-left: 2px solid var(--color-border); 
+                font-size: 0.9rem; 
+                padding: 0.7rem 0.5rem; 
+            }
+            .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
+            
+            .radio-group input[type="radio"]:checked + label {
+                border-color: var(--color-accent);
+                background: var(--color-accent);
+                color: var(--color-bg);
+            }
+        }
+        
+        /* Desktop hover/checked states */
+        @media (min-width: 601px) {
+            .radio-group label:hover {
+                background: var(--color-bg-light);
+                color: var(--color-text);
+            }
+            .radio-group input[type="radio"]:checked + label {
+                background-color: var(--color-accent);
+                color: var(--color-bg);
+                border-color: var(--color-accent);
+                font-weight: 700;
+            }
+        }
+        
+        /* --- Accordion (Request 1 REVERTED) --- */
+        .accordion-container {
+            margin-top: 1.5rem; 
+            border-top: 1px solid var(--color-border-light);
+            padding-top: 1rem; 
+             /* This setup makes the accordion area scrollable within the fixed-height card */
+             flex-grow: 1; 
+             min-height: 0; /* Needed for flex-grow */
+             overflow-y: auto; /* Scroll if content exceeds space */
+             padding-right: 10px; /* Space for scrollbar */
+             margin-right: -10px;
+             scrollbar-width: thin; 
+             scrollbar-color: var(--color-border) transparent; 
+        }
+         .accordion-container::-webkit-scrollbar { width: 8px; }
+         .accordion-container::-webkit-scrollbar-track { background: transparent; }
+         .accordion-container::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 4px;
+         }
+        
+        details { margin-bottom: 0.5rem; }
+        
+        summary {
+            font-weight: 700;
+            color: var(--color-text);
+            cursor: pointer;
+            list-style: none; /* Remove default marker */
+            position: relative;
+            padding-left: 1.75rem;
+            font-size: 0.9rem; /* Smaller summary */
+        }
+        
+        summary::before {
+            content: '+';
+            font-weight: 700;
+            position: absolute;
+            left: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-accent);
+            font-size: 1.1rem; /* Smaller icon */
+        }
+        
+        details[open] summary::before { content: '–'; }
+        
+        .accordion-content {
+            padding: 0.5rem 0 0.5rem 1.75rem; /* Reduced padding */
+            color: var(--color-text-secondary);
+            font-size: 0.85rem; /* Smaller content text */
+            line-height: 1.5; /* Tighter line height */
+        }
+        
+        /* --- Navigation --- */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem; /* Ensure space above nav */
+            border-top: 1px solid var(--color-border-light);
+            padding-top: 2rem;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
 
-        /* --- Results Card --- */
-        #results-card .card-content {
-             justify-content: center; 
-             height: var(--card-fixed-height); /* Also fixed height */
-        }
-        
-        #results-card h2 {
-            font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1.2;
-            color: var(--color-text);
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        
-        .result-bar { margin-bottom: 1.5rem; }
-        .result-bar-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        .candidate-name { font-size: 1.1rem; color: var(--color-text); }
-        .result-percent { font-size: 1.1rem; color: var(--color-text-secondary); }
-        .bar-wrapper {
-            height: 28px;
-            background: #f0f0f0;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .bar-fill {
-            height: 100%;
-            background: var(--color-text-light);
-            width: 0%; /* Set by JS */
-            transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .result-bar.top-match .bar-fill {
-            background: var(--color-accent); /* Top match is accent color */
-        }
-        .result-bar.top-match .candidate-name,
-        .result-bar.top-match .result-percent {
-            font-weight: 700;
-            color: var(--color-accent);
-        }
-        #restart-btn {
-            width: 100%;
-            max-width: 300px; /* Limit width */
-            margin: auto auto 0 auto; /* Push to bottom */
-            display: block;
-            padding-top: 1rem; /* Space above */
-        }
-         @media (max-width: 600px) {
-             #restart-btn {
-                 margin-top: 1.5rem; 
-             }
-         }
-    </style>
+        .nav-btn, #start-btn, #submit-quiz-btn, #restart-btn, #got-it-btn {
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--color-accent);
+            border-radius: 4px;
+            background: var(--color-accent);
+            color: var(--color-bg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-btn:hover, #start-btn:hover, #submit-quiz-btn:hover, #restart-btn:hover, #got-it-btn:hover {
+            background: #003366; 
+            border-color: #003366;
+        }
+        
+        .nav-btn.secondary, #restart-btn {
+            background: var(--color-bg);
+            color: var(--color-accent);
+        }
+        
+        .nav-btn.secondary:hover, #restart-btn:hover {
+            background: #f4f4f4;
+            border-color: var(--color-accent);
+        }
+        
+        #start-btn:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+        #start-btn {
+            background-color: var(--color-text); 
+            border-color: var(--color-text);
+        }
+
+        
+        .nav-btn:disabled, #submit-quiz-btn:disabled, #got-it-btn:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .nav-btn.secondary:disabled {
+            background: var(--color-bg);
+            border-color: #ccc;
+            color: #ccc;
+            opacity: 0.7;
+        }
+
+        /* --- Weighting Card --- */
+        #weighting-card .card-content {
+            padding-top: 2.5rem;
+        }
+        
+        #weighting-card h2 {
+            font-weight: 800;
+            font-size: 2rem; 
+            line-height: 1.2;
+            color: var(--color-text);
+            text-align: center;
+            margin-bottom: 0.5rem; /* Reduced margin */
+            flex-shrink: 0;
+        }
+        #weighting-card .card-subtitle {
+            font-size: 1rem; 
+            color: var(--color-text-light);
+            text-align: center;
+            margin-bottom: 1rem; 
+            flex-shrink: 0;
+        }
+
+        .points-tracker {
+            text-align: center;
+            /* Removed border-bottom and padding-bottom (Request 2) */
+            margin-bottom: 1rem; 
+            flex-shrink: 0;
+        }
+        
+        /* Removed .points-tracker-label styles (Request 2) */
+        
+        #total-points-display {
+            font-size: 1.5rem; 
+            font-weight: 700;
+            color: var(--color-success);
+            transition: color 0.3s ease;
+        }
+        #total-points-display.error { color: var(--color-error); }
+        
+        #points-helper {
+            font-size: 0.9rem; 
+            color: var(--color-text-light);
+            margin-top: 0.25rem;
+            line-height: 1.5;
+        }
+        
+        /* --- Weighting Swiper (Request 3) --- */
+        .weighting-swiper-container {
+            flex-grow: 1; /* Takes up remaining space */
+            min-height: 0; /* Critical for flex */
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            overflow: hidden; /* This hides the other slides */
+            position: relative;
+        }
+        
+        /* This is the track that moves */
+        #weighting-list {
+            display: flex;
+            transition: transform 0.4s ease;
+            height: 100%;
+        }
+        
+        .weighting-slide {
+            width: 100%;
+            flex-shrink: 0;
+            overflow-y: auto; /* Allow individual slides to scroll if content overflows */
+            height: 100%;
+            /* Scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-border) transparent;
+        }
+        .weighting-slide::-webkit-scrollbar { width: 8px; }
+        .weighting-slide::-webkit-scrollbar-track { background: transparent; }
+        .weighting-slide::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 4px;
+        }
+
+        .weighting-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem; 
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        /* Remove border from last item *within a slide* */
+        .weighting-slide .weighting-list-item:last-child { 
+            border-bottom: none; 
+        }
+        
+        /* Swiper Navigation */
+        .weighting-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+            flex-shrink: 0;
+        }
+        #weighting-page-indicator {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--color-text-light);
+        }
+        /* --- End Swiper Styles --- */
+        
+        .weighting-q-text {
+            font-weight: 500;
+            padding-right: 1rem;
+            flex-grow: 1;
+            font-size: 0.9rem; 
+        }
+        
+        .weighting-q-text strong {
+            font-weight: 700;
+            color: var(--color-text);
+        }
+        
+        /* Point Allocator (+/- buttons) */
+        .point-allocator {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .point-btn {
+            width: 30px; 
+            height: 30px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+a           border-radius: 50%;
+            cursor: pointer;
+            line-height: 0; 
+            padding: 0;
+            transition: all 0.2s;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+        }
+        .point-btn:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+            border-color: var(--color-accent);
+        }
+        
+        .point-input {
+            width: 45px; 
+            height: 40px;
+            font-size: 1rem; 
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: var(--color-text);
+Note           margin: 0 0.2rem;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            pointer-events: none; /* Make readonly visually */
+        }
+        
+        #submit-quiz-btn {
+            width: 100%;
+            margin-top: 1.5rem; 
+            flex-shrink: 0; 
+        }
+        
+        #error-message {
+            color: var(--color-error);
+            text-align: center;
+            font-weight: 700;
+content:             margin-top: 1rem; 
+            font-size: 1rem; 
+            display: none; 
+            flex-shrink: 0;
+        }
+
+        /* --- Results Card --- */
+        #results-card .card-content {
+             justify-content: center; 
+             min-height: var(--card-min-height); /* Use min-height */
+        }
+        
+        #results-card h2 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1.2;
+code:             color: var(--color-text);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .result-bar { margin-bottom: 1.5rem; }
+        .result-bar-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .candidate-name { font-size: 1.1rem; color: var(--color-text); }
+        .result-percent { font-size: 1.1rem; color: var(--color-text-secondary); }
+        .bar-wrapper {
+            height: 28px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: var(--color-text-light);
+            width: 0%; /* Set by JS */
+            transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .result-bar.top-match .bar-fill {
+            background: var(--color-accent); /* Top match is accent color */
+        }
+        .result-bar.top-match .candidate-name,
+        .result-bar.top-match .result-percent {
+            font-weight: 700;
+t:             color: var(--color-accent);
+        }
+        #restart-btn {
+            width: 100%;
+            max-width: 300px; /* Limit width */
+            margin: auto auto 0 auto; /* Push to bottom */
+            display: block;
+            padding-top: 1rem; /* Space above */
+        }
+         @media (max-width: 600px) {
+s              #restart-btn {
+                 margin-top: 1.5rem; 
+             }
+s          }
+    </style>
 </head>
 <body>
 
-    <div class="progress-container-fixed">
-        <div id="progress-bar"></div>
-    </div>
+    <div class="progress-container-fixed">
+        <div id="progress-bar"></div>
+    </div>
 
-    <div class="container">
-        
-        <div id="start-card" class="quiz-card active">
-            <div class="card-content">
-                <div class="start-card-header">
-                    <div class="icon-stack">
-                        <span class="stack-icon icon-answer">☑</span> 
-                        <span class="stack-icon icon-weight">⚖</span> 
-                        <span class="stack-icon icon-match">🎯</span>
-                    </div>
-                    <h1>Mayoral Matchmaker</h1>
-                </div>
-                
-                <p class="tagline">
-                    See which Montreal party you are most aligned to
-                    <span class="time-badge">~ 5 min</span>
-                </p>
+    <div class="container">
+        
+        <div id="start-card" class="quiz-card active">
+            <div class="card-content">
+                <div class="start-card-header">
+                    <div class="icon-stack">
+                        <span class="stack-icon icon-answer">☑</span> 
+                        <span class="stack-icon icon-weight">⚖</span> 
+                        <span class="stack-icon icon-match">🎯</span>
+s                   </div>
+                    <h1>Mayoral Matchmaker</h1>
+                </div>
+                
+                <p class="tagline">
+s                   See which Montreal party you are most aligned to
+                    <span class="time-badge">~ 5 min</span>
+                </p>
 
-                <button id="start-btn" class="nav-btn">Start Quiz</button>
-                
-                <div class="quiz-author">Questions by Aimee Lucido</div> 
-            </div>
-        </div>
+                <button id="start-btn" class="nav-btn">Start Quiz</button>
+                
+                <div class="quiz-author">Questions by Aimee Lucido</div> 
+            </div>
+        </div>
 
-        <div id="how-to-play-card" class="quiz-card">
-            <div class="card-content">
-                <h2>How It Works</h2>
+        <div id="how-to-play-card" class="quiz-card">
+            <div class="card-content">
+                <h2>How It Works</h2>
 
-                <ol class="how-to-list">
-                    <li>
-                        <strong>Answer questions:</strong> Share your opinion on 20 key Montreal issues.
-                    </li>
-                    <li>
-                        <strong>Wager your points:</strong> Allocate 100 points to show what matters most to you.
-                    </li>
-                    <li>
-                        <strong>Find your match:</strong> See which mayoral candidate aligns with your views.
-                    </li>
-                </ol>
+                <ol class="how-to-list">
+                    <li>
+                        <strong>Answer questions:</strong> Share your opinion on 20 key Montreal issues.
+                    </li>
+                    <li>
+                        <strong>Wager your points:</strong> Allocate 100 points to show what matters most to you.
+s                   </li>
+                    <li>
+                        <strong>Find your match:</strong> See which mayoral candidate aligns with your views.
+                    </li>
+                </ol>
 
-                <button id="got-it-btn" class="nav-btn">Got it</button>
+                <button id="got-it-btn" class="nav-btn">Got it</button>
 
-                <div class="privacy-notice">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.5A5.25 5.25 0 0 0 6.75 6.75v3.75H6a2.25 2.25 0 0 0-2.25 2.25v8.25A2.25 2.25 0 0 0 6 23.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.25A2.25 2.25 0 0 0 18 10.5h-.75V6.75A5.25 5.25 0 0 0 12 1.5Zm0 1.5a3.75 3.75 0 0 1 3.75 3.75v3.75H8.25V6.75A3.75 3.75 0 0 1 12 3Zm-4.5 9h9v8.25a.75.75 0 0 1-.75.75H8.25a.75.75 0 0 1-.75-.75V12Z"></path></svg>
-                    <span><strong>We respect your privacy.</strong> No data is collected or stored.</span>
-                </div>
-            </div>
-        </div>
-        
-        <div id="question-card-container"></div>
-        
-        <div id="weighting-card" class="quiz-card">
-            <div class="card-content">
-                <h2>How important is each question?</h2>
-                <p class="card-subtitle">You have 100 points to show what matters most. Give more points to the questions you care about, and fewer to the ones you don't.</p>
-                
-                <div class="points-tracker">
-                    <span class="points-tracker-label">Your Importance Budget</span>
-                    <span id="total-points-display">100 / 100</span>
-                    <div id="points-helper">All questions start at 5 points. You must use <strong>exactly 100</strong>.</div>
-                </div>
+                <div class="privacy-notice">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1.5A5.25 5.25 0 0 0 6.75 6.75v3.75H6a2.25 2.25 0 0 0-2.25 2.25v8.25A2.25 2.25 0 0 0 6 23.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.25A2.25 2.25 0 0 0 18 10.5h-.75V6.75A5.25 5.25 0 0 0 12 1.5Zm0 1.5a3.75 3.75 0 0 1 3.75 3.75v3.75H8.25V6.75A3.75 3.75 0 0 1 12 3Zm-4.5 9h9v8.25a.75.75 0 0 1-.75.75H8.25a.75.75 0 0 1-.75-.75V12Z"></path></svg>
+                    <span><strong>We respect your privacy.</strong> No data is collected or stored.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="question-card-container"></div>
+        
+        <div id="weighting-card" class="quiz-card">
+            <div class="card-content">
+                <h2>How important is each question?</h2>
+                <p class="card-subtitle">You have 100 points to show what matters most. Give more points to the questions you care about, and fewer to the ones you don't.</p>
+                
+                <div class="points-tracker">
+                                        <span id="total-points-display">100 / 100</span>
+                    <div id="points-helper">All questions start at 5 points. You must use <strong>exactly 100</strong>.</div>
+                </div>
 
-                <div class="weighting-list-container">
-                    <div id="weighting-list">
-                        </div>
-                </div>
+                                <div class="weighting-swiper-container">
+                    <div id="weighting-list">
+                                            </div>
+                </div>
+                
+                <div class="weighting-nav">
+a                 <button type="button" id="weighting-prev" class="nav-btn secondary" disabled>&larr; Previous</button>
+                    <span id="weighting-page-indicator">1 / 5</span>
+                    <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
+                </div>
+                                <button id="submit-quiz-btn" class="nav-btn">Calculate My Alignment</button>
+                <p id="error-message"></p>
+            </div>
+        </div>
 
-                <button id="submit-quiz-btn" class="nav-btn">Calculate My Alignment</button>
-                <p id="error-message"></p>
-            </div>
-        </div>
+        <div id="results-card" class="quiz-card">
+content:           <div class="card-content">
+                <h2>Your 2025 Montreal Match</h2>
+                <div id="results-output">
+                    </div>
+                </div>
+        </div>
 
-        <div id="results-card" class="quiz-card">
-            <div class="card-content">
-                <h2>Your 2025 Montreal Match</h2>
-                <div id="results-output">
-                    </div>
-                </div>
-        </div>
+    </div>
 
-    </div>
+    <script>
+        // --- Data Setup ---
 
-    <script>
-        // --- Data Setup ---
+        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q20
+        // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
+        const CANDIDATE_SCORES = {
+            'Luc Rabouin (Projet Montréal)':              [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1,  2,  2,  2,  2],
+            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2, -2, -1, -1,  1],
+            'Craig Sauvé (Transition Montréal)':           [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
+            'Gilbert Thibodeau (Action Montréal)':         [-2,  2,  2, -2,  0,  2, -1, -2, -2, -1, 1, -1,  2, -2,  2, -2, -2, -2,  0, -2],
+            'Jean-François Kacou (Futur Montréal)':      [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
+        };
+code: 
+        // Quiz Questions: 20 total, now with accordion details
+        const QUESTIONS = [
+            // --- Mobility (1-2) ---
+            { 
+                id: 1, 
+                text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries.",
+                details: [
+                    { summary: "What is the REV?", content: "The Réseau express vélo is a network of high-capacity, protected bike lanes, many of which are designed to be clear and safe for year-round cycling." },
+                    { summary: "Why 'specialized options'?", content: "This refers to proposals to add features like baby seats to the Bixi bike-share service, making it more accessible for families." }
+                ]
+  s         },
+            { 
+                id: 2, 
+                text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses.",
+                details: [
+s                   { summary: "What's the argument for this?", content: "Some candidates argue that bike lanes on commercial streets (like Ste-Catherine or Saint-Denis) hurt local businesses by removing parking, and that bike routes should be prioritized on residential streets or in parks instead." },
+                    { summary: "What's the argument against this?", content: "Opponents argue that bike lanes bring more foot (and bike) traffic to businesses, reduce traffic, and are essential for creating a connected, safe transportation network." }
+                ]
+            },
+            // --- Cleanliness (3) ---
+            { 
+                id: 3, 
+                text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer.",
+                details: [
+                    { summary: "Why is this an issue?", content: "Some boroughs have moved to bi-weekly (every two weeks) garbage collection to encourage composting and recycling. This has led to complaints about smells and overflowing bins, especially during summer." }
+                ]
+            },
+            // --- Climate (4) ---
+            { 
+                id: 4, 
+                text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032.",
+                details: [
+                    { summary: "What is a kilometre tax?", content: "This is a 'user-pay' system where drivers are taxed based on the distance they drive, rather than (or in addition to) a gas tax. It's proposed as a way to strongly discourage car use and fund public transit." }
+                ]
+            },
+            // --- Cost of Living (5-6) ---
+            { 
+                id: 5, 
+                text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>.",
+                details: [
+                    { summary: "What are the different proposals?", content: "Candidates have proposed different income thresholds for this discount. This question uses the highest proposed threshold ($47,500 from Transition Montréal). Projet Montréal proposed a lower threshold ($30,000)." }
+                ]
+            },
+            { 
+                id: 6, 
+                text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM).",
+                details: [
+                    { summary: "What's the context?", content: "This is a proposal from Action Montréal aimed at reducing the financial burden on car owners, who they feel are unfairly taxed by the current administration." }
+                ]
+            },
+            // --- Culture (7) ---
+            { 
+                id: 7, 
+                text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues.",
+A               details: [
+                    { summary: "What would a 'Night Mayor' do?", content: "This person and their council would manage the city's nightlife economy, working to resolve conflicts between venues (bars, concert halls) and residents through mediation, rather than immediately involving police for noise complaints." }
+                ]
+            },
+            // --- Democratic Reform (8) ---
+            { 
+                id: 8, 
+                text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions.",
+                details: [
+                    { summary: "What is a preferential ballot?", content: "Instead of picking just one candidate, you would rank your choices (1st, 2nd, 3rd, etc.). If no one wins 50% of the 1st-choice votes, the candidate with the fewest votes is eliminated, and their votes go to their voters' 2nd choice. This continues until one candidate has a majority." }
+                ]
+            },
+            // --- Economy/Taxes (9) ---
+            { 
+                id: 9, 
+                text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts.",
+                details: [
+                    { summary: "What kind of tax is this?", content: "This is a 'mansion tax' or 'luxury tax' proposed by Transition Montréal. It would apply only to the city's most expensive homes to create a dedicated fund for social programs." }
+                ]
+            },
+            // --- Homelessness (10) ---
+s           { 
+                id: 10, 
+                text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments.",
+                details: [
+                    { summary: "What does 'requisition' mean?", content: "This would involve the city taking temporary control of empty buildings (like unused hotels) to provide immediate shelter for the homeless, particularly during winter." },
+                    { summary: "Why ban police?", content: "This proposal suggests that police dismantling encampments is harmful and ineffective. Instead, it advocates for sending social service teams to support people on-site." }
+                ]
+            },
+            // --- Housing (11-12) ---
+C           { 
+                id: 11, 
+                text: "The city must **eliminate the current affordable housing bylaw** (the '20-20-20' rule) and replace it with a new system.",
+                details: [
+                    { summary: "What is the current bylaw?", content: "Known as the '20-20-20' bylaw, it requires new developments to include 20% social housing, 20% affordable housing, and 20% family-sized units. Many candidates (from all sides) argue it has failed and actually stalled construction." }
+                ]
+            },
+            { 
+                id: 12, 
+                text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families.",
+                details: [
+                    { summary: "How is this different from other proposals?", content: "This is the strictest position, proposed by Transition Montréal. Other candidates propose limiting short-term rentals to 90 days/year or banning only *commercial* operators, rather than a total ban." }
+                ]
+            },
+            // --- Public Transit (13) ---
+s           { 
+                id: 13, 
+                text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines.",
+                details: [
+                    { summary: "What is the debate?", content: "There's a major debate over which is better: expanding the existing, high-capacity Metro system (which is very expensive) or building new, more flexible tramway lines on the surface (which is cheaper but can be slowed by traffic)." }
+                ]
+            },
+            // --- Safety/Policing (14-15) ---
+            { 
+                id: 14, 
+                text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues.",
+                details: [
+                    { summary: "Is this 'defunding the police'?", content: "This proposal (from Transition Montréal) aims to re-allocate a portion of the police budget—specifically from overtime—to fund social workers, prevention programs, and civilian response teams, rather than cutting officer positions." }
+                ]
+            },
+            { 
+              _ id: 15, 
+                text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space.",
+                details: [
+                    { summary: "What does this mean?", content: "This proposal from Action Montréal would require any religious gathering in a public space (like a street prayer) to get a permit. It also calls for increased police enforcement at protests that are deemed 'disruptive' or 'unruly'." }
+                ]
+            },
+            // --- Israel-Gaza (16) ---
+            { 
+                id: 16, 
+                text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**.",
+s               details: [
+                    { summary: "Why is this a municipal issue?", content: "Some candidates (Rabouin, Sauvé) believe the city has a moral duty to take a stand on international human rights issues. Others (Ferrada, Thibodeau, Kacou) argue this is 'importing a foreign conflict' and is outside municipal jurisdiction." }
+                ]
+            },
+            // --- NEW Q17 (Traffic) ---
+            { 
+                id: 17,s 
+                text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal.",
+                details: [
+                    { summary: "What's the 'Camillien-Houde' debate?", content: "This is a long-standing, heated debate. Projet Montréal (Rabouin) wants to close the road that cuts across the mountain to cars. Others (Ferrada, Thibodeau) are strongly opposed, arguing it's a vital link for drivers." }
+                ]
+            },
+            // --- NEW Q18 (Culture) ---
+            { 
+                id: 18, 
+                text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund to help local venues acquire their own spaces.",
+                details: [
+                    { summary: "Why 'reserved housing'?", content: "This proposal from Projet Montréal aims to keep artists from being pushed out of the city by gentrification, ensuring they can live and work affordably. The fund would help independent venues (like small theatres or music halls) buy their buildings." }
+                ]
+            },
+            // --- NEW Q19 (Economy) ---
+Pos           { 
+                id: 19, 
+                text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects.",
+                details: [
+    s               { summary: "What is the 'East End' focus?", content: "Many candidates have a plan for Montreal's East End. This specific proposal from Projet Montréal focuses on economic development through education (a new university) and the 'green' economy (clean tech)." }
+                ]
+            },
+            // --- NEW Q20 (Public Transit) ---
+            { 
+                id: 20, 
+                text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions.",
+C               details: [
+                    { summary: "What's the tramway plan?", content: "This proposal (strongly supported by Projet Montréal) involves building three new tram lines: in the East End, the Southwest, and a 'loop' connecting Côte-des-Neiges, Jean-Talon, and du Parc. This is in direct contrast to candidates who favor Metro expansion." }
+                ]
+            }
+        ];
+        
+        // --- App State ---
+        // 0 = Start, 1 = How to Play, 2-21 = Questions, 22 = Weighting, 23 = Results
+s       let currentStep = 0; 
+        const totalQuizQuestions = QUESTIONS.length;
+        // Total steps now includes Start, How-to-Play, Questions, Weighting, Results
+        const totalSteps = 2 + totalQuizQuestions + 2; 
+        let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
+        
+        // State for weighting swiper (Request 3)
+        let currentWeightingPage = 0;
+        const questionsPerSlide = 4;
+        let totalWeightingPages = Math.ceil(QUESTIONS.length / questionsPerSlide);
 
-        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q20
-        // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
-        const CANDIDATE_SCORES = {
-            'Luc Rabouin (Projet Montréal)':              [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1,  2,  2,  2,  2],
-            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2, -2, -1, -1,  1],
-            'Craig Sauvé (Transition Montréal)':           [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
-            'Gilbert Thibodeau (Action Montréal)':         [-2,  2,  2, -2,  0,  2, -1, -2, -2, -1, 1, -1,  2, -2,  2, -2, -2, -2,  0, -2],
-            'Jean-François Kacou (Futur Montréal)':      [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
-        };
+        // --- Helper Functions ---
 
-        // Quiz Questions: 20 total, now with accordion details
-        const QUESTIONS = [
-            // --- Mobility (1-2) ---
-            { 
-                id: 1, 
-                text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries.",
-                details: [
-                    { summary: "What is the REV?", content: "The Réseau express vélo is a network of high-capacity, protected bike lanes, many of which are designed to be clear and safe for year-round cycling." },
-                    { summary: "Why 'specialized options'?", content: "This refers to proposals to add features like baby seats to the Bixi bike-share service, making it more accessible for families." }
-                ]
-            },
-            { 
-                id: 2, 
-                text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses.",
-                details: [
-                    { summary: "What's the argument for this?", content: "Some candidates argue that bike lanes on commercial streets (like Ste-Catherine or Saint-Denis) hurt local businesses by removing parking, and that bike routes should be prioritized on residential streets or in parks instead." },
-                    { summary: "What's the argument against this?", content: "Opponents argue that bike lanes bring more foot (and bike) traffic to businesses, reduce traffic, and are essential for creating a connected, safe transportation network." }
-                ]
-            },
-            // --- Cleanliness (3) ---
-            { 
-                id: 3, 
-                text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer.",
-                details: [
-                    { summary: "Why is this an issue?", content: "Some boroughs have moved to bi-weekly (every two weeks) garbage collection to encourage composting and recycling. This has led to complaints about smells and overflowing bins, especially during summer." }
-                ]
-            },
-            // --- Climate (4) ---
-            { 
-                id: 4, 
-                text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032.",
-                details: [
-                    { summary: "What is a kilometre tax?", content: "This is a 'user-pay' system where drivers are taxed based on the distance they drive, rather than (or in addition to) a gas tax. It's proposed as a way to strongly discourage car use and fund public transit." }
-                ]
-            },
-            // --- Cost of Living (5-6) ---
-            { 
-                id: 5, 
-                text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>.",
-                details: [
-                    { summary: "What are the different proposals?", content: "Candidates have proposed different income thresholds for this discount. This question uses the highest proposed threshold ($47,500 from Transition Montréal). Projet Montréal proposed a lower threshold ($30,000)." }
-                ]
-            },
-            { 
-                id: 6, 
-                text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM).",
-                details: [
-                    { summary: "What's the context?", content: "This is a proposal from Action Montréal aimed at reducing the financial burden on car owners, who they feel are unfairly taxed by the current administration." }
-                ]
-            },
-            // --- Culture (7) ---
-            { 
-                id: 7, 
-                text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues.",
-                details: [
-                    { summary: "What would a 'Night Mayor' do?", content: "This person and their council would manage the city's nightlife economy, working to resolve conflicts between venues (bars, concert halls) and residents through mediation, rather than immediately involving police for noise complaints." }
-                ]
-            },
-            // --- Democratic Reform (8) ---
-            { 
-                id: 8, 
-                text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions.",
-                details: [
-                    { summary: "What is a preferential ballot?", content: "Instead of picking just one candidate, you would rank your choices (1st, 2nd, 3rd, etc.). If no one wins 50% of the 1st-choice votes, the candidate with the fewest votes is eliminated, and their votes go to their voters' 2nd choice. This continues until one candidate has a majority." }
-                ]
-            },
-            // --- Economy/Taxes (9) ---
-            { 
-                id: 9, 
-                text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts.",
-                details: [
-                    { summary: "What kind of tax is this?", content: "This is a 'mansion tax' or 'luxury tax' proposed by Transition Montréal. It would apply only to the city's most expensive homes to create a dedicated fund for social programs." }
-                ]
-            },
-            // --- Homelessness (10) ---
-            { 
-                id: 10, 
-                text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments.",
-                details: [
-                    { summary: "What does 'requisition' mean?", content: "This would involve the city taking temporary control of empty buildings (like unused hotels) to provide immediate shelter for the homeless, particularly during winter." },
-                    { summary: "Why ban police?", content: "This proposal suggests that police dismantling encampments is harmful and ineffective. Instead, it advocates for sending social service teams to support people on-site." }
-                ]
-            },
-            // --- Housing (11-12) ---
-            { 
-                id: 11, 
-                text: "The city must **eliminate the current affordable housing bylaw** (the '20-20-20' rule) and replace it with a new system.",
-                details: [
-                    { summary: "What is the current bylaw?", content: "Known as the '20-20-20' bylaw, it requires new developments to include 20% social housing, 20% affordable housing, and 20% family-sized units. Many candidates (from all sides) argue it has failed and actually stalled construction." }
-                ]
-            },
-            { 
-                id: 12, 
-                text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families.",
-                details: [
-                    { summary: "How is this different from other proposals?", content: "This is the strictest position, proposed by Transition Montréal. Other candidates propose limiting short-term rentals to 90 days/year or banning only *commercial* operators, rather than a total ban." }
-                ]
-            },
-            // --- Public Transit (13) ---
-            { 
-                id: 13, 
-                text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines.",
-                details: [
-                    { summary: "What is the debate?", content: "There's a major debate over which is better: expanding the existing, high-capacity Metro system (which is very expensive) or building new, more flexible tramway lines on the surface (which is cheaper but can be slowed by traffic)." }
-                ]
-            },
-            // --- Safety/Policing (14-15) ---
-            { 
-                id: 14, 
-                text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues.",
-                details: [
-                    { summary: "Is this 'defunding the police'?", content: "This proposal (from Transition Montréal) aims to re-allocate a portion of the police budget—specifically from overtime—to fund social workers, prevention programs, and civilian response teams, rather than cutting officer positions." }
-                ]
-            },
-            { 
-                id: 15, 
-                text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space.",
-                details: [
-                    { summary: "What does this mean?", content: "This proposal from Action Montréal would require any religious gathering in a public space (like a street prayer) to get a permit. It also calls for increased police enforcement at protests that are deemed 'disruptive' or 'unruly'." }
-                ]
-            },
-            // --- Israel-Gaza (16) ---
-            { 
-                id: 16, 
-                text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**.",
-                details: [
-                    { summary: "Why is this a municipal issue?", content: "Some candidates (Rabouin, Sauvé) believe the city has a moral duty to take a stand on international human rights issues. Others (Ferrada, Thibodeau, Kacou) argue this is 'importing a foreign conflict' and is outside municipal jurisdiction." }
-                ]
-            },
-            // --- NEW Q17 (Traffic) ---
-            { 
-                id: 17, 
-                text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal.",
-                details: [
-                    { summary: "What's the 'Camillien-Houde' debate?", content: "This is a long-standing, heated debate. Projet Montréal (Rabouin) wants to close the road that cuts across the mountain to cars. Others (Ferrada, Thibodeau) are strongly opposed, arguing it's a vital link for drivers." }
-                ]
-            },
-            // --- NEW Q18 (Culture) ---
-            { 
-                id: 18, 
-                text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund to help local venues acquire their own spaces.",
-                details: [
-                    { summary: "Why 'reserved housing'?", content: "This proposal from Projet Montréal aims to keep artists from being pushed out of the city by gentrification, ensuring they can live and work affordably. The fund would help independent venues (like small theatres or music halls) buy their buildings." }
-                ]
-            },
-            // --- NEW Q19 (Economy) ---
-            { 
-                id: 19, 
-                text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects.",
-                details: [
-                    { summary: "What is the 'East End' focus?", content: "Many candidates have a plan for Montreal's East End. This specific proposal from Projet Montréal focuses on economic development through education (a new university) and the 'green' economy (clean tech)." }
-                ]
-            },
-            // --- NEW Q20 (Public Transit) ---
-            { 
-                id: 20, 
-                text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions.",
-                details: [
-                    { summary: "What's the tramway plan?", content: "This proposal (strongly supported by Projet Montréal) involves building three new tram lines: in the East End, the Southwest, and a 'loop' connecting Côte-des-Neiges, Jean-Talon, and du Parc. This is in direct contrast to candidates who favor Metro expansion." }
-                ]
-            }
-        ];
-        
-        // --- App State ---
-        // 0 = Start, 1 = How to Play, 2-21 = Questions, 22 = Weighting, 23 = Results
-        let currentStep = 0; 
-        const totalQuizQuestions = QUESTIONS.length;
-        // Total steps now includes Start, How-to-Play, Questions, Weighting, Results
-        const totalSteps = 2 + totalQuizQuestions + 2; 
-        let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
-        
-        // --- Helper Functions ---
+        /**
+         * Calculates the agreement score for one question.
+         * The formula is: (5 - |User Score - Candidate Score|) * Importance Multiplier
+         */
+        function calculateAgreement(userScore, candidateScore, points) {
+s           const scoreDifference = Math.abs(userScore - candidateScore);
+            const rawAgreement = 5 - scoreDifference;
+            return rawAgreement * points;
+        }
 
-        /**
-         * Calculates the agreement score for one question.
-         * The formula is: (5 - |User Score - Candidate Score|) * Importance Multiplier
-         */
-        function calculateAgreement(userScore, candidateScore, points) {
-            const scoreDifference = Math.abs(userScore - candidateScore);
-            const rawAgreement = 5 - scoreDifference;
-            return rawAgreement * points;
-        }
+        /**
+         * Updates the total points display and enables/disables the calculate button.
+         */
+        function updatePointTotal() {
+            const pointInputs = document.querySelectorAll('.point-input');
+            let totalPoints = 0;
+            pointInputs.forEach(input => {
+                totalPoints += parseInt(input.value) || 0;
+            });
 
-        /**
-         * Updates the total points display and enables/disables the calculate button.
-         */
-        function updatePointTotal() {
-            const pointInputs = document.querySelectorAll('.point-input');
-            let totalPoints = 0;
-            pointInputs.forEach(input => {
-                totalPoints += parseInt(input.value) || 0;
-            });
+            const display = document.getElementById('total-points-display');
+s           const helper = document.getElementById('points-helper');
+            const calculateBtn = document.getElementById('submit-quiz-btn');
 
-            const display = document.getElementById('total-points-display');
-            const helper = document.getElementById('points-helper');
-            const calculateBtn = document.getElementById('submit-quiz-btn');
+            display.textContent = `${totalPoints} / 100`;
 
-            display.textContent = `${totalPoints} / 100`;
+            if (totalPoints === 100) {
+                display.classList.remove('error');
+                helper.textContent = "Perfect! Your total is 100. You're ready to calculate!";
+                helper.style.color = 'var(--color-success)';
+                calculateBtn.disabled = false;
+            } else {
+                display.classList.add('error');
+s               helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
+                helper.style.color = 'var(--color-error)';
+                calculateBtn.disabled = true;
+            }
+        }
+        
+        /**
+         * Shows a specific card by its ID and hides all others
+         */
+         function showCard(cardId) {
+            document.querySelectorAll('.quiz-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(cardId).classList.add('active');
+s           window.scrollTo(0, 0); // Scroll to top on every card change
+         }
 
-            if (totalPoints === 100) {
-                display.classList.remove('error');
-                helper.textContent = "Perfect! Your total is 100. You're ready to calculate!";
-                helper.style.color = 'var(--color-success)';
-                calculateBtn.disabled = false;
-            } else {
-                display.classList.add('error');
-                helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
-                helper.style.color = 'var(--color-error)';
-                calculateBtn.disabled = true;
-            }
-        }
-        
-        /**
-         * Shows a specific card by its ID and hides all others
-         */
-         function showCard(cardId) {
-            document.querySelectorAll('.quiz-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            document.getElementById(cardId).classList.add('active');
-            window.scrollTo(0, 0); // Scroll to top on every card change
-         }
+        /**
+         * Updates the fixed progress bar
+         */
+         function updateProgressBar(step, total = totalSteps) {
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                const effectiveStep = Math.max(0, step); 
+                const percentage = (effectiveStep / (total -1)) * 100; // -1 because results is the end
+  s             progressBar.style.width = `${percentage}%`;
+            }
+         }
 
-        /**
-         * Updates the fixed progress bar
-         */
-         function updateProgressBar(step, total = totalSteps) {
-            const progressBar = document.getElementById('progress-bar');
-            if (progressBar) {
-                const effectiveStep = Math.max(0, step); 
-                const percentage = (effectiveStep / (total -1)) * 100; // -1 because results is the end
-                progressBar.style.width = `${percentage}%`;
-            }
-         }
+        // --- Main Logic ---
 
-        // --- Main Logic ---
+        /**
+         * Renders all 20 question cards into the DOM (hidden)
+         */
+        function renderQuestionCards() {
+            const container = document.getElementById('question-card-container');
+            let html = '';
 
-        /**
-         * Renders all 20 question cards into the DOM (hidden)
-         */
-        function renderQuestionCards() {
-            const container = document.getElementById('question-card-container');
-            let html = '';
+            QUESTIONS.forEach((q, index) => {
+                // Build Accordion HTML
+                let detailsHtml = '';
+                if (q.details && q.details.length > 0) {
+                    detailsHtml += '<div class="accordion-container">';
+                    q.details.forEach(detail => {
+                        detailsHtml += `
+                            <details>
+                                <summary>${detail.summary}</summary>
+                                <div class="accordion-content">
+s                                 <p style="margin-top: 0.25rem; margin-bottom: 1rem;">${detail.content}</p>
+                                </div>
+                            </details>
+                        `;
+                    });
+                    detailsHtml += '</div>';
+s             }
+                
+                // Build Full Question Card
+                html += `
+                    <div class="quiz-card" id="question-card-${index}">
+                        <div class="card-content">
+                            <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
+                            <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
+                            
+                            <div class="radio-group" id="radio-group-${index}">
+                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
+                            </div>
+                            
+                            ${detailsHtml}
+                            <div class="navigation-buttons">
+                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
+                                <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
+                            </div>
+                        </div>
+A                 </div>
+                `;
+            });
+            container.innerHTML = html;
+Note       }
 
-            QUESTIONS.forEach((q, index) => {
-                // Build Accordion HTML
-                let detailsHtml = '';
-                if (q.details && q.details.length > 0) {
-                    detailsHtml += '<div class="accordion-container">';
-                    q.details.forEach(detail => {
-                        detailsHtml += `
-                            <details>
-                                <summary>${detail.summary}</summary>
-                                <div class="accordion-content">
-                                    <p style="margin-top: 0.25rem; margin-bottom: 1rem;">${detail.content}</p>
-                                </div>
-                            </details>
-                        `;
-                    });
-                    detailsHtml += '</div>';
-                }
-                
-                // Build Full Question Card
-                html += `
-                    <div class="quiz-card" id="question-card-${index}">
-                        <div class="card-content">
-                            <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
-                            <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
-                            
-                            <div class="radio-group" id="radio-group-${index}">
-                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
-                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
-                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
-                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
-                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
-                            </div>
-                            
-                            ${detailsHtml}
-                            <div class="navigation-buttons">
-                                <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
-                                <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
+        /**
+         * Renders the weighting card slides (Request 3)
+         */
+        function renderWeightingCard() {
+            const listContainer = document.getElementById('weighting-list');
+            listContainer.innerHTML = ''; // Clear existing
+            
+            // Create slides
+            for (let i = 0; i < totalWeightingPages; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'weighting-slide';
+                
+                const start = i * questionsPerSlide;
+                const end = start + questionsPerSlide;
+                let slideHtml = '';
 
-        /**
-         * Renders the list of 20 questions into the weighting card
-         */
-        function renderWeightingCard() {
-            const listContainer = document.getElementById('weighting-list');
-            let html = '';
-            
-            QUESTIONS.forEach((q, index) => {
-                const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text.split('<')[0];
-                html += `
-                    <div class="weighting-list-item">
-                        <label for="points-${index}" class="weighting-q-text">
-                            ${q.id}. <strong>${questionShortText}</strong>
-                        </label>
-                        <div class="point-allocator">
-                            <button type="button" class="point-btn minus" data-index="${index}" aria-label="Decrease points">-</button>
-                            <input type="text" class="point-input" id="points-${index}" value="5" readonly>
-                            <button type="button" class="point-btn plus" data-index="${index}" aria-label="Increase points">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
-        }
-        
-        /**
-         * Attaches all the necessary event listeners after rendering
-         */
-        function attachListeners() {
-            // Start button
-            document.getElementById('start-btn').addEventListener('click', () => {
-                currentStep = 1; 
-                showCard('how-to-play-card');
-                updateProgressBar(currentStep);
-            });
+                QUESTIONS.slice(start, end).forEach((q, index) => {
+                    const questionIndex = start + index;
+                    const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text.split('<')[0];
+s                   slideHtml += `
+                        <div class="weighting-list-item">
+                            <label for="points-${questionIndex}" class="weighting-q-text">
+                                ${q.id}. <strong>${questionShortText}</strong>
+                            </label>
+                            <div class="point-allocator">
+Note                           <button type="button" class="point-btn minus" data-index="${questionIndex}" aria-label="Decrease points">-</button>
+                                <input type="text" class="point-input" id="points-${questionIndex}" value="5" readonly>
+                                <button type="button" class="point-btn plus" data-index="${questionIndex}" aria-label="Increase points">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                slide.innerHTML = slideHtml;
+                listContainer.appendChild(slide);
+            }
+            document.getElementById('weighting-page-indicator').textContent = `1 / ${totalWeightingPages}`;
+        }
+        
+        /**
+         * Handles changing the weighting slide (Request 3)
+         */
+        function updateWeightingSlide() {
+            const track = document.getElementById('weighting-list');
+            const prevBtn = document.getElementById('weighting-prev');
+            const nextBtn = document.getElementById('weighting-next');
+            const indicator = document.getElementById('weighting-page-indicator');
+            
+            track.style.transform = `translateX(-${currentWeightingPage * 100}%)`;
+            indicator.textContent = `${currentWeightingPage + 1} / ${totalWeightingPages}`;
+            
+            prevBtn.disabled = (currentWeightingPage === 0);
+            nextBtn.disabled = (currentWeightingPage === totalWeightingPages - 1);
+        }
+        
+        /**
+         * Attaches all the necessary event listeners after rendering
+A          */
+        function attachListeners() {
+            // Start button
+            document.getElementById('start-btn').addEventListener('click', () => {
+                currentStep = 1; 
+                showCard('how-to-play-card');
+Note               updateProgressBar(currentStep);
+            });
 
-            // "Got it" button for How to Play card
-            document.getElementById('got-it-btn').addEventListener('click', () => {
-                currentStep = 2; 
-                showCard('question-card-0');
-                updateProgressBar(currentStep);
-                document.getElementById('prev-btn-0').style.visibility = 'hidden';
-            });
-            
-            // Next/Prev buttons
-            QUESTIONS.forEach((q, index) => {
-                const nextBtn = document.getElementById(`next-btn-${index}`);
-                const prevBtn = document.getElementById(`prev-btn-${index}`);
-                
-                if (index === 0) {
-                    prevBtn.style.visibility = 'hidden';
-                }
+            // "Got it" button for How to Play card
+            document.getElementById('got-it-btn').addEventListener('click', () => {
+                currentStep = 2; 
+                showCard('question-card-0');
+                updateProgressBar(currentStep);
+                document.getElementById('prev-btn-0').style.visibility = 'hidden';
+            });
+            
+            // Next/Prev buttons
+            QUESTIONS.forEach((q, index) => {
+                const nextBtn = document.getElementById(`next-btn-${index}`);
+      s         const prevBtn = document.getElementById(`prev-btn-${index}`);
+                
+                if (index === 0) {
+  s                 prevBtn.style.visibility = 'hidden';
+                }
 
-                document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
-                    nextBtn.disabled = false;
-                });
+                document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
+                    nextBtn.disabled = false;
+                });
 
-                nextBtn.addEventListener('click', () => {
-                    const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
-                    if (!selected) { return; } 
-                    
-                    userAgreementAnswers[index] = parseInt(selected.value);
-                    
-                    currentStep++;
-                    if (currentStep <= totalQuizQuestions + 1) { 
-                        const nextQuestionIndex = currentStep - 2; 
-                        showCard(`question-card-${nextQuestionIndex}`);
-                        updateProgressBar(currentStep);
-                        
-                        document.getElementById(`prev-btn-${nextQuestionIndex}`).style.visibility = 'visible';
-                        
-                        if (userAgreementAnswers[nextQuestionIndex] !== null) {
-                            const val = userAgreementAnswers[nextQuestionIndex];
-                            document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
-                            document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
-                        } else {
-                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = true; 
-                        }
+                nextBtn.addEventListener('click', () => {
+                    const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
+                    if (!selected) { return; } 
+                    
+                    userAgreementAnswers[index] = parseInt(selected.value);
+                    
+                    currentStep++;
+                    if (currentStep <= totalQuizQuestions + 1) { 
+                        const nextQuestionIndex = currentStep - 2; 
+                        showCard(`question-card-${nextQuestionIndex}`);
+                        updateProgressBar(currentStep);
+                        
+s                       document.getElementById(`prev-btn-${nextQuestionIndex}`).style.visibility = 'visible';
+                        
+                        if (userAgreementAnswers[nextQuestionIndex] !== null) {
+                            const val = userAgreementAnswers[nextQuestionIndex];
+                    content:         document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
+                            document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
+                        } else {
+                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = true;s 
+                        }
 
-                    } else {
-                        showCard('weighting-card');
-                        updateProgressBar(currentStep); 
-                        updatePointTotal();
-                    }
-                });
+                    } else {
+                        showCard('weighting-card');
+                        updateProgressBar(currentStep); 
+                        updatePointTotal();
+                    }
+                });
 
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', () => {
-                        currentStep--;
-                        if (currentStep <= 1) { 
-                            showCard('how-to-play-card');
-                            updateProgressBar(currentStep);
-                        } else { 
-                            const prevQuestionIndex = currentStep - 2; 
-                            showCard(`question-card-${prevQuestionIndex}`);
-                            updateProgressBar(currentStep);
+                if (prevBtn) {
+Pos                 prevBtn.addEventListener('click', () => {
+                        currentStep--;
+                        if (currentStep <= 1) { 
+                            showCard('how-to-play-card');
+code:                           updateProgressBar(currentStep);
+                        } else { 
+                            const prevQuestionIndex = currentStep - 2; 
+                            showCard(`question-card-${prevQuestionIndex}`);
+                            updateProgressBar(currentStep);
 
-                            const val = userAgreementAnswers[prevQuestionIndex];
-                            if (val !== null) {
-                                document.querySelector(`#question-card-${prevQuestionIndex} input[value="${val}"]`).checked = true;
-                                document.getElementById(`next-btn-${prevQuestionIndex}`).disabled = false;
-                            }
-                            if (prevQuestionIndex === 0) {
-                                document.getElementById(`prev-btn-0`).style.visibility = 'hidden';
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Weighting card +/- button listener
-            document.getElementById('weighting-list').addEventListener('click', (event) => {
-                const target = event.target;
-                if (!target.classList.contains('point-btn')) return;
+                            const val = userAgreementAnswers[prevQuestionIndex];
+                            if (val !== null) {
+                                document.querySelector(`#question-card-${prevQuestionIndex} input[value="${val}"]`).checked = true;
+                                document.getElementById(`next-btn-${prevQuestionIndex}`).disabled = false;
+                            }
+                            if (prevQuestionIndex === 0) {
+s                             document.getElementById(`prev-btn-0`).style.visibility = 'hidden';
+                            }
+                        }
+is                   });
+                }
+  s         });
+            
+            // Weighting card +/- button listener
+            document.getElementById('weighting-list').addEventListener('click', (event) => {
+                const target = event.target;
+                if (!target.classList.contains('point-btn')) return;
 
-                const index = target.dataset.index;
-                const input = document.getElementById(`points-${index}`);
-                let currentValue = parseInt(input.value);
+                const index = target.dataset.index;
+                const input = document.getElementById(`points-${index}`);
+content:                 let currentValue = parseInt(input.value);
 
-                if (target.classList.contains('plus')) {
-                    if (currentValue < 100) currentValue++;
-                } else if (target.classList.contains('minus')) {
-                    if (currentValue > 0) currentValue--;
-                }
-                
-                input.value = currentValue;
-                updatePointTotal();
-            });
-            
-            // Submit button
-            document.getElementById('submit-quiz-btn').addEventListener('click', calculateResults);
-        }
+                if (target.classList.contains('plus')) {
+                    if (currentValue < 100) currentValue++;
+                } else if (target.classList.contains('minus')) {
+                    if (currentValue > 0) currentValue--;
+                }
+                
+                input.value = currentValue;
+code:                 updatePointTotal();
+            });
+            
+            // Weighting swiper navigation (Request 3)
+            document.getElementById('weighting-next').addEventListener('click', () => {
+                if (currentWeightingPage < totalWeightingPages - 1) {
+s                 currentWeightingPage++;
+                    updateWeightingSlide();
+                }
+            });
+            document.getElementById('weighting-prev').addEventListener('click', () => {
+                if (currentWeightingPage > 0) {
+                    currentWeightingPage--;
+                    updateWeightingSlide();
+      s         }
+            });
 
-        /**
-         * Calculates the final results and displays them.
-         */
-        function calculateResults() {
-            const results = {};
-            const errorMsg = document.getElementById('error-message');
-            errorMsg.style.display = 'none';
+            // Submit button
+            document.getElementById('submit-quiz-btn').addEventListener('click', calculateResults);
+        }
 
-            for (const candidate in CANDIDATE_SCORES) {
-                results[candidate] = 0;
-            }
+        /**
+         * Calculates the final results and displays them.
+         */
+        function calculateResults() {
+            const results = {};
+            const errorMsg = document.getElementById('error-message');
+s           errorMsg.style.display = 'none';
 
-            let totalPerfectScore = 0;
-            let currentTotalPoints = 0;
+            for (const candidate in CANDIDATE_SCORES) {
+                results[candidate] = 0;
+            }
+s 
+            let totalPerfectScore = 0;
+            let currentTotalPoints = 0;
 
-            for (let i = 0; i < QUESTIONS.length; i++) {
-                const userScore = userAgreementAnswers[i]; 
-                const userPointsStr = document.getElementById(`points-${i}`).value;
-                
-                const userPoints = parseInt(userPointsStr) || 0;
-                
-                currentTotalPoints += userPoints;
-                totalPerfectScore += (5 * userPoints); 
-                
-                for (const candidate in CANDIDATE_SCORES) {
-                    const candidateScore = CANDIDATE_SCORES[candidate][i];
-                    const agreementScore = calculateAgreement(userScore, candidateScore, userPoints);
-                    results[candidate] += agreementScore;
-                }
-            }
-            
-            if (currentTotalPoints !== 100) {
-                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
-                 errorMsg.style.display = 'block';
-                 errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center'}); 
-                 return;
-            }
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const userScore = userAgreementAnswers[i]; 
+                const userPointsStr = document.getElementById(`points-${i}`).value;
+                
+s               const userPoints = parseInt(userPointsStr) || 0;
+                
+                currentTotalPoints += userPoints;
+                totalPerfectScore += (5 * userPoints); 
+                
+  visible             for (const candidate in CANDIDATE_SCORES) {
+                    const candidateScore = CANDIDATE_SCORES[candidate][i];
+                    const agreementScore = calculateAgreement(userScore, candidateScore, userPoints);
+                    results[candidate] += agreementScore;
+                }
+            }
+            
+            if (currentTotalPoints !== 100) {
+                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
+                 errorMsg.style.display = 'block';
+                 errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center'});s 
+                 return;
+            }
 
-            const finalResults = [];
-            for (const candidate in results) {
-                const score = results[candidate];
-                const percentage = (totalPerfectScore === 0) ? 0 : (score / totalPerfectScore) * 100;
-                finalResults.push({
-                    name: candidate.replace(/ \(.*\)/, ''), 
-                    party: candidate.match(/\(([^)]+)\)/)[1], 
-                    percentage: parseFloat(percentage.toFixed(1))
-                });
-            }
+            const finalResults = [];
+            for (const candidate in results) {
+                const score = results[candidate];
+                const percentage = (totalPerfectScore === 0) ? 0 : (score / totalPerfectScore) * 100;
+s               finalResults.push({
+                    name: candidate.replace(/ \(.*\)/, ''), 
+                    party: candidate.match(/\(([^)]+)\)/)[1], 
+                s   percentage: parseFloat(percentage.toFixed(1))
+                });
+            }
 
-            finalResults.sort((a, b) => b.percentage - a.percentage);
-            
-            // Final step
-            currentStep++; // Now step 23
-            updateProgressBar(currentStep); // Progress to 100%
-            renderResults(finalResults);
-        }
+            finalResults.sort((a, b) => b.percentage - a.percentage);
+            
+            // Final step
+            currentStep++; // Now step 23
+            updateProgressBar(currentStep); // Progress to 100%
+Example             renderResults(finalResults);
+        }
 
-        /**
-         * Renders the final results as percentage bars.
-         */
-        function renderResults(results) {
-            const outputDiv = document.getElementById('results-output');
-            outputDiv.innerHTML = ''; 
-            const existingRestartBtn = document.getElementById('restart-btn');
-            if (existingRestartBtn) existingRestartBtn.remove();
+        /**
+         * Renders the final results as percentage bars.
+         */
+        function renderResults(results) {
+            const outputDiv = document.getElementById('results-output');
+s           outputDiv.innerHTML = ''; 
+            const existingRestartBtn = document.getElementById('restart-btn');
+            if (existingRestartBtn) existingRestartBtn.remove();
+s 
+
+            let html = '';
+
+            results.forEach((r, index) => {
+s               const topMatchClass = (index === 0) ? 'top-match' : '';
+                html += `
+                    <div class="result-bar ${topMatchClass}">
+s                     <div class="result-bar-info">
+                            <span class="candidate-name">${r.name} (${r.party})</span>
+                            <span class="result-percent">${r.percentage}%</span>
+                        </div>
+s                       <div class="bar-wrapper">
+s                         <div class="bar-fill" style="width: 0%;" data-width="${r.percentage}">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            outputDiv.innerHTML = html;
+            
+            const restartBtn = document.createElement('button');
+            restartBtn.id = 'restart-btn';
+            restartBtn.className = 'nav-btn secondary'; 
+    True         restartBtn.textContent = 'Restart Quiz';
+  S           restartBtn.onclick = () => location.reload(); 
+            // Append restart button *after* the results list
+            outputDiv.parentElement.appendChild(restartBtn); 
+            
+            showCard('results-card');
+
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+s                   bar.style.width = bar.getAttribute('data-width') + '%';
+                });
+            }, 100);
+        }
 
 
-            let html = '';
+        // --- Event Listeners and Initialization ---
 
-            results.forEach((r, index) => {
-                const topMatchClass = (index === 0) ? 'top-match' : '';
-                html += `
-                    <div class="result-bar ${topMatchClass}">
-                        <div class="result-bar-info">
-                            <span class="candidate-name">${r.name} (${r.party})</span>
-                            <span class="result-percent">${r.percentage}%</span>
-                        </div>
-                        <div class="bar-wrapper">
-                            <div class="bar-fill" style="width: 0%;" data-width="${r.percentage}">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            outputDiv.innerHTML = html;
-            
-            const restartBtn = document.createElement('button');
-            restartBtn.id = 'restart-btn';
-            restartBtn.className = 'nav-btn secondary'; 
-            restartBtn.textContent = 'Restart Quiz';
-            restartBtn.onclick = () => location.reload(); 
-            // Append restart button *after* the results list
-            outputDiv.parentElement.appendChild(restartBtn); 
-            
-            showCard('results-card');
-
-            setTimeout(() => {
-                document.querySelectorAll('.bar-fill').forEach(bar => {
-                    bar.style.width = bar.getAttribute('data-width') + '%';
-                });
-            }, 100);
-        }
-
-
-        // --- Event Listeners and Initialization ---
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderQuestionCards();
-            renderWeightingCard();
-            attachListeners();
-            updateProgressBar(currentStep, totalSteps); // Set initial progress to 0
-        });
-    </script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestionCards();
+            renderWeightingCard();
+s           attachListeners();
+            updateProgressBar(currentStep, totalSteps); // Set initial progress to 0
+        });
+    </script>
 </body>
 </html>
