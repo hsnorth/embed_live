@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            /* NEW: Consistent FIXED height for main cards */
-            --card-fixed-height: 700px; 
+            /* Consistent FIXED height for main cards */
+            --card-fixed-height: 700px; /* Adjusted slightly */
         }
         
         * {
@@ -36,7 +36,7 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            padding: 0 0 3rem 0; /* Removed top padding */
+            padding: 0 0 3rem 0; 
             background-color: var(--color-bg-light);
             color: var(--color-text);
             line-height: 1.6;
@@ -45,7 +45,7 @@
 
         /* --- Fixed Progress Tracker --- */
         .progress-container-fixed {
-            position: sticky; /* Changed to sticky to scroll with body initially */
+            position: sticky; 
             top: 0;
             left: 0;
             width: 100%;
@@ -63,7 +63,6 @@
 
         .container {
             max-width: 760px;
-            /* Removed top margin */
             margin: 0 auto; 
             background: var(--color-bg);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -72,12 +71,12 @@
         }
         
         .card-content {
-            padding: 2rem 2.5rem 2.5rem 2.5rem; /* Slightly reduced padding */
+            padding: 2.5rem 3rem 3rem 3rem;
             display: flex;
             flex-direction: column;
         }
         
-        /* Apply fixed height only to quiz, weighting, and results cards */
+        /* Apply fixed height to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
@@ -87,8 +86,8 @@
         #start-card .card-content,
         #how-to-play-card .card-content {
              height: auto; 
-             min-height: 90vh; /* Ensure they take significant height */
-             justify-content: center; /* Center content vertically */
+             min-height: 90vh; 
+             justify-content: center; 
         }
 
 
@@ -178,7 +177,26 @@
             font-size: 3rem; 
             line-height: 1.1;
             text-align: center;
+            display: inline-block; /* To allow badge placement */
+            position: relative; /* For badge positioning */
         }
+        /* NEW: 5 Minute Badge */
+        .time-badge {
+            display: inline-block;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 1rem;
+            border: 1px solid var(--color-border);
+            position: absolute;
+            top: -0.5rem; /* Adjust position */
+            right: -1rem; /* Adjust position */
+            white-space: nowrap;
+             transform: translateX(100%) rotate(10deg); /* Tilt effect */
+        }
+
         #start-card .quiz-date {
             font-size: 1rem; 
             color: var(--color-text-light);
@@ -215,7 +233,8 @@
             font-size: 0.85rem; 
             color: var(--color-text-light);
             text-align: center;
-            margin-top: 3rem; 
+            margin-top: auto; 
+            padding-top: 2rem; 
         }
 
         /* --- How To Play Card --- */
@@ -266,7 +285,7 @@
             width: 100%;
             max-width: 300px; 
             display: block; 
-            margin: auto auto 2rem auto; /* Adjusted margin */
+            margin: auto auto 2rem auto; 
         }
         
         #how-to-play-card .privacy-notice {
@@ -274,7 +293,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            margin-top: auto; /* Push to bottom */
+            margin-top: auto; 
             padding: 1rem;
             background-color: var(--color-bg-light);
             border-radius: 4px;
@@ -304,7 +323,7 @@
         
         .question-text {
             font-weight: 700;
-            font-size: 1.6rem; /* Slightly smaller */
+            font-size: 1.6rem; 
             line-height: 1.4;
             color: var(--color-text);
             margin-bottom: 2rem;
@@ -714,7 +733,10 @@
                         <span class="stack-icon icon-weight">⚖</span> 
                         <span class="stack-icon icon-match">🎯</span>
                     </div>
-                    <h1>Mayoral Matchmaker</h1>
+                    <h1>
+                        Mayoral Matchmaker
+                        <span class="time-badge">~ 5 min</span>
+                    </h1>
                     <span class="quiz-date">November 1, 2025</span>
                 </div>
                 
@@ -1322,7 +1344,8 @@
             restartBtn.className = 'nav-btn secondary'; // Use secondary style
             restartBtn.textContent = 'Restart Quiz';
             restartBtn.onclick = () => location.reload(); 
-            outputDiv.parentElement.appendChild(restartBtn);
+            // Append restart button *after* the results list
+            outputDiv.parentElement.appendChild(restartBtn); 
             
             showCard('results-card');
 
