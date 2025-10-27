@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            --card-min-height-quiz: 680px; 
-            --card-min-height-intro: auto; 
+            /* NEW: Consistent min-height for ALL main cards */
+            --card-min-height: 650px; 
         }
         
         * {
@@ -36,7 +36,8 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            padding: 2rem 1rem 3rem 1rem; 
+            /* NEW: Removed top padding */
+            padding: 0 0 3rem 0; 
             background-color: var(--color-bg-light);
             color: var(--color-text);
             line-height: 1.6;
@@ -63,9 +64,11 @@
 
         .container {
             max-width: 760px;
-            margin: 2rem auto 0 auto; 
+            /* NEW: Removed top margin */
+            margin: 0 auto; 
             background: var(--color-bg);
-            border-radius: 4px;
+            /* Remove border-radius if card touches edges */
+            /* border-radius: 4px; */ 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             position: relative;
@@ -75,12 +78,26 @@
             padding: 2.5rem 3rem 3rem 3rem;
             display: flex;
             flex-direction: column;
+            /* NEW: Consistent Min Height applied to ALL cards */
+            min-height: var(--card-min-height); 
         }
-        
-        #question-card-container .card-content,
-        #weighting-card .card-content {
-            min-height: var(--card-min-height-quiz);
+
+        /* NEW: Remove side padding on mobile */
+        @media (max-width: 600px) {
+            .card-content {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+             .container {
+                 margin-left: 0;
+                 margin-right: 0;
+                 border-radius: 0; /* Full width means no radius needed */
+            }
+            body {
+                 padding: 0 0 2rem 0; /* Adjust body padding */
+            }
         }
+
 
         /* Card Visibility */
         .quiz-card { display: none; }
@@ -91,19 +108,18 @@
             text-align: center;
             margin-bottom: 2rem;
         }
-        /* NEW: Icon Stack Styling */
         .icon-stack {
             position: relative;
-            width: 100px; /* Container width */
-            height: 80px; /* Container height */
-            margin: 1rem auto 2rem auto; /* Spacing */
+            width: 100px; 
+            height: 80px; 
+            margin: 1rem auto 2rem auto; 
         }
         .stack-icon {
             position: absolute;
             width: 50px;
             height: 50px;
             border-radius: 8px;
-            font-size: 1.8rem; /* Icon size */
+            font-size: 1.8rem; 
             font-weight: 700;
             color: var(--color-text);
             background: var(--color-bg-light);
@@ -113,27 +129,27 @@
             justify-content: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .stack-icon.icon-answer { /* Check box */
+        .stack-icon.icon-answer { 
             transform: rotate(-15deg);
             background-color: var(--color-success);
             color: white;
             border-color: var(--color-success);
             top: 0;
-            left: 25px; /* Centered */
+            left: 25px; 
             z-index: 3;
         }
-        .stack-icon.icon-weight { /* Scale */
+        .stack-icon.icon-weight { 
             transform: rotate(10deg);
-            background-color: var(--color-info); /* Teal */
+            background-color: var(--color-info); 
             color: white;
             border-color: var(--color-info);
             top: 20px;
             left: 5px;
             z-index: 2;
         }
-        .stack-icon.icon-match { /* Target */
+        .stack-icon.icon-match { 
             transform: rotate(-5deg);
-            background-color: var(--color-warning); /* Yellow */
+            background-color: var(--color-warning); 
              color: white;
             border-color: var(--color-warning);
             top: 20px;
@@ -146,7 +162,7 @@
             font-weight: 800;
             color: var(--color-text);
             margin: 0; 
-            font-size: 3rem; /* Slightly adjusted size */
+            font-size: 3rem; 
             line-height: 1.1;
             text-align: center;
         }
@@ -162,12 +178,12 @@
             font-size: 1.1rem; 
             font-weight: 500;
             color: var(--color-text-light); 
-            margin: 0 0 2.5rem 0; /* Adjusted spacing */
+            margin: 0 0 2.5rem 0; 
             text-align: center;
         }
 
         #start-btn {
-            background-color: var(--color-text); /* Black button */
+            background-color: var(--color-text); 
             border-color: var(--color-text);
             color: var(--color-bg);
             font-size: 1.1rem;
@@ -175,7 +191,7 @@
             width: 100%;
             max-width: 300px; 
             display: block;
-            margin: 1rem auto; 
+            margin: auto auto 2rem auto; /* Center button, add bottom margin */
         }
          #start-btn:hover {
             background-color: #333;
@@ -186,7 +202,8 @@
             font-size: 0.85rem; 
             color: var(--color-text-light);
             text-align: center;
-            margin-top: 3rem; 
+            margin-top: auto; /* Push to bottom */
+            padding-top: 2rem; /* Ensure space above */
         }
 
         /* --- How To Play Card --- */
@@ -198,10 +215,15 @@
             text-align: center;
             margin-bottom: 2.5rem;
         }
+        /* Style for the ordered list */
         .how-to-list {
             padding-left: 0;
             list-style: none; 
             counter-reset: how-to-counter; 
+            /* NEW: Tighter max-width */
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .how-to-list li {
             counter-increment: how-to-counter; 
@@ -234,7 +256,7 @@
             width: 100%;
             max-width: 300px; 
             display: block; 
-            margin: 3rem auto 0 auto; 
+            margin: auto auto 2rem auto; /* Use margin auto for centering, add bottom margin */
         }
         
         /* Privacy Notice moved to How To Play card */
@@ -243,7 +265,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            margin-top: 3rem;
+            margin-top: auto; /* Push to bottom */
             padding: 1rem;
             background-color: var(--color-bg-light);
             border-radius: 4px;
@@ -615,6 +637,10 @@
         }
 
         /* --- Results Card --- */
+         #results-card .card-content {
+             min-height: var(--card-min-height-intro); /* Can be shorter */
+         }
+        
         #results-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -990,9 +1016,7 @@
          function updateProgressBar(step, total = totalSteps) {
             const progressBar = document.getElementById('progress-bar');
             if (progressBar) {
-                // Ensure step is never 0 for percentage calculation unless it's the very start
                 const effectiveStep = Math.max(0, step); 
-                // Calculate percentage based on *final* step (results page)
                 const percentage = (effectiveStep / (total -1)) * 100; // -1 because results is the end
                 progressBar.style.width = `${percentage}%`;
             }
@@ -1113,10 +1137,7 @@
                 // UX: Listen to radio group to enable Next button
                 document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
                     nextBtn.disabled = false;
-                    // Auto-advance on mobile for a slicker feel
-                    if (window.innerWidth <= 600) {
-                        setTimeout(() => nextBtn.click(), 250);
-                    }
+                    // REMOVED Auto-advance on mobile
                 });
 
                 nextBtn.addEventListener('click', () => {
