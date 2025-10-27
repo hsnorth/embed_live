@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
 
-            /* Consistent MINIMUM height for main cards */
-            --card-min-height: 680px; /* Adjusted min height */
+            /* Consistent FIXED height for main cards */
+            --card-fixed-height: 680px; /* Changed from min-height */
         }
 
         * {
@@ -76,11 +76,11 @@
             flex-direction: column;
         }
 
-        /* Apply min-height to quiz, weighting, and results cards (Request 1 REVERTED) */
+        /* Apply FIXED height to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
-            min-height: var(--card-min-height);
+            height: var(--card-fixed-height); /* Use height instead of min-height */
         }
 
         /* Intro cards size naturally but centered */
@@ -104,9 +104,9 @@
             body {
                  padding: 0 0 2rem 0;
             }
-             /* Adjust min height slightly for smaller screens */
+             /* Adjust fixed height slightly for smaller screens */
              :root {
-                 --card-min-height: 650px;
+                 --card-fixed-height: 650px; /* Changed from min-height */
              }
              #start-card .card-content,
              #how-to-play-card .card-content {
@@ -419,7 +419,7 @@
             }
         }
 
-        /* --- Accordion (Request 1 REVERTED) --- */
+        /* --- Accordion --- */
         .accordion-container {
             margin-top: 1.5rem;
             border-top: 1px solid var(--color-border-light);
@@ -538,6 +538,7 @@
         /* --- Weighting Card --- */
         #weighting-card .card-content {
             padding-top: 2.5rem;
+            /* Height is set in the common rule above */
         }
 
         #weighting-card h2 {
@@ -717,7 +718,7 @@
         /* --- Results Card --- */
         #results-card .card-content {
              justify-content: center;
-             min-height: var(--card-min-height); /* Use min-height */
+             /* Height is set in the common rule above */
         }
 
         #results-card h2 {
