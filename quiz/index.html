@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            /* NEW: Consistent min-height for ALL main cards */
-            --card-min-height: 650px; 
+            /* NEW: Consistent FIXED height for main cards */
+            --card-fixed-height: 700px; 
         }
         
         * {
@@ -36,8 +36,7 @@
         body {
             font-family: var(--font-sans);
             margin: 0;
-            /* NEW: Removed top padding */
-            padding: 0 0 3rem 0; 
+            padding: 0 0 3rem 0; /* Removed top padding */
             background-color: var(--color-bg-light);
             color: var(--color-text);
             line-height: 1.6;
@@ -46,7 +45,7 @@
 
         /* --- Fixed Progress Tracker --- */
         .progress-container-fixed {
-            position: fixed;
+            position: sticky; /* Changed to sticky to scroll with body initially */
             top: 0;
             left: 0;
             width: 100%;
@@ -64,38 +63,52 @@
 
         .container {
             max-width: 760px;
-            /* NEW: Removed top margin */
+            /* Removed top margin */
             margin: 0 auto; 
             background: var(--color-bg);
-            /* Remove border-radius if card touches edges */
-            /* border-radius: 4px; */ 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             position: relative;
         }
         
         .card-content {
-            padding: 2.5rem 3rem 3rem 3rem;
+            padding: 2rem 2.5rem 2.5rem 2.5rem; /* Slightly reduced padding */
             display: flex;
             flex-direction: column;
-            /* NEW: Consistent Min Height applied to ALL cards */
-            min-height: var(--card-min-height); 
+        }
+        
+        /* Apply fixed height only to quiz, weighting, and results cards */
+        #question-card-container .card-content,
+        #weighting-card .card-content,
+        #results-card .card-content {
+            height: var(--card-fixed-height); 
+        }
+         /* Intro cards size naturally */
+        #start-card .card-content,
+        #how-to-play-card .card-content {
+             height: auto; 
+             min-height: 90vh; /* Ensure they take significant height */
+             justify-content: center; /* Center content vertically */
         }
 
-        /* NEW: Remove side padding on mobile */
+
+        /* Remove side padding on mobile */
         @media (max-width: 600px) {
             .card-content {
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
             }
              .container {
                  margin-left: 0;
                  margin-right: 0;
-                 border-radius: 0; /* Full width means no radius needed */
             }
             body {
-                 padding: 0 0 2rem 0; /* Adjust body padding */
+                 padding: 0 0 2rem 0; 
             }
+             /* Adjust fixed height slightly for smaller screens if needed */
+             :root {
+                 --card-fixed-height: 680px; 
+             }
         }
 
 
@@ -191,7 +204,7 @@
             width: 100%;
             max-width: 300px; 
             display: block;
-            margin: auto auto 2rem auto; /* Center button, add bottom margin */
+            margin: 1rem auto; 
         }
          #start-btn:hover {
             background-color: #333;
@@ -202,8 +215,7 @@
             font-size: 0.85rem; 
             color: var(--color-text-light);
             text-align: center;
-            margin-top: auto; /* Push to bottom */
-            padding-top: 2rem; /* Ensure space above */
+            margin-top: 3rem; 
         }
 
         /* --- How To Play Card --- */
@@ -215,12 +227,10 @@
             text-align: center;
             margin-bottom: 2.5rem;
         }
-        /* Style for the ordered list */
         .how-to-list {
             padding-left: 0;
             list-style: none; 
             counter-reset: how-to-counter; 
-            /* NEW: Tighter max-width */
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
@@ -256,10 +266,9 @@
             width: 100%;
             max-width: 300px; 
             display: block; 
-            margin: auto auto 2rem auto; /* Use margin auto for centering, add bottom margin */
+            margin: auto auto 2rem auto; /* Adjusted margin */
         }
         
-        /* Privacy Notice moved to How To Play card */
         #how-to-play-card .privacy-notice {
              display: flex;
             align-items: center;
@@ -295,11 +304,16 @@
         
         .question-text {
             font-weight: 700;
-            font-size: 1.75rem;
+            font-size: 1.6rem; /* Slightly smaller */
             line-height: 1.4;
             color: var(--color-text);
             margin-bottom: 2rem;
             flex-shrink: 0;
+        }
+        
+        /* Responsive font size */
+        @media (max-width: 600px) {
+            .question-text { font-size: 1.4rem; }
         }
         
         .quiz-body {
@@ -637,10 +651,6 @@
         }
 
         /* --- Results Card --- */
-         #results-card .card-content {
-             min-height: var(--card-min-height-intro); /* Can be shorter */
-         }
-        
         #results-card h2 {
             font-weight: 800;
             font-size: 2.5rem;
@@ -1137,7 +1147,7 @@
                 // UX: Listen to radio group to enable Next button
                 document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
                     nextBtn.disabled = false;
-                    // REMOVED Auto-advance on mobile
+                    // REMOVED Auto-advance 
                 });
 
                 nextBtn.addEventListener('click', () => {
@@ -1254,6 +1264,8 @@
             if (currentTotalPoints !== 100) {
                  errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
                  errorMsg.style.display = 'block';
+                 // Scroll to the error message or tracker if needed
+                 errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center'}); 
                  return;
             }
 
