@@ -25,8 +25,8 @@
             --color-warning: #ffc107; /* Yellow */
             --color-info: #0dcaf0;   /* Teal */
             
-            /* Consistent MINIMUM height for main cards */
-            --card-min-height: 650px; /* Reduced slightly */
+            /* Consistent FIXED height for main cards */
+            --card-fixed-height: 700px; 
         }
         
         * {
@@ -76,11 +76,11 @@
             flex-direction: column;
         }
         
-        /* Apply min-height to quiz, weighting, and results cards */
+        /* Apply fixed height to quiz, weighting, and results cards */
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
-            min-height: var(--card-min-height); 
+            height: var(--card-fixed-height); 
         }
          /* Intro cards size naturally */
         #start-card .card-content,
@@ -94,7 +94,7 @@
         /* Remove side padding on mobile */
         @media (max-width: 600px) {
             .card-content {
-                padding: 2rem 1.5rem 2.5rem 1.5rem; /* Adjusted padding */
+                padding: 2rem 1.5rem 2.5rem 1.5rem; 
             }
              .container {
                  margin-left: 0;
@@ -103,13 +103,13 @@
             body {
                  padding: 0 0 2rem 0; 
             }
-             /* Adjust min height slightly for smaller screens */
+             /* Adjust fixed height slightly for smaller screens */
              :root {
-                 --card-min-height: 620px; 
+                 --card-fixed-height: 680px; 
              }
              #start-card .card-content,
              #how-to-play-card .card-content {
-                 min-height: 85vh; /* Shorter min-height for intro */
+                 min-height: 85vh; 
              }
         }
 
@@ -182,51 +182,41 @@
             line-height: 1.1;
             text-align: center;
         }
-        /* 5 Minute Badge */
-        .time-badge {
-            display: inline-block;
-            background-color: var(--color-bg-light);
-            color: var(--color-text-light);
-            font-size: 0.7rem; 
-            font-weight: 700;
-            padding: 0.2rem 0.5rem; 
-            border-radius: 1rem;
-            border: 1px solid var(--color-border);
-            white-space: nowrap;
-            margin-left: 0.5rem; /* Space from title */
-            vertical-align: middle; /* Align with text */
-        }
-         /* Move badge below on mobile */
-         @media (max-width: 600px) {
-             #start-card h1 { 
-                 font-size: 2.5rem; 
-                 display: block; /* Stack title and badge */
-                 margin-bottom: 0.5rem;
-             } 
-            .time-badge {
-                 display: block; /* Make it a block element */
-                 margin: 0 auto 1rem auto; /* Center it */
-                 width: fit-content; /* Size to content */
-                 font-size: 0.8rem;
-            }
-         }
-
-
-        #start-card .quiz-date {
-            font-size: 1rem; 
-            color: var(--color-text-light);
-            text-align: center;
-            margin: 0.5rem 0 2rem 0; 
-            display: block;
-        }
+        
+        /* Removed .quiz-date */
         
         #start-card .tagline {
             font-size: 1.1rem; 
             font-weight: 500;
             color: var(--color-text-light); 
-            margin: 0 0 2.5rem 0; 
+            margin: 1rem 0 2.5rem 0; /* Adjusted top margin */
             text-align: center;
         }
+        /* 5 Minute Badge moved to tagline */
+        .time-badge {
+            display: inline-block;
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+            font-size: 0.75rem; 
+            font-weight: 700;
+            padding: 0.2rem 0.6rem; 
+            border-radius: 1rem;
+            border: 1px solid var(--color-border);
+            white-space: nowrap;
+            margin-left: 0.5rem; 
+            vertical-align: baseline; /* Align with text better */
+        }
+         @media (max-width: 600px) {
+             #start-card h1 { 
+                 font-size: 2.5rem; 
+             } 
+            #start-card .tagline { font-size: 1rem; }
+            .time-badge {
+                 font-size: 0.7rem;
+                 padding: 0.15rem 0.4rem;
+            }
+         }
+
 
         #start-btn {
             background-color: var(--color-text); 
@@ -338,20 +328,35 @@
         
         .question-text {
             font-weight: 700;
-            font-size: 1.5rem; /* Further reduced */
+            font-size: 1.5rem; 
             line-height: 1.4;
             color: var(--color-text);
-            margin-bottom: 1.5rem; /* Reduced */
+            margin-bottom: 1.5rem; 
             flex-shrink: 0;
         }
         
         /* Responsive font size */
         @media (max-width: 600px) {
-            .question-text { font-size: 1.3rem; } /* Further reduced */
+            .question-text { font-size: 1.3rem; } 
         }
         
-        /* REMOVED .quiz-body scroll container */
-        
+        /* NEW: quiz-body for internal scrolling is back */
+        .quiz-body {
+            flex-grow: 1; 
+            min-height: 0; 
+            overflow-y: auto; 
+            padding-right: 15px; 
+            margin-right: -15px; 
+            scrollbar-width: thin; 
+            scrollbar-color: var(--color-border) transparent; 
+        }
+        .quiz-body::-webkit-scrollbar { width: 8px; }
+        .quiz-body::-webkit-scrollbar-track { background: transparent; }
+        .quiz-body::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 4px;
+        }
+
         /* --- Segmented Control Radio Buttons --- */
         .radio-group {
             display: flex;
@@ -359,21 +364,21 @@
             border-radius: 6px;
             overflow: hidden;
             width: 100%;
-            margin-bottom: 1.5rem; /* Added margin */
+            margin-bottom: 1.5rem; 
             flex-shrink: 0; /* Prevent shrinking */
         }
         .radio-group input[type="radio"] { display: none; }
         .radio-group label {
             flex: 1; 
             text-align: center;
-            padding: 0.8rem 0.5rem; /* Reduced padding */
+            padding: 0.8rem 0.5rem; 
             cursor: pointer;
             font-weight: 500;
             color: var(--color-text-light);
             background: var(--color-bg);
             border-left: 1px solid var(--color-border);
             transition: all 0.2s ease-in-out;
-            font-size: 0.85rem; /* Reduced font size */
+            font-size: 0.85rem; 
             line-height: 1.3;
         }
         .radio-group label:first-of-type { border-left: none; }
@@ -391,8 +396,8 @@
                 border-radius: 6px; 
                 margin-bottom: 0.5rem; 
                 border-left: 2px solid var(--color-border); 
-                font-size: 0.9rem; /* Reduced mobile font size */
-                padding: 0.7rem 0.5rem; /* Reduced mobile padding */
+                font-size: 0.9rem; 
+                padding: 0.7rem 0.5rem; 
             }
             .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
             
@@ -419,10 +424,9 @@
         
         /* --- Accordion --- */
         .accordion-container {
-            margin-top: 1.5rem; /* Reduced margin */
+            margin-top: 1.5rem; 
             border-top: 1px solid var(--color-border-light);
-            padding-top: 1rem; /* Reduced padding */
-             flex-shrink: 0; /* Allow shrinking if needed, but low priority */
+            padding-top: 1rem; 
         }
         
         details { margin-bottom: 0.5rem; }
@@ -674,9 +678,10 @@
         }
 
         /* --- Results Card --- */
-        #results-card .card-content {
-             justify-content: center; /* Center content */
-        }
+         #results-card .card-content {
+             justify-content: center; /* Center content vertically */
+             min-height: var(--card-fixed-height); /* Ensure it uses fixed height */
+         }
         
         #results-card h2 {
             font-weight: 800;
@@ -741,14 +746,13 @@
                         <span class="stack-icon icon-weight">⚖</span> 
                         <span class="stack-icon icon-match">🎯</span>
                     </div>
-                    <h1>
-                        Mayoral Matchmaker
-                        <span class="time-badge">~ 5 min</span>
-                    </h1>
-                    <span class="quiz-date">November 1, 2025</span>
-                </div>
+                    <h1>Mayoral Matchmaker</h1>
+                    </div>
                 
-                <p class="tagline">Montreal's Mayoral Alignment Quiz: <br>Find your political match.</p>
+                <p class="tagline">
+                    See which Montreal party you are most aligned to
+                    <span class="time-badge">~ 5 min</span>
+                </p>
 
                 <button id="start-btn" class="nav-btn">Start Quiz</button>
                 
@@ -1096,15 +1100,18 @@
                             <div class="question-header">Question ${index + 1} of ${QUESTIONS.length}</div>
                             <div class="question-text">${q.text.replace(/<strong>/g, '<strong>')}</div>
                             
-                            <div class="radio-group" id="radio-group-${index}">
-                                <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
-                                <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
-                                <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
-                                <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
-                                <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
+                            <div class="quiz-body"> 
+                                <div class="radio-group" id="radio-group-${index}">
+                                    <input type="radio" id="q${q.id}-sd" name="agreement-${q.id}" value="-2" required><label class="radio-label" for="q${q.id}-sd">Strongly Disagree</label>
+                                    <input type="radio" id="q${q.id}-d" name="agreement-${q.id}" value="-1"><label class="radio-label" for="q${q.id}-d">Disagree</label>
+                                    <input type="radio" id="q${q.id}-n" name="agreement-${q.id}" value="0"><label class="radio-label" for="q${q.id}-n">Neutral</label>
+                                    <input type="radio" id="q${q.id}-a" name="agreement-${q.id}" value="1"><label class="radio-label" for="q${q.id}-a">Agree</label>
+                                    <input type="radio" id="q${q.id}-sa" name="agreement-${q.id}" value="2"><label class="radio-label" for="q${q.id}-sa">Strongly Agree</label>
+                                </div>
+                                
+                                ${detailsHtml}
                             </div>
-                            
-                            ${detailsHtml}
+
                             <div class="navigation-buttons">
                                 <button type="button" class="nav-btn secondary" id="prev-btn-${index}">Previous</button>
                                 <button type="button" class="nav-btn" id="next-btn-${index}" disabled>Next</button>
