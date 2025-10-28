@@ -96,7 +96,7 @@
         /* Remove side padding on mobile */
         @media (max-width: 600px) {
             .card-content {
-                padding: 1.5rem 1.5rem 2rem 1.5rem; /* CHANGED: Reduced padding */
+                padding: 1.2rem 1.2rem 1.5rem 1.2rem; /* <-- CHANGED: Tighter padding */
             }
              .container {
                  margin-left: 0;
@@ -106,24 +106,30 @@
                  padding: 0; /* CHANGED: Removed bottom padding */
             }
              
-            /* --- MOVED/ADDED RULES TO FIX ACCORDION --- */
+            /* --- AGGRESSIVE SHRINK RULES --- */
             .question-text { 
-                font-size: 1.1rem; /* <-- CHANGED: Smaller */
-                margin-bottom: 1rem;
+                font-size: 1rem; /* <-- CHANGED: Smaller font */
+                line-height: 1.3; /* <-- CHANGED: Tighter line height */
+                margin-bottom: 0.75rem; /* <-- CHANGED: Less margin */
             }
 
             .question-header {
-                font-size: 0.85rem; /* <-- CHANGED: Smaller */
-                margin-bottom: 0.5rem; /* <-- CHANGED: Less margin */
+                font-size: 0.8rem; /* <-- CHANGED: Smaller font */
+                margin-bottom: 0.4rem; /* <-- CHANGED: Less margin */
+            }
+            
+            .radio-group {
+                 margin-bottom: 0.75rem; /* <-- CHANGED: Less margin */
             }
 
-            .radio-group label {
-                padding: 0.5rem 0.4rem; /* <-- CHANGED: Less padding */
+            .accordion-container {
+                margin-top: 0.75rem; /* <-- CHANGED: Less margin */
+                padding-top: 0.75rem; /* <-- CHANGED: Less padding */
             }
             
             .navigation-buttons {
-                margin-top: 1.2rem; /* <-- CHANGED: Less margin */
-                padding-top: 1.2rem; /* <-- CHANGED: Less padding */
+                margin-top: 1rem; /* <-- CHANGED: Less margin */
+                padding-top: 1rem; /* <-- CHANGED: Less padding */
             }
         }
 
@@ -399,9 +405,8 @@
                 border-radius: 6px;
                 margin-bottom: 0.5rem;
                 border-left: 2px solid var(--color-border);
-                font-size: 0.85rem; /* CHANGED: Smaller */
-                /* padding is now handled by a rule earlier in the media query */
-                /* padding: 0.7rem 0.5rem; */ 
+                font-size: 0.8rem; /* <-- CHANGED: Even smaller */
+                padding: 0.5rem 0.4rem; /* <-- CHANGED: Smaller padding */
             }
             .radio-group label:first-of-type { border-left: 2px solid var(--color-border); }
 
@@ -1214,7 +1219,7 @@
             indicator.textContent = `${currentWeightingPage + 1} / ${totalWeightingPages}`;
 
             prevBtn.disabled = (currentWeightingPage === 0);
-            nextBtn.disabled = (currentWeightingPage === totalWeightingPages - 1);
+            nextBtn.disabled = (currentWeightegingPage === totalWeightingPages - 1);
         }
 
         /**
