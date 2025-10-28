@@ -832,7 +832,7 @@
 
                 <ol class="how-to-list">
                     <li>
-                        <strong>Answer questions:</strong> Choose from disagree to agree on 20 statements.
+                        <strong>Answer questions:</strong> Choose from disagree to agree on 15 statements.
                     </li>
                     <li>
                         <strong>Weight importance:</strong> Decide which questions matters most to you.
@@ -858,8 +858,8 @@
                 <p class="card-subtitle">Give more points to the questions you care about.</p>
 
                 <div class="points-tracker">
-                    <span id="total-points-display">100 / 100</span>
-                    <div id="points-helper">All questions start at 5 points. You must use <strong>exactly 100</strong>.</div>
+                    <span id="total-points-display">60 / 60</span>
+                    <div id="points-helper">All questions start at 4 points. You must use <strong>exactly 60</strong>.</div>
                 </div>
 
                 <div class="weighting-swiper-container">
@@ -869,7 +869,7 @@
 
                 <div class="weighting-nav">
                     <button type="button" id="weighting-prev" class="nav-btn secondary" disabled>&larr; Previous</button>
-                    <span id="weighting-page-indicator">1 / 5</span>
+                    <span id="weighting-page-indicator">1 / 3</span>
                     <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
                 </div>
                 <button id="submit-quiz-btn" class="nav-btn">Calculate</button>
@@ -890,14 +890,14 @@
     <script>
         // --- Data Setup ---
 
-        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q20
+        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q15
         // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
         const CANDIDATE_SCORES = {
-            'Luc Rabouin (Projet Montréal)':              [2, -2, 1, -1, -1, -2, 1, -1, -1, -2, 1, 1, -1, -1, -2, 1,  2,  2,  2,  2],
-            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, -1, 1, -1, -2, -1, 1, -2, -1, -2, 1, -1, 1, -2, -1, -2, -2, -1, -1,  1],
-            'Craig Sauvé (Transition Montréal)':          [2, -2, -1,  2,  2, -2, 2,  2,  2,  2, 2,  2,  2,  2, -2,  2,  1,  1,  1, -2],
-            'Gilbert Thibodeau (Action Montréal)':         [-2,  2,  2, -2,  0,  2, -1, -2, -2, -1, 1, -1,  2, -2,  2, -2, -2, -2,  0, -2],
-            'Jean-François Kacou (Futur Montréal)':       [-2,  2,  0, -1,  0, -1, -1,  0,  1, -1, 0, -1,  1, -1, -1, -2,  0, -1,  0, -1]
+            'Luc Rabouin (Projet Montréal)':              [2, 2, 0, 1, -1, 1, 0, 0, 1, 1, -2, 1, -1, -1, 1],
+            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, 0, -1, 1, 2, 1, -1, 2, 0, 0, -1, -2, 1, 2, -1],
+            'Craig Sauvé (Transition Montréal)':          [1, 2, 2, 0, -1, 2, 2, -1, 2, 2, -2, 2, -1, -1, 2],
+            'Gilbert Thibodeau (Action Montréal)':         [-2, -1, -2, 2, 1, -1, -1, 2, -1, -1, 2, -2, 2, 1, -2],
+            'Jean-François Kacou (Futur Montréal)':       [-1, -1, -1, 0, 1, -1, -1, 2, 0, 0, 0, -1, 0, 0, -1]
         };
 
         // --- NEW: Party Colors ---
@@ -909,177 +909,96 @@
             'Futur Montréal': '#3399cc'
         };
 
-        // Quiz Questions: 20 total, now with accordion details
+        // Quiz Questions: 15 total
         const QUESTIONS = [
-            // --- Mobility (1-2) ---
             {
                 id: 1,
-                text: "The city must **immediately expand the Réseau express vélo (REV)**, adding specialized options like Bixi baby seats and rapid bus lanes on major arteries.",
-                details: [
-                    { summary: "What is the REV?", content: "The Réseau express vélo is a network of high-capacity, protected bike lanes, many of which are designed to be clear and safe for year-round cycling." },
-                ]
+                text: "Should Montreal continue expanding its <strong>bike lane network</strong>, even if it means reducing parking and road space for cars?",
+                details: []
             },
             {
                 id: 2,
-                text: "I support **banning any new bike lanes on commercial streets** and removing existing lanes that eliminate essential parking spots for businesses.",
-                details: [
-                    { summary: "What's the argument for this?", content: "Some candidates argue that bike lanes on commercial streets (like Ste-Catherine or Saint-Denis) hurt local businesses by removing parking, and that bike routes should be prioritized on residential streets or in parks instead." },
-                ]
+                text: "Montreal should offer <strong>discounted transit passes to low-income residents</strong>, instead of freezing prices for everyone.",
+                details: []
             },
-            // --- Cleanliness (3) ---
             {
                 id: 3,
-                text: "The city must commit to **weekly garbage collection in all boroughs** year-round, even if it means raising the frequency to twice a week in the summer.",
-                details: [
-                    { summary: "Why is this an issue?", content: "Some boroughs have moved to bi-weekly (every two weeks) garbage collection to encourage composting and recycling. This has led to complaints about smells and overflowing bins, especially during summer." }
-                ]
+                text: "Montreal should introduce a <strong>kilometre-based tax on vehicles</strong> to fund climate initiatives.",
+                details: []
             },
-            // --- Climate (4) ---
             {
                 id: 4,
-                text: "To fight climate change, I support implementing a **kilometre tax on vehicle use** and planting 50,000 trees to eliminate heat islands by 2032.",
-                details: [
-                    { summary: "What is a kilometre tax?", content: "This is a 'user-pay' system where drivers are taxed based on the distance they drive, rather than (or in addition to) a gas tax. It's proposed as a way to strongly discourage car use and fund public transit." }
-                ]
+                text: "Montreal should restore <strong>weekly garbage pickup</strong> across all boroughs during the summer months.",
+                details: []
             },
-            // --- Cost of Living (5-6) ---
             {
                 id: 5,
-                text: "The municipal public transit discount currently offered to students should be extended to **all low-income residents** earning less than <strong>$47,500</strong>.",
-                details: [
-                    { summary: "What are the different proposals?", content: "Candidates have proposed different income thresholds for this discount. This question uses the highest proposed threshold ($47,500 from Transition Montréal). Projet Montréal proposed a lower threshold ($30,000)." }
-                ]
+                text: "Montreal should <strong>scrap the 20-20-20 housing bylaw</strong> and replace it with financial incentives for developers.",
+                details: []
             },
             {
                 id: 6,
-                text: "Residential parking permits should be capped at <strong>$50</strong> per year, and parking meters should be **free all weekend** (Friday 9 PM to Monday 9 AM).",
-                details: [
-                    { summary: "What's the context?", content: "This is a proposal from Action Montréal aimed at reducing the financial burden on car owners, who they feel are unfairly taxed by the current administration." }
-                ]
+                text: "Montreal should <strong>ban short-term rentals</strong> like Airbnb in most residential neighbourhoods.",
+                details: []
             },
-            // --- Culture (7) ---
             {
                 id: 7,
-                text: "The city should designate a **Night Mayor and Night Council** to act as a mediator for noise complaints, reducing police involvement in cultural venue issues.",
-                details: [
-                    { summary: "What would a 'Night Mayor' do?", content: "This person and their council would manage the city's nightlife economy, working to resolve conflicts between venues (bars, concert halls) and residents through mediation, rather than immediately involving police for noise complaints." }
-                ]
+                text: "Montreal should <strong>end the forced eviction</strong> of homeless encampments.",
+                details: []
             },
-            // --- Democratic Reform (8) ---
             {
                 id: 8,
-                text: "Montreal's electoral system must be reformed by introducing a **preferential ballot** for mayoral races and a single transferable vote for other positions.",
-                details: [
-                    { summary: "What is a preferential ballot?", content: "Instead of picking just one candidate, you would rank your choices (1st, 2nd, 3rd, etc.). If no one wins 50% of the 1st-choice votes, the candidate with the fewest votes is eliminated, and their votes go to their voters' 2nd choice. This continues until one candidate has a majority." }
-                ]
+                text: "Montreal should <strong>increase the number of police patrols</strong> in high-risk neighbourhoods.",
+                details: []
             },
-            // --- Economy/Taxes (9) ---
             {
                 id: 9,
-                text: "I support introducing a **new municipal tax on individual residential properties valued over <strong>$3.5 million</strong>** to fund anti-gentrification and homelessness efforts.",
-                details: [
-                    { summary: "What kind of tax is this?", content: "This is a 'mansion tax' or 'luxury tax' proposed by Transition Montréal. It would apply only to the city's most expensive homes to create a dedicated fund for social programs." }
-                ]
+                text: "Montreal should <strong>limit random police stops</strong> and street checks to urgent security issues only.",
+                details: []
             },
-            // --- Homelessness (10) ---
             {
                 id: 10,
-                text: "For homelessness, the city should **declare a state of emergency** to requisition hotels and vacant buildings, and ban police from intervening in large encampments.",
-                details: [
-                    { summary: "What does 'requisition' mean?", content: "This would involve the city taking temporary control of empty buildings (like unused hotels) to provide immediate shelter for the homeless, particularly during winter." },
-                ]
+                text: "Montreal should <strong>protect its nightlife and cultural venues</strong> from noise complaints, even if it means limiting city interventions.",
+                details: []
             },
-            // --- Housing (11-12) ---
             {
                 id: 11,
-                text: "The city must **eliminate the current affordable housing bylaw** (the '20-20-20' rule) and replace it with a new system.",
-                details: [
-                    { summary: "What is the current bylaw?", content: "Known as the '20-20-20' bylaw, it requires new developments to include 20% social housing, 20% affordable housing, and 20% family-sized units. Many candidates (from all sides) argue it has failed and actually stalled construction." }
-                ]
+                text: "Montreal should require a <strong>permit for any religious gathering</strong> in a public space.",
+                details: []
             },
             {
                 id: 12,
-                text: "I support a **complete moratorium (total ban)** on all short-term rentals (like Airbnb) in residential units to preserve the housing stock for families.",
-                details: [
-                    { summary: "How is this different from other proposals?", content: "This is the strictest position, proposed by Transition Montréal. Other candidates propose limiting short-term rentals to 90 days/year or banning only *commercial* operators, rather than a total ban." }
-                ]
+                text: "Montreal should openly support an <strong>arms embargo on Israel</strong>.",
+                details: []
             },
-            // --- Public Transit (13) ---
             {
                 id: 13,
-                text: "The city's top transit priority should be **Metro extensions** (Orange line to Bois-Franc, Green line to Lachine), not the construction of new tramway lines.",
-                details: [
-                    { summary: "What is the debate?", content: "There's a major debate over which is better: expanding the existing, high-capacity Metro system (which is very expensive) or building new, more flexible tramway lines on the surface (which is cheaper but can be slowed by traffic)." }
-                ]
+                text: "Montreal’s city council is too large and should be <strong>simplified to make decisions faster</strong>.",
+                details: []
             },
-            // --- Safety/Policing (14-15) ---
             {
                 id: 14,
-                text: "The city should redirect <strong>$25 million</strong> from the police budget (like overtime) to **prevention and new civilian services** to address non-urgent social issues.",
-                details: [
-                    { summary: "Is this 'defunding the police'?", content: "This proposal (from Transition Montréal) aims to re-allocate a portion of the police budget—specifically from overtime—to fund social workers, prevention programs, and civilian response teams, rather than cutting officer positions." }
-                ]
+                text: "Montreal should <strong>freeze city hiring</strong> for non-essential administrative positions.",
+                details: []
             },
             {
                 id: 15,
-                text: "To ensure safety and secularism, I support a strong police crackdown on unruly protests and the requirement of a **permit for any religious event** in a public space.",
-                details: [
-                    { summary: "What does this mean?", content: "This proposal from Action Montréal would require any religious gathering in a public space (like a street prayer) to get a permit. It also calls for increased police enforcement at protests that are deemed 'disruptive' or 'unruly'." }
-                ]
-            },
-            // --- Israel-Gaza (16) ---
-            {
-                id: 16,
-                text: "Montreal should take a clear stance on the Israel-Gaza conflict by officially calling for an **arms embargo on Israel** and supporting **divestment from genocide**.",
-                details: [
-                    { summary: "Why is this a municipal issue?", content: "Some candidates (Rabouin, Sauvé) believe the city has a moral duty to take a stand on international human rights issues. Others (Ferrada, Thibodeau, Kacou) argue this is 'importing a foreign conflict' and is outside municipal jurisdiction." }
-                ]
-            },
-            // --- NEW Q17 (Traffic) ---
-            {
-                id: 17,
-                text: "The city should permanently **close Camillien-Houde Way to through-traffic** and transform it into a green walking and public transit path on Mount Royal.",
-                details: [
-                    { summary: "What's the 'Camillien-Houde' debate?", content: "This is a long-standing, heated debate. Projet Montréal (Rabouin) wants to close the road that cuts across the mountain to cars. Others (Ferrada, Thibodeau) are strongly opposed, arguing it's a vital link for drivers." }
-                ]
-            },
-            // --- NEW Q18 (Culture) ---
-            {
-                id: 18,
-                text: "The city's cultural priority should be to create **affordable housing reserved for artists** and a special fund to help local venues acquire their own spaces.",
-                details: [
-                    { summary: "Why 'reserved housing'?", content: "This proposal from Projet Montréal aims to keep artists from being pushed out of the city by gentrification, ensuring they can live and work affordably. The fund would help independent venues (like small theatres or music halls) buy their buildings." }
-                ]
-            },
-            // --- NEW Q19 (Economy) ---
-            {
-                id: 19,
-                text: "The city's top priority for the East End should be creating a **new university hub** and supporting clean technology and circular economy projects.",
-                details: [
-                    { summary: "What is the 'East End' focus?", content: "Many candidates have a plan for Montreal's East End. This specific proposal from Projet Montréal focuses on economic development through education (a new university) and the 'green' economy (clean tech)." }
-                ]
-            },
-            // --- NEW Q20 (Public Transit) ---
-            {
-                id: 20,
-                text: "The city must prioritize building new **tramway lines** as the future of public transit, rather than focusing primarily on new Metro line extensions.",
-                details: [
-                    { summary: "What's the tramway plan?", content: "This proposal (strongly supported by Projet Montréal) involves building three new tram lines: in the East End, the Southwest, and a 'loop' connecting Côte-des-Neiges, Jean-Talon, and du Parc. This is in direct contrast to candidates who favor Metro expansion." }
-                ]
+                text: "Montreal has improved... and should <strong>build on that progress</strong>, but push harder on... housing.",
+                details: []
             }
         ];
 
         // --- App State ---
-        // 0 = Start, 1 = How to Play, 2-21 = Questions, 22 = Weighting, 23 = Results
+        // 0 = Start, 1 = How to Play, 2-16 = Questions, 17 = Weighting, 18 = Results
         let currentStep = 0;
         const totalQuizQuestions = QUESTIONS.length;
         // Total steps now includes Start, How-to-Play, Questions, Weighting, Results
         const totalSteps = 2 + totalQuizQuestions + 2;
         let userAgreementAnswers = new Array(QUESTIONS.length).fill(null); // Stores -2 to 2
 
-        // State for weighting swiper (Request 3)
+        // State for weighting swiper
         let currentWeightingPage = 0;
-        const questionsPerSlide = 4;
+        const questionsPerSlide = 5; // CHANGED to 5 for 3 pages
         let totalWeightingPages = Math.ceil(QUESTIONS.length / questionsPerSlide);
 
         // --- Helper Functions ---
@@ -1108,16 +1027,16 @@
             const helper = document.getElementById('points-helper');
             const calculateBtn = document.getElementById('submit-quiz-btn');
 
-            display.textContent = `${totalPoints} / 100`;
+            display.textContent = `${totalPoints} / 60`; // CHANGED
 
-            if (totalPoints === 100) {
+            if (totalPoints === 60) { // CHANGED
                 display.classList.remove('error');
-                helper.textContent = "Perfect! Your total is 100. You're ready to calculate!";
+                helper.textContent = "Perfect! Your total is 60. You're ready to calculate!"; // CHANGED
                 helper.style.color = 'var(--color-success)';
                 calculateBtn.disabled = false;
             } else {
                 display.classList.add('error');
-                helper.textContent = `Whoops! Your total must be exactly 100. You are ${Math.abs(100 - totalPoints)} points ${totalPoints > 100 ? 'over' : 'under'}.`;
+                helper.textContent = `Whoops! Your total must be exactly 60. You are ${Math.abs(60 - totalPoints)} points ${totalPoints > 60 ? 'over' : 'under'}.`; // CHANGED
                 helper.style.color = 'var(--color-error)';
                 calculateBtn.disabled = true;
             }
@@ -1149,7 +1068,7 @@
         // --- Main Logic ---
 
         /**
-         * Renders all 20 question cards into the DOM (hidden)
+         * Renders all 15 question cards into the DOM (hidden)
          */
         function renderQuestionCards() {
             const container = document.getElementById('question-card-container');
@@ -1171,6 +1090,9 @@
                         `;
                     });
                     detailsHtml += '</div>';
+                } else {
+                    // Add a non-breaking space to maintain layout if no accordion
+                    detailsHtml = '<div class="accordion-container" style="border-top: none;">&nbsp;</div>';
                 }
 
                 // Build Full Question Card
@@ -1201,7 +1123,7 @@
         }
 
         /**
-         * Renders the weighting card slides (Request 3)
+         * Renders the weighting card slides
          */
         function renderWeightingCard() {
             const listContainer = document.getElementById('weighting-list');
@@ -1218,7 +1140,7 @@
 
                 QUESTIONS.slice(start, end).forEach((q, index) => {
                     const questionIndex = start + index;
-                    const questionShortText = q.text.split('**')[1] || q.text.split('<strong>')[1] || q.text.split('<')[0];
+                    const questionShortText = q.text.split('<strong>')[1] || q.text.split('**')[1] || q.text.split('<')[0];
                     slideHtml += `
                         <div class="weighting-list-item">
                             <label for="points-${questionIndex}" class="weighting-q-text">
@@ -1226,8 +1148,7 @@
                             </label>
                             <div class="point-allocator">
                                 <button type="button" class="point-btn minus" data-index="${questionIndex}" aria-label="Decrease points">-</button>
-                                <input type="text" class="point-input" id="points-${questionIndex}" value="5" readonly>
-                                <button type="button" class="point-btn plus" data-index="${questionIndex}" aria-label="Increase points">+</button>
+                                <input type="text" class="point-input" id="points-${questionIndex}" value="4" readonly> <button type="button" class="point-btn plus" data-index="${questionIndex}" aria-label="Increase points">+</button>
                             </div>
                         </div>
                     `;
@@ -1240,7 +1161,7 @@
         }
 
         /**
-         * Handles changing the weighting slide (Request 3)
+         * Handles changing the weighting slide
          */
         function updateWeightingSlide() {
             const track = document.getElementById('weighting-list');
@@ -1350,7 +1271,7 @@
                 let currentValue = parseInt(input.value);
 
                 if (target.classList.contains('plus')) {
-                    if (currentValue < 100) currentValue++;
+                    if (currentValue < 100) currentValue++; // Still allow going over, validation handles it
                 } else if (target.classList.contains('minus')) {
                     if (currentValue > 0) currentValue--;
                 }
@@ -1359,7 +1280,7 @@
                 updatePointTotal();
             });
 
-            // Weighting swiper navigation (Request 3)
+            // Weighting swiper navigation
             document.getElementById('weighting-next').addEventListener('click', () => {
                 if (currentWeightingPage < totalWeightingPages - 1) {
                     currentWeightingPage++;
@@ -1408,8 +1329,8 @@
                 }
             }
 
-            if (currentTotalPoints !== 100) {
-                 errorMsg.textContent = `Your total points must be exactly 100. Please adjust.`;
+            if (currentTotalPoints !== 60) { // CHANGED
+                 errorMsg.textContent = `Your total points must be exactly 60. Please adjust.`; // CHANGED
                  errorMsg.style.display = 'block';
                  errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center'});
                  return;
@@ -1429,7 +1350,7 @@
             finalResults.sort((a, b) => b.percentage - a.percentage);
 
             // Final step
-            currentStep++; // Now step 23
+            currentStep++; // Now step 18
             updateProgressBar(currentStep); // Progress to 100%
             renderResults(finalResults);
         }
