@@ -219,8 +219,8 @@
                }
               #start-card .tagline {
                  font-size: 1rem;
-                 display: in-line-block;
-                 padding-right: 10px;
+                 display: inline-block; /* CHANGED: Fixed typo */
+                 padding-right: 50px; /* CHANGED: Added space for badge */
                  padding-left:10px;
                  margin-bottom: 1rem;
               }
@@ -869,8 +869,7 @@
 
                 <div class="weighting-nav">
                     <button type="button" id="weighting-prev" class="nav-btn secondary" disabled>&larr; Previous</button>
-                    <span id="weighting-page-indicator">1 / 3</span>
-                    <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
+                    <span id="weighting-page-indicator">1 / 4</span> <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
                 </div>
                 <button id="submit-quiz-btn" class="nav-btn">Calculate</button>
                 <p id="error-message"></p>
@@ -1028,7 +1027,7 @@
 
         // State for weighting swiper
         let currentWeightingPage = 0;
-        const questionsPerSlide = 5; // CHANGED to 5 for 3 pages
+        const questionsPerSlide = 4; // CHANGED to 4
         let totalWeightingPages = Math.ceil(QUESTIONS.length / questionsPerSlide);
 
         // --- Helper Functions ---
@@ -1057,16 +1056,16 @@
             const helper = document.getElementById('points-helper');
             const calculateBtn = document.getElementById('submit-quiz-btn');
 
-            display.textContent = `${totalPoints} / 60`; // CHANGED
+            display.textContent = `${totalPoints} / 60`; 
 
-            if (totalPoints === 60) { // CHANGED
+            if (totalPoints === 60) { 
                 display.classList.remove('error');
-                helper.textContent = "Perfect! Your total is 60. You're ready to calculate!"; // CHANGED
+                helper.textContent = "Perfect! You're ready to calculate!"; // CHANGED
                 helper.style.color = 'var(--color-success)';
                 calculateBtn.disabled = false;
             } else {
                 display.classList.add('error');
-                helper.textContent = `Whoops! Your total must be exactly 60. You are ${Math.abs(60 - totalPoints)} points ${totalPoints > 60 ? 'over' : 'under'}.`; // CHANGED
+                helper.textContent = `Whoops! Your total must be exactly 60. You are ${Math.abs(60 - totalPoints)} points ${totalPoints > 60 ? 'over' : 'under'}.`; 
                 helper.style.color = 'var(--color-error)';
                 calculateBtn.disabled = true;
             }
