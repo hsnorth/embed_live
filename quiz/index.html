@@ -77,18 +77,18 @@
             flex-direction: column;
         }
 
-        /* Apply FIXED height to quiz, weighting, and results cards */
+        /* Apply FIXED height to ALL cards */
+        #start-card .card-content,
+        #how-to-play-card .card-content,
         #question-card-container .card-content,
         #weighting-card .card-content,
         #results-card .card-content {
             height: var(--card-fixed-height); /* Use height instead of min-height */
         }
 
-        /* Intro cards size naturally but centered */
+        /* Center content on intro cards */
         #start-card .card-content,
         #how-to-play-card .card-content {
-             height: auto;
-             min-height: 100vh; /* Increase min height slightly */
              justify-content: center;
         }
 
@@ -103,17 +103,11 @@
                  margin-right: 0;
              }
             body {
-                 padding: 0;
+                 padding: 0; /* CHANGED: Removed bottom padding */
             }
              /* Adjust fixed height slightly for smaller screens */
              :root {
                  --card-fixed-height: 100vh; /* Changed from min-height */
-             }
-             #start-card .card-content,
-             #how-to-play-card .card-content {
-                 min-height: 100vh;
-                 padding-top: 4rem;
-                 padding-bottom: 4rem;
              }
         }
 
@@ -869,7 +863,7 @@
 
                 <div class="weighting-nav">
                     <button type="button" id="weighting-prev" class="nav-btn secondary" disabled>&larr; Previous</button>
-                    <span id="weighting-page-indicator">1 / 4</span> <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
+                    <span id="weighting-page-indicator">1 / 5</span> <button type="button" id="weighting-next" class="nav-btn">Next &rarr;</button>
                 </div>
                 <button id="submit-quiz-btn" class="nav-btn">Calculate</button>
                 <p id="error-message"></p>
@@ -1027,7 +1021,7 @@
 
         // State for weighting swiper
         let currentWeightingPage = 0;
-        const questionsPerSlide = 4; // CHANGED to 4
+        const questionsPerSlide = 3; // CHANGED to 3
         let totalWeightingPages = Math.ceil(QUESTIONS.length / questionsPerSlide);
 
         // --- Helper Functions ---
