@@ -96,7 +96,7 @@
         /* Remove side padding on mobile */
         @media (max-width: 600px) {
             .card-content {
-                padding: 2rem 1.5rem 2.5rem 1.5rem;
+                padding: 1.5rem 1.5rem 2rem 1.5rem; /* CHANGED: Reduced padding */
             }
              .container {
                  margin-left: 0;
@@ -105,27 +105,25 @@
             body {
                  padding: 0; /* CHANGED: Removed bottom padding */
             }
-             /* Adjust fixed height slightly for smaller screens */
-
              
             /* --- MOVED/ADDED RULES TO FIX ACCORDION --- */
             .question-text { 
-                font-size: 1.2rem; /* <-- Changed from 1.3rem */
-                margin-bottom: 1rem; /* <-- Added */
+                font-size: 1.1rem; /* <-- CHANGED: Smaller */
+                margin-bottom: 1rem;
             }
 
             .question-header {
-                font-size: 0.9rem;
-                margin-bottom: 0.75rem;
+                font-size: 0.85rem; /* <-- CHANGED: Smaller */
+                margin-bottom: 0.5rem; /* <-- CHANGED: Less margin */
             }
 
             .radio-group label {
-                padding: 0.6rem 0.5rem;
+                padding: 0.5rem 0.4rem; /* <-- CHANGED: Less padding */
             }
             
             .navigation-buttons {
-                margin-top: 1.5rem;
-                padding-top: 1.5rem;
+                margin-top: 1.2rem; /* <-- CHANGED: Less margin */
+                padding-top: 1.2rem; /* <-- CHANGED: Less padding */
             }
         }
 
@@ -401,7 +399,7 @@
                 border-radius: 6px;
                 margin-bottom: 0.5rem;
                 border-left: 2px solid var(--color-border);
-                font-size: 0.9rem;
+                font-size: 0.85rem; /* CHANGED: Smaller */
                 /* padding is now handled by a rule earlier in the media query */
                 /* padding: 0.7rem 0.5rem; */ 
             }
@@ -903,7 +901,7 @@
     <script>
         // --- Data Setup ---
 
-        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q1File
+        // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q15
         // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
         const CANDIDATE_SCORES = {
             'Luc Rabouin (Projet Montréal)':              [2, 2, 0, 1, -1, 1, 0, 0, 1, 1, -2, 1, -1, -1, 1],
