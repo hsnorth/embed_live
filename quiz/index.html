@@ -26,7 +26,7 @@
             --color-info: #0dcaf0;   /* Teal */
 
             /* Consistent FIXED height for main cards */
-            --card-fixed-height: 680px; /* Changed from min-height */
+            --card-fixed-height: 750px; /* Changed from min-height */
         }
 
         * {
@@ -123,8 +123,8 @@
             }
 
             .accordion-container {
-                margin-top: 0.75rem; /* <-- CHANGED: Less margin */
-                padding-top: 0.75rem; /* <-- CHANGED: Less padding */
+                margin-top: 0.2rem; /* <-- CHANGED: Less margin */
+                padding-top: 0.2rem; /* <-- CHANGED: Less padding */
             }
             
             .navigation-buttons {
@@ -829,7 +829,7 @@
                         <span class="stack-icon icon-weight">⚖</span>
                         <span class="stack-icon icon-match">🎯</span>
                     </div>
-                    <h1>Montreal Mayoral Matchmaker</h1>
+                    <h1>Montreal Vote Compass</h1>
                 </div>
 
                 <p class="tagline">
@@ -849,13 +849,13 @@
 
                 <ol class="how-to-list">
                     <li>
-                        <strong>Answer questions:</strong>Select level of agreement for each of the 15 statements..
+                        <strong>Answer questions:</strong> Select level of agreement for each of the 15 statements.
                     </li>
                     <li>
                         <strong>Weight importance:</strong> Decide which questions matter most to you.
                     </li>
                     <li>
-                        <strong>Find your match:</strong> See which mayoral party aligns with your views.
+                        <strong>Find your match:</strong> See which party aligns with your views.
                     </li>
                 </ol>
 
@@ -909,11 +909,19 @@
         // Candidate data: Key is the candidate, Value is an array of their scores for Q1 to Q15
         // Scores based on the grid: SD=-2, D=-1, N=0, A=1, SA=2
         const CANDIDATE_SCORES = {
-            'Luc Rabouin (Projet Montréal)':              [2, 2, 0, 1, -1, 1, 0, 0, 1, 1, -2, 1, -1, -1, 1],
-            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, 0, -1, 1, 2, 1, -1, 2, 0, 0, -1, -2, 1, 2, -1],
-            'Craig Sauvé (Transition Montréal)':          [1, 2, 2, 0, -1, 2, 2, -1, 2, 2, -2, 2, -1, -1, 2],
-            'Gilbert Thibodeau (Action Montréal)':         [-2, -1, -2, 2, 1, -1, -1, 2, -1, -1, 2, -2, 2, 1, -2],
-            'Jean-François Kacou (Futur Montréal)':       [-1, -1, -1, 0, 1, -1, -1, 2, 0, 0, 0, -1, 0, 0, -1]
+            /* Q:  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  
+            ------------------------------------------------------------------
+            PM:   2   2   0   1  -1   1   0  -2   0   1  -1   1  -1  -1   2 
+            EM:  -1   0  -1   1   2   1  -1  -1   2   1  -1  -1   1   2  -1
+            TM:   1   2   2   0  -1   2   2  -2  -1   2  -2   2  -1  -1   1
+            AM:  -2  -1  -2   2   2  -1  -1  -1   2   0   2  -2   2   1  -1
+            FM:  -1  -1   0   0   1  -1  -1  -1   2   1   0  -1   0   0  -1
+            */
+            'Luc Rabouin (Projet Montréal)':              [2, 2, 0, 1, -1, 1, 0, 0, 0, 1, -1, 1, -1, -1, 2],
+            'Soraya Martinez Ferrada (Ensemble Montréal)': [-1, 0, -1, 1, 2, 1, -1, -1, 2, 1, -1, -1, 1, 2, -1],
+            'Craig Sauvé (Transition Montréal)':          [1, 2, 2, 0, -1, 2, 2, 2, -1, 2, -2, 2, -1, -1, 1],
+            'Gilbert Thibodeau (Action Montréal)':         [-2, -1, -2, 2, 2, -1, -1, -1, 2, 0, 2, -2, 2, 1, -2],
+            'Jean-François Kacou (Futur Montréal)':       [-1, -1, -1, 0, 1, -1, -1, -1, 2, 1, 0, -1, 0, 0, -1]
         };
 
         // --- NEW: Party Colors ---
@@ -931,12 +939,12 @@
                 id: 1,
                 text: "Should Montreal continue expanding its <strong>bike lane network</strong>, even if it means reducing parking and road space for cars?",
                 details: [
-                    { summary: "What’s the debate?", content: "Montreal’s bike network has expanded rapidly in recent years, especially in the Plateau, often reducing parking and sparking tension between cyclists and drivers." }
+                    { summary: "What’s the debate?", content: "Montreal’s bike network has expanded rapidly in recent years, often reducing parking and causing tension between cyclists and drivers." }
                 ]
             },
             {
                 id: 2,
-                text: "Montreal should offer <strong>discounted transit passes to low-income residents</strong>, instead of freezing prices for everyone.",
+                text: "Montreal should offer <strong>discounted transit passes to low-income residents</strong> instead of freezing prices for everyone.",
                 details: [
                     { summary: "What’s the trade-off?", content: "Targeted discounts help low-income riders but may put upward pressure on the city’s budget or lead to higher fares for others." }
                 ]
@@ -957,7 +965,7 @@
             },
             {
                 id: 5,
-                text: "Montreal should <strong>scrap the 20-20-20 housing bylaw</strong> and replace it with financial incentives for developers.",
+                text: "Montreal should <strong>scrap the 20-20-20 housing bylaw</strong> and replace it with financial incentives for developers to build social housing.",
                 details: [
                     { summary: "What is the 20-20-20 bylaw?", content: "It requires new developments to include 20% affordable units, 20% social housing, and 20% family-sized homes. It's a rule developers say makes projects too costly." }
                 ]
@@ -971,23 +979,23 @@
             },
             {
                 id: 7,
-                text: "Montreal should <strong>end the forced eviction</strong> of homeless encampments.",
+                text: "Montreal should introduce <strong>higher taxes on the ultra-rich</strong>, such as higher property taxes on luxury homes.",
+                details: [
+                    { summary: "Context", content: "This question gauges support for wealth redistribution policies at the municipal level, which could fund social programs or address inequality." }
+                ]
+            },
+            {
+                id: 8,
+                text: "Montreal should <strong>not forcibly evict homeless encampments</strong>.",
                 details: [
                     { summary: "What’s happening?", content: "Homeless encampments — tent communities that have appeared more often as homelessness rises — are criticized as unsafe and unsanitary but defended as a last resort for shelter." }
                 ]
             },
             {
-                id: 8,
+                id: 9,
                 text: "Montreal should <strong>increase the number of police patrols</strong> in high-risk neighbourhoods.",
                 details: [
-                    { summary: "What’s the goal?", content: "More police patrols could deter violence and reassure residents, but critics warn they risk over-policing marginalized communities." }
-                ]
-            },
-            {
-                id: 9,
-                text: "Montreal should <strong>limit random police stops</strong> and street checks to urgent security issues only.",
-                details: [
-                    { summary: "What are street checks?", content: "Random police stops not tied to an offence — a practice Quebec’s ombudsman and rights groups have condemned as discriminatory." }
+                    { summary: "What’s the goal?", content: "More police patrols could deter violence and reassure some residents, but critics warn they risk over-policing marginalized communities." }
                 ]
             },
             {
@@ -1006,9 +1014,9 @@
             },
             {
                 id: 12,
-                text: "Montreal should openly support an <strong>arms embargo on Israel</strong>.",
+                text: "Montreal should openly support the <strong>Palestinian cause</strong>.",
                 details: [
-                    { summary: "Context", content: "Pro-Palestinian activists want Montreal to take a stronger stance in response to Israel’s military actions in Gaza." }
+                    { summary: "Background", content: "Pro-Palestinian activists want Montreal to take a stronger stance in response to Israel’s military actions in Gaza." }
                 ]
             },
             {
@@ -1022,14 +1030,14 @@
                 id: 14,
                 text: "Montreal should <strong>freeze city hiring</strong> for non-essential administrative positions.",
                 details: [
-                    { summary: "Why it matters", content: "A hiring freeze could save taxpayers money but risk delaying permits, inspections, and urban planning." }
+                    { summary: "Why it matters", content: "A hiring freeze could save taxpayers money but risks delaying permits, inspections, and urban planning." }
                 ]
             },
             {
                 id: 15,
-                text: "Montreal has improved... and should <strong>build on that progress</strong>, but push harder on... housing.",
+                text: "On the whole, life in Montreal has <strong>improved in the last eight years</strong>.",
                 details: [
-                    { summary: "The big picture", content: "This gauges whether Montrealers want continuity under Projet Montréal, an even stronger push in the same progressive direction, or a fresh political course." }
+                    { summary: "The big picture", content: "This gauges whether Montrealers want continuity under Projet Montréal or a fresh political course." }
                 ]
             }
         ];
@@ -1051,11 +1059,11 @@
 
         /**
          * Calculates the agreement score for one question.
-         * The formula is: (5 - |User Score - Candidate Score|) * Importance Multiplier
+         * The formula is: (4 - |User Score - Candidate Score|) * Importance Multiplier. 
          */
         function calculateAgreement(userScore, candidateScore, points) {
             const scoreDifference = Math.abs(userScore - candidateScore);
-            const rawAgreement = 5 - scoreDifference;
+            const rawAgreement = 4 - scoreDifference;
             return rawAgreement * points;
         }
 
@@ -1186,7 +1194,16 @@
 
                 QUESTIONS.slice(start, end).forEach((q, index) => {
                     const questionIndex = start + index;
-                    const questionShortText = q.text.split('<strong>')[1] || q.text.split('**')[1] || q.text.split('<')[0];
+                    // Improved logic to extract the short, bolded part of the question text
+                    let questionShortText = q.text.replace(/<[^>]*>?/gm, ''); // Remove all HTML tags first
+                    const strongMatch = q.text.match(/<strong>(.*?)<\/strong>/); // Find content in <strong></strong>
+                    if (strongMatch && strongMatch[1]) {
+                        questionShortText = strongMatch[1];
+                    } else if (questionShortText.length > 50) {
+                        questionShortText = questionShortText.substring(0, 50) + '...';
+                    }
+
+
                     slideHtml += `
                         <div class="weighting-list-item">
                             <label for="points-${questionIndex}" class="weighting-q-text">
@@ -1219,7 +1236,7 @@
             indicator.textContent = `${currentWeightingPage + 1} / ${totalWeightingPages}`;
 
             prevBtn.disabled = (currentWeightingPage === 0);
-            nextBtn.disabled = (currentWeightegingPage === totalWeightingPages - 1);
+            nextBtn.disabled = (currentWeightingPage === totalWeightingPages - 1);
         }
 
         /**
@@ -1250,14 +1267,32 @@
                     prevBtn.style.visibility = 'hidden';
                 }
 
+                // *** MODIFICATION 2: Updated 'change' listener for hybrid navigation ***
                 document.getElementById(`radio-group-${index}`).addEventListener('change', (e) => {
+                    // Always enable the Next button when an option is selected
                     nextBtn.disabled = false;
+                    
+                    // Check if the question has been answered before.
+                    // If it's 'null', this is the first time.
+                    if (userAgreementAnswers[index] === null) {
+                        // This is the auto-advance.
+                        // We add a short delay (150ms) so the user sees their
+                        // selection register before the page transitions.
+                        setTimeout(() => {
+                            nextBtn.click();
+                        }, 150);
+                    }
+                    // If userAgreementAnswers[index] is NOT null, it means
+                    // the user has gone back. We just enable the button
+                    // and do NOT auto-advance, forcing a manual click.
                 });
 
                 nextBtn.addEventListener('click', () => {
                     const selected = document.querySelector(`input[name="agreement-${q.id}"]:checked`);
                     if (!selected) { return; }
 
+                    // Save the answer *now*. This is what makes the
+                    // "go back" logic work.
                     userAgreementAnswers[index] = parseInt(selected.value);
 
                     currentStep++;
@@ -1268,15 +1303,18 @@
 
                         document.getElementById(`prev-btn-${nextQuestionIndex}`).style.visibility = 'visible';
 
+                        // Check if the *next* question has a pre-saved answer
                         if (userAgreementAnswers[nextQuestionIndex] !== null) {
                             const val = userAgreementAnswers[nextQuestionIndex];
                             document.querySelector(`#question-card-${nextQuestionIndex} input[value="${val}"]`).checked = true;
                             document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = false;
                         } else {
+                             // If no saved answer, the 'Next' button should be disabled
                              document.getElementById(`next-btn-${nextQuestionIndex}`).disabled = true;
                         }
 
                     } else {
+                        // Moving to the weighting card
                         showCard('weighting-card');
                         updateProgressBar(currentStep);
                         updatePointTotal();
@@ -1294,6 +1332,8 @@
                             showCard(`question-card-${prevQuestionIndex}`);
                             updateProgressBar(currentStep);
 
+                            // When going back, the answer is already saved,
+                            // so we just re-check the button and enable 'Next'.
                             const val = userAgreementAnswers[prevQuestionIndex];
                             if (val !== null) {
                                 document.querySelector(`#question-card-${prevQuestionIndex} input[value="${val}"]`).checked = true;
@@ -1363,10 +1403,17 @@
                 const userScore = userAgreementAnswers[i];
                 const userPointsStr = document.getElementById(`points-${i}`).value;
 
+                // Handle check for unanswered questions (shouldn't happen, but good defense)
+                if (userScore === null) {
+                    console.error(`Question ${i+1} was not answered.`);
+                    // Or show an error to the user
+                    return; 
+                }
+
                 const userPoints = parseInt(userPointsStr) || 0;
 
                 currentTotalPoints += userPoints;
-                totalPerfectScore += (5 * userPoints);
+                totalPerfectScore += (4 * userPoints);
 
                 for (const candidate in CANDIDATE_SCORES) {
                     const candidateScore = CANDIDATE_SCORES[candidate][i];
@@ -1386,9 +1433,15 @@
             for (const candidate in results) {
                 const score = results[candidate];
                 const percentage = (totalPerfectScore === 0) ? 0 : (score / totalPerfectScore) * 100;
+                
+                // Extracting name and party
+                const match = candidate.match(/^(.*) \(([^)]+)\)$/);
+                const name = match ? match[1] : candidate;
+                const party = match ? match[2] : 'Unknown';
+
                 finalResults.push({
-                    name: candidate.replace(/ \(.*\)/, ''),
-                    party: candidate.match(/\(([^)]+)\)/)[1],
+                    name: name,
+                    party: party,
                     percentage: parseFloat(percentage.toFixed(1))
                 });
             }
