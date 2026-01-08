@@ -6,28 +6,69 @@
     <title>Montreal Ride Comparison</title>
     <style>
         :root {
-            --card-aspect-ratio: 3 / 4; /* Adjust this to match your image shapes */
+            --primary-accent: #ff00bf; /* Pink color for progress bar */
         }
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f4f4f4;
+            background-color: transparent; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         /* The Main Container */
         .slider-container {
             width: 100%;
-            max-width: 400px; /* Limits width on desktop */
+            max-width: 450px; 
             position: relative;
             overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white;
         }
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 30;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 25%; /* 1 of 4 slides */
+            background: var(--primary-accent);
+            transition: width 0.3s ease;
+        }
+
+        /* Navigation Arrows */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover { background: white; }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
 
         /* The Swipe Wrapper */
         .slider-wrapper {
@@ -36,12 +77,10 @@
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Hides scrollbar for Firefox */
+            scrollbar-width: none;
         }
 
-        .slider-wrapper::-webkit-scrollbar {
-            display: none; /* Hides scrollbar for Chrome/Safari */
-        }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
 
         /* Individual Slides */
         .slide {
@@ -49,7 +88,6 @@
             scroll-snap-align: start;
             display: flex;
             flex-direction: column;
-            background: white;
         }
 
         .slide img {
@@ -58,7 +96,7 @@
             display: block;
         }
 
-        /* Swipe Instruction Overlay */
+        /* Instruction Overlay */
         .swipe-hint {
             position: absolute;
             bottom: 20px;
@@ -71,6 +109,7 @@
             pointer-events: none;
             animation: fadeOut 3s forwards;
             animation-delay: 2s;
+            z-index: 10;
         }
 
         @keyframes fadeOut {
@@ -82,26 +121,44 @@
 <body>
 
     <div class="slider-container">
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+
+        <button class="nav-btn prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+        <button class="nav-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
+
         <div class="swipe-hint">Swipe right →</div>
         
-        <div class="slider-wrapper">
-            <div class="slide">
-                <img src="thegif.GIF" alt="Montreal Route Map">
-            </div>
-
-            <div class="slide">
-                <img src="thecom.png" alt="The Commute">
-            </div>
-
-            <div class="slide">
-                <img src="theair.png" alt="The Airport">
-            </div>
-
-            <div class="slide">
-                <img src="thegroc.png" alt="Grocery store run">
-            </div>
+        <div class="slider-wrapper" id="slider">
+            <div class="slide"><img src="thegif.GIF" alt="Montreal Route Map"></div>
+            <div class="slide"><img src="thecom.png" alt="The Commute"></div>
+            <div class="slide"><img src="theair.png" alt="The Airport"></div>
+            <div class="slide"><img src="thegroc.png" alt="Grocery store run"></div>
         </div>
     </div>
+
+    <script>
+        const slider = document.getElementById('slider');
+        const progressBar = document.getElementById('progress-bar');
+        const totalSlides = 4;
+
+        // Update progress bar on scroll or swipe
+        slider.addEventListener('scroll', () => {
+            const scrollPercent = slider.scrollLeft / (slider.scrollWidth - slider.clientWidth);
+            const activeSlide = Math.round(scrollPercent * (totalSlides - 1)) + 1;
+            progressBar.style.width = (activeSlide / totalSlides) * 100 + '%';
+        });
+
+        // Click logic for arrows
+        function moveSlide(step) {
+            const slideWidth = slider.clientWidth;
+            slider.scrollBy({
+                left: step * slideWidth,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 
 </body>
 </html>
