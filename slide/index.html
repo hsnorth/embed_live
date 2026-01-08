@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montreal Ride Comparison</title>
+    <style>
+        :root {
+            --card-aspect-ratio: 3 / 4; /* Adjust this to match your image shapes */
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* The Main Container */
+        .slider-container {
+            width: 100%;
+            max-width: 400px; /* Limits width on desktop */
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* The Swipe Wrapper */
+        .slider-wrapper {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Hides scrollbar for Firefox */
+        }
+
+        .slider-wrapper::-webkit-scrollbar {
+            display: none; /* Hides scrollbar for Chrome/Safari */
+        }
+
+        /* Individual Slides */
+        .slide {
+            min-width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Swipe Instruction Overlay */
+        .swipe-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            pointer-events: none;
+            animation: fadeOut 3s forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container">
+        <div class="swipe-hint">Swipe right →</div>
+        
+        <div class="slider-wrapper">
+            <div class="slide">
+                <img src="Untitled_Artwork.GIF" alt="Montreal Route Map">
+            </div>
+
+            <div class="slide">
+                <img src="IMG_3945.jpeg" alt="Grocery Store Run">
+            </div>
+
+            <div class="slide">
+                <img src="https://via.placeholder.com/800x1100.png?text=Route+Comparison+3" alt="Route 3">
+            </div>
+
+            <div class="slide">
+                <img src="https://via.placeholder.com/800x1100.png?text=Route+Comparison+4" alt="Route 4">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
