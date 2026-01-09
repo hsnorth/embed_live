@@ -18,17 +18,27 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
+            overflow: hidden; /* Prevents double scroll in iframe */
         }
 
         .slider-container {
             width: 100%;
-            max-width: 500px;
+            /* Fixed height for your embed */
+            height: 650px; 
+            max-width: 500px; /* Mobile width */
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: max-width 0.3s ease;
         }
 
-        /* Progress Bar pinned to top of the card */
+        /* LAPTOP VERSION: Expand container width when screen is wider */
+        @media (min-width: 600px) {
+            .slider-container {
+                max-width: 1000px; /* Wider for laptop images */
+            }
+        }
+
         .progress-container {
             width: 100%;
             height: 5px;
@@ -43,10 +53,10 @@
             transition: width 0.3s ease;
         }
 
-        /* The Swipe Wrapper */
         .slider-wrapper {
             display: flex;
             width: 100%;
+            flex: 1; /* Fills remaining space above buttons */
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
@@ -60,31 +70,32 @@
             min-width: 100%;
             scroll-snap-align: start;
             display: flex;
-            align-items: flex-start;
+            align-items: center; /* Centers images in the 650px height */
             justify-content: center;
         }
 
-        .slide img {
+        .slide picture, .slide img {
             width: 100%;
             height: auto;
+            max-height: 580px; /* Leaves room for progress bar and buttons */
+            object-fit: contain;
             display: block;
         }
 
-        /* New Control Bar for centered arrows */
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
-            padding: 15px 0;
+            padding: 10px 0;
             background: #ffffff;
         }
 
         .nav-btn {
             background: var(--button-bg);
             border: 1px solid #ddd;
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -97,23 +108,18 @@
         .nav-btn:hover {
             background: var(--button-hover);
             transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .nav-btn:active {
-            transform: scale(0.95);
         }
 
         .swipe-hint {
             position: absolute;
-            top: 50px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 13px;
+            font-size: 12px;
             pointer-events: none;
             animation: fadeOut 2s forwards;
             animation-delay: 2s;
@@ -133,18 +139,38 @@
         <div class="swipe-hint">Swipe to compare</div>
         
         <div class="slider-wrapper" id="slider">
-            <div class="slide"><img src="thegif.GIF" alt="Montreal Route Map"></div>
-            <div class="slide"><img src="1.png" alt="The Commute"></div>
-            <div class="slide"><img src="2.png" alt="The Airport"></div>
-            <div class="slide"><img src="3.png" alt="Grocery store run"></div>
+            <div class="slide">
+                <img src="thegif.GIF" alt="Montreal Route Map">
+            </div>
+
+            <div class="slide">
+                <picture>
+                    <source media="(min-width: 600px)" srcset="width1.png">
+                    <img src="1.png" alt="The Commute">
+                </picture>
+            </div>
+
+            <div class="slide">
+                <picture>
+                    <source media="(min-width: 600px)" srcset="width2.png">
+                    <img src="2.png" alt="The Airport">
+                </picture>
+            </div>
+
+            <div class="slide">
+                <picture>
+                    <source media="(min-width: 600px)" srcset="width3.png">
+                    <img src="3.png" alt="Grocery store run">
+                </picture>
+            </div>
         </div>
 
         <div class="controls">
-            <button class="nav-btn" onclick="moveSlide(-1)" aria-label="Previous">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <button class="nav-btn" onclick="moveSlide(-1)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
-            <button class="nav-btn" onclick="moveSlide(1)" aria-label="Next">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <button class="nav-btn" onclick="moveSlide(1)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
         </div>
     </div>
