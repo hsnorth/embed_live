@@ -2184,3 +2184,339 @@ body.social-layout #social-feed-view {
         left: 0.75rem; /* Align with mobile's inner padding */
     }
 }
+
+/* === REFINED MAGAZINE LAYOUT IMPROVEMENTS === */
+
+/* Better spacing for welcome section */
+.welcome-grid {
+    margin-bottom: 4rem;
+}
+
+/* Improved typography hierarchy */
+.article-title {
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+}
+
+.item-description {
+    margin-bottom: 1rem;
+}
+
+.item-description:last-child {
+    margin-bottom: 0;
+}
+
+/* Better visual separation between sections */
+.content-section {
+    scroll-margin-top: 120px; /* For better anchor scrolling */
+}
+
+/* Improved cannoli layout responsiveness */
+@media (min-width: 900px) {
+    .cannoli-section-content {
+        gap: 4rem;
+    }
+    
+    .cannoli-text-content {
+        max-width: 600px;
+    }
+    
+    .cannoli-image-container {
+        max-width: 350px;
+    }
+}
+
+/* === SOCIAL FEED SPACING IMPROVEMENTS === */
+
+/* Better mobile spacing for social feed */
+@media (max-width: 600px) {
+    #social-feed-view {
+        margin-top: 0;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .social-post {
+        padding: 1rem 0.75rem;
+        gap: 0.875rem;
+    }
+    
+    /* Tighter avatar column */
+    .social-post {
+        grid-template-columns: 44px 1fr;
+    }
+    
+    .post-avatar, .post-avatar-placeholder {
+        width: 44px;
+        height: 44px;
+    }
+    
+    /* Better text sizing */
+    .post-author-name {
+        font-size: 0.95rem;
+    }
+    
+    .post-body p {
+        font-size: 1.05rem;
+        line-height: 1.65;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Improved thread line positioning for smaller avatars */
+    .post-thread .post-avatar-placeholder::before {
+        top: -1.75rem;
+        width: 2px;
+    }
+    
+    /* Better image spacing */
+    .post-image {
+        margin-top: 0.75rem;
+    }
+    
+    .post-image img {
+        border-radius: 8px;
+    }
+}
+
+/* Medium screens (tablets) */
+@media (min-width: 601px) and (max-width: 900px) {
+    .social-post {
+        padding: 1.25rem 1rem;
+    }
+    
+    .post-body p {
+        font-size: 1.125rem;
+    }
+}
+
+/* Desktop social feed improvements */
+@media (min-width: 901px) {
+    #social-feed-view {
+        margin-top: 2rem;
+        border-radius: 4px;
+    }
+    
+    .social-post {
+        padding: 1.5rem;
+    }
+    
+    /* Hover effect for posts */
+    .social-post:hover {
+        background-color: #fafafa;
+        transition: background-color 0.2s ease;
+    }
+}
+
+/* Better pinned post styling across all sizes */
+.pinned-post {
+    background: linear-gradient(to bottom, #f9fafb 0%, #f7f9f9 100%);
+}
+
+.pinned-header {
+    letter-spacing: 0.5px;
+}
+
+/* Improved thread line visibility */
+.post-thread .post-avatar-placeholder::before {
+    background-color: #d0d0d0;
+    opacity: 0.6;
+}
+
+/* Better content separation in social feed */
+.post-content {
+    min-width: 0; /* Prevents text overflow */
+}
+
+.post-header {
+    margin-bottom: 0.5rem;
+}
+
+/* Ensure images don't break layout */
+.post-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === SHARED IMPROVEMENTS === */
+
+/* Better focus states for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* Smooth scrolling with offset */
+html {
+    scroll-padding-top: 100px;
+}
+
+/* Improved loading states */
+.content-section[style*="display: none"] {
+    display: none !important;
+}
+
+/* Better spacing for Harry's note on mobile */
+@media (max-width: 768px) {
+    .welcome-sidebar {
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
+    
+    .eyebrow-container {
+        justify-content: center;
+    }
+}
+
+/* Improved sticky banner on mobile */
+@media (max-width: 600px) {
+    .sticky-signup-banner {
+        padding: 2rem 1.5rem;
+    }
+    
+    .sticky-signup-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .sticky-signup-text {
+        text-align: center;
+    }
+    
+    .sticky-signup-form {
+        width: 100%;
+    }
+    
+    .sticky-form-step {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    
+    .sticky-input {
+        width: 100%;
+    }
+    
+    .sticky-btn {
+        width: 100%;
+    }
+}
+
+/* Better modal sizing on mobile */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+}
+
+/* Improved comment view positioning */
+.comment-display-popup {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .comment-display-popup {
+        width: 90%;
+        max-width: 90%;
+        left: 5% !important;
+    }
+}
+
+/* === MAGAZINE FORMAT POLISH === */
+
+/* Better section title spacing */
+.section-title {
+    margin-bottom: 2.5rem;
+    line-height: 1.2;
+}
+
+/* Improved essential items spacing */
+.essential-item {
+    padding-top: 2rem;
+    padding-bottom: 0.5rem;
+}
+
+.essential-item:last-child {
+    padding-bottom: 0;
+}
+
+/* Better map container */
+.map-container {
+    margin-bottom: 2.5rem;
+}
+
+/* Improved live ticker on small screens */
+@media (max-width: 500px) {
+    .live-ticker-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .ticker-static-section {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .ticker-separator {
+        display: none;
+    }
+    
+    .headlines-container {
+        width: 100%;
+    }
+}
+
+/* Better footer spacing */
+.main-footer {
+    margin-top: 4rem;
+}
+
+/* Improved scroll indicator */
+.page-scroll-indicator {
+    padding-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+    .page-scroll-indicator {
+        padding: 1.5rem 0 2.5rem;
+    }
+}
+
+/* === PRINT STYLES === */
+@media print {
+    .header-top-bar,
+    .mobile-top-bar,
+    .sticky-signup-banner,
+    .main-nav,
+    .open-haul-button,
+    .live-ticker-container,
+    #comment-ui-container,
+    #deepnote-ui-container,
+    .modal-overlay,
+    .account-panel-overlay {
+        display: none !important;
+    }
+    
+    .main-header {
+        border-bottom: 2px solid #000;
+        padding-bottom: 1rem;
+    }
+    
+    body {
+        font-size: 12pt;
+        line-height: 1.6;
+    }
+    
+    .article-title {
+        page-break-after: avoid;
+    }
+    
+    .essential-item {
+        page-break-inside: avoid;
+    }
+}
