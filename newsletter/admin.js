@@ -195,36 +195,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function sendNewsletterEmails(newsletterData, newsletterId) {
+        // 🔥 YOUR MAILGUN CREDENTIALS HERE
+        const MAILGUN_API_KEY = '13367b04df52dae4d122d135f9479cdf-42b8ce75-bb25e8c2';
+        const MAILGUN_DOMAIN = 'sandbox2aa9365e47274ae4b3b6b63b8dd9861d.mailgun.org';
+        
         try {
-            // Get all subscribers
             const usersSnapshot = await getDocs(collection(db, 'users'));
             const subscribers = usersSnapshot.docs
                 .filter(doc => doc.data().newsletter === true)
                 .map(doc => ({ id: doc.id, ...doc.data() }));
 
-            // Create email queue entries
-            const emailPromises = subscribers.map(subscriber => {
-                return addDoc(collection(db, 'emailQueue'), {
-                    to: subscriber.email,
-                    subject: `The News Haul #${newsletterData.issueNumber}: ${newsletterData.mainTitle}`,
-                    html: generateEmailHTML(newsletterData, subscriber),
-                    newsletterId: newsletterId,
-                    createdAt: serverTimestamp(),
-                    status: 'pending'
+            if (subscribers.length === 0) {
+                alert('No subscribers found!');
+                return;
+            }
+
+            console.log(`Sending to ${subscribers.length} subscribers...`);
+
+            const emailPromises = subscribers.map(async (subscriber) => {
+                const emailHTML = generateEmailHTML(newsletterData, subscriber);
+                
+                // Mailgun uses Basic Auth with api:YOUR_API_KEY
+                const auth = btoa(`api:${MAILGUN_API_KEY}`);
+                
+                const formData = new FormData();
+                formData.append('from', 'The News Haul <mailgun@' + MAILGUN_DOMAIN + '>');
+                formData.append('to', subscriber.email);
+                formData.append('subject', `The News Haul #${newsletterData.issueNumber}: ${newsletterData.mainTitle}`);
+                formData.append('html', emailHTML);
+                
+                const response = await fetch(`https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${auth}`
+                    },
+                    body: formData
                 });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    console.log(`✅ Sent to ${subscriber.email}`);
+                } else {
+                    console.error(`❌ Failed to send to ${subscriber.email}:`, result);
+                }
+                
+                return result;
             });
 
             await Promise.all(emailPromises);
-            alert(`Email queued for ${subscribers.length} subscribers!`);
+            alert(`Newsletter sent to ${subscribers.length} subscribers! Check console for details.`);
             
         } catch (error) {
-            console.error('Error queueing emails:', error);
+            console.error('Error sending emails:', error);
             alert('Error sending emails: ' + error.message);
         }
     }
 
     function generateEmailHTML(data, subscriber) {
-        // Generate beautiful email HTML
         return `
 <!DOCTYPE html>
 <html>
