@@ -15,6 +15,7 @@
             width: 100%;
             height: 100%;
             background: white;
+            overflow: hidden;
         }
 
         body {
@@ -28,7 +29,8 @@
             background: white;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 700px;
+            max-height: 700px;
             position: relative;
             overflow: hidden;
         }
@@ -58,6 +60,7 @@
             flex-direction: column;
             animation: fadeIn 0.3s ease-in;
             gap: 18px;
+            overflow-y: auto;
         }
 
         @keyframes fadeIn {
@@ -258,6 +261,11 @@
         }
 
         @media (max-width: 768px) {
+            .email-chain-container {
+                height: 600px;
+                max-height: 600px;
+            }
+
             .email-page {
                 padding: 20px;
                 padding-top: 20px;
@@ -372,58 +380,72 @@
             {
                 from: "Austin Hill",
                 to: "Jeffrey Epstein",
-                date: "Wed, March 19, 2014, 1:15 AM",
+                date: "Wed, Mar 19, 2014, 1:15 AM",
                 subject: "Re: Please meet each other",
-                body: "Hi Jeffrey,\n\nThanks for the intro (moved to BCC).\n\nI'm doing some new work in the area of global finance technologies based on blockchain & bitcoin infrastructures. You suggested we find sometime to sit down in Vancouver this week. Would love to set something up.\n\nI can be reached by email or phone.\n\nbest,\n-Austin"
+                body: "Hi Jeffrey,\n\nThanks [redacted] for the intro (moved to BCC).\n\nI'm doing some new work in the area of global finance technologies based on blockchain & bitcoin infrastructures. [redacted] suggested we find sometime to sit down in Vancouver this week. Would love to set something up.\n\nI can be reached by email or phone at [redacted]\n\nbest,\n-Austin"
+            },
+            {
+                from: "[Intermediary]",
+                to: "[Intermediary]",
+                date: "Wed, Mar 19, 2014",
+                subject: "",
+                body: "Austin did email. Hmmm...\n\nAustin - can you get over to the fairmont pacific Rim?\n\nJeff will be the one with salt & pepper hair, a huge grin, and 1-2 gorgeous women circling him.\n\nAustin has an equally large grin.\n\n;-)"
+            },
+            {
+                from: "Jeffrey Epstein",
+                to: "",
+                date: "Wed, Mar 19, 2014, 10:58 AM",
+                subject: "",
+                body: "he didn't email me , I will be same place fairmont pacific rim from 12 30 all day"
             },
             {
                 from: "Jeffrey Epstein",
                 to: "Austin Hill",
-                date: "Wed, March 19, 2014, 3:12 PM",
-                subject: "Re: Coming?",
+                date: "Wed, Mar 19, 2014, 11:48 PM",
+                subject: "Re: Austin Hill & Jeffrey",
+                body: "2 min\n\nOn Wednesday, March 19, 2014, Jeffrey Epstein jeevacation@gmail.com wrote:\npacific rim fairmont im with two pretty girls"
+            },
+            {
+                from: "Austin Hill",
+                to: "Jeffrey Epstein",
+                date: "Wed, Mar 19, 2014, 4:13 PM",
+                subject: "",
+                body: "I'm sitting in the lobby across from reception Fairmont waterfront.\n\nSent from Mailbox for iPhone"
+            },
+            {
+                from: "Austin Hill",
+                to: "Jeffrey Epstein",
+                date: "Wed, Mar 19, 2014, 4:09 PM",
+                subject: "",
+                body: "Here - where are you? I'm the guy who obviously conquered anorexia (big) dressed in black.\n\nSent from Mailbox for iPhone"
+            },
+            {
+                from: "Austin Hill",
+                to: "Jeffrey Epstein",
+                date: "Wed, Mar 19, 2014, 3:58 PM",
+                subject: "",
+                body: "On my way over 5 min\n\nSent from Mailbox for iPhone"
+            },
+            {
+                from: "Jeffrey Epstein",
+                to: "Austin Hill",
+                date: "Wed, Mar 19, 2014, 3:12 PM",
+                subject: "",
                 body: "Coming?"
             },
             {
                 from: "Austin Hill",
                 to: "Jeffrey Epstein",
-                date: "Wed, March 19, 2014, 3:58 PM",
-                subject: "ETA",
-                body: "On my way over 5 min"
+                date: "Wed, Mar 19, 2014",
+                subject: "",
+                body: "Happy to make it to the Fairmont."
             },
             {
                 from: "Austin Hill",
                 to: "Jeffrey Epstein",
-                date: "Wed, March 19, 2014, 4:09 PM",
-                subject: "Re: Where are you?",
-                body: "Here - where are you? I'm the guy who obviously conquered anorexia (big) dressed in black."
-            },
-            {
-                from: "Austin Hill",
-                to: "Jeffrey Epstein",
-                date: "Wed, March 19, 2014, 4:13 PM",
-                subject: "Location",
-                body: "I'm sitting in the lobby across from reception Fairmont Waterfront."
-            },
-            {
-                from: "Jeffrey Epstein",
-                to: "Austin Hill",
-                date: "Wed, March 19, 2014, 11:48 PM",
+                date: "Thu, Mar 20, 2014, 2:09 AM",
                 subject: "Re: Austin Hill & Jeffrey",
-                body: "pacific rim fairmont im with two pretty girls"
-            },
-            {
-                from: "[Intermediary]",
-                to: "[Intermediary]",
-                date: "Wednesday, March 19, 2014",
-                subject: "Follow-up",
-                body: "Austin did email. Hmmm...\n\nAustin - can you get over to the Fairmont Pacific Rim?\n\nJeff will be the one with salt & pepper hair, a huge grin, and 1-2 gorgeous women circling him.\n\nAustin has an equally large grin. ;-)"
-            },
-            {
-                from: "Austin Hill",
-                to: "Jeffrey Epstein",
-                date: "Thu, March 20, 2014, 2:09 AM",
-                subject: "Re: Austin Hill & Jeffrey",
-                body: "Jeffrey,\n\nIt was really great to meet you.\n\nI enjoyed our conversation immensely. Would love the chance to spend an afternoon continuing the discussion and learning more about money from you ;)\n\nI know we share at least a few hobbies & interests already.\n\nI'm happy to travel - so hopefully we can meet in NY or St. Thomas in April or May.\n\nMy cell is on file.\n\nbest,\nAustin\n\nP.S. - yes they were pretty :)"
+                body: "Jeffrey,\n\nIt's was really great to meet you.\n\nI enjoyed our conversation immensely. Would live the chance to spend an afternoon continuing the discussion and learning more about money from you ;)\n\nI know we share at least a few hobbies & interests already.\n\nI'm happy to travel - so hopefully we can meet in NY or St. Thomas in April or May.\n\nMy cell is [redacted]\n\nbest,\nAustin\n\nPs - yes they were pretty :)"
             }
         ];
 
@@ -435,16 +457,18 @@
 
         function groupEmailsIntoPages() {
             pages = [];
-            // Page 1: First email only (Please meet each other)
+            // Page 1: Austin's intro email
             pages.push([emails[0]]);
-            // Page 2: Intermediary's "Follow-up" + Jeffrey's "with two pretty girls"
-            pages.push([emails[6], emails[5]]);
-            // Page 3: Jeffrey's "Coming?" and Austin's "ETA" 
+            // Page 2: Intermediary + Epstein "he didn't email me"
             pages.push([emails[1], emails[2]]);
-            // Page 4: Austin's "Where are you?" and "Location"
-            pages.push([emails[3], emails[4]]);
-            // Page 5: Austin's follow-up meeting email
-            pages.push([emails[7]]);
+            // Page 3: Austin "Happy to make it" + Epstein "Coming?"
+            pages.push([emails[8], emails[7]]);
+            // Page 4: Austin "On my way" + Austin "where are you?"
+            pages.push([emails[6], emails[5]]);
+            // Page 5: Austin "lobby" + Epstein "two pretty girls"
+            pages.push([emails[4], emails[3]]);
+            // Page 6: Austin's follow-up
+            pages.push([emails[9]]);
         }
 
         function initializeCarousel() {
@@ -461,7 +485,7 @@
                     emailDiv.className = 'email-item';
                     emailDiv.innerHTML = `
                         <div class="email-from">From: ${email.from}</div>
-                        <div class="email-to">To: ${email.to}</div>
+                        ${email.to ? `<div class="email-to">To: ${email.to}</div>` : ''}
                         <div class="email-date">${email.date}</div>
                         ${email.subject ? `<div class="email-subject">Subject: ${email.subject}</div>` : ''}
                         <div class="email-body">${email.body}</div>
