@@ -343,21 +343,6 @@
 </head>
 <body>
     <div class="email-chain-container">
-        <div class="email-viewer">
-            <!-- Summary trigger text - top right -->
-            <div class="summary-trigger hidden" id="summaryTrigger" onclick="openSummary()">Summary</div>
-            
-            <div class="email-carousel" id="emailCarousel"></div>
-            
-            <!-- Summary box - near top, left-aligned, max-width -->
-            <div class="summary-box" id="summaryBox">
-                <div class="summary-content">
-                    <div class="summary-title">The 2017 meeting</div>
-                    <div class="summary-text" id="summaryText">Loading summary...</div>
-                </div>
-                <button class="summary-close" onclick="closeSummary()">✕</button>
-            </div>
-        </div>
 
         <div class="dot-indicator" id="dotIndicator"></div>
         <div class="ripped-edge"></div>
@@ -400,11 +385,8 @@
             }
         ];
 
-        const summarySummary = "Austin Hill confirms a Saturday meeting at Epstein's Manhattan townhouse at 9 East 71st Street, while Epstein's team coordinates a coat purchase.";
-
         let currentPage = 0;
         let pages = [];
-        let summaryOpen = true;
 
         function groupEmailsIntoPages() {
             pages = [];
