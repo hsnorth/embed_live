@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Chain Viewer</title>
+    <title>Email Thread</title>
     <style>
         * {
             margin: 0;
@@ -11,511 +11,158 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: white;
-            overflow: hidden;
-        }
-
         body {
-            font-family: 'Georgia', serif;
-        }
-
-        .email-chain-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            height: 700px;
-            max-height: 700px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .email-viewer {
-            flex: 1;
-            overflow: hidden;
-            background: white;
-            position: relative;
-            width: 100%;
-        }
-
-        .email-carousel {
-            display: flex;
-            transition: transform 0.3s ease-out;
-            touch-action: pan-y;
-            width: 100%;
-            height: 100%;
-        }
-
-        .email-page {
-            width: 100%;
-            min-width: 100%;
-            padding: 28px;
-            padding-top: 28px;
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease-in;
-            gap: 18px;
-            overflow-y: auto;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .email-item {
-            padding: 16px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .email-item:last-child {
-            border-bottom: none;
-        }
-
-        .email-from {
-            font-weight: 700;
-            color: #000;
-            font-size: 17px;
-            margin-bottom: 4px;
-        }
-
-        .email-to {
-            color: #666;
-            font-size: 15px;
-            margin-bottom: 2px;
-        }
-
-        .email-date {
-            color: #999;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .email-subject {
-            background: transparent;
-            padding: 0;
-            border-left: none;
-            font-size: 15px;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .email-body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
             line-height: 1.6;
-            color: #444;
-            font-size: 15px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
-        /* Summary box - near top, left-aligned, max-width */
-        .summary-box {
-            position: absolute;
-            top: 12px;
-            left: 20px;
-            width: 65%;
-            max-width: 480px;
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            padding: 18px 22px 16px 22px;
+        .email-thread {
+            max-width: 1100px;
+            margin: 0 auto;
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-            z-index: 10;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .email-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .email-card:hover {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        .summary-box.hidden {
-            opacity: 0;
-            transform: translateY(-10px);
-            pointer-events: none;
+        .email-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin-bottom: 16px;
+            gap: 12px;
         }
 
-        .summary-content {
+        .email-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 12px;
             flex: 1;
         }
 
-        .summary-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 6px;
+        .email-from,
+        .email-to,
+        .email-cc,
+        .email-subject {
+            font-size: 17px;
+            color: #1a1a1a;
         }
 
-        .summary-text {
-            font-size: 15px;
-            color: #555;
-            line-height: 1.5;
+        .email-from strong,
+        .email-to strong,
+        .email-cc strong,
+        .email-subject strong {
+            font-weight: 600;
+            margin-right: 4px;
         }
 
-        .summary-close {
-            background: none;
-            border: none;
-            font-size: 16px;
-            color: #999;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-            transition: color 0.2s;
-            flex-shrink: 0;
+        .email-address {
+            color: #1a1a1a;
         }
 
-        .summary-close:hover {
-            color: #333;
-        }
-
-        /* Summary trigger text - top right */
-        .summary-trigger {
-            position: absolute;
-            top: 10px;
-            right: 28px;
-            font-size: 12px;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.2s;
-            z-index: 5;
-        }
-
-        .summary-trigger:hover {
+        .email-date {
+            font-size: 17px;
             color: #666;
+            margin-left: auto;
         }
 
-        .summary-trigger.hidden {
-            display: none;
+        .email-body {
+            font-size: 17px;
+            color: #1a1a1a;
+            line-height: 1.7;
         }
 
-        /* Ripped paper edge at bottom of email area */
-        .ripped-edge {
-            position: relative;
-            height: 12px;
-            background: white;
-            flex-shrink: 0;
-        }
-
-        .ripped-edge::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 12px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 12" preserveAspectRatio="none"><path d="M0,2 Q5,6 10,2 Q15,0 20,3 Q25,7 30,2 Q35,0 40,4 Q45,8 50,3 Q55,0 60,2 Q65,6 70,1 Q75,0 80,4 Q85,7 90,2 Q95,0 100,3 Q105,6 110,2 Q115,0 120,4 Q125,7 130,2 Q135,0 140,3 Q145,5 150,1 Q155,0 160,4 Q165,6 170,2 Q175,0 180,3 Q185,7 190,2 Q195,0 200,4 Q205,6 210,1 Q215,0 220,3 Q225,5 230,2 Q235,0 240,4 Q245,7 250,2 Q255,0 260,3 Q265,6 270,1 Q275,0 280,4 Q285,6 290,2 Q295,0 300,3 Q305,7 310,2 Q315,0 320,4 Q325,5 330,1 Q335,0 340,3 Q345,6 350,2 Q355,0 360,4 Q365,7 370,2 Q375,0 380,3 Q385,5 390,1 Q395,0 400,4 Q405,6 410,2 Q415,0 420,3 Q425,7 430,2 Q435,0 440,4 Q445,6 450,1 Q455,0 460,3 Q465,5 470,2 Q475,0 480,4 Q485,7 490,2 Q495,0 500,3 L500,12 L0,12 Z" fill="white"/></svg>') repeat-x;
-            background-size: 100% 100%;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 28px;
-            background: #e8e8e8;
-            flex-shrink: 0;
-        }
-
-        .nav-button {
-            background: #000;
-            color: white;
-            border: none;
-            padding: 9px 18px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Georgia', serif;
-        }
-
-        .nav-button:hover:not(:disabled) {
-            background: #333;
-        }
-
-        .nav-button:disabled {
-            background: #aaa;
-            cursor: not-allowed;
-        }
-
-        .email-counter {
-            text-align: center;
-            color: #333;
-            font-size: 14px;
-            font-weight: 600;
-            min-width: 70px;
-        }
-
-        .dot-indicator {
-            display: none;
-        }
-
+        /* Responsive design */
         @media (max-width: 768px) {
-            .email-chain-container {
-                height: 600px;
-                max-height: 600px;
+            body {
+                padding: 12px;
             }
 
-            .email-page {
-                padding: 20px;
-                padding-top: 20px;
-                gap: 16px;
+            .email-card {
+                padding: 18px;
             }
 
-            .summary-box {
-                width: calc(100% - 32px);
-                max-width: none;
-                left: 16px;
-                right: 16px;
-                top: 10px;
-                padding: 16px 18px 14px 18px;
+            .email-header {
+                gap: 10px;
             }
 
-            .summary-title {
+            .email-from,
+            .email-to,
+            .email-cc,
+            .email-subject,
+            .email-body,
+            .email-date {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .email-card {
+                padding: 16px;
+                border-radius: 8px;
+            }
+
+            .email-from,
+            .email-to,
+            .email-cc,
+            .email-subject,
+            .email-body,
+            .email-date {
                 font-size: 15px;
             }
 
-            .summary-text {
-                font-size: 14px;
+            .email-thread {
+                gap: 12px;
             }
 
-            .controls {
-                padding: 12px 20px;
-                gap: 6px;
-            }
-
-            .nav-button {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-
-            .email-counter {
-                font-size: 13px;
-                min-width: 60px;
-            }
-
-            .email-from {
-                font-size: 16px;
-            }
-
-            .email-body {
-                font-size: 14px;
-            }
-
-            .summary-trigger {
-                right: 20px;
-            }
-
-            .dot-indicator {
-                display: flex;
-                justify-content: center;
-                gap: 5px;
-                padding: 10px 0;
-                background: white;
-                flex-shrink: 0;
-            }
-
-            .dot {
-                width: 7px;
-                height: 7px;
-                border-radius: 50%;
-                background: #ddd;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .dot.active {
-                background: #000;
-                transform: scale(1.25);
+            .email-date {
+                margin-left: 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="email-chain-container">
-
-        <div class="dot-indicator" id="dotIndicator"></div>
-        <div class="ripped-edge"></div>
-
-        <div class="controls">
-            <button class="nav-button" id="prevBtn" onclick="previousPage()">
-                ← Previous
-            </button>
-            <div class="email-counter">
-                <span id="currentPage">1</span> / <span id="totalPages">1</span>
+    <div class="email-thread">
+        <!-- Email 8 -->
+        <div class="email-card">
+            <div class="email-header">
+                <div class="email-meta">
+                    <div class="email-from">
+                        <strong>From:</strong>
+                        <span class="email-address">jeffrey E.</span>
+                    </div>
+                    <div class="email-to">
+                        <strong>To:</strong>
+                        <span class="email-address">Austin Hill</span>
+                    </div>
+                </div>
+                <div class="email-date">Sun 5/18/2014 1:15:08 PM</div>
             </div>
-            <button class="nav-button" id="nextBtn" onclick="nextPage()">
-                Next →
-            </button>
+            <div class="email-body">
+                montreal comedy, definitely
+                <br><br>
+                --
+            </div>
         </div>
     </div>
-
-    <script>
-        const emails = [
-            {
-                from: "Jeffrey Epstein",
-                to: "",
-                date: "Wed, Nov 8, 2017, 7:37 AM",
-                subject: "",
-                body: "https://www.amazon.com/Valuker-Womens-Puffer-Jacket-57-Black-L/dp/B01KO0SQR4/ref=sr_1_13?ie=UTF8&qid=1510144574&sr=8-13&keywords=winter+coat [redacted]"
-            },
-            {
-                from: "[Redacted]",
-                to: "Jeffrey Epstein",
-                date: "Wed, Nov 8, 2017, 10:04 AM",
-                subject: "",
-                body: "Re the coat for [redacted]...may I ask her what size she prefers?"
-            },
-            {
-                from: "Jeffrey Epstein",
-                to: "",
-                date: "Wed, Nov 8, 2017, 3:38 PM",
-                subject: "Re: Coat for [redacted] - What size?",
-                body: "whatever she prefers"
-            }
-        ];
-
-        let currentPage = 0;
-        let pages = [];
-
-        function groupEmailsIntoPages() {
-            pages = [];
-            // Page 1: Austin's confirmation email
-            pages.push([emails[0]]);
-        }
-
-        function initializeCarousel() {
-            groupEmailsIntoPages();
-            const carousel = document.getElementById('emailCarousel');
-            const dotIndicator = document.getElementById('dotIndicator');
-
-            pages.forEach((pageEmails, pageIndex) => {
-                const pageDiv = document.createElement('div');
-                pageDiv.className = 'email-page';
-
-                pageEmails.forEach((email) => {
-                    const emailDiv = document.createElement('div');
-                    emailDiv.className = 'email-item';
-                    emailDiv.innerHTML = `
-                        <div class="email-from">From: ${email.from}</div>
-                        ${email.to ? `<div class="email-to">To: ${email.to}</div>` : ''}
-                        <div class="email-date">${email.date}</div>
-                        ${email.subject ? `<div class="email-subject">Subject: ${email.subject}</div>` : ''}
-                        <div class="email-body">${email.body}</div>
-                    `;
-                    pageDiv.appendChild(emailDiv);
-                });
-
-                carousel.appendChild(pageDiv);
-
-                const dot = document.createElement('div');
-                dot.className = 'dot' + (pageIndex === 0 ? ' active' : '');
-                dot.onclick = () => goToPage(pageIndex);
-                dotIndicator.appendChild(dot);
-            });
-
-            document.getElementById('totalPages').textContent = pages.length;
-            document.getElementById('summaryText').textContent = summarySummary;
-            updateControls();
-        }
-
-        function updateCarouselPosition() {
-            const carousel = document.getElementById('emailCarousel');
-            carousel.style.transform = `translateX(-${currentPage * 100}%)`;
-
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentPage);
-            });
-
-            document.getElementById('currentPage').textContent = currentPage + 1;
-            updateControls();
-        }
-
-        function updateControls() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            prevBtn.disabled = currentPage === 0;
-            nextBtn.disabled = currentPage === pages.length - 1;
-        }
-
-        function nextPage() {
-            if (currentPage < pages.length - 1) {
-                currentPage++;
-                updateCarouselPosition();
-                // Auto-close summary when navigating
-                if (summaryOpen) {
-                    closeSummary();
-                }
-            }
-        }
-
-        function previousPage() {
-            if (currentPage > 0) {
-                currentPage--;
-                updateCarouselPosition();
-                // Auto-close summary when navigating
-                if (summaryOpen) {
-                    closeSummary();
-                }
-            }
-        }
-
-        function goToPage(index) {
-            currentPage = index;
-            updateCarouselPosition();
-            // Auto-close summary when navigating
-            if (summaryOpen) {
-                closeSummary();
-            }
-        }
-
-        function closeSummary() {
-            document.getElementById('summaryBox').classList.add('hidden');
-            document.getElementById('summaryTrigger').classList.remove('hidden');
-            summaryOpen = false;
-        }
-
-        function openSummary() {
-            document.getElementById('summaryBox').classList.remove('hidden');
-            document.getElementById('summaryTrigger').classList.add('hidden');
-            summaryOpen = true;
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') nextPage();
-            if (e.key === 'ArrowLeft') previousPage();
-            if (e.key === 'Escape') closeSummary();
-        });
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        const carousel = document.getElementById('emailCarousel');
-        carousel.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        carousel.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            const diff = touchStartX - touchEndX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) nextPage();
-                else previousPage();
-            }
-        });
-
-        window.addEventListener('DOMContentLoaded', initializeCarousel);
-    </script>
 </body>
 </html>
