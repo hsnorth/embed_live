@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Thread</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .email-thread {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .email-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .email-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .email-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+
+        .email-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .email-from,
+        .email-to,
+        .email-cc,
+        .email-subject {
+            font-size: 17px;
+            color: #1a1a1a;
+        }
+
+        .email-from strong,
+        .email-to strong,
+        .email-cc strong,
+        .email-subject strong {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .email-address {
+            color: #1a1a1a;
+        }
+
+        .email-date {
+            font-size: 17px;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .email-body {
+            font-size: 17px;
+            color: #1a1a1a;
+            line-height: 1.7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .email-card {
+                padding: 18px;
+            }
+
+            .email-header {
+                gap: 10px;
+            }
+
+            .email-from,
+            .email-to,
+            .email-cc,
+            .email-subject,
+            .email-body,
+            .email-date {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .email-card {
+                padding: 16px;
+                border-radius: 8px;
+            }
+
+            .email-from,
+            .email-to,
+            .email-cc,
+            .email-subject,
+            .email-body,
+            .email-date {
+                font-size: 15px;
+            }
+
+            .email-thread {
+                gap: 12px;
+            }
+
+            .email-date {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-thread">
+        <!-- Email 1 -->
+        <div class="email-card">
+            <div class="email-header">
+                <div class="email-meta">
+                    <div class="email-from">
+                        <strong>From:</strong>
+                        <span class="email-address">John Christensen &lt;[redacted]&gt;</span>
+                    </div>
+                    <div class="email-to">
+                        <strong>To:</strong>
+                        <span class="email-address">"jeffrey E." jeevacation@gmail.com</span>
+                    </div>
+                    <div class="email-subject">
+                        <strong>Subject:</strong>
+                        <span class="email-address">Celine</span>
+                    </div>
+                </div>
+                <div class="email-date">Fri, Nov 14, 2014 at 2:24 PM</div>
+            </div>
+            <div class="email-body">
+                Hi Jeffrey,
+                <br><br>
+                I had arranged with the Estate Manager at the Florida home that we would go see the house "of the record" on thanksgiving.
+                <br><br>
+                Apparently that was a breach of contract... So I was terminated today for not having Celine's best interests in mind.
+                <br><br>
+                Oh well... Life can be a bitch sometimes :)
+                <br><br>
+                Needless to say, I no longer am in the position to show you the home.
+                <br><br>
+                Do you by any chance have someone in your group of friends who might need an estate manager? Any suggestions/leads would be highly appreciated.
+                <br><br>
+                Thanks<br>
+                John
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0; color: #666; font-size: 15px;">
+                    Sent from my iPhone
+                </div>
+            </div>
+        </div>
+
+        <!-- Email 2 -->
+        <div class="email-card">
+            <div class="email-header">
+                <div class="email-meta">
+                    <div class="email-from">
+                        <strong>From:</strong>
+                        <span class="email-address">"jeffrey E." jeevacation@gmail.com</span>
+                    </div>
+                    <div class="email-to">
+                        <strong>To:</strong>
+                        <span class="email-address">John Christensen &lt;[redacted]&gt;</span>
+                    </div>
+                    <div class="email-subject">
+                        <strong>Subject:</strong>
+                        <span class="email-address">Re: Celine</span>
+                    </div>
+                </div>
+                <div class="email-date">Friday, November 14, 2014 at 10:51 AM</div>
+            </div>
+            <div class="email-body">
+                i will keep you in mind. is it too late to ressurect celine
+            </div>
+        </div>
+
+        <!-- Email 3 -->
+        <div class="email-card">
+            <div class="email-header">
+                <div class="email-meta">
+                    <div class="email-from">
+                        <strong>From:</strong>
+                        <span class="email-address">John Christensen &lt;[redacted]&gt;</span>
+                    </div>
+                    <div class="email-to">
+                        <strong>To:</strong>
+                        <span class="email-address">"jeffrey E." jeevacation@gmail.com</span>
+                    </div>
+                    <div class="email-subject">
+                        <strong>Subject:</strong>
+                        <span class="email-address">Re: Celine</span>
+                    </div>
+                </div>
+                <div class="email-date">Fri, 14 Nov 2014 18:58:17 +0000</div>
+            </div>
+            <div class="email-body">
+                Yes, It was made clear to me not the do the showing. My fault... I should have listened.
+                <br><br>
+                I was given 5 min to clear my office. So, I'm here in Vegas with a whole lot of time on my hands :-)
+                <br><br>
+                Got any projects you need a hand with, let me know.
+                <br><br>
+                Thanks<br>
+                John
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const height = document.body.scrollHeight;
+            window.parent.postMessage({ type: 'resize', height: height }, '*');
+        });
+    </script>
+</body>
+</html>
