@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Thread</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #ffffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .email-thread {
+            max-width: 450px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .email-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .email-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .email-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+
+        .email-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .email-from,
+        .email-to,
+        .email-subject {
+            font-size: 17px;
+            color: #1a1a1a;
+        }
+
+        .email-from strong,
+        .email-to strong,
+        .email-subject strong {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .email-address {
+            color: #1a1a1a;
+        }
+
+        .email-date {
+            font-size: 17px;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .email-body {
+            font-size: 17px;
+            color: #1a1a1a;
+            line-height: 1.7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .email-card {
+                padding: 18px;
+            }
+
+            .email-header {
+                gap: 10px;
+            }
+
+            .email-from,
+            .email-to,
+            .email-subject,
+            .email-body,
+            .email-date {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .email-card {
+                padding: 16px;
+                border-radius: 8px;
+            }
+
+            .email-from,
+            .email-to,
+            .email-subject,
+            .email-body,
+            .email-date {
+                font-size: 15px;
+            }
+
+            .email-thread {
+                gap: 12px;
+            }
+
+            .email-date {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-thread">
+        <div class="email-card">
+            <div class="email-header">
+                <div class="email-meta">
+                    <div class="email-to">
+                        <strong>Subject: Complaint regarding commercial publications posted on social media</strong>
+            
+                    </div>
+          
+                </div>
+                <div class="email-date">Feb, 6, 2026</div>
+            </div>
+            <div class="email-body">
+                Dear Sir,<br>
+                The purpose of this letter is to inform you that the Office québécois de la langue française has received a complaint regarding the commercial publications you post on your company's Facebook page.
+                <br><br>
+                The Charter of the French Language sets out rules concerning commercial publications. We would therefore like to inform you that, according to section 52 of the Charter, it is against the law to make available to the public, on social media, a commercial publication that is not in French or a commercial publication that is in a language other than French when its French version is not available under at least equivalent conditions.                <br><br>
+                <br><br>
+                An inspection revealed that the commercial publications posted on your company's social media account were not written entirely in French.
+                <br><br>
+                Consequently, the Office requests that you correct the situation as soon as possible. To do so, you may write commercial publications in French and in one or more other languages, provided that their French version is accessible under at least equally favorable conditions.
+                <br><br>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
