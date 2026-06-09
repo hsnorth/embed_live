@@ -2,13 +2,13 @@
 import { auth, db } from './firebase-init.js';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
+ 
 console.log("Firebase is connected via shared module!");
-
+ 
 window.auth = auth; 
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
-
+ 
     // --- DYNAMIC CONTENT LOADING (NEW) ---
     async function loadLatestHaul() {
         try {
@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('loader')?.classList.add('hidden');
                 return;
             }
-
+ 
             const newsletterDoc = querySnapshot.docs[0];
             const data = newsletterDoc.data();
             renderMagazineView(data);
-
+ 
             // 2. Fetch "How It Works" Content from Firestore
             const howItWorksDoc = await getDoc(doc(db, 'siteContent', 'howItWorks'));
             if (howItWorksDoc.exists()) {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     howItWorksPanelContent.innerHTML = howItWorksDoc.data().content;
                 }
             }
-
+ 
         } catch (error)            {
             console.error("Error loading latest haul:", error);
             const contentWrapper = document.getElementById('page-content-wrapper');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
+ 
     function renderMagazineView(data) {
         // Populate Header/Welcome section
         const welcomeEyebrow = document.querySelector('.welcome-main-content .eyebrow');
@@ -58,10 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const welcomeTitle = document.querySelector('.welcome-main-content .article-title');
         if (welcomeTitle) welcomeTitle.textContent = data.mainTitle;
-
+ 
         const welcomeSummary = document.querySelector('.welcome-main-content .article-body-wrapper p');
         if (welcomeSummary) welcomeSummary.textContent = data.mainSummary;
-
+ 
         const harrysNote = document.querySelector('.welcome-sidebar .article-body-wrapper p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
         
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             datePlaceholder.textContent = date.toLocaleDateString('en-US', options).toUpperCase();
         }
-
+ 
         // Populate Dynamic Sections from the database
         renderSection('essentials', data.essentials, 'Five essentials');
         renderSection('imports', data.imports, 'The Imports');
@@ -79,16 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSection('cannoli', data.cannoli, 'The Cannoli');
         renderSection('coffee', data.coffee, 'Coffee Review');
     }
-
+ 
     function renderSection(type, items, defaultTitle) {
         const section = document.getElementById(type);
         if (!section) return;
         
         const container = section.querySelector('.essentials-container, .cannoli-text-content'); // Support both layouts
         if (!container) return;
-
+ 
         container.innerHTML = ''; // Clear any hardcoded content
-
+ 
         if (!items || items.length === 0) {
              section.style.display = 'none'; // Hide the entire section if no items exist
              return;
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         section.style.display = 'block'; // Ensure section is visible
         const titleEl = section.querySelector('.section-title');
         if (titleEl) titleEl.textContent = defaultTitle;
-
+ 
         items.forEach(item => {
             const itemEl = document.createElement('div');
             itemEl.className = 'essential-item';
@@ -129,14 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(itemEl);
         });
     }
-
+ 
     // --- INITIAL PAGE LOAD ---
     loadLatestHaul();
     // --- END OF DYNAMIC CONTENT LOADING ---
-
-
+ 
+ 
     // --- ALL ORIGINAL UI AND AUTH LOGIC ---
-
+ 
     const typeWriter = (element, text, speed, callback) => {
         let i = 0;
         if (!element) return;
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const layoutToggleContainer = document.querySelector('.layout-toggle-container');
     const pageContentWrapper = document.getElementById('page-content-wrapper');
     const socialFeedView = document.getElementById('social-feed-view');
-
+ 
     let typeInterval;
     let joinEmailValue = '';
     let weekdayEmailValue = '';
@@ -210,14 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
     const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5; // Monday to Friday
-
-    if (isWeekday) {
-        const closedOverlay = document.getElementById('weekday-closed-overlay');
+    const weekdayClosedOverlay = document.getElementById('weekday-closed-overlay');
+ 
+    // Only run the "closed" flow on pages that actually have the overlay (i.e. the homepage).
+    // Previously this branch returned early on EVERY page on weekdays, which killed all
+    // auth/UI logic on audio.html, about-us.html, etc.
+    if (isWeekday && weekdayClosedOverlay) {
+        const closedOverlay = weekdayClosedOverlay;
         const messagePlaceholder = document.getElementById('weekday-message-placeholder');
         const signupForm = document.getElementById('weekday-signup-form');
         
         if (closedOverlay) document.body.style.overflow = 'hidden';
-
+ 
         setTimeout(() => {
             if (loader) loader.classList.add('hidden');
             if (closedOverlay) closedOverlay.style.display = 'flex';
@@ -227,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (signupForm) signupForm.classList.add('is-visible');
             });
         }, 2000);
-
+ 
         if (signupForm) {
             let formStep = 1;
             const credentialsContainer = document.getElementById('weekday-credentials-container');
@@ -236,18 +240,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const errorMessageDiv = document.getElementById('weekday-error-message');
             const nameInput = document.getElementById('weekday-name');
             const passwordInput = document.getElementById('weekday-password');
-
+ 
             const showWeekdayError = (message) => {
                 if (errorMessageDiv) {
                     errorMessageDiv.textContent = message;
                     errorMessageDiv.classList.add('is-visible');
                 }
             };
-
+ 
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (errorMessageDiv) errorMessageDiv.classList.remove('is-visible');
-
+ 
                 if (formStep === 1) {
                     const emailInput = document.getElementById('weekday-email');
                     if (emailInput && emailInput.value && emailInput.checkValidity()) {
@@ -275,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (formStep === 2) {
                     const name = nameInput ? nameInput.value : '';
                     const password = passwordInput ? passwordInput.value : '';
-
+ 
                     if (weekdayEmailValue && name && password) {
                         try {
                             const userCredential = await createUserWithEmailAndPassword(auth, weekdayEmailValue, password);
@@ -297,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return; 
     }
-
+ 
     // --- WEEKEND/NORMAL PAGE LOAD ---
     if (loader && loaderMessage) {
         setTimeout(() => {
@@ -309,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, 2000);
     }
-
+ 
     if (modalCloseBtns.length > 0) {
         modalCloseBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -334,24 +338,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+ 
     function openSearch() {
         if (!searchOverlay) return;
         searchOverlay.classList.add('is-open');
         document.body.classList.add('no-scroll');
         setTimeout(() => searchInput.focus(), 300);
     }
-
+ 
     function closeSearch() {
         if (!searchOverlay) return;
         searchOverlay.classList.remove('is-open');
         document.body.classList.remove('no-scroll');
     }
-
+ 
     if (searchIcon) searchIcon.addEventListener('click', (e) => { e.preventDefault(); openSearch(); });
     if (closeSearchBtn) closeSearchBtn.addEventListener('click', closeSearch);
     if (searchOverlay) searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeSearch(); });
-
+ 
     function showToast(message, type = 'info', duration = 4000) {
         if (!toastContainer) return;
         const toast = document.createElement('div');
@@ -363,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.addEventListener('animationend', () => toast.remove());
         }, duration);
     }
-
+ 
     function removeStickyBannerLock() {
         if (stickyBanner && stickyBanner.classList.contains('is-visible')) {
             stickyBanner.classList.remove('is-visible');
@@ -374,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('no-scroll'); 
         }
     }
-
+ 
     function openModal(modal) {
         if (!modal) return;
         modal.classList.add('is-open');
@@ -386,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
+ 
     function closeModal(modal) {
         if (!modal) return;
         modal.classList.remove('is-open');
@@ -400,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeInterval) clearInterval(typeInterval);
         if (modalTagline) modalTagline.innerHTML = '';
     }
-
+ 
     const signUp = async (email, password, name, wantsNewsletter) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -412,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
-
+ 
     const signIn = async (email, password) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
@@ -421,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
             removeStickyBannerLock();
         } catch (error) { showToast(error.message, 'error'); }
     };
-
+ 
     const handleSignOut = async () => {
         try {
             await signOut(auth);
@@ -438,11 +442,34 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast(`Error saving preference: ${error.message}`, 'error');
         }
     };
-
+ 
     if (signInForm) signInForm.addEventListener('submit', (e) => { e.preventDefault(); signIn(signInForm.elements['signInEmail'].value, signInForm.elements['signInPassword'].value); });
     if (joinFormStep1) joinFormStep1.addEventListener('submit', (e) => { e.preventDefault(); joinEmailValue = joinFormStep1.elements['joinEmail'].value; if (joinEmailValue) { joinFormStep1.classList.add('hidden'); joinFormStep2.classList.remove('hidden'); } });
     if (joinFormStep2) joinFormStep2.addEventListener('submit', (e) => { e.preventDefault(); signUp(joinEmailValue, joinFormStep2.elements['joinPassword'].value, joinFormStep2.elements['joinName'].value, joinFormStep2.elements['joinNewsletter'].checked); });
-
+ 
+    // --- FORGOT PASSWORD (was imported but never wired up) ---
+    if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener('click', async () => {
+            const email = signInForm ? signInForm.elements['signInEmail'].value.trim() : '';
+            if (!email) {
+                showToast('Enter your email address above first, then click "Forgot Password?".', 'error');
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showToast('Password reset email sent. Check your inbox.', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        });
+    }
+ 
+    // --- SWITCH BETWEEN SIGN IN / JOIN MODALS (buttons existed in HTML but did nothing) ---
+    const goToJoinBtnFromSignIn = document.getElementById('goToJoinBtnFromSignIn');
+    const goToSignInBtnFromJoin = document.getElementById('goToSignInBtnFromJoin');
+    if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', () => { closeModal(signInModal); openModal(joinModal); });
+    if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', () => { closeModal(joinModal); openModal(signInModal); });
+ 
     function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null) {
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
@@ -453,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         post.innerHTML = `${isThread ? avatarPlaceholder : avatarContent}<div class="post-content">${headerHTML}<div class="post-body">${content}</div>${imageHTML}</div>`;
         return post;
     }
-
+ 
     function generateSocialFeed() {
         if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
         socialFeedView.innerHTML = '';
@@ -501,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('social-layout');
         }
     }
-
+ 
     if (layoutToggleContainer) {
         layoutToggleContainer.addEventListener('click', (e) => {
             const button = e.target.closest('.layout-toggle-btn');
@@ -512,10 +539,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+ 
+    // --- FEATURE TOGGLES (Control Centre) ---
+    // These toggles previously did nothing. They now drive the body classes that
+    // style.css and commenting.js rely on, persist the preference, and notify
+    // commenting.js (via a custom event) so highlights are re-rendered.
+    const applyFeatureClasses = () => {
+        const commentsEnabled = commentsToggle ? commentsToggle.checked : true;
+        const deepnotesEnabled = deepnoteToggle ? deepnoteToggle.checked : false;
+        document.body.classList.toggle('commenting-disabled', !commentsEnabled);
+        document.body.classList.toggle('deepnote-disabled', !deepnotesEnabled);
+        document.dispatchEvent(new CustomEvent('features-changed'));
+    };
+ 
+    const saveFeaturePreferences = async () => {
+        const user = auth.currentUser;
+        if (!user) return;
+        try {
+            await updateDoc(doc(db, 'users', user.uid), {
+                commentsEnabled: commentsToggle ? commentsToggle.checked : true,
+                deepnotesEnabled: deepnoteToggle ? deepnoteToggle.checked : false
+            });
+        } catch (error) {
+            console.error('Error saving feature preferences:', error);
+        }
+    };
+ 
+    if (commentsToggle) commentsToggle.addEventListener('change', () => { applyFeatureClasses(); saveFeaturePreferences(); });
+    if (deepnoteToggle) deepnoteToggle.addEventListener('change', () => { applyFeatureClasses(); saveFeaturePreferences(); });
+    applyFeatureClasses(); // Set the initial state (deepnotes are off by default)
+ 
     onAuthStateChanged(auth, async (user) => {
         const userAuthLinks = document.querySelector('.desktop-only.user-auth-links');
-        const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
         if (user) {
             document.body.classList.add('logged-in');
             removeStickyBannerLock();
@@ -523,15 +578,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 let layoutPreference = 'magazine';
                 if (userDoc.exists()) {
-                    layoutPreference = userDoc.data().layoutPreference || 'magazine';
+                    const userData = userDoc.data();
+                    layoutPreference = userData.layoutPreference || 'magazine';
+                    // Restore saved feature preferences
+                    if (commentsToggle) commentsToggle.checked = userData.commentsEnabled !== false;
+                    if (deepnoteToggle) deepnoteToggle.checked = userData.deepnotesEnabled === true;
                 }
                 applyLayoutPreference(layoutPreference);
+                applyFeatureClasses();
             } catch(e) {
                 console.error("Error fetching user preferences:", e);
                 applyLayoutPreference('magazine');
             }
             if (userAuthLinks) userAuthLinks.innerHTML = ``;
-            if (mobileAccountTrigger) mobileAccountTrigger.addEventListener('click', (e) => { e.preventDefault(); openAccountPanel(); });
         } else {
             document.body.classList.remove('logged-in');
             applyLayoutPreference('magazine');
@@ -542,21 +601,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
+ 
     function openControlCentrePanel() { if (controlCentreOverlay) { controlCentreOverlay.classList.add('is-open'); document.body.classList.add('no-scroll'); } }
     function closeControlCentrePanel() { if (controlCentreOverlay) { controlCentreOverlay.classList.remove('is-open'); document.body.classList.remove('no-scroll'); } }
     if (controlCentreTrigger) controlCentreTrigger.addEventListener('click', (e) => { e.preventDefault(); openControlCentrePanel(); });
     if (controlCentreOverlay) controlCentreOverlay.addEventListener('click', (e) => { if (e.target === controlCentreOverlay) closeControlCentrePanel(); });
     if (controlCentreCloseBtn) controlCentreCloseBtn.addEventListener('click', closeControlCentrePanel);
-
+ 
     const accountPanelOverlay = document.getElementById('account-panel-overlay');
     const accountPanelCloseBtn = document.getElementById('account-panel-close-btn');
     const logoutBtn = document.getElementById('logout-btn');
-    
+    const accountGreeting = document.getElementById('account-greeting');
+    const accountNameInput = document.getElementById('account-name');
+    const accountEmailInput = document.getElementById('account-email');
+    const newsletterCheckbox = document.getElementById('newsletter-checkbox');
+    const accountDetailsForm = document.getElementById('account-details-form');
+    const accountPasswordForm = document.getElementById('account-password-form');
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+    const personalDetailsToggle = document.getElementById('personal-details-toggle');
+    const personalDetailsContent = document.getElementById('personal-details-content');
+    const mobileAccountTrigger = document.getElementById('mobile-account-trigger');
+ 
     async function openAccountPanel() {
-        if (!auth.currentUser || !accountPanelOverlay) return;
+        const user = auth.currentUser;
+        if (!user || !accountPanelOverlay) return;
         accountPanelOverlay.classList.add('is-open');
         document.body.classList.add('no-scroll');
+        // Populate the panel with the user's saved details
+        try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const data = userDoc.exists() ? userDoc.data() : {};
+            if (accountGreeting) accountGreeting.textContent = data.name ? `Bonjour, ${data.name.split(' ')[0]}!` : 'Bonjour!';
+            if (accountNameInput) accountNameInput.value = data.name || '';
+            if (accountEmailInput) accountEmailInput.value = user.email || '';
+            if (newsletterCheckbox) newsletterCheckbox.checked = data.newsletter === true;
+        } catch (error) {
+            console.error('Error loading account details:', error);
+        }
     }
     function closeAccountPanel() {
         if (accountPanelOverlay) {
@@ -567,22 +648,119 @@ document.addEventListener('DOMContentLoaded', () => {
     if (accountPanelOverlay) accountPanelOverlay.addEventListener('click', (e) => { if (e.target === accountPanelOverlay) closeAccountPanel(); });
     if (accountPanelCloseBtn) accountPanelCloseBtn.addEventListener('click', closeAccountPanel);
     if (logoutBtn) logoutBtn.addEventListener('click', async () => { await handleSignOut(); closeAccountPanel(); });
+ 
+    // Single, persistent listener (was previously re-attached on every auth change,
+    // and did nothing at all for logged-out users)
+    if (mobileAccountTrigger) {
+        mobileAccountTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (auth.currentUser) openAccountPanel();
+            else openModal(signInModal);
+        });
+    }
+ 
+    // Collapsible "Personal Details" section
+    if (personalDetailsToggle && personalDetailsContent) {
+        personalDetailsToggle.addEventListener('click', () => {
+            personalDetailsToggle.classList.toggle('is-open');
+            personalDetailsContent.classList.toggle('is-open');
+        });
+    }
+ 
+    // Newsletter subscription toggle
+    if (newsletterCheckbox) {
+        newsletterCheckbox.addEventListener('change', async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+            try {
+                await updateDoc(doc(db, 'users', user.uid), { newsletter: newsletterCheckbox.checked });
+                showToast(newsletterCheckbox.checked ? 'Subscribed to the weekly newsletter.' : 'Unsubscribed from the weekly newsletter.', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        });
+    }
+ 
+    // Save name changes
+    if (accountDetailsForm) {
+        accountDetailsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+            const newName = accountNameInput ? accountNameInput.value.trim() : '';
+            if (!newName) { showToast('Name cannot be empty.', 'error'); return; }
+            try {
+                await updateDoc(doc(db, 'users', user.uid), { name: newName });
+                if (accountGreeting) accountGreeting.textContent = `Bonjour, ${newName.split(' ')[0]}!`;
+                showToast('Your details have been updated.', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        });
+    }
+ 
+    // Change password
+    if (accountPasswordForm) {
+        accountPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+            const passwordInputEl = document.getElementById('account-password');
+            const newPassword = passwordInputEl ? passwordInputEl.value : '';
+            if (!newPassword || newPassword.length < 6) {
+                showToast('Password must be at least 6 characters.', 'error');
+                return;
+            }
+            try {
+                await updatePassword(user, newPassword);
+                accountPasswordForm.reset();
+                showToast('Password updated successfully.', 'success');
+            } catch (error) {
+                if (error.code === 'auth/requires-recent-login') {
+                    showToast('For security, please sign out and back in before changing your password.', 'error');
+                } else {
+                    showToast(error.message, 'error');
+                }
+            }
+        });
+    }
+ 
+    // Delete account
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) return;
+            if (!confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) return;
+            try {
+                await deleteDoc(doc(db, 'users', user.uid));
+                await deleteUser(user);
+                closeAccountPanel();
+                showToast('Your account has been deleted.', 'info');
+            } catch (error) {
+                if (error.code === 'auth/requires-recent-login') {
+                    showToast('For security, please sign out and back in before deleting your account.', 'error');
+                } else {
+                    showToast(error.message, 'error');
+                }
+            }
+        });
+    }
     
     function openHowItWorksPanel() { if (howItWorksPanelOverlay) { howItWorksPanelOverlay.classList.add('is-open'); document.body.classList.add('no-scroll'); } }
     function closeHowItWorksPanel() { if (howItWorksPanelOverlay) { howItWorksPanelOverlay.classList.remove('is-open'); document.body.classList.remove('no-scroll'); } }
-
+ 
     if (howItWorksTriggers.length > 0) {
         howItWorksTriggers.forEach(trigger => trigger.addEventListener('click', (e) => { e.preventDefault(); openHowItWorksPanel(); }));
     }
     if (howItWorksPanelOverlay) howItWorksPanelOverlay.addEventListener('click', (e) => { if (e.target === howItWorksPanelOverlay) closeHowItWorksPanel(); });
     if (howItWorksPanelCloseBtn) howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
-
+ 
     const menuToggle = document.querySelector('.menu-toggle');
     const mobileNav = document.querySelector('.mobile-nav');
     const closeMenuBtn = document.querySelector('.close-menu-btn');
     function toggleMenu() { if (mobileNav) document.body.classList.toggle('no-scroll', mobileNav.classList.toggle('is-open')); }
     if (menuToggle && closeMenuBtn) { menuToggle.addEventListener('click', toggleMenu); closeMenuBtn.addEventListener('click', toggleMenu); }
-
+ 
     function handleScrollLock() { if (isScrollLocked && window.scrollY > scrollLockPosition) { window.scrollTo(0, scrollLockPosition); } }
     if (stickyBanner) {
         const triggerSection = document.getElementById('imports');
