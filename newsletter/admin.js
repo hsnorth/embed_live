@@ -1,3 +1,4 @@
+
 import { auth, db } from './firebase-init.js';
 import { 
     onAuthStateChanged, 
@@ -15,7 +16,7 @@ import {
     where,
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
     // Check if user is admin
     onAuthStateChanged(auth, async (user) => {
@@ -35,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadHowItWorksContent();
         initializeFormHandlers();
     });
-
+ 
     // Logout
     document.getElementById('admin-logout-btn')?.addEventListener('click', async (e) => {
         e.preventDefault();
         await signOut(auth);
         window.location.href = 'index.html';
     });
-
+ 
     // Load metrics
     async function loadDashboardMetrics() {
         try {
@@ -51,14 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const newsletterSubscribers = usersSnapshot.docs.filter(
                 doc => doc.data().newsletter === true
             ).length;
-
+ 
             document.getElementById('total-users-count').textContent = totalUsers;
             document.getElementById('newsletter-subscribers-count').textContent = newsletterSubscribers;
         } catch (error) {
             console.error('Error loading metrics:', error);
         }
     }
-
+ 
     // Load "How It Works" content
     async function loadHowItWorksContent() {
         try {
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading How It Works:', error);
         }
     }
-
+ 
     // Save "How It Works"
     document.getElementById('how-it-works-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error saving content.');
         }
     });
-
+ 
     // Dynamic section handlers
     function initializeFormHandlers() {
         const addButtons = document.querySelectorAll('.add-item-btn');
@@ -95,15 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 addDynamicItem(type);
             });
         });
-
+ 
         // Preview buttons
         document.getElementById('preview-magazine-btn')?.addEventListener('click', previewMagazine);
         document.getElementById('preview-social-btn')?.addEventListener('click', previewSocial);
-
+ 
         // Newsletter form submission
         document.getElementById('newsletter-form')?.addEventListener('submit', publishNewsletter);
     }
-
+ 
     function addDynamicItem(type) {
         const containers = {
             'essential': 'essentials-container',
@@ -112,10 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'cannoli': 'cannoli-container',
             'coffee': 'coffee-container'
         };
-
+ 
         const container = document.getElementById(containers[type]);
         if (!container) return;
-
+ 
         const itemEl = document.createElement('div');
         itemEl.className = 'dynamic-item';
         itemEl.innerHTML = `
@@ -135,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         container.appendChild(itemEl);
     }
-
+ 
     function collectDynamicItems(containerSelector) {
         const container = document.querySelector(containerSelector);
         if (!container) return [];
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             image: item.querySelector('.item-image-input').value || null
         }));
     }
-
+ 
     async function publishNewsletter(e) {
         e.preventDefault();
         
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isLatest: document.getElementById('set-latest-haul').checked,
             createdAt: serverTimestamp()
         };
-
+ 
         try {
             // If this is set as latest, unset all others
             if (newsletterData.isLatest) {
@@ -175,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await updateDoc(doc(db, 'newsletters', docSnapshot.id), { isLatest: false });
                 }
             }
-
+ 
             // Save newsletter
             const docRef = await addDoc(collection(db, 'newsletters'), newsletterData);
             
@@ -193,9 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error publishing newsletter: ' + error.message);
         }
     }
-
+ 
     async function sendNewsletterEmails(newsletterData, newsletterId) {
-        // 🔥 YOUR MAILGUN CREDENTIALS HERE
+        // ⚠️ SECURITY WARNING: These credentials are visible to anyone who views
+        // this page's source, and this key has been committed to a public repo —
+        // it should be ROTATED in the Mailgun dashboard immediately.
+        // Email sending should be moved to a backend (e.g. a Firebase Cloud
+        // Function) so the key never ships to the browser. Note also that
+        // Mailgun's API blocks cross-origin browser requests, so this call will
+        // typically fail with a CORS error when run from the client.
         const MAILGUN_API_KEY = '13367b04df52dae4d122d135f9479cdf-42b8ce75-bb25e8c2';
         const MAILGUN_DOMAIN = 'sandbox2aa9365e47274ae4b3b6b63b8dd9861d.mailgun.org';
         
@@ -204,14 +211,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const subscribers = usersSnapshot.docs
                 .filter(doc => doc.data().newsletter === true)
                 .map(doc => ({ id: doc.id, ...doc.data() }));
-
+ 
             if (subscribers.length === 0) {
                 alert('No subscribers found!');
                 return;
             }
-
+ 
             console.log(`Sending to ${subscribers.length} subscribers...`);
-
+ 
             const emailPromises = subscribers.map(async (subscriber) => {
                 const emailHTML = generateEmailHTML(newsletterData, subscriber);
                 
@@ -231,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     body: formData
                 });
-
+ 
                 const result = await response.json();
                 
                 if (response.ok) {
@@ -242,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 return result;
             });
-
+ 
             await Promise.all(emailPromises);
             alert(`Newsletter sent to ${subscribers.length} subscribers! Check console for details.`);
             
@@ -251,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error sending emails: ' + error.message);
         }
     }
-
+ 
     function generateEmailHTML(data, subscriber) {
         return `
 <!DOCTYPE html>
@@ -323,26 +330,26 @@ document.addEventListener('DOMContentLoaded', () => {
 </html>
         `;
     }
-
+ 
     function clearAllDynamicItems() {
         ['essentials', 'imports', 'deliveries', 'cannoli', 'coffee'].forEach(type => {
             const container = document.getElementById(`${type}-container`);
             if (container) container.innerHTML = '';
         });
     }
-
+ 
     function previewMagazine() {
         const previewData = gatherFormData();
         sessionStorage.setItem('newsletterPreviewData', JSON.stringify(previewData));
         window.open('preview.html?view=magazine', '_blank');
     }
-
+ 
     function previewSocial() {
         const previewData = gatherFormData();
         sessionStorage.setItem('newsletterPreviewData', JSON.stringify(previewData));
         window.open('preview.html?view=social', '_blank');
     }
-
+ 
     function gatherFormData() {
         return {
             issueNumber: parseInt(document.getElementById('issue-number').value) || 1,
