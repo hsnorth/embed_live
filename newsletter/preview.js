@@ -16,9 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('main-summary-placeholder').textContent = data.mainSummary;
         document.getElementById('harrys-note-placeholder').textContent = data.harrysNote;
         
-        const date = new Date(data.publishDate.replace(/-/g, '\/'));
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('header-date-placeholder').textContent = date.toLocaleDateString('en-US', options).toUpperCase();
+        if (data.publishDate) {
+            const date = new Date(data.publishDate.replace(/-/g, '\/'));
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('header-date-placeholder').textContent = date.toLocaleDateString('en-US', options).toUpperCase();
+        }
 
         // Populate Dynamic Sections
         renderSection('essentials', data.essentials);
@@ -26,6 +28,27 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSection('deliveries', data.deliveries);
         renderSection('cannoli', data.cannoli);
         renderSection('coffee', data.coffee);
+
+        // Import map with the pins dropped in the admin editor
+        if (data.importMap && data.importMap.image) {
+            const importsSection = document.getElementById('imports');
+            if (importsSection && importsSection.style.display !== 'none') {
+                const mapWrapper = document.createElement('div');
+                mapWrapper.className = 'map-container';
+                mapWrapper.innerHTML = `
+                    <div class="map-pin-wrapper">
+                        <img src="${data.importMap.image}" alt="World map of imports" class="map-image">
+                        ${(data.importMap.pins || []).map(pin => `
+                            <div class="map-pin" style="left:${Number(pin.x)}%; top:${Number(pin.y)}%;">
+                                <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"></path><circle cx="12" cy="9" r="2.5" fill="#ffffff"></circle></svg>
+                                <span class="pin-label"></span>
+                            </div>`).join('')}
+                    </div>`;
+                const pinEls = mapWrapper.querySelectorAll('.map-pin .pin-label');
+                (data.importMap.pins || []).forEach((pin, i) => { if (pinEls[i]) pinEls[i].textContent = pin.label || ''; });
+                importsSection.insertBefore(mapWrapper, importsSection.querySelector('.essentials-container'));
+            }
+        }
     }
 
     function renderSection(type, items) {
@@ -75,8 +98,19 @@ document.addEventListener('DOMContentLoaded', () => {
             socialFeedView.appendChild(createSocialPost('Harry North', `<p>${data.harrysNote}</p>`));
         }
 
-        data.essentials.forEach((item, index) => socialFeedView.appendChild(createSocialPost(`Essential #${index + 1}`, `<p><strong>${item.title}</strong></p><p>${item.content}</p>`)));
-        // ... repeat for other sections
+        // Render every content section (previously only essentials were rendered)
+        const renderItems = (items, labelFn) => {
+            (items || []).forEach((item, index) => {
+                const body = `<p><strong>${item.title}</strong></p><p>${(item.content || '').replace(/\n/g, '<br>')}</p>`;
+                socialFeedView.appendChild(createSocialPost(labelFn(index), body));
+            });
+        };
+
+        renderItems(data.essentials, (i) => `Essential #${i + 1}`);
+        renderItems(data.imports, () => 'Import');
+        renderItems(data.deliveries, () => 'Next Delivery');
+        renderItems(data.cannoli, () => 'The Cannoli');
+        renderItems(data.coffee, () => 'Coffee Review');
     }
     
     // --- INITIALIZE VIEW ---
