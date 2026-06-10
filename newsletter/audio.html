@@ -8,12 +8,12 @@
     <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2FThe%20Haul.png?alt=media&token=d3e88c53-45d9-4999-b579-07b931a20dce">
     <link rel="apple-touch-icon" href="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2FThe%20Haul.png?alt=media&token=d3e88c53-45d9-4999-b579-07b931a20dce">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
+ 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
-
+ 
 <style>
     /* Base HTML/Body Styles for Non-Sticky Header */
     .audio-page .header-top-bar {
@@ -31,7 +31,7 @@
     .audio-page .scrolled-logo-link {
         display: none !important;
     }
-
+ 
     .audio-page .scrolled-icon-link {
         display: block !important; 
         position: absolute;
@@ -45,13 +45,13 @@
         width: auto;
         filter: brightness(100%); 
     }
-
+ 
     /* Hide all large branding */
     .audio-page .header-branding,
     .audio-page .main-header {
         display: none;
     }
-
+ 
     /* Audio Hero Styles - FIXING SPACING */
     .audio-hero-container {
         width: 100%;
@@ -100,8 +100,8 @@
             opacity: 0.8; /* Improve visibility when stacked */
         }
     }
-
-
+ 
+ 
     .audio-title {
         font-family: var(--font-serif);
         font-size: clamp(2.5rem, 8vw, 4rem);
@@ -205,7 +205,7 @@
     .episode-scroll-container::-webkit-scrollbar {
         display: none;
     }
-
+ 
     .episode-card {
         flex: 0 0 auto;
         width: 300px;
@@ -219,7 +219,7 @@
          box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
          transform: translateY(-5px);
     }
-
+ 
     .episode-card .eyebrow {
         font-size: 0.8rem;
         font-family: var(--font-sans);
@@ -273,7 +273,7 @@
 </style>
 </head>
 <body class="audio-page">
-
+ 
     <div class="header-top-bar">
         <div class="top-bar-left"></div>
         <a href="index.html" class="scrolled-logo-link">THE NEWS HAUL</a>
@@ -282,7 +282,7 @@
         </a>
         <div class="user-actions"></div>
     </div>
-
+ 
     <div class="audio-hero-container">
         <div class="audio-hero-content">
             <div class="audio-eyebrow">
@@ -293,7 +293,7 @@
             <h1 class="audio-title">What mattered most this week in Montreal</h1>
             
             <div class="audio-player-controls">
-                <audio id="podcast-audio" src="YOUR_ACTUAL_FIREBASE_STORAGE_URL_GOES_HERE.mp3"></audio> 
+                <audio id="podcast-audio" preload="metadata"></audio> 
                 
                 <button id="play-pause-btn" class="play-pause-btn">
                     <svg id="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-lg">
@@ -312,8 +312,8 @@
                     <span></span><span></span><span></span><span></span><span></span>
                 </div>
             </div>
-
-            <p class="audio-listen-prompt">Listen to the curated edition of **The News Haul**.</p>
+ 
+            <p class="audio-listen-prompt">Listen to the curated edition of <strong>The News Haul</strong>.</p>
         </div>
     </div>
     
@@ -360,51 +360,125 @@
     </footer>
     <script type="module" src="firebase-init.js"></script>
     <script type="module" src="main.js"></script>
-<script>
-    // Custom JS for the audio player page
-    document.addEventListener('DOMContentLoaded', () => {
-        // Check if the required elements exist
+<script type="module">
+    // Audio player + episodes loaded from Firestore ('episodes' collection,
+    // published from the admin dashboard).
+    import { db } from './firebase-init.js';
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+ 
+    document.addEventListener('DOMContentLoaded', async () => {
         const audio = document.getElementById('podcast-audio');
         const playBtn = document.getElementById('play-pause-btn');
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         const visualizer = document.getElementById('audio-visualizer');
-        
-        if (!audio || !playBtn) return; // Exit if page is incomplete
-
-        // Function to set the visual state to PLAYING
+        const titleEl = document.querySelector('.audio-title');
+        const dateEl = document.querySelector('.audio-eyebrow .eyebrow-date');
+        const episodeContainer = document.querySelector('.episode-scroll-container');
+ 
+        if (!audio || !playBtn) return;
+ 
         const setPlayingState = () => {
             playIcon.classList.add('hidden');
             pauseIcon.classList.remove('hidden');
             visualizer.classList.add('is-playing');
         };
-
-        // Function to set the visual state to PAUSED/STOPPED
         const setPausedState = () => {
             playIcon.classList.remove('hidden');
             pauseIcon.classList.add('hidden');
             visualizer.classList.remove('is-playing');
         };
-
-        // 1. Basic Player Logic (Always enabled)
+ 
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '';
+            const d = new Date(String(dateStr).replace(/-/g, '/'));
+            if (isNaN(d)) return '';
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+        };
+ 
+        let currentEpisode = null;
+ 
+        const loadEpisode = (episode, autoplay = false) => {
+            currentEpisode = episode;
+            if (titleEl) titleEl.textContent = episode.title || 'The Montreal Weekly';
+            if (dateEl) dateEl.textContent = formatDate(episode.date);
+            audio.pause();
+            setPausedState();
+            audio.src = episode.audioUrl || '';
+            if (autoplay && episode.audioUrl) {
+                audio.play().then(setPlayingState).catch(() => setPausedState());
+            }
+        };
+ 
+        // Player controls
         playBtn.addEventListener('click', () => {
-            // Check the actual state of the audio element
+            if (!audio.src) {
+                alert('No episode is available yet. Check back soon!');
+                return;
+            }
             if (audio.paused) {
-                // Audio is paused, so play it and set to Playing State
-                audio.play();
-                setPlayingState();
+                audio.play().then(setPlayingState).catch((e) => {
+                    console.error('Playback failed:', e);
+                    alert('Could not play this episode. The audio file may be unavailable.');
+                });
             } else {
-                // Audio is playing, so pause it and set to Paused State
                 audio.pause();
                 setPausedState();
             }
         });
-
-        // Ensure visuals reset when audio naturally ends
-        audio.addEventListener('ended', () => {
-            audio.currentTime = 0;
+        // Keep visuals in sync with the real element state (covers OS media keys etc.)
+        audio.addEventListener('play', setPlayingState);
+        audio.addEventListener('pause', setPausedState);
+        audio.addEventListener('ended', () => { audio.currentTime = 0; setPausedState(); });
+        audio.addEventListener('error', () => {
+            if (audio.src) console.error('Audio failed to load:', audio.src);
             setPausedState();
         });
+ 
+        // Load episodes from Firestore
+        try {
+            const snapshot = await getDocs(collection(db, 'episodes'));
+            const episodes = snapshot.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(ep => ep.audioUrl)
+                .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+ 
+            if (episodes.length === 0) {
+                if (titleEl) titleEl.textContent = 'No episode published yet — check back Saturday.';
+                return;
+            }
+ 
+            // Latest episode goes in the hero player
+            loadEpisode(episodes[0]);
+ 
+            // Past episodes — clickable, loads that episode back into the player
+            if (episodeContainer) {
+                episodeContainer.innerHTML = '';
+                episodes.slice(1).forEach(ep => {
+                    const card = document.createElement('div');
+                    card.className = 'episode-card';
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('tabindex', '0');
+                    card.innerHTML = `<span class="eyebrow"></span><h3></h3><p></p>`;
+                    card.querySelector('.eyebrow').textContent = formatDate(ep.date);
+                    card.querySelector('h3').textContent = ep.title || 'Untitled episode';
+                    card.querySelector('p').textContent = ep.description || '';
+                    const playEpisode = () => {
+                        loadEpisode(ep, true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    };
+                    card.addEventListener('click', playEpisode);
+                    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playEpisode(); } });
+                    episodeContainer.appendChild(card);
+                });
+                if (episodes.length === 1) {
+                    episodeContainer.innerHTML = '<p style="color:#aaaaaa; font-family: var(--font-sans); padding-left: 0;">Past episodes will appear here.</p>';
+                }
+            }
+        } catch (error) {
+            console.error('Could not load episodes:', error);
+            if (titleEl) titleEl.textContent = 'Could not load episodes. Please try again later.';
+        }
     });
 </script>
 </body>
