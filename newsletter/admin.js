@@ -1,4 +1,4 @@
-import { auth, db } from './firebase-init.js';
+import { auth, db, storage } from './firebase-init.js';
 import { 
     onAuthStateChanged, 
     signOut 
@@ -15,6 +15,12 @@ import {
     where,
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import {
+    ref as storageRef,
+    uploadBytesResumable,
+    getDownloadURL,
+    deleteObject
+} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
  
 document.addEventListener('DOMContentLoaded', () => {
     // Check if user is admin
@@ -106,6 +112,104 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('newsletter-form')?.addEventListener('submit', publishNewsletter);
 
         initializeMapEditor();
+        initializeVideoUploader();
+    }
+
+    // --- Vertical video upload to Firebase Storage ---
+    function initializeVideoUploader() {
+        const fileInput = document.getElementById('welcome-video-file');
+        const hiddenUrl = document.getElementById('welcome-video');
+        const statusEl = document.getElementById('video-upload-status');
+        const progWrap = document.getElementById('video-upload-progress-wrap');
+        const progBar = document.getElementById('video-upload-progress-bar');
+        const preview = document.getElementById('video-upload-preview');
+        const removeBtn = document.getElementById('video-remove-btn');
+        const publishBtn = document.querySelector('#newsletter-form .btn-primary-admin');
+        if (!fileInput || !hiddenUrl) return;
+
+        const resetUI = () => {
+            statusEl.textContent = '';
+            progWrap.style.display = 'none';
+            progBar.style.width = '0%';
+            preview.style.display = 'none';
+            preview.removeAttribute('src');
+            removeBtn.style.display = 'none';
+        };
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) return;
+
+            // Basic guardrails.
+            if (!file.type.startsWith('video/')) {
+                statusEl.textContent = 'Please choose a video file.';
+                fileInput.value = '';
+                return;
+            }
+            const MAX_MB = 200;
+            if (file.size > MAX_MB * 1024 * 1024) {
+                statusEl.textContent = `That file is ${(file.size / 1048576).toFixed(0)}MB — please keep it under ${MAX_MB}MB.`;
+                fileInput.value = '';
+                return;
+            }
+
+            // Unique path so re-uploads don't clobber each other.
+            const safeName = file.name.replace(/[^\w.\-]/g, '_');
+            const path = `welcomeVideos/${Date.now()}_${safeName}`;
+            const fileRef = storageRef(storage, path);
+            const task = uploadBytesResumable(fileRef, file, { contentType: file.type });
+
+            // Disable publishing while the upload is in flight.
+            if (publishBtn) publishBtn.disabled = true;
+            progWrap.style.display = 'block';
+            statusEl.textContent = 'Uploading…';
+
+            task.on('state_changed',
+                (snap) => {
+                    const pct = snap.totalBytes ? (snap.bytesTransferred / snap.totalBytes) * 100 : 0;
+                    progBar.style.width = `${pct.toFixed(0)}%`;
+                    statusEl.textContent = `Uploading… ${pct.toFixed(0)}%`;
+                },
+                (err) => {
+                    console.error('Video upload failed:', err);
+                    statusEl.textContent = 'Upload failed: ' + err.message;
+                    if (publishBtn) publishBtn.disabled = false;
+                    progWrap.style.display = 'none';
+                },
+                async () => {
+                    try {
+                        const url = await getDownloadURL(task.snapshot.ref);
+                        hiddenUrl.value = url;
+                        hiddenUrl.dataset.storagePath = path;
+                        statusEl.textContent = 'Video uploaded ✓';
+                        preview.src = url;
+                        preview.style.display = 'block';
+                        removeBtn.style.display = 'inline-block';
+                    } catch (e) {
+                        console.error('Could not get download URL:', e);
+                        statusEl.textContent = 'Upload finished but URL retrieval failed.';
+                    } finally {
+                        if (publishBtn) publishBtn.disabled = false;
+                    }
+                }
+            );
+        });
+
+        removeBtn.addEventListener('click', async () => {
+            const path = hiddenUrl.dataset.storagePath;
+            // Best-effort delete from Storage; clear the field regardless.
+            if (path) {
+                try { await deleteObject(storageRef(storage, path)); }
+                catch (e) { console.warn('Could not delete uploaded video (continuing):', e); }
+            }
+            hiddenUrl.value = '';
+            delete hiddenUrl.dataset.storagePath;
+            fileInput.value = '';
+            resetUI();
+        });
+
+        // Expose for publish() to reset after a successful publish.
+        window.__resetVideoUploader = () => { hiddenUrl.value = ''; delete hiddenUrl.dataset.storagePath; if (fileInput) fileInput.value = ''; resetUI(); };
     }
 
     function initializeMapEditor() {
@@ -257,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mapPins = [];
             renderMapPins();
             document.getElementById('map-editor-wrapper').style.display = 'none';
+            if (window.__resetVideoUploader) window.__resetVideoUploader();
             
         } catch (error) {
             console.error('Error publishing:', error);
