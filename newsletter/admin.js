@@ -87,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
  
     // Dynamic section handlers
+    let mapPins = []; // [{ x, y, label }] in percentage coordinates
+
     function initializeFormHandlers() {
         const addButtons = document.querySelectorAll('.add-item-btn');
         addButtons.forEach(btn => {
@@ -102,6 +104,69 @@ document.addEventListener('DOMContentLoaded', () => {
  
         // Newsletter form submission
         document.getElementById('newsletter-form')?.addEventListener('submit', publishNewsletter);
+
+        initializeMapEditor();
+    }
+
+    function initializeMapEditor() {
+        const imageInput = document.getElementById('import-map-image');
+        const wrapper = document.getElementById('map-editor-wrapper');
+        const img = document.getElementById('map-editor-image');
+        if (!imageInput || !wrapper || !img) return;
+
+        const showMap = (url) => {
+            if (url) {
+                img.src = url;
+                wrapper.style.display = 'block';
+            } else {
+                wrapper.style.display = 'none';
+            }
+        };
+
+        imageInput.addEventListener('input', () => showMap(imageInput.value.trim()));
+
+        // Drop a pin where the admin clicks (coordinates stored as % of image).
+        img.addEventListener('click', (e) => {
+            const rect = img.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            const label = prompt('Pin label (optional):', '') || '';
+            mapPins.push({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, label });
+            renderMapPins();
+        });
+    }
+
+    function renderMapPins() {
+        const wrapper = document.getElementById('map-editor-wrapper');
+        const list = document.getElementById('map-pins-list');
+        if (!wrapper || !list) return;
+
+        // Remove existing visual pins (keep the <img>).
+        wrapper.querySelectorAll('.admin-map-pin').forEach(p => p.remove());
+
+        mapPins.forEach((pin, i) => {
+            const pinEl = document.createElement('div');
+            pinEl.className = 'admin-map-pin';
+            pinEl.title = 'Click to remove';
+            pinEl.style.cssText = `position:absolute; left:${pin.x}%; top:${pin.y}%; transform:translate(-50%,-100%); width:22px; height:22px; cursor:pointer;`;
+            pinEl.innerHTML = `<svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#fff" stroke-width="1.2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"></path><circle cx="12" cy="9" r="2.5" fill="#fff"></circle></svg>`;
+            pinEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mapPins.splice(i, 1);
+                renderMapPins();
+            });
+            wrapper.appendChild(pinEl);
+        });
+
+        list.innerHTML = mapPins.length
+            ? mapPins.map((p, i) => `<span style="display:inline-block; font-family:var(--font-sans); font-size:0.8rem; background:#f0f0f0; padding:2px 8px; margin:2px; border-radius:3px;">${i + 1}. ${p.label || '(no label)'}</span>`).join('')
+            : '';
+    }
+
+    function getImportMap() {
+        const image = document.getElementById('import-map-image')?.value.trim() || '';
+        if (!image) return null;
+        return { image, pins: mapPins.slice() };
     }
  
     function addDynamicItem(type) {
@@ -157,6 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mainTitle: document.getElementById('main-title').value,
             mainSummary: document.getElementById('main-summary').value,
             harrysNote: document.getElementById('harrys-note').value,
+            welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
+            importMap: getImportMap(),
             essentials: collectDynamicItems('#essentials-container'),
             imports: collectDynamicItems('#imports-container'),
             deliveries: collectDynamicItems('#deliveries-container'),
@@ -187,6 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Newsletter published successfully!');
             document.getElementById('newsletter-form').reset();
             clearAllDynamicItems();
+            mapPins = [];
+            renderMapPins();
+            document.getElementById('map-editor-wrapper').style.display = 'none';
             
         } catch (error) {
             console.error('Error publishing:', error);
@@ -225,9 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const auth = btoa(`api:${MAILGUN_API_KEY}`);
                 
                 const formData = new FormData();
-                formData.append('from', 'The News Haul <mailgun@' + MAILGUN_DOMAIN + '>');
+                formData.append('from', "Harry's Haul <mailgun@" + MAILGUN_DOMAIN + '>');
                 formData.append('to', subscriber.email);
-                formData.append('subject', `The News Haul #${newsletterData.issueNumber}: ${newsletterData.mainTitle}`);
+                formData.append('subject', `Harry's Haul #${newsletterData.issueNumber}: ${newsletterData.mainTitle}`);
                 formData.append('html', emailHTML);
                 
                 const response = await fetch(`https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`, {
@@ -265,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The News Haul #${data.issueNumber}</title>
+    <title>Harry's Haul #${data.issueNumber}</title>
     <style>
         body { font-family: Georgia, serif; margin: 0; padding: 0; background-color: #f5f5f5; }
         .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
@@ -288,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <body>
     <div class="container">
         <div class="header">
-            <h1>THE NEWS HAUL</h1>
+            <h1>HARRY'S HAUL</h1>
             <p>Issue #${data.issueNumber} | ${new Date(data.publishDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         
@@ -320,9 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         
         <div class="footer">
-            <p>You're receiving this because you subscribed to The News Haul.</p>
+            <p>You're receiving this because you subscribed to Harry's Haul.</p>
             <p><a href="https://newshaul.ca" style="color: #888;">Visit Website</a> | <a href="#" style="color: #888;">Unsubscribe</a></p>
-            <p>&copy; 2025 The News Haul. All Rights Reserved.</p>
+            <p>&copy; 2025 Harry's Haul. All Rights Reserved.</p>
         </div>
     </div>
 </body>
@@ -356,6 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
             mainTitle: document.getElementById('main-title').value || 'Preview Title',
             mainSummary: document.getElementById('main-summary').value || 'Preview summary...',
             harrysNote: document.getElementById('harrys-note').value || '',
+            welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
+            importMap: getImportMap(),
             essentials: collectDynamicItems('#essentials-container'),
             imports: collectDynamicItems('#imports-container'),
             deliveries: collectDynamicItems('#deliveries-container'),
