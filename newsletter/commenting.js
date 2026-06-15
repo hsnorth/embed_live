@@ -1,42 +1,26 @@
-// Import the shared auth/db instances, specific Firestore functions, and the auth state listener
+// Comments are now attached to whole posts (magazine items + social posts),
+// shown under each post in the actions area. Anyone logged in can comment,
+// all comments are public, and threaded replies are supported.
+//
+// Deepnotes remain inline text highlights (dotted underline) but ONLY admins
+// can create them. Everyone can read/click an existing deepnote.
+
 import { db, auth } from './firebase-init.js';
 import { collection, addDoc, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
- 
-// Define collection references for both features
+
 const commentsCollection = collection(db, 'comments');
 const deepnotesCollection = collection(db, 'deepnotes');
- 
+
 document.addEventListener('DOMContentLoaded', () => {
-    const commentUiContainer = document.getElementById('comment-ui-container');
     const deepnoteUiContainer = document.getElementById('deepnote-ui-container');
-    
-    if (!commentUiContainer || !deepnoteUiContainer) {
-        console.error('Comment or Deepnote UI container not found!');
-        return;
-    }
- 
     let currentSelectionRange = null;
- 
-    // --- UTILITY FUNCTIONS ---
-    function getRangeHtml(range) {
-        const container = document.createElement('div');
-        container.appendChild(range.cloneContents());
-        return container.innerHTML;
-    }
-     
-    function applyHighlightToRange(element, start, end, commentId) {
-        const originalHtml = element.innerHTML;
-        const before = originalHtml.substring(0, start);
-        const highlighted = originalHtml.substring(start, end);
-        const after = originalHtml.substring(end);
-        
-        if (highlighted.includes('class="comment-highlight"')) return;
- 
-        const newHtml = `${before}<span class="comment-highlight" data-comment-id="${commentId}">${highlighted}</span>${after}`;
-        element.innerHTML = newHtml;
-    }
- 
+
+    const isAdmin = () => window.isAdmin === true;
+
+    // ---------------------------------------------------------------------
+    // UTILITIES
+    // ---------------------------------------------------------------------
     function generateCssSelector(el) {
         if (!(el instanceof Element)) return;
         let path = [];
@@ -58,88 +42,283 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return path.join(" > ");
     }
- 
-    function cleanupFeatures() {
-        document.getElementById('selection-trigger')?.remove();
-        document.getElementById('comment-view')?.remove();
-        document.getElementById('deepnote-view')?.remove();
- 
-        document.querySelectorAll('.comment-highlight, .deepnote-highlight').forEach(span => {
-            const parent = span.parentNode;
-            if (parent) {
-                parent.replaceChild(document.createTextNode(span.textContent), span);
-                parent.normalize();
-            }
+
+    const toMillis = (r) => (r && r.createdAt && typeof r.createdAt.toMillis === 'function')
+        ? r.createdAt.toMillis()
+        : new Date((r && r.createdAt) || 0).getTime();
+
+    async function getUserName(uid) {
+        try {
+            const snap = await getDoc(doc(db, 'users', uid));
+            return snap.exists() ? (snap.data().name || 'Anonymous') : 'Anonymous';
+        } catch { return 'Anonymous'; }
+    }
+
+    // =====================================================================
+    // POST COMMENTS  (magazine items + social posts)
+    // =====================================================================
+
+    // Cache of all top-level comments + replies for this page, grouped by postId.
+    let commentsByPost = {};
+
+    async function loadComments() {
+        commentsByPost = {};
+        try {
+            const q = query(commentsCollection, where('pageUrl', '==', window.location.pathname));
+            const snap = await getDocs(q);
+            const all = [];
+            snap.forEach(d => all.push({ id: d.id, ...d.data() }));
+
+            // Group top-level comments by postId; stash replies under their parent.
+            const repliesByParent = {};
+            all.forEach(c => {
+                if (c.parentCommentId) {
+                    (repliesByParent[c.parentCommentId] = repliesByParent[c.parentCommentId] || []).push(c);
+                }
+            });
+            all.forEach(c => {
+                if (!c.parentCommentId && c.postId) {
+                    c.replies = (repliesByParent[c.id] || []).sort((a, b) => toMillis(a) - toMillis(b));
+                    (commentsByPost[c.postId] = commentsByPost[c.postId] || []).push(c);
+                }
+            });
+            Object.values(commentsByPost).forEach(list => list.sort((a, b) => toMillis(a) - toMillis(b)));
+        } catch (e) {
+            console.error('Could not load comments.', e);
+        }
+    }
+
+    function renderAllCommentThreads() {
+        const disabled = document.body.classList.contains('commenting-disabled');
+        document.querySelectorAll('.post-comments[data-post-id]').forEach(container => {
+            if (disabled) { container.innerHTML = ''; return; }
+            renderCommentThread(container);
         });
     }
-    /**
-     * Makes the comment view box draggable by its header.
-     * @param {HTMLElement} element The comment view element to make draggable.
-     */
-    function makeDraggable(element) {
-        const handle = element.querySelector('.comment-view-header');
-        if (!handle) return; // We only want to drag by the header
-    
-        let isDragging = false;
-        let initialX, initialY, offsetX, offsetY;
-        
-        // Get the main header to prevent dragging the box on top of it
-        const mainHeader = document.querySelector('.main-header');
-        const navHeight = mainHeader ? mainHeader.offsetHeight : 0;
-    
-        handle.onmousedown = (e) => {
-            isDragging = true;
-            // Record initial positions
-            initialX = e.clientX;
-            initialY = e.clientY;
-            offsetX = element.offsetLeft;
-            offsetY = element.offsetTop;
-            
-            element.classList.add('is-dragging'); // Add style for visual feedback
-    
-            // Listen for mouse movements and release
-            document.onmousemove = onMouseMove;
-            document.onmouseup = onMouseUp;
-        };
-    
-        function onMouseMove(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-    
-            // Calculate the new position
-            const deltaX = e.clientX - initialX;
-            const deltaY = e.clientY - initialY;
-            let newTop = offsetY + deltaY;
-            let newLeft = offsetX + deltaX;
-    
-            // Constraint: Prevent the box from being dragged under the nav header
-            if (newTop < navHeight) {
-                newTop = navHeight;
-            }
-            
-            element.style.top = `${newTop}px`;
-            element.style.left = `${newLeft}px`;
+
+    function renderCommentThread(container) {
+        const postId = container.dataset.postId;
+        const comments = commentsByPost[postId] || [];
+        const loggedIn = !!auth.currentUser;
+
+        container.innerHTML = '';
+        const wrap = document.createElement('div');
+        wrap.className = 'comment-thread';
+
+        // Header / count
+        const head = document.createElement('div');
+        head.className = 'comment-thread-head';
+        head.textContent = comments.length
+            ? `${comments.length} comment${comments.length === 1 ? '' : 's'}`
+            : 'No comments yet';
+        wrap.appendChild(head);
+
+        // Existing comments + their replies
+        comments.forEach(c => wrap.appendChild(buildCommentEl(c)));
+
+        // Comment composer (logged-in only)
+        if (loggedIn) {
+            wrap.appendChild(buildComposer(postId));
+        } else {
+            const prompt = document.createElement('div');
+            prompt.className = 'comment-login-prompt';
+            prompt.textContent = 'Sign in to join the conversation.';
+            wrap.appendChild(prompt);
         }
-    
-        function onMouseUp() {
-            isDragging = false;
-            element.classList.remove('is-dragging');
-            
-            // Stop listening to mouse events
-            document.onmousemove = null;
-            document.onmouseup = null;
+
+        container.appendChild(wrap);
+    }
+
+    function buildCommentEl(comment) {
+        const el = document.createElement('div');
+        el.className = 'thread-comment';
+
+        const main = document.createElement('div');
+        main.className = 'thread-comment-main';
+        main.innerHTML = `
+            <div class="thread-comment-author"></div>
+            <p class="thread-comment-body"></p>
+            <button class="thread-reply-btn" type="button">Reply</button>
+        `;
+        main.querySelector('.thread-comment-author').textContent = comment.userName || 'Anonymous';
+        main.querySelector('.thread-comment-body').textContent = comment.commentText || '';
+        el.appendChild(main);
+
+        // Replies
+        const repliesWrap = document.createElement('div');
+        repliesWrap.className = 'thread-replies';
+        (comment.replies || []).forEach(r => {
+            const rEl = document.createElement('div');
+            rEl.className = 'thread-reply';
+            rEl.innerHTML = `<div class="thread-comment-author"></div><p class="thread-comment-body"></p>`;
+            rEl.querySelector('.thread-comment-author').textContent = r.userName || 'Anonymous';
+            rEl.querySelector('.thread-comment-body').textContent = r.commentText || '';
+            repliesWrap.appendChild(rEl);
+        });
+        el.appendChild(repliesWrap);
+
+        // Reply button behaviour
+        const replyBtn = main.querySelector('.thread-reply-btn');
+        replyBtn.addEventListener('click', () => {
+            if (!auth.currentUser) { promptSignIn(); return; }
+            if (el.querySelector('.reply-composer')) return; // already open
+            const composer = buildComposer(comment.postId, comment.id);
+            composer.classList.add('reply-composer');
+            el.appendChild(composer);
+            composer.querySelector('textarea')?.focus();
+        });
+
+        return el;
+    }
+
+    function buildComposer(postId, parentCommentId = null) {
+        const composer = document.createElement('div');
+        composer.className = 'comment-composer';
+        composer.innerHTML = `
+            <textarea class="comment-composer-input" placeholder="${parentCommentId ? 'Write a reply…' : 'Add a comment…'}"></textarea>
+            <button class="comment-composer-btn" type="button">${parentCommentId ? 'Post Reply' : 'Post'}</button>
+        `;
+        const textarea = composer.querySelector('textarea');
+        const btn = composer.querySelector('.comment-composer-btn');
+        btn.addEventListener('click', async () => {
+            const text = textarea.value.trim();
+            if (!text) return;
+            btn.disabled = true;
+            await postComment(postId, text, parentCommentId);
+        });
+        return composer;
+    }
+
+    async function postComment(postId, commentText, parentCommentId = null) {
+        const user = auth.currentUser;
+        if (!user) { promptSignIn(); return; }
+        const userName = await getUserName(user.uid);
+        try {
+            await addDoc(commentsCollection, {
+                commentText,
+                isPublic: true,
+                postId,
+                parentCommentId,
+                userId: user.uid,
+                userName,
+                pageUrl: window.location.pathname,
+                newsletterId: window.currentNewsletterId || 'default',
+                createdAt: new Date()
+            });
+            await loadComments();
+            renderAllCommentThreads();
+        } catch (e) {
+            console.error('Error posting comment:', e);
+            alert('Your comment could not be saved. Please try again.');
         }
     }
- 
-    // --- DEEPNOTE-SPECIFIC FUNCTIONS ---
+
+    function promptSignIn() {
+        const signInModal = document.getElementById('signInModal');
+        if (signInModal) signInModal.classList.add('is-open');
+    }
+
+    // =====================================================================
+    // DEEPNOTES  (admin-only creation, inline dotted highlight)
+    // =====================================================================
+
+    function cleanupDeepnotes() {
+        document.getElementById('selection-trigger')?.remove();
+        document.getElementById('deepnote-view')?.remove();
+        // Unwrap existing deepnote highlights safely via DOM (no innerHTML splicing).
+        document.querySelectorAll('.deepnote-highlight').forEach(span => {
+            const parent = span.parentNode;
+            if (!parent) return;
+            while (span.firstChild) parent.insertBefore(span.firstChild, span);
+            parent.removeChild(span);
+            parent.normalize();
+        });
+    }
+
+    // Wrap a DOM Range in a highlight span using surroundContents-style logic.
+    // This is offset-free, so it cannot corrupt the surrounding HTML the way the
+    // old innerHTML string-splicing did.
+    function wrapRangeWithDeepnote(range, deepnoteId) {
+        try {
+            const span = document.createElement('span');
+            span.className = 'deepnote-highlight';
+            span.dataset.deepnoteId = deepnoteId;
+            // surroundContents throws if the range partially selects a node;
+            // fall back to extract+insert which handles multi-node ranges.
+            try {
+                range.surroundContents(span);
+            } catch {
+                const contents = range.extractContents();
+                span.appendChild(contents);
+                range.insertNode(span);
+            }
+            return true;
+        } catch (e) {
+            console.error('Could not wrap deepnote range:', e);
+            return false;
+        }
+    }
+
+    // Find a text range inside an element matching the saved highlighted text.
+    function findTextRange(element, text) {
+        if (!text) return null;
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+        let node;
+        while ((node = walker.nextNode())) {
+            const idx = node.nodeValue.indexOf(text);
+            if (idx !== -1) {
+                const range = document.createRange();
+                range.setStart(node, idx);
+                range.setEnd(node, idx + text.length);
+                return range;
+            }
+        }
+        return null; // spans multiple nodes — skip rather than risk corruption
+    }
+
+    async function loadDeepnotes() {
+        cleanupDeepnotes();
+        if (document.body.classList.contains('deepnote-disabled')) return;
+        try {
+            const q = query(deepnotesCollection, where('pageUrl', '==', window.location.pathname));
+            const snap = await getDocs(q);
+            snap.forEach(d => {
+                const deepnote = { id: d.id, ...d.data() };
+                const element = document.querySelector(deepnote.targetSelector);
+                if (!element) return;
+                if (element.querySelector(`[data-deepnote-id="${deepnote.id}"]`)) return;
+                const range = findTextRange(element, deepnote.highlightedText);
+                if (range) wrapRangeWithDeepnote(range, deepnote.id);
+            });
+        } catch (e) {
+            console.error('Could not load deepnotes.', e);
+        }
+    }
+
+    async function showDeepnoteView(highlightElement) {
+        document.getElementById('deepnote-view')?.remove();
+        const deepnoteId = highlightElement.dataset.deepnoteId;
+        if (!deepnoteId) return;
+        try {
+            const snap = await getDoc(doc(db, 'deepnotes', deepnoteId));
+            if (!snap.exists()) return;
+            const view = document.createElement('div');
+            view.id = 'deepnote-view';
+            view.textContent = snap.data().content;
+            deepnoteUiContainer.appendChild(view);
+            const rect = highlightElement.getBoundingClientRect();
+            view.style.top = `${window.scrollY + rect.bottom + 5}px`;
+            view.style.left = `${window.scrollX + rect.left}px`;
+        } catch (e) {
+            console.error('Error fetching deepnote:', e);
+        }
+    }
+
     function showDeepnoteForm() {
         document.getElementById('selection-trigger')?.remove();
-        // Use the stored range: clicking the trigger button collapses the live
-        // selection, so window.getSelection() would be empty here.
         if (!currentSelectionRange) return;
         const selectedText = currentSelectionRange.toString().trim();
         if (!selectedText) return;
- 
         const modal = document.getElementById('deepnote-form-modal');
         if (modal) {
             modal.querySelector('#deepnote-quote').textContent = `"${selectedText}"`;
@@ -147,557 +326,103 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.querySelector('#deepnote-textarea').focus();
         }
     }
- 
+
     async function postDeepnote() {
         const user = auth.currentUser;
-        if (!user || !currentSelectionRange) return;
- 
+        if (!user || !isAdmin() || !currentSelectionRange) return;
         const content = document.getElementById('deepnote-textarea').value;
-        if (!content.trim()) {
-            alert("Deepnote cannot be empty.");
-            return;
-        }
-        
+        if (!content.trim()) { alert('Deepnote cannot be empty.'); return; }
+
         const parentElement = currentSelectionRange.startContainer.parentElement.closest('p, li, h3');
         if (!parentElement) {
-            console.error("Could not find a valid parent element for the deepnote.");
+            console.error('No valid parent element for the deepnote.');
             return;
         }
- 
         const selector = generateCssSelector(parentElement);
-        const preRange = document.createRange();
-        preRange.selectNodeContents(parentElement);
-        preRange.setEnd(currentSelectionRange.startContainer, currentSelectionRange.startOffset);
-        const startOffset = getRangeHtml(preRange).length;
-        const endOffset = startOffset + getRangeHtml(currentSelectionRange).length;
- 
+        const highlightedText = currentSelectionRange.toString();
+
         try {
             await addDoc(deepnotesCollection, {
-                content: content,
-                highlightedText: currentSelectionRange.toString(),
+                content,
+                highlightedText,
                 targetSelector: selector,
-                startOffset: startOffset,
-                endOffset: endOffset,
                 userId: user.uid,
                 pageUrl: window.location.pathname,
+                newsletterId: window.currentNewsletterId || 'default',
                 createdAt: new Date()
             });
-            await loadAllFeatures();
-        } catch (error) {
-            console.error("Error saving deepnote: ", error);
+            await loadDeepnotes();
+        } catch (e) {
+            console.error('Error saving deepnote:', e);
         } finally {
             const modal = document.getElementById('deepnote-form-modal');
-            if(modal) {
-                modal.classList.remove('is-open');
-                modal.querySelector('form').reset();
-            }
+            if (modal) { modal.classList.remove('is-open'); modal.querySelector('form')?.reset(); }
+            currentSelectionRange = null;
         }
     }
- 
-    async function showDeepnoteView(highlightElement) {
-        document.getElementById('deepnote-view')?.remove();
-        const deepnoteId = highlightElement.dataset.deepnoteId;
-        if (!deepnoteId) return;
- 
-        try {
-            const docRef = doc(db, 'deepnotes', deepnoteId);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const deepnoteData = docSnap.data();
-                const view = document.createElement('div');
-                view.id = 'deepnote-view';
-                view.textContent = deepnoteData.content;
-                deepnoteUiContainer.appendChild(view);
-                
-                const rect = highlightElement.getBoundingClientRect();
-                view.style.top = `${window.scrollY + rect.bottom + 5}px`;
-                view.style.left = `${window.scrollX + rect.left}px`;
-            }
-        } catch (error) {
-            console.error("Error fetching deepnote:", error);
-        }
-    }
- 
-    async function loadAllFeatures() {
-        cleanupFeatures();
- 
-        // 1. Load Comments (only if the feature is not disabled)
-        if (!document.body.classList.contains('commenting-disabled')) {
-            try {
-                const q = query(commentsCollection, where("pageUrl", "==", window.location.pathname), where("parentCommentId", "==", null));
-                const snapshot = await getDocs(q);
- 
-                const comments = [];
-                snapshot.forEach(docSnap => comments.push({ id: docSnap.id, ...docSnap.data() }));
- 
-                // Group comments by their target element so we can apply
-                // multiple highlights to the same element safely.
-                const commentsBySelector = comments.reduce((acc, comment) => {
-                    (acc[comment.targetSelector] = acc[comment.targetSelector] || []).push(comment);
-                    return acc;
-                }, {});
- 
-                for (const selector in commentsBySelector) {
-                    const element = document.querySelector(selector);
-                    if (!element) continue;
- 
-                    // Apply highlights from the end of the element backwards so the
-                    // earlier offsets remain valid as we insert the <span> wrappers.
-                    const elementComments = commentsBySelector[selector].sort((a, b) => b.startOffset - a.startOffset);
-                    let newHtml = element.innerHTML;
- 
-                    for (const comment of elementComments) {
-                        const before = newHtml.substring(0, comment.startOffset);
-                        const highlighted = newHtml.substring(comment.startOffset, comment.endOffset);
-                        const after = newHtml.substring(comment.endOffset);
- 
-                        if (highlighted.includes('class="comment-highlight"')) continue;
- 
-                        newHtml = `${before}<span class="comment-highlight" data-comment-id="${comment.id}">${highlighted}</span>${after}`;
-                    }
-                    element.innerHTML = newHtml;
-                }
-            } catch(e) { console.error("Could not load comments.", e); }
-        }
- 
-        // --- MODIFIED --- Only load deepnotes if the feature is not disabled
-        if (!document.body.classList.contains('deepnote-disabled')) {
-            // 2. Load Deepnotes
-            try {
-                const q = query(deepnotesCollection, where("pageUrl", "==", window.location.pathname));
-                const snapshot = await getDocs(q);
-                snapshot.forEach(doc => {
-                    const deepnote = { id: doc.id, ...doc.data() };
-                    const element = document.querySelector(deepnote.targetSelector);
-                    if (element) {
-                        let html = element.innerHTML;
-                        const before = html.substring(0, deepnote.startOffset);
-                        const highlighted = html.substring(deepnote.startOffset, deepnote.endOffset);
-                        const after = html.substring(deepnote.endOffset);
-                        if (!highlighted.includes('deepnote-highlight')) {
-                            element.innerHTML = `${before}<span class="deepnote-highlight" data-deepnote-id="${deepnote.id}">${highlighted}</span>${after}`;
-                        }
-                    }
-                });
-            } catch(e) { console.error("Could not load deepnotes.", e); }
-        }
-    }
-    /**
-     * Displays the comment view with screen-size-aware positioning.
-     */
-    function showCommentView(commentData, highlightElement) {
-        document.getElementById('comment-view')?.remove();
-        const rect = highlightElement.getBoundingClientRect();
-        const view = document.createElement('div');
-        view.id = 'comment-view';
-        view.dataset.commentId = commentData.id;
-    
-        // The HTML structure remains the same
-        view.innerHTML = `
-            <div class="comment-view-header">
-                <div class="comment-author">${commentData.userName || 'Anonymous'}</div>
-                <button class="comment-view-close-btn">&times;</button>
-            </div>
-            <p class="comment-body">${commentData.commentText}</p>
-            <div class="comment-footer">
-                <button class="reply-btn" data-comment-id="${commentData.id}">Reply</button>
-            </div>
-            <div class="replies-container"></div>
-        `;
-    
-        commentUiContainer.appendChild(view);
-        const viewRect = view.getBoundingClientRect();
-    
-        // Logic for replies and close button
-        loadAndDisplayReplies(commentData.id, view);
-        view.querySelector('.reply-btn').onclick = (e) => showReplyForm(e.target.dataset.commentId, view);
-        view.querySelector('.comment-view-close-btn').onclick = () => view.remove();
-    
-        // --- NEW Positioning and Draggable Logic ---
-        if (window.innerWidth > 900) { // Large screens
-            view.className = 'comment-display-sidebar';
-            const mainContent = highlightElement.closest('.main-article, .essentials-container, .cannoli-section-content');
-            if (mainContent) {
-                const contentRect = mainContent.getBoundingClientRect();
-                view.style.top = `${window.scrollY + rect.top}px`;
-                view.style.left = `${contentRect.right + 20}px`;
-            }
-            makeDraggable(view); // Enable dragging
-        } else { // Medium and Small screens
-            view.className = 'comment-display-popup';
-            // Position below and centered to the highlighted text
-            view.style.top = `${window.scrollY + rect.bottom + 15}px`;
-            const centeredLeft = (rect.left + (rect.width / 2)) - (viewRect.width / 2);
-            view.style.left = `${Math.max(15, centeredLeft)}px`; // Use Math.max to prevent it from going off the left edge
-            
-            if (window.innerWidth > 768) {
-                makeDraggable(view); // Enable dragging only on medium screens and up
-            }
-        }
-    }
-    
-// In commenting.js, replace the entire postReply function with this one
- 
-    async function postReply(replyText, parentCommentId) {
-        const user = auth.currentUser;
-        if (!user || !replyText.trim()) {
-            alert("You must be logged in and write a reply.");
-            return;
-        }
- 
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
-    
-        const replyData = {
-            commentText: replyText,
-            parentCommentId: parentCommentId,
-            userId: user.uid,
-            userName: userName,
-            pageUrl: window.location.pathname,
-            createdAt: new Date()
-        };
- 
-        try {
-            await addDoc(commentsCollection, replyData);
- 
-            // Refresh the reply list from the database.
-            const commentView = document.getElementById('comment-view');
-            if (commentView) {
-                loadAndDisplayReplies(parentCommentId, commentView);
-                commentView.querySelector('.reply-form-container')?.remove();
-            }
-    
-        } catch (error) {
-            console.error("Error saving reply:", error);
-            alert("Error: The reply could not be saved. Please try again.");
-        }
-    }
-    function showReplyForm(parentCommentId, viewElement) {
-        viewElement.querySelector('.reply-form-container')?.remove();
-    
-        const formContainer = document.createElement('div');
-        formContainer.className = 'reply-form-container';
-        formContainer.innerHTML = `
-            <textarea class="reply-textarea" placeholder="Write a reply..."></textarea>
-            <button class="post-reply-btn">Post Reply</button>
-        `;
-        viewElement.appendChild(formContainer);
-    
-        const postBtn = formContainer.querySelector('.post-reply-btn');
-        const textarea = formContainer.querySelector('.reply-textarea');
-        textarea.focus();
-    
-        postBtn.onclick = () => {
-            postReply(textarea.value, parentCommentId);
-        };
-    }
-    
-    async function loadAndDisplayReplies(parentCommentId, viewElement) {
-        let repliesContainer = viewElement.querySelector('.replies-container');
-        if (!repliesContainer) {
-            repliesContainer = document.createElement('div');
-            repliesContainer.className = 'replies-container';
-            viewElement.appendChild(repliesContainer);
-        }
-        
-        repliesContainer.innerHTML = '';
-    
-        // Avoid where() + orderBy() which requires a composite Firestore index;
-        // sort the replies on the client instead.
-        const q = query(commentsCollection, where("parentCommentId", "==", parentCommentId));
-        const querySnapshot = await getDocs(q);
- 
-        const replies = [];
-        querySnapshot.forEach((doc) => replies.push(doc.data()));
-        const toMillis = (r) => (r.createdAt && typeof r.createdAt.toMillis === 'function')
-            ? r.createdAt.toMillis()
-            : new Date(r.createdAt || 0).getTime();
-        replies.sort((a, b) => toMillis(a) - toMillis(b));
- 
-        replies.forEach((replyData) => {
-            const replyDiv = document.createElement('div');
-            replyDiv.className = 'reply';
-            replyDiv.innerHTML = `
-                <div class="reply-author">${replyData.userName || 'Anonymous'}</div>
-                <p class="reply-body">${replyData.commentText}</p>
-            `;
-            repliesContainer.appendChild(replyDiv);
-        });
-    }
- 
-    // --- CORE COMMENTING FUNCTIONS ---
-    function showCommentForm() {
-        // Use the stored range: the live selection is collapsed by the click
-        // on the trigger button, so it can't be relied on here.
-        if (!currentSelectionRange) return;
-        const range = currentSelectionRange;
-        const selectedText = range.toString();
- 
-        const modal = document.createElement('div');
-        modal.className = 'comment-form-modal';
-        modal.innerHTML = `
-            <div class="comment-form-content">
-                <button class="comment-close-btn">&times;</button>
-                <h3>Add a Comment</h3>
-                <blockquote class="comment-quote"></blockquote>
-                <textarea id="comment-textarea" placeholder="Share your thoughts..."></textarea>
-                <div class="comment-options">
-                    <input type="checkbox" id="comment-public-checkbox" checked>
-                    <label for="comment-public-checkbox">Public comment</label>
-                </div>
-                <button id="comment-post-btn">Post</button>
-            </div>
-        `;
-        // Set the quote via textContent to avoid injecting HTML from the page
-        modal.querySelector('.comment-quote').textContent = selectedText;
-        commentUiContainer.appendChild(modal);
-        modal.querySelector('.comment-close-btn').onclick = () => modal.remove();
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-        
-        modal.querySelector('#comment-post-btn').onclick = async () => {
-            const commentText = document.getElementById('comment-textarea').value;
-            const isPublic = document.getElementById('comment-public-checkbox').checked;
-            if (commentText.trim()) {
-                await postComment(commentText, isPublic, selectedText, range);
-                modal.remove();
-            } else {
-                alert("Comment cannot be empty.");
-            }
-        };
-    }
- 
-    async function postComment(commentText, isPublic, selectedText, range) {
-        const user = auth.currentUser;
-        if (!user) return;
- 
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        const userName = userDoc.exists() ? userDoc.data().name : "Anonymous";
- 
-        const parentElement = range.startContainer.parentElement.closest('p, li, h3');
-        if (!parentElement) {
-            console.error("Could not find a valid parent element for the comment.");
-            return;
-        }
- 
-        const selector = generateCssSelector(parentElement);
-        const preRange = document.createRange();
-        preRange.selectNodeContents(parentElement);
-        preRange.setEnd(range.startContainer, range.startOffset);
-        const startOffset = getRangeHtml(preRange).length;
-        const endOffset = startOffset + getRangeHtml(range).length;
- 
-        try {
-            const docRef = await addDoc(commentsCollection, {
-                commentText, isPublic, highlightedText: selectedText,
-                targetSelector: selector, startOffset, endOffset,
-                parentCommentId: null, // This marks it as a top-level comment
-                userId: user.uid, userName: userName,
-                pageUrl: window.location.pathname, createdAt: new Date()
-            });
-            
-            applyHighlightToRange(parentElement, startOffset, endOffset, docRef.id);
-            
-            const newHighlight = parentElement.querySelector(`[data-comment-id="${docRef.id}"]`);
-            if (newHighlight) {
-                const commentData = { id: docRef.id, userName: userName, commentText };
-                showCommentView(commentData, newHighlight);
-            }
-        } catch (error) {
-            console.error("Error saving comment to Firestore: ", error);
-        }
-    }
- 
-   // --- MODIFIED --- EVENT HANDLERS ---
- 
+
+    // Selection trigger — only offered to admins, only for deepnotes.
     const handleMouseUp = (e) => {
         setTimeout(() => {
-            const commentingDisabled = document.body.classList.contains('commenting-disabled');
-            const deepnoteDisabled = document.body.classList.contains('deepnote-disabled');
-            if (commentingDisabled && deepnoteDisabled) return;
- 
+            document.getElementById('selection-trigger')?.remove();
+            if (!isAdmin()) return;
+            if (document.body.classList.contains('deepnote-disabled')) return;
+
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
-            document.getElementById('selection-trigger')?.remove();
-            
-            if (selectedText.length > 0 && selection.rangeCount > 0 && !e.target.closest('input, textarea, button, #comment-view, #deepnote-view')) {
-                const range = selection.getRangeAt(0);
-                const container = range.commonAncestorContainer.parentElement;
-                
-                if (!container || !container.closest('.main-article, .essentials-container, .cannoli-section-content')) return;
-                
-                // Clone the range so it survives the selection being collapsed
-                // when the user clicks the trigger button.
-                currentSelectionRange = range.cloneRange();
- 
-                const rect = range.getBoundingClientRect();
-                const trigger = document.createElement('div');
-                trigger.id = 'selection-trigger';
-                
-                // Build the trigger's HTML based on which features are enabled
-                let triggerHTML = '';
-                if (!commentingDisabled) {
-                    triggerHTML += `<button class="selection-trigger-btn" id="comment-trigger-btn">Add Comment</button>`;
-                }
-                if (!deepnoteDisabled) {
-                    if (triggerHTML) triggerHTML += `<div class="selection-trigger-divider"></div>`;
-                    triggerHTML += `<button class="selection-trigger-btn" id="deepnote-trigger-btn">Add Deepnote</button>`;
-                }
-                trigger.innerHTML = triggerHTML;
-                document.body.appendChild(trigger);
-                
-                trigger.style.top = `${window.scrollY + rect.top - trigger.offsetHeight - 5}px`;
-                trigger.style.left = `${window.scrollX + rect.left + (rect.width - trigger.offsetWidth) / 2}px`;
-                
-                const commentBtn = document.getElementById('comment-trigger-btn');
-                if (commentBtn) {
-                    commentBtn.onclick = () => showCommentForm();
-                }
-                const deepnoteBtn = document.getElementById('deepnote-trigger-btn');
-                if (deepnoteBtn) {
-                    deepnoteBtn.onclick = showDeepnoteForm;
-                }
-            }
+            if (selectedText.length === 0 || selection.rangeCount === 0) return;
+            if (e.target.closest('input, textarea, button, #deepnote-view')) return;
+
+            const range = selection.getRangeAt(0);
+            const container = range.commonAncestorContainer.parentElement;
+            // Deepnotes only inside the magazine article body.
+            if (!container || !container.closest('.main-article, .essentials-container, .cannoli-section-content')) return;
+
+            currentSelectionRange = range.cloneRange();
+            const rect = range.getBoundingClientRect();
+            const trigger = document.createElement('div');
+            trigger.id = 'selection-trigger';
+            trigger.innerHTML = `<button class="selection-trigger-btn" id="deepnote-trigger-btn">Add Deepnote</button>`;
+            document.body.appendChild(trigger);
+            trigger.style.top = `${window.scrollY + rect.top - trigger.offsetHeight - 5}px`;
+            trigger.style.left = `${window.scrollX + rect.left + (rect.width - trigger.offsetWidth) / 2}px`;
+            document.getElementById('deepnote-trigger-btn').onclick = showDeepnoteForm;
         }, 10);
     };
-    
-    const handleDocumentClick = async (e) => {
+
+    const handleDocumentClick = (e) => {
         if (!e.target.closest('#selection-trigger')) {
             document.getElementById('selection-trigger')?.remove();
         }
- 
-        const commentHighlight = e.target.closest('.comment-highlight');
-        if (commentHighlight) {
-            const commentId = commentHighlight.dataset.commentId;
-            const commentDoc = await getDoc(doc(db, 'comments', commentId));
-            if (commentDoc.exists()) {
-                showCommentView({ id: commentId, ...commentDoc.data() }, commentHighlight);
-            }
-            return;
-        }
- 
         const deepnoteHighlight = e.target.closest('.deepnote-highlight');
-        if (deepnoteHighlight) {
-            showDeepnoteView(deepnoteHighlight);
-            return;
-        }
- 
-        if (!e.target.closest('#comment-view')) document.getElementById('comment-view')?.remove();
+        if (deepnoteHighlight) { showDeepnoteView(deepnoteHighlight); return; }
         if (!e.target.closest('#deepnote-view')) document.getElementById('deepnote-view')?.remove();
     };
- 
+
     const deepnoteForm = document.getElementById('deepnote-form');
     if (deepnoteForm) {
-        deepnoteForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            postDeepnote();
-        });
+        deepnoteForm.addEventListener('submit', (e) => { e.preventDefault(); postDeepnote(); });
     }
- 
-    // --- AUTH-DRIVEN INITIALIZATION ---
-    onAuthStateChanged(auth, (user) => {
-        cleanupFeatures(); // Always cleanup first
 
-        if (user) {
-            loadAllFeatures(); // Internally checks which features are disabled
-            document.addEventListener('click', handleDocumentClick);
-            document.addEventListener('mouseup', handleMouseUp); // Bails early if both features are off
-        } else {
-            // If logged out, remove listeners
-            document.removeEventListener('mouseup', handleMouseUp);
-            document.removeEventListener('click', handleDocumentClick);
-        }
-        // Public comments/deepnotes are visible to everyone in the social feed.
-        renderSocialThreads();
-    });
- 
-    // Re-render highlights whenever the Control Centre toggles change
-    // (main.js dispatches this event after updating the body classes).
-    document.addEventListener('features-changed', () => {
-        if (auth.currentUser) {
-            loadAllFeatures();
-        }
-    });
+    // =====================================================================
+    // WIRING
+    // =====================================================================
+    // Deepnote selection/click listeners are always attached; they self-gate
+    // on admin status and the deepnote-disabled body class.
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('click', handleDocumentClick);
 
-    // BUGFIX: comments/deepnotes used to load once, before main.js had finished
-    // injecting the newsletter content from Firestore — so the target selectors
-    // didn't exist yet and no highlights appeared. Re-run once the content is in.
-    document.addEventListener('newsletter-loaded', () => {
-        if (auth.currentUser) loadAllFeatures();
-    });
-
-    // #6 — render public comments + deepnotes beneath each social post.
-    document.addEventListener('social-feed-generated', renderSocialThreads);
-
-    async function renderSocialThreads() {
-        const feed = document.getElementById('social-feed-view');
-        if (!feed) return;
-        const containers = feed.querySelectorAll('.post-comments[data-post-id]');
-        if (containers.length === 0) return;
-
-        // Pull all public, top-level comments and all deepnotes for this page once.
-        let comments = [];
-        let deepnotes = [];
-        try {
-            const cq = query(commentsCollection,
-                where('pageUrl', '==', window.location.pathname),
-                where('parentCommentId', '==', null));
-            const csnap = await getDocs(cq);
-            csnap.forEach(d => {
-                const data = d.data();
-                if (data.isPublic) comments.push({ id: d.id, ...data });
-            });
-        } catch (e) { console.error('Could not load social comments.', e); }
-
-        try {
-            const dq = query(deepnotesCollection, where('pageUrl', '==', window.location.pathname));
-            const dsnap = await getDocs(dq);
-            dsnap.forEach(d => deepnotes.push({ id: d.id, ...d.data() }));
-        } catch (e) { console.error('Could not load social deepnotes.', e); }
-
-        containers.forEach(container => {
-            const postId = container.dataset.postId;
-            const post = container.closest('.social-post');
-            const bodyText = post ? (post.querySelector('.post-body')?.innerText || '') : '';
-            container.innerHTML = '';
-
-            // Match a comment/deepnote to this post if its highlighted text
-            // appears in the post body (content-based, layout-agnostic).
-            const relComments = comments.filter(c =>
-                c.highlightedText && bodyText.includes(c.highlightedText.trim()));
-            const relDeepnotes = deepnotes.filter(d =>
-                d.highlightedText && bodyText.includes(d.highlightedText.trim()));
-
-            if (relComments.length === 0 && relDeepnotes.length === 0) return;
-
-            const wrap = document.createElement('div');
-            wrap.className = 'social-thread';
-
-            relDeepnotes.forEach(d => {
-                const el = document.createElement('div');
-                el.className = 'social-deepnote';
-                el.innerHTML = `<span class="social-thread-label">Deepnote</span>
-                    <span class="social-thread-quote"></span>
-                    <p class="social-thread-body"></p>`;
-                el.querySelector('.social-thread-quote').textContent = `"${d.highlightedText}"`;
-                el.querySelector('.social-thread-body').textContent = d.content || '';
-                wrap.appendChild(el);
-            });
-
-            relComments.forEach(c => {
-                const el = document.createElement('div');
-                el.className = 'social-comment';
-                el.innerHTML = `<div class="social-comment-author"></div>
-                    <span class="social-thread-quote"></span>
-                    <p class="social-thread-body"></p>`;
-                el.querySelector('.social-comment-author').textContent = c.userName || 'Anonymous';
-                el.querySelector('.social-thread-quote').textContent = c.highlightedText ? `"${c.highlightedText}"` : '';
-                el.querySelector('.social-thread-body').textContent = c.commentText || '';
-                wrap.appendChild(el);
-            });
-
-            container.appendChild(wrap);
-        });
+    async function refreshEverything() {
+        await loadComments();
+        renderAllCommentThreads();
+        await loadDeepnotes();
     }
+
+    // Re-render after content appears or auth/admin status changes.
+    document.addEventListener('newsletter-loaded', refreshEverything);
+    document.addEventListener('magazine-section-rendered', () => { renderAllCommentThreads(); loadDeepnotes(); });
+    document.addEventListener('social-feed-generated', renderAllCommentThreads);
+    document.addEventListener('admin-status-resolved', refreshEverything);
+    document.addEventListener('features-changed', () => { loadDeepnotes(); renderAllCommentThreads(); });
+    onAuthStateChanged(auth, refreshEverything);
 });
