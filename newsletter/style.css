@@ -2520,3 +2520,179 @@ html {
         page-break-inside: avoid;
     }
 }
+
+/* ============================================================
+   ADJUSTMENTS: Harry's note (top), welcome video, map pins,
+   likes, and social-feed comment/deepnote threads.
+   ============================================================ */
+
+/* Harry's Note now sits under the main summary at the top */
+.harrys-note-top {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+.harrys-note-top .harrys-note-body p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* Vertical video in the welcome sidebar: right on big screens */
+.welcome-video-wrapper {
+    width: 100%;
+}
+.welcome-video {
+    width: 100%;
+    max-height: 70vh;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    background: #000;
+    display: block;
+    border: 1px solid var(--color-border);
+}
+/* When the sidebar only holds the (optional) video, drop its divider
+   so an empty sidebar leaves no stray border. */
+.welcome-sidebar:has(.welcome-video-wrapper[style*="display: none"]) {
+    border-left: none;
+    padding-left: 0;
+}
+
+@media (max-width: 900px) {
+    /* Video stacks under the content on small screens */
+    .welcome-video {
+        max-height: 60vh;
+        margin: 0 auto;
+        max-width: 360px;
+    }
+}
+
+/* --- Imports map pins --- */
+.map-pin-wrapper {
+    position: relative;
+    display: block;
+    line-height: 0;
+}
+.map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    width: 26px;
+    height: 26px;
+    pointer-events: none;
+}
+.map-pin svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));
+}
+.map-pin .pin-label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-top: 2px;
+}
+.map-pin .pin-label:empty {
+    display: none;
+}
+
+/* --- Likes --- */
+.item-actions,
+.post-actions {
+    margin-top: 1rem;
+}
+.post-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-text);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.post-like-btn svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: fill 0.15s ease, stroke 0.15s ease;
+}
+.post-like-btn:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+.post-like-btn.liked {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+.post-like-btn.liked svg {
+    fill: #e74c3c;
+    stroke: #e74c3c;
+}
+.post-like-count {
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- Social feed: comments + deepnotes under each post --- */
+.post-comments:empty {
+    display: none;
+}
+.social-thread {
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.social-comment,
+.social-deepnote {
+    background: #f7f9fa;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-family: var(--font-sans);
+}
+.social-deepnote {
+    background: #fefae0;
+    border-left: 3px solid #ffde3f;
+}
+.social-thread-label {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a7a1f;
+    margin-bottom: 2px;
+}
+.social-comment-author {
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+}
+.social-thread-quote {
+    display: block;
+    font-style: italic;
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+}
+.social-thread-quote:empty {
+    display: none;
+}
+.social-thread-body {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
