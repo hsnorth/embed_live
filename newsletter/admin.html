@@ -73,7 +73,17 @@
                         <div class="form-group"><label for="main-title">Main Title</label><input type="text" id="main-title" class="form-input-admin" placeholder="What mattered most this week..." required></div>
                         <div class="form-group"><label for="main-summary">Main Summary Paragraph</label><textarea id="main-summary" class="form-input-admin" required></textarea></div>
                         <div class="form-group"><label for="harrys-note">Harry's Note</label><textarea id="harrys-note" class="form-input-admin"></textarea></div>
-                        <div class="form-group"><label for="welcome-video">Welcome Vertical Video URL (.mp4, optional)</label><input type="url" id="welcome-video" class="form-input-admin" placeholder="https://.../clip.mp4"></div>
+                        <div class="form-group">
+                            <label for="welcome-video-file">Welcome Vertical Video (.mp4, optional)</label>
+                            <input type="file" id="welcome-video-file" class="form-input-admin" accept="video/mp4,video/quicktime,video/webm">
+                            <div id="video-upload-status" style="font-family: var(--font-sans); font-size: 0.85rem; color: #555; margin-top: 0.4rem;"></div>
+                            <div id="video-upload-progress-wrap" style="display:none; height: 6px; background:#eee; border-radius:3px; overflow:hidden; margin-top:0.4rem;">
+                                <div id="video-upload-progress-bar" style="height:100%; width:0%; background: var(--color-text); transition: width 0.15s ease;"></div>
+                            </div>
+                            <video id="video-upload-preview" style="display:none; width:180px; margin-top:0.6rem; border:1px solid var(--color-border);" controls playsinline preload="metadata"></video>
+                            <button type="button" id="video-remove-btn" class="btn-secondary-admin" style="display:none; margin-top:0.5rem;">Remove video</button>
+                            <input type="hidden" id="welcome-video" value="">
+                        </div>
                         
                         <hr class="divider">
 
