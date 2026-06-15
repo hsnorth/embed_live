@@ -176,7 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                         <span class="post-like-count">0</span>
                     </button>
-                </div>`;
+                </div>
+                <div class="post-comments" data-post-id="${postId}"></div>`;
             
             itemEl.innerHTML = innerHTML;
             container.appendChild(itemEl);
@@ -652,9 +653,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Restore saved feature preferences
                     if (commentsToggle) commentsToggle.checked = userData.commentsEnabled !== false;
                     if (deepnoteToggle) deepnoteToggle.checked = userData.deepnotesEnabled === true;
+                    // Expose admin status so deepnote creation can be gated.
+                    window.isAdmin = userData.isAdmin === true;
+                    document.body.classList.toggle('is-admin', window.isAdmin);
                 }
                 applyLayoutPreference(layoutPreference);
                 applyFeatureClasses();
+                document.dispatchEvent(new CustomEvent('admin-status-resolved'));
             } catch(e) {
                 console.error("Error fetching user preferences:", e);
                 applyLayoutPreference('magazine');
@@ -662,6 +667,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userAuthLinks) userAuthLinks.innerHTML = ``;
         } else {
             document.body.classList.remove('logged-in');
+            window.isAdmin = false;
+            document.body.classList.remove('is-admin');
+            document.dispatchEvent(new CustomEvent('admin-status-resolved'));
             applyLayoutPreference('magazine');
             if (userAuthLinks) {
                 userAuthLinks.innerHTML = `<a href="#" class="nav-link" id="signInLink">SIGN IN</a><a href="#" class="btn btn-primary" id="joinLink">JOIN COMMUNITY</a>`;
