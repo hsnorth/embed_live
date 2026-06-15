@@ -88,11 +88,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Track which posts have their comment thread expanded, so re-renders
+    // (e.g. after posting) keep the thread open.
+    const expandedPosts = new Set();
+
+    function updateCommentCount(postId) {
+        const count = (commentsByPost[postId] || []).reduce(
+            (n, c) => n + 1 + (c.replies ? c.replies.length : 0), 0);
+        document.querySelectorAll(`.post-comment-btn[data-post-id="${postId}"] .post-comment-count`)
+            .forEach(el => { el.textContent = count; });
+    }
+
     function renderAllCommentThreads() {
         const disabled = document.body.classList.contains('commenting-disabled');
         document.querySelectorAll('.post-comments[data-post-id]').forEach(container => {
-            if (disabled) { container.innerHTML = ''; return; }
+            const postId = container.dataset.postId;
+            if (disabled) {
+                container.innerHTML = '';
+                container.hidden = true;
+                // Hide the comment button entirely when commenting is off.
+                document.querySelectorAll(`.post-comment-btn[data-post-id="${postId}"]`)
+                    .forEach(b => { b.style.display = 'none'; });
+                return;
+            }
+            document.querySelectorAll(`.post-comment-btn[data-post-id="${postId}"]`)
+                .forEach(b => { b.style.display = ''; });
             renderCommentThread(container);
+            updateCommentCount(postId);
+            // Respect whether this thread was open before the re-render.
+            const open = expandedPosts.has(postId);
+            container.hidden = !open;
+            document.querySelectorAll(`.post-comment-btn[data-post-id="${postId}"]`)
+                .forEach(b => b.setAttribute('aria-expanded', String(open)));
         });
     }
 
@@ -105,16 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrap = document.createElement('div');
         wrap.className = 'comment-thread';
 
-        // Header / count
-        const head = document.createElement('div');
-        head.className = 'comment-thread-head';
-        head.textContent = comments.length
-            ? `${comments.length} comment${comments.length === 1 ? '' : 's'}`
-            : 'No comments yet';
-        wrap.appendChild(head);
-
         // Existing comments + their replies
         comments.forEach(c => wrap.appendChild(buildCommentEl(c)));
+
+        if (comments.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'comment-empty';
+            empty.textContent = 'No comments yet. Be the first.';
+            wrap.appendChild(empty);
+        }
 
         // Comment composer (logged-in only)
         if (loggedIn) {
@@ -128,6 +154,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.appendChild(wrap);
     }
+
+    // Toggle a post's comment thread open/closed.
+    function toggleCommentThread(postId) {
+        const isOpen = expandedPosts.has(postId);
+        if (isOpen) expandedPosts.delete(postId);
+        else expandedPosts.add(postId);
+        const nowOpen = !isOpen;
+        document.querySelectorAll(`.post-comments[data-post-id="${postId}"]`)
+            .forEach(c => { c.hidden = !nowOpen; });
+        document.querySelectorAll(`.post-comment-btn[data-post-id="${postId}"]`)
+            .forEach(b => b.setAttribute('aria-expanded', String(nowOpen)));
+        // Auto-focus the composer when opening, for an intuitive feel.
+        if (nowOpen) {
+            const ta = document.querySelector(`.post-comments[data-post-id="${postId}"] .comment-composer-input`);
+            if (ta) ta.focus();
+        }
+    }
+
+    // Delegated click for the comment toggle button.
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.post-comment-btn');
+        if (!btn) return;
+        e.preventDefault();
+        toggleCommentThread(btn.dataset.postId);
+    });
 
     function buildCommentEl(comment) {
         const el = document.createElement('div');
