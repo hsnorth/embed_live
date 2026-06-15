@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AUTH-DRIVEN INITIALIZATION ---
     onAuthStateChanged(auth, (user) => {
         cleanupFeatures(); // Always cleanup first
- 
+
         if (user) {
             loadAllFeatures(); // Internally checks which features are disabled
             document.addEventListener('click', handleDocumentClick);
@@ -608,6 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('click', handleDocumentClick);
         }
+        // Public comments/deepnotes are visible to everyone in the social feed.
+        renderSocialThreads();
     });
  
     // Re-render highlights whenever the Control Centre toggles change
@@ -617,4 +619,85 @@ document.addEventListener('DOMContentLoaded', () => {
             loadAllFeatures();
         }
     });
+
+    // BUGFIX: comments/deepnotes used to load once, before main.js had finished
+    // injecting the newsletter content from Firestore — so the target selectors
+    // didn't exist yet and no highlights appeared. Re-run once the content is in.
+    document.addEventListener('newsletter-loaded', () => {
+        if (auth.currentUser) loadAllFeatures();
+    });
+
+    // #6 — render public comments + deepnotes beneath each social post.
+    document.addEventListener('social-feed-generated', renderSocialThreads);
+
+    async function renderSocialThreads() {
+        const feed = document.getElementById('social-feed-view');
+        if (!feed) return;
+        const containers = feed.querySelectorAll('.post-comments[data-post-id]');
+        if (containers.length === 0) return;
+
+        // Pull all public, top-level comments and all deepnotes for this page once.
+        let comments = [];
+        let deepnotes = [];
+        try {
+            const cq = query(commentsCollection,
+                where('pageUrl', '==', window.location.pathname),
+                where('parentCommentId', '==', null));
+            const csnap = await getDocs(cq);
+            csnap.forEach(d => {
+                const data = d.data();
+                if (data.isPublic) comments.push({ id: d.id, ...data });
+            });
+        } catch (e) { console.error('Could not load social comments.', e); }
+
+        try {
+            const dq = query(deepnotesCollection, where('pageUrl', '==', window.location.pathname));
+            const dsnap = await getDocs(dq);
+            dsnap.forEach(d => deepnotes.push({ id: d.id, ...d.data() }));
+        } catch (e) { console.error('Could not load social deepnotes.', e); }
+
+        containers.forEach(container => {
+            const postId = container.dataset.postId;
+            const post = container.closest('.social-post');
+            const bodyText = post ? (post.querySelector('.post-body')?.innerText || '') : '';
+            container.innerHTML = '';
+
+            // Match a comment/deepnote to this post if its highlighted text
+            // appears in the post body (content-based, layout-agnostic).
+            const relComments = comments.filter(c =>
+                c.highlightedText && bodyText.includes(c.highlightedText.trim()));
+            const relDeepnotes = deepnotes.filter(d =>
+                d.highlightedText && bodyText.includes(d.highlightedText.trim()));
+
+            if (relComments.length === 0 && relDeepnotes.length === 0) return;
+
+            const wrap = document.createElement('div');
+            wrap.className = 'social-thread';
+
+            relDeepnotes.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'social-deepnote';
+                el.innerHTML = `<span class="social-thread-label">Deepnote</span>
+                    <span class="social-thread-quote"></span>
+                    <p class="social-thread-body"></p>`;
+                el.querySelector('.social-thread-quote').textContent = `"${d.highlightedText}"`;
+                el.querySelector('.social-thread-body').textContent = d.content || '';
+                wrap.appendChild(el);
+            });
+
+            relComments.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'social-comment';
+                el.innerHTML = `<div class="social-comment-author"></div>
+                    <span class="social-thread-quote"></span>
+                    <p class="social-thread-body"></p>`;
+                el.querySelector('.social-comment-author').textContent = c.userName || 'Anonymous';
+                el.querySelector('.social-thread-quote').textContent = c.highlightedText ? `"${c.highlightedText}"` : '';
+                el.querySelector('.social-thread-body').textContent = c.commentText || '';
+                wrap.appendChild(el);
+            });
+
+            container.appendChild(wrap);
+        });
+    }
 });
