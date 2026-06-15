@@ -14,7 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('eyebrow-placeholder').textContent = `Issue #${data.issueNumber}`;
         document.getElementById('main-title-placeholder').textContent = data.mainTitle;
         document.getElementById('main-summary-placeholder').textContent = data.mainSummary;
-        document.getElementById('harrys-note-placeholder').textContent = data.harrysNote;
+        const harrysNoteEl = document.getElementById('harrys-note-placeholder');
+        if (harrysNoteEl) harrysNoteEl.textContent = data.harrysNote;
+
+        // Vertical welcome video (where Harry's Note used to live)
+        const videoWrapper = document.getElementById('welcome-video-wrapper');
+        const videoEl = document.getElementById('welcome-video');
+        if (videoWrapper && videoEl) {
+            if (data.welcomeVideo) {
+                videoEl.src = data.welcomeVideo;
+                videoWrapper.style.display = 'block';
+            } else {
+                videoWrapper.style.display = 'none';
+            }
+        }
         
         if (data.publishDate) {
             const date = new Date(data.publishDate.replace(/-/g, '\/'));
@@ -93,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return post;
         };
 
-        socialFeedView.appendChild(createSocialPost('The News Haul', `<p><strong>${data.mainTitle}</strong></p><p>${data.mainSummary}</p>`));
+        socialFeedView.appendChild(createSocialPost("Harry's Haul", `<p><strong>${data.mainTitle}</strong></p><p>${data.mainSummary}</p>`));
         if (data.harrysNote) {
             socialFeedView.appendChild(createSocialPost('Harry North', `<p>${data.harrysNote}</p>`));
         }
