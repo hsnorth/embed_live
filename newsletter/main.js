@@ -1,7 +1,7 @@
 // Import the shared Firebase services and specific functions
 import { auth, db } from './firebase-init.js';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, updatePassword, deleteUser, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, collection, query, where, getDocs, limit, onSnapshot, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
  
 console.log("Firebase is connected via shared module!");
  
@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
  
             const newsletterDoc = querySnapshot.docs[0];
             const data = newsletterDoc.data();
+            window.currentNewsletterId = newsletterDoc.id;
             renderMagazineView(data);
+            // Hydrate like counts now that the magazine is built.
+            document.dispatchEvent(new CustomEvent('newsletter-loaded'));
  
             // 2. Fetch "How It Works" Content from Firestore
             const howItWorksDoc = await getDoc(doc(db, 'siteContent', 'howItWorks'));
@@ -62,22 +65,64 @@ document.addEventListener('DOMContentLoaded', () => {
         const welcomeSummary = document.querySelector('.welcome-main-content .article-body-wrapper p');
         if (welcomeSummary) welcomeSummary.textContent = data.mainSummary;
  
-        const harrysNote = document.querySelector('.welcome-sidebar .article-body-wrapper p');
+        const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
+
+        // Vertical video in the welcome sidebar (where Harry's Note used to be)
+        const videoWrapper = document.getElementById('welcome-video-wrapper');
+        const videoEl = document.getElementById('welcome-video');
+        if (videoWrapper && videoEl) {
+            if (data.welcomeVideo) {
+                videoEl.src = data.welcomeVideo;
+                videoWrapper.style.display = 'block';
+            } else {
+                videoEl.removeAttribute('src');
+                videoWrapper.style.display = 'none';
+            }
+        }
         
         const datePlaceholder = document.getElementById('header-date-placeholder');
-        if(datePlaceholder && data.publishDate) {
-            const date = new Date(data.publishDate.replace(/-/g, '\/')); // More robust date parsing
+        if (datePlaceholder) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            datePlaceholder.textContent = date.toLocaleDateString('en-US', options).toUpperCase();
+            // Keep the masthead date in sync with the real current date.
+            const today = new Date();
+            datePlaceholder.textContent = today.toLocaleDateString('en-US', options).toUpperCase();
         }
  
         // Populate Dynamic Sections from the database
         renderSection('essentials', data.essentials, 'Five essentials');
         renderSection('imports', data.imports, 'The Imports');
+        renderImportMap(data.importMap);
         renderSection('deliveries', data.deliveries, 'Next Deliveries');
         renderSection('cannoli', data.cannoli, 'The Cannoli');
         renderSection('coffee', data.coffee, 'Coffee Review');
+    }
+
+    // Render the imports world map and drop any pins the admin placed.
+    function renderImportMap(importMap) {
+        const wrapper = document.querySelector('#imports .map-pin-wrapper');
+        const mapContainer = document.querySelector('#imports .map-container');
+        if (!wrapper || !mapContainer) return;
+
+        const imageSrc = importMap && importMap.image;
+        if (!imageSrc) {
+            // No custom map provided: leave the default image in place, no pins.
+            return;
+        }
+
+        mapContainer.style.display = 'block';
+        wrapper.innerHTML = `<img src="${imageSrc}" alt="World map of imports" class="map-image">`;
+        (importMap.pins || []).forEach(pin => {
+            const pinEl = document.createElement('div');
+            pinEl.className = 'map-pin';
+            pinEl.style.left = `${Number(pin.x)}%`;
+            pinEl.style.top = `${Number(pin.y)}%`;
+            pinEl.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"></path><circle cx="12" cy="9" r="2.5" fill="#ffffff"></circle></svg>
+                <span class="pin-label"></span>`;
+            pinEl.querySelector('.pin-label').textContent = pin.label || '';
+            wrapper.appendChild(pinEl);
+        });
     }
  
     function renderSection(type, items, defaultTitle) {
@@ -98,9 +143,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleEl = section.querySelector('.section-title');
         if (titleEl) titleEl.textContent = defaultTitle;
  
-        items.forEach(item => {
+        items.forEach((item, index) => {
             const itemEl = document.createElement('div');
             itemEl.className = 'essential-item';
+            const postId = `${type}-${index}`;
+            itemEl.dataset.postId = postId;
             
             // Create inner HTML, converting newlines in content to <br> tags
             let innerHTML = `
@@ -116,18 +163,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (imageContainer) {
                         imageContainer.innerHTML = `<img src="${item.image}" alt="${item.title}" class="cannoli-image">`;
                     }
-                } else if (type === 'imports') {
-                     const mapContainer = document.querySelector('#imports .map-container');
-                     if(mapContainer) mapContainer.innerHTML = `<img src="${item.image}" alt="World map of imports" class="map-image">`;
                 }
                 else {
                     innerHTML += `<img src="${item.image}" alt="${item.title}" style="width:100%; height:auto; margin-top:1rem; border:1px solid var(--color-border);">`;
                 }
             }
+
+            // Like bar for magazine items
+            innerHTML += `
+                <div class="item-actions" data-post-id="${postId}">
+                    <button class="post-like-btn" data-post-id="${postId}" aria-label="Like">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <span class="post-like-count">0</span>
+                    </button>
+                </div>`;
             
             itemEl.innerHTML = innerHTML;
             container.appendChild(itemEl);
         });
+        // Let the likes engine hydrate any new buttons.
+        document.dispatchEvent(new CustomEvent('magazine-section-rendered'));
     }
  
     // --- INITIAL PAGE LOAD ---
@@ -470,23 +525,34 @@ document.addEventListener('DOMContentLoaded', () => {
     if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', () => { closeModal(signInModal); openModal(joinModal); });
     if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', () => { closeModal(joinModal); openModal(signInModal); });
  
-    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null) {
+    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, postId = null) {
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
+        if (postId) post.dataset.postId = postId;
         const avatarContent = avatarSrc.startsWith('https') ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>` : `<div class="post-avatar ${avatarSrc}"></div>`;
         const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
         const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
         const headerHTML = !isThread ? `<div class="post-header"><span class="post-author-name">${authorName}</span></div>` : '';
-        post.innerHTML = `${isThread ? avatarPlaceholder : avatarContent}<div class="post-content">${headerHTML}<div class="post-body">${content}</div>${imageHTML}</div>`;
+        // Only top-level posts get a like bar and comment thread; continuation threads do not.
+        const actionsHTML = (!isThread && postId)
+            ? `<div class="post-actions" data-post-id="${postId}">
+                   <button class="post-like-btn" data-post-id="${postId}" aria-label="Like">
+                       <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                       <span class="post-like-count">0</span>
+                   </button>
+               </div>
+               <div class="post-comments" data-post-id="${postId}"></div>`
+            : '';
+        post.innerHTML = `${isThread ? avatarPlaceholder : avatarContent}<div class="post-content">${headerHTML}<div class="post-body">${content}</div>${imageHTML}${actionsHTML}</div>`;
         return post;
     }
- 
+
     function generateSocialFeed() {
         if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
         socialFeedView.innerHTML = '';
         const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
         const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
-        const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null) => {
+        const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null, idPrefix = '') => {
             pageContentWrapper.querySelectorAll(selector).forEach((item, index) => {
                 const title = item.querySelector('.item-title')?.innerText.replace(/^\d+\.\s*/, '') || '';
                 const description = item.querySelector('.item-description')?.innerText || '';
@@ -496,26 +562,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const postAuthorName = titlePrefix.replace('#', index + 1);
                 const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
                 const imageForPost = (index === 0) ? sectionImageSrc : null;
-                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost));
+                const postId = `${idPrefix}-${index}`;
+                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost, postId));
                 paragraphs.forEach(para => socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true)));
             });
         };
         const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
         const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
-        const harrysNoteBody = pageContentWrapper.querySelector('.welcome-sidebar .article-body-wrapper p')?.innerText || '';
+        const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body p')?.innerText || '';
         const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
-        socialFeedView.appendChild(createSocialPost('The News Haul', haulAvatar, welcomeContent));
-        if (harrysNoteBody) socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`));
-        const importMapSrc = pageContentWrapper.querySelector('#imports .map-image')?.src || null;
+        socialFeedView.appendChild(createSocialPost("Harry's Haul", haulAvatar, welcomeContent, false, null, 'welcome-0'));
+        if (harrysNoteBody) socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`, false, null, 'harrysnote-0'));
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
-        processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential');
-        processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', importMapSrc);
-        processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery');
-        processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc);
-        processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee');
+        // The import map is intentionally NOT rendered in the social feed.
+        processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential', null, 'essential');
+        processSectionItems('#imports .essential-item', 'Import', 'post-avatar--import', null, 'import');
+        processSectionItems('#deliveries .essential-item', 'Next Delivery', 'post-avatar--delivery', null, 'delivery');
+        processSectionItems('#cannoli .essential-item', 'The Cannoli', 'post-avatar--cannoli', cannoliImgSrc, 'cannoli');
+        processSectionItems('#coffee .essential-item', 'Coffee Review', 'post-avatar--coffee', null, 'coffee');
         isSocialFeedGenerated = true;
+        // Let commenting.js / likes hydrate the freshly-built posts.
+        document.dispatchEvent(new CustomEvent('social-feed-generated'));
     }
-    
+
     function applyLayoutPreference(layout) {
         if (layoutToggleContainer) {
             layoutToggleContainer.querySelector('.active')?.classList.remove('active');
@@ -777,4 +846,97 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stickyNextBtn) stickyNextBtn.addEventListener('click', () => { if (stickyEmailInput && stickyEmailInput.checkValidity()) { if (stickyStep1) stickyStep1.classList.add('hidden'); if (stickyStep2) stickyStep2.classList.remove('hidden'); } });
         if (stickyForm) stickyForm.addEventListener('submit', (e) => { e.preventDefault(); signUp(stickyEmailInput.value, document.getElementById('sticky-password').value, document.getElementById('sticky-name').value, true); });
     }
+
+    // =========================================================================
+    // LIKES
+    // Each post (magazine item or social post) has a stable postId. Likes are
+    // stored at: likes/{newsletterId}__{postId} with { count, users: [uid...] }.
+    // A logged-in user can like once; pressing again unlikes and decrements.
+    // Counts update live for everyone via onSnapshot.
+    // =========================================================================
+    const likeUnsubscribers = new Map();
+
+    function likeDocRef(postId) {
+        const nId = window.currentNewsletterId || 'default';
+        // Slashes aren't allowed in doc IDs; postIds are safe but guard anyway.
+        const safeId = `${nId}__${postId}`.replace(/\//g, '_');
+        return doc(db, 'likes', safeId);
+    }
+
+    function paintLikeButton(postId, count, likedByMe) {
+        document.querySelectorAll(`.post-like-btn[data-post-id="${postId}"]`).forEach(btn => {
+            const countEl = btn.querySelector('.post-like-count');
+            if (countEl) countEl.textContent = count;
+            btn.classList.toggle('liked', !!likedByMe);
+        });
+    }
+
+    function subscribeLikes(postId) {
+        if (likeUnsubscribers.has(postId)) return; // already watching
+        const unsub = onSnapshot(likeDocRef(postId), (snap) => {
+            const data = snap.exists() ? snap.data() : { count: 0, users: [] };
+            const uid = auth.currentUser ? auth.currentUser.uid : null;
+            const likedByMe = uid ? (data.users || []).includes(uid) : false;
+            paintLikeButton(postId, data.count || 0, likedByMe);
+        }, (err) => console.error('Likes listener error:', err));
+        likeUnsubscribers.set(postId, unsub);
+    }
+
+    function hydrateLikeButtons() {
+        document.querySelectorAll('.post-like-btn[data-post-id]').forEach(btn => {
+            subscribeLikes(btn.dataset.postId);
+        });
+    }
+
+    async function toggleLike(postId) {
+        const user = auth.currentUser;
+        if (!user) {
+            showToast('Please sign in to like posts.', 'info');
+            openModal(signInModal);
+            return;
+        }
+        const ref = likeDocRef(postId);
+        try {
+            const snap = await getDoc(ref);
+            const data = snap.exists() ? snap.data() : { count: 0, users: [] };
+            const alreadyLiked = (data.users || []).includes(user.uid);
+            if (!snap.exists()) {
+                await setDoc(ref, {
+                    count: 1,
+                    users: [user.uid],
+                    newsletterId: window.currentNewsletterId || 'default',
+                    postId
+                });
+            } else if (alreadyLiked) {
+                await updateDoc(ref, { count: increment(-1), users: arrayRemove(user.uid) });
+            } else {
+                await updateDoc(ref, { count: increment(1), users: arrayUnion(user.uid) });
+            }
+        } catch (err) {
+            console.error('Error toggling like:', err);
+            showToast('Could not update like. Please try again.', 'error');
+        }
+    }
+
+    // One delegated click handler covers magazine items and social posts.
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.post-like-btn');
+        if (!btn) return;
+        e.preventDefault();
+        toggleLike(btn.dataset.postId);
+    });
+
+    // Hydrate whenever new likeable content appears.
+    document.addEventListener('newsletter-loaded', hydrateLikeButtons);
+    document.addEventListener('magazine-section-rendered', hydrateLikeButtons);
+    document.addEventListener('social-feed-generated', hydrateLikeButtons);
+    // Re-evaluate "liked by me" styling when auth state changes.
+    onAuthStateChanged(auth, () => {
+        // Re-trigger the listeners' paint by re-reading current snapshots.
+        likeUnsubscribers.forEach((unsub, postId) => {
+            unsub();
+            likeUnsubscribers.delete(postId);
+            subscribeLikes(postId);
+        });
+    });
 });
