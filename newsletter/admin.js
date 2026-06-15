@@ -164,19 +164,31 @@ document.addEventListener('DOMContentLoaded', () => {
             progWrap.style.display = 'block';
             statusEl.textContent = 'Uploading…';
 
+            // Watchdog: if no progress event arrives within 15s, something is
+            // wrong at the network/CORS/bucket level rather than just "slow".
+            let sawProgress = false;
+            const watchdog = setTimeout(() => {
+                if (!sawProgress) {
+                    statusEl.textContent = 'Upload not starting — check the Storage bucket name and Storage rules, then retry.';
+                }
+            }, 15000);
+
             task.on('state_changed',
                 (snap) => {
+                    sawProgress = true;
                     const pct = snap.totalBytes ? (snap.bytesTransferred / snap.totalBytes) * 100 : 0;
                     progBar.style.width = `${pct.toFixed(0)}%`;
                     statusEl.textContent = `Uploading… ${pct.toFixed(0)}%`;
                 },
                 (err) => {
-                    console.error('Video upload failed:', err);
-                    statusEl.textContent = 'Upload failed: ' + err.message;
+                    clearTimeout(watchdog);
+                    console.error('Video upload failed:', err.code, err.message);
+                    statusEl.textContent = `Upload failed (${err.code || 'error'}): ${err.message}`;
                     if (publishBtn) publishBtn.disabled = false;
                     progWrap.style.display = 'none';
                 },
                 async () => {
+                    clearTimeout(watchdog);
                     try {
                         const url = await getDownloadURL(task.snapshot.ref);
                         hiddenUrl.value = url;
