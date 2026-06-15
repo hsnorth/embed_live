@@ -2607,8 +2607,12 @@ html {
 .item-actions,
 .post-actions {
     margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
-.post-like-btn {
+.post-like-btn,
+.post-comment-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -2622,10 +2626,13 @@ html {
     color: var(--color-text);
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
-.post-like-btn svg {
+.post-like-btn svg,
+.post-comment-btn svg {
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     transition: fill 0.15s ease, stroke 0.15s ease;
 }
 .post-like-btn:hover {
@@ -2640,12 +2647,24 @@ html {
     fill: #e74c3c;
     stroke: #e74c3c;
 }
-.post-like-count {
+.post-comment-btn:hover {
+    border-color: var(--color-text);
+}
+/* Open state: filled, so it's obvious the thread is showing */
+.post-comment-btn[aria-expanded="true"] {
+    background: var(--color-text);
+    color: var(--color-background);
+    border-color: var(--color-text);
+}
+.post-like-count,
+.post-comment-count {
     font-variant-numeric: tabular-nums;
 }
 
 /* --- Post comment threads (magazine items + social posts) --- */
-.post-comments:empty {
+/* Threads are collapsed via the [hidden] attribute until the comment
+   button is clicked. */
+.post-comments[hidden] {
     display: none;
 }
 .comment-thread {
@@ -2654,12 +2673,10 @@ html {
     padding-top: 0.75rem;
     font-family: var(--font-sans);
 }
-.comment-thread-head {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.comment-empty {
+    font-size: 0.85rem;
     color: #888;
+    font-style: italic;
     margin-bottom: 0.6rem;
 }
 .thread-comment {
