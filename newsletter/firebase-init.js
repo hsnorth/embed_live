@@ -8,7 +8,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyBgCds3FfTRZtZaAQ0Ej6hfgPPMqeRy54s",
     authDomain: "newsletter-496de.firebaseapp.com",
     projectId: "newsletter-496de",
-    storageBucket: "newsletter-496de.appspot.com",
+    storageBucket: "newsletter-496de.firebasestorage.app",
     messagingSenderId: "524546319756",
     appId: "1:524546319756:web:947abcff220aec51aa22a9",
     measurementId: "G-B8LSKDYS99"
