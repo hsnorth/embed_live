@@ -134,18 +134,12 @@
     </header>
 
     <div class="live-ticker-container">
-        <a href="audio.html" class="live-ticker-bar" target="_blank" rel="noopener noreferrer">
+        <a href="#welcome-video-anchor" class="live-ticker-bar" id="watch-ticker">
             <div class="ticker-static-section">
                 <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                 </svg>
-                <span class="ticker-title">Listen</span>
-                <div class="sound-bar-animation">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+                <span class="ticker-title">Watch</span>
             </div>
             <span class="ticker-separator">|</span>
             <div class="headlines-container">
@@ -161,8 +155,6 @@
             <article class="main-article">
                 <div class="welcome-grid">
                     <div class="welcome-main-content">
-                        <span class="eyebrow"></span>
-                        <h2 class="article-title"></h2>
                         <div class="harrys-note-top">
                             <div class="eyebrow-container">
                                 <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134" alt="Harry's Icon" class="harry-icon">
@@ -175,6 +167,7 @@
                     </div>
         
                     <div class="welcome-sidebar">
+                        <span id="welcome-video-anchor" style="position:relative; top:-90px;"></span>
                         <div class="welcome-video-wrapper" id="welcome-video-wrapper" style="display: none;">
                             <video id="welcome-video" class="welcome-video" controls playsinline preload="metadata"></video>
                         </div>
@@ -197,10 +190,8 @@
 
         <section id="imports" class="content-section">
             <h2 class="section-title">The Imports</h2>
-            <div class="map-container">
-                <div class="map-pin-wrapper">
-                    <img src="https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2FThe%20Gazette%20(1).png?alt=media&token=da84367b-9a7b-4614-952c-a352cbfc577e" alt="World map of imports from The Gazette" class="map-image">
-                </div>
+            <div class="map-container" style="display:none;">
+                <div class="map-pin-wrapper"></div>
             </div>
             <div class="essentials-container"></div>
         </section>
