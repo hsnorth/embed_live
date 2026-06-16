@@ -112,12 +112,17 @@
                         <hr class="divider">
 
                         <h3>Imports Map</h3>
-                        <div class="form-group"><label for="import-map-image">Map Image URL (optional)</label><input type="url" id="import-map-image" class="form-input-admin" placeholder="https://.../map.png"></div>
-                        <p style="font-family: var(--font-sans); font-size: 0.85rem; color: #555; margin: 0;">Paste a map image URL above, then click on the preview to drop pins. Click a pin to remove it.</p>
-                        <div id="map-editor-wrapper" style="position: relative; display: none; max-width: 600px; margin-top: 0.5rem; border: 1px solid var(--color-border);">
-                            <img id="map-editor-image" src="" alt="Map preview" style="width: 100%; display: block; cursor: crosshair;">
+                        <div class="form-group">
+                            <label for="map-image-file">Map Image (optional)</label>
+                            <input type="file" id="map-image-file" class="form-input-admin" accept="image/*">
+                            <div id="map-upload-status" style="font-family: var(--font-sans); font-size: 0.85rem; color: #555; margin-top: 0.4rem;"></div>
+                            <div id="map-upload-progress-wrap" style="display:none; height: 6px; background:#eee; border-radius:3px; overflow:hidden; margin-top:0.4rem;">
+                                <div id="map-upload-progress-bar" style="height:100%; width:0%; background: var(--color-text); transition: width 0.15s ease;"></div>
+                            </div>
+                            <img id="map-upload-preview" style="display:none; width:100%; max-width:500px; margin-top:0.6rem; border:1px solid var(--color-border);" alt="Map preview">
+                            <button type="button" id="map-remove-btn" class="btn-secondary-admin" style="display:none; margin-top:0.5rem;">Remove map</button>
+                            <input type="hidden" id="import-map-image" value="">
                         </div>
-                        <div id="map-pins-list" style="margin-top: 0.5rem;"></div>
                         
                         <hr class="divider">
                         
