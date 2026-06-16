@@ -113,6 +113,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initializeMapEditor();
         initializeVideoUploader();
+
+        // Pre-fill the form with the original homepage content as Issue #9999.
+        document.getElementById('load-9999-btn')?.addEventListener('click', prefillIssue9999);
+    }
+
+    // The content that used to be hardcoded on the homepage, as structured data.
+    const ISSUE_9999 = {
+        issueNumber: 9999,
+        publishDate: new Date().toISOString().split('T')[0],
+        mainTitle: '5-3-2-1 newsletter: What mattered most this week in Montreal',
+        mainSummary: "This is the primary summary of the week's newsletter, giving readers an overview of the most essential stories and what they can expect from the full haul. It's designed to be engaging and draw the reader in.",
+        harrysNote: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings.",
+        essentials: [
+            { title: '1. BLAH BLAH BLAH', content: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings as a cast of competitive coalition partners and critics from...\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus." },
+            { title: '2. A Global Stance', content: "Britain, Canada and Australia confirmed on Sunday that they now formally recognize Palestinian statehood, piling pressure on Israel to ease the humanitarian crisis in Gaza and putting three major American allies at odds with the Trump administration. The widely expected announcements came on the eve of the annual gathering of the United Nations General Assembly in New York. France and Portugal have also pledged to vote for recognition of Palestinian statehood at the U.N. this week, joining some 150 members of the body who have already done so." },
+            { title: '3. A Durable Tote Bag', content: 'Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in.' },
+            { title: '4. Quality Sunglasses', content: 'Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis.' },
+            { title: '5. A Classic Watch', content: 'Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui.' }
+        ],
+        imports: [
+            { title: 'Artisanal Ceramics', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.' },
+            { title: 'Leather Notebook', content: 'Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna.' },
+            { title: 'Minimalist Desk Lamp', content: 'Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in.' }
+        ],
+        deliveries: [
+            { title: 'A Weatherproof Trench Coat', content: "Arriving just in time for the shifting seasons, this classic trench is cut from water-repellent Italian cotton. A perfect transitional piece for city life, it\u2019s tailored for a clean silhouette that works over a suit or a simple sweater." },
+            { title: 'Portuguese Stoneware', content: 'Hand-finished in a family-run studio in the Algarve, our new collection of stoneware brings a rustic yet refined touch to the table. Each piece is unique, featuring a reactive glaze that creates subtle variations in colour.' },
+            { title: 'The Perfect Carry-on', content: 'Engineered in Germany, this lightweight polycarbonate carry-on is designed for the modern traveler. It features a silent wheel system, an integrated power bank, and a thoughtfully organized interior to make your journey seamless.' }
+        ],
+        cannoli: [
+            { title: 'Sweet, Sweet Perfection', content: 'Originating from Sicily, cannoli are a staple of Italian pastry, cherished for their crispy fried shell and creamy ricotta filling. Traditionally, the shells are made from flour, sugar, and a hint of cocoa, then fried until golden and crisp. The filling is a delectable blend of fresh ricotta cheese, often sweetened with sugar, flavored with vanilla or citrus zest, and sometimes studded with chocolate chips or candied fruit.' },
+            { title: 'A Delicate Art', content: 'Crafting the perfect cannoli is an art form. The dough must be worked to the right consistency to achieve that signature crunch, and the ricotta filling requires careful preparation to be smooth and light. Each cannolo is typically filled just before serving to prevent the shell from becoming soggy, ensuring every bite delivers a delightful contrast between the delicate, crisp exterior and the rich, sweet interior.' }
+        ],
+        coffee: [
+            { title: 'In the Plateau, Caf\u00e9 Tere', content: "Nestled on a quiet corner in the Plateau, Caf\u00e9 Tere offers a respite from the city's bustle. The aroma of freshly ground Ethiopian beans hits you the moment you walk in. We tried their signature single-origin pour-over, a brew that\u2019s both bright and complex with notes of citrus and jasmine. The baristas are knowledgeable and passionate, happy to guide you through their curated selection of beans. It's a small space with limited seating, but for a truly exceptional cup of coffee, it's well worth the visit." }
+        ]
+    };
+
+    function prefillIssue9999() {
+        const d = ISSUE_9999;
+        document.getElementById('issue-number').value = d.issueNumber;
+        document.getElementById('publish-date').value = d.publishDate;
+        document.getElementById('main-title').value = d.mainTitle;
+        document.getElementById('main-summary').value = d.mainSummary;
+        document.getElementById('harrys-note').value = d.harrysNote;
+
+        // Clear existing dynamic items, then add each section's items.
+        clearAllDynamicItems();
+        d.essentials.forEach(item => addDynamicItem('essential', item));
+        d.imports.forEach(item => addDynamicItem('import', item));
+        d.deliveries.forEach(item => addDynamicItem('delivery', item));
+        d.cannoli.forEach(item => addDynamicItem('cannoli', item));
+        d.coffee.forEach(item => addDynamicItem('coffee', item));
+
+        // Tick "Set as Latest Haul" so publishing makes it the homepage version.
+        const latest = document.getElementById('set-latest-haul');
+        if (latest) latest.checked = true;
+
+        const status = document.getElementById('prefill-status');
+        if (status) status.textContent = 'Loaded Issue #9999 content. Review, then click Publish Newsletter.';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // --- Vertical video upload to Firebase Storage ---
@@ -285,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { image, pins: mapPins.slice() };
     }
  
-    function addDynamicItem(type) {
+    function addDynamicItem(type, data = null) {
         const containers = {
             'essential': 'essentials-container',
             'import': 'imports-container',
@@ -314,6 +375,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="url" class="form-input-admin item-image-input">
             </div>
         `;
+        if (data) {
+            itemEl.querySelector('.item-title-input').value = data.title || '';
+            itemEl.querySelector('.item-content-input').value = data.content || '';
+            itemEl.querySelector('.item-image-input').value = data.image || '';
+        }
         container.appendChild(itemEl);
     }
  
