@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Populate Header/Welcome
         document.getElementById('eyebrow-placeholder').textContent = `Issue #${data.issueNumber}`;
         document.getElementById('main-title-placeholder').textContent = data.mainTitle;
-        document.getElementById('main-summary-placeholder').textContent = data.mainSummary;
         const harrysNoteEl = document.getElementById('harrys-note-placeholder');
         if (harrysNoteEl) harrysNoteEl.textContent = data.harrysNote;
 
@@ -106,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return post;
         };
 
-        socialFeedView.appendChild(createSocialPost("Harry's Haul", `<p><strong>${data.mainTitle}</strong></p><p>${data.mainSummary}</p>`));
+        socialFeedView.appendChild(createSocialPost("Harry's Haul", `<p><strong>${data.mainTitle}</strong></p>`));
         if (data.harrysNote) {
             socialFeedView.appendChild(createSocialPost('Harry North', `<p>${data.harrysNote}</p>`));
         }
