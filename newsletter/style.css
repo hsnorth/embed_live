@@ -481,12 +481,12 @@ body.logged-in #mobile-account-trigger {
     height: 30px;
 }
 
-/* Default scrolled state: show text logo (for magazine layout) */
+/* Scrolled state: show the bag icon for both magazine and social layouts */
 .header-top-bar.scrolled .scrolled-logo-link {
-    display: block;
+    display: none;
 }
 .header-top-bar.scrolled .scrolled-icon-link {
-    display: none;
+    display: block;
 }
 
 /* --- Social Layout Navbar Override (All Screens) --- */
@@ -559,6 +559,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    flex-wrap: nowrap;
     background-color: var(--color-accent);
     color: var(--color-text);
     text-decoration: none;
@@ -582,6 +583,8 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
         flex-wrap: nowrap;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
     }
     .ticker-static-section {
         flex-shrink: 0;
@@ -1890,163 +1893,89 @@ body.commenting-disabled #comment-view {
     line-height: 1.7;
     color: #333;
 }
-/* --- SOCIAL FEED LAYOUT STYLES --- */
+/* --- SOCIAL FEED LAYOUT (polished) --- */
 #social-feed-view {
-    display: none; /* Hidden by default */
-    max-width: 750px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-    border: 1px solid var(--color-border);
-    border-top: none; /* Clean look */
-}
-
-body.social-layout #page-content-wrapper {
-    display: none; /* Hide original content when social layout is active */
-}
-
-body.social-layout #social-feed-view {
-    display: block; /* Show social feed when active */
-}
-
-.social-post {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    border-top: 1px solid var(--color-border);
-}
-
-#social-feed-view .social-post:first-child {
-    border-top: none; /* No border on the very first post */
-}
-
-.post-avatar, .post-avatar-placeholder {
-    width: 48px;
-    height: 48px;
-    position: relative; /* Crucial for positioning the thread line */
-}
-
-.post-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* Placeholder Avatars with colors */
-.post-avatar--essential { background-color: #f2e8cf; }
-.post-avatar--import { background-color: #d4e7f5; }
-.post-avatar--delivery { background-color: #e1d4f5; }
-.post-avatar--cannoli { background-color: #f5d4d4; }
-.post-avatar--coffee { background-color: #d4f5e7; }
-
-/* --- SOCIAL FEED LAYOUT STYLES --- */
-#social-feed-view {
-    display: none; /* Hidden by default */
-    max-width: 750px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-    border: 1px solid var(--color-border);
-    border-top: none; /* Clean look */
-}
-
-body.social-layout #page-content-wrapper {
-    display: none; /* Hide original content when social layout is active */
-}
-
-body.social-layout #social-feed-view {
-    display: block; /* Show social feed when active */
-}
-
-.social-post {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    border-top: 1px solid var(--color-border);
-}
-
-#social-feed-view .social-post:first-child {
-    border-top: none; /* No border on the very first post */
-}
-
-.post-avatar, .post-avatar-placeholder {
-    width: 48px;
-    height: 48px;
-    position: relative; /* Crucial for positioning the thread line */
-}
-
-.post-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* Placeholder Avatars with colors */
-.post-avatar--essential { background-color: #f2e8cf; }
-.post-avatar--import { background-color: #d4e7f5; }
-.post-avatar--delivery { background-color: #e1d4f5; }
-.post-avatar--cannoli { background-color: #f5d4d4; }
-.post-avatar--coffee { background-color: #d4f5e7; }
-
-/* --- SOCIAL FEED LAYOUT STYLES (FINAL) --- */
-#social-feed-view {
-    display: none; /* Hidden by default */
-    max-width: 750px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-    border: 1px solid var(--color-border);
-    border-top: none;
-}
-
-body.social-layout #page-content-wrapper {
     display: none;
+    max-width: 600px;
+    margin: 2.5rem auto;
+    padding: 0;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
 }
+body.social-layout #page-content-wrapper { display: none; }
+body.social-layout #social-feed-view { display: block; }
 
-body.social-layout #social-feed-view {
-    display: block;
+.social-feed-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.9rem 1.25rem;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: saturate(180%) blur(8px);
+    -webkit-backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid var(--color-border);
 }
+.social-feed-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+}
+.social-feed-sub {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: #8a949c;
+}
+/* The header sits first, so the first real post shouldn't double its border. */
+.social-feed-header + .social-post { border-top: none; }
 
 .social-post {
     display: grid;
-    grid-template-columns: 60px 1fr;
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: 52px 1fr;
+    gap: 0.85rem;
+    padding: 1.1rem 1.25rem;
     border-top: 1px solid var(--color-border);
+    transition: background 0.15s ease;
 }
-
+.social-post:not(.post-thread):hover {
+    background: #fafbfc;
+}
 #social-feed-view .social-post:first-child {
     border-top: none;
 }
 
 .post-avatar, .post-avatar-placeholder {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     position: relative;
+    border-radius: 50%;
 }
-
+.post-avatar {
+    overflow: hidden;
+    background: #eef1f3;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
 .post-avatar img {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
 }
-
 .post-avatar--essential { background-color: #f2e8cf; }
 .post-avatar--import { background-color: #d4e7f5; }
 .post-avatar--delivery { background-color: #e1d4f5; }
 .post-avatar--cannoli { background-color: #f5d4d4; }
 .post-avatar--coffee { background-color: #d4f5e7; }
 
-/* --- THREADING REFINEMENT (SIMPLIFIED) --- */
-
-/* For threaded replies, simply remove their top border to tuck them under the parent post. */
-.post-thread {
-    border-top: none;
-}
-
-/* The ONLY line is now drawn by the threaded reply itself. This one element does all the work. */
+/* Threaded replies: tuck under parent, draw the connector line. */
+.post-thread { border-top: none; padding-top: 0; }
 .post-thread .post-avatar-placeholder::before {
     content: '';
     position: absolute;
@@ -2054,51 +1983,57 @@ body.social-layout #social-feed-view {
     background-color: var(--color-border);
     left: 50%;
     transform: translateX(-50%);
-
-    /* This is the magic: */
-    /* 1. Start the line far above the element, ensuring it connects visually to the avatar above. */
-    top: -7rem; 
-    /* 2. End the line exactly halfway down its own container, as you requested. */
+    top: -1.1rem;
     bottom: 50%;
 }
 
 .post-header {
-    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 0.15rem;
+    line-height: 1.2;
+    flex-wrap: wrap;
 }
-
 .post-author-name {
     font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 800;
+    font-size: 0.98rem;
+    color: var(--color-text);
+}
+.post-verified {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.post-handle {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: #8a949c;
+    font-weight: 400;
 }
 
 .post-body p {
     font-family: var(--font-serif);
-    font-size: 1.1rem;
-    line-height: 1.7;
+    font-size: 1.06rem;
+    line-height: 1.6;
     margin: 0 0 0.5rem 0;
-    color: var(--color-text);
+    color: #15181b;
 }
-
-.post-body p:last-child {
-    margin-bottom: 0;
-}
-
+.post-body p:last-child { margin-bottom: 0; }
 .post-body strong {
     font-family: var(--font-serif);
     font-weight: 700;
 }
 
-.post-image {
-    margin-top: 1rem;
-}
-
+.post-image { margin-top: 0.85rem; }
 .post-image img {
     width: 100%;
     height: auto;
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid var(--color-border);
+    display: block;
 }
+
 /* --- Feature Disabled State in Control Centre --- */
 .newsletter-toggle.feature-disabled {
     opacity: 0.5;
@@ -2332,10 +2267,6 @@ body.social-layout #social-feed-view {
 /* Better content separation in social feed */
 .post-content {
     min-width: 0; /* Prevents text overflow */
-}
-
-.post-header {
-    margin-bottom: 0.5rem;
 }
 
 /* Ensure images don't break layout */
@@ -2664,6 +2595,38 @@ html {
 .post-like-count,
 .post-comment-count {
     font-variant-numeric: tabular-nums;
+}
+
+/* Social feed: lighter, borderless actions for a native feel */
+.social-post .post-actions {
+    margin-top: 0.7rem;
+    gap: 1.5rem;
+}
+.social-post .post-like-btn,
+.social-post .post-comment-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 4px 6px 4px 4px;
+    margin-left: -4px;
+    color: #5a6570;
+    font-size: 0.85rem;
+}
+.social-post .post-like-btn:hover {
+    color: #e0245e;
+    background: rgba(224,36,94,0.08);
+}
+.social-post .post-comment-btn:hover {
+    color: #1d9bf0;
+    background: rgba(29,155,240,0.08);
+    border-color: transparent;
+}
+.social-post .post-like-btn.liked {
+    color: #e0245e;
+}
+.social-post .post-comment-btn[aria-expanded="true"] {
+    background: rgba(29,155,240,0.12);
+    color: #1d9bf0;
+    border-color: transparent;
 }
 
 /* --- Post comment threads (magazine items + social posts) --- */
