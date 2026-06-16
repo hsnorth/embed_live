@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
  
     // Dynamic section handlers
-    let mapPins = []; // [{ x, y, label }] in percentage coordinates
 
     function initializeFormHandlers() {
         const addButtons = document.querySelectorAll('.add-item-btn');
@@ -186,15 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Media: load existing URLs back into the uploader UIs.
         if (videoUploader) videoUploader.setExisting(n.welcomeVideo || '');
         if (audioUploader) audioUploader.setExisting(n.audioUrl || '');
-
-        // Map + pins.
-        const mapInput = document.getElementById('import-map-image');
-        mapPins = (n.importMap && Array.isArray(n.importMap.pins)) ? n.importMap.pins.slice() : [];
-        if (mapInput) {
-            mapInput.value = (n.importMap && n.importMap.image) || '';
-            mapInput.dispatchEvent(new Event('input'));
-        }
-        renderMapPins();
+        if (mapUploader) mapUploader.setExisting((n.importMap && n.importMap.image) || '');
 
         // Dynamic sections.
         clearAllDynamicItems();
@@ -433,65 +424,23 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    let mapUploader = null;
+
     function initializeMapEditor() {
-        const imageInput = document.getElementById('import-map-image');
-        const wrapper = document.getElementById('map-editor-wrapper');
-        const img = document.getElementById('map-editor-image');
-        if (!imageInput || !wrapper || !img) return;
-
-        const showMap = (url) => {
-            if (url) {
-                img.src = url;
-                wrapper.style.display = 'block';
-            } else {
-                wrapper.style.display = 'none';
-            }
-        };
-
-        imageInput.addEventListener('input', () => showMap(imageInput.value.trim()));
-
-        // Drop a pin where the admin clicks (coordinates stored as % of image).
-        img.addEventListener('click', (e) => {
-            const rect = img.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            const label = prompt('Pin label (optional):', '') || '';
-            mapPins.push({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, label });
-            renderMapPins();
+        // The imports map is now just an uploaded image (no pins).
+        mapUploader = initializeMediaUploader({
+            fileInputId: 'map-image-file', hiddenUrlId: 'import-map-image',
+            statusId: 'map-upload-status', progWrapId: 'map-upload-progress-wrap',
+            progBarId: 'map-upload-progress-bar', previewId: 'map-upload-preview',
+            removeBtnId: 'map-remove-btn', folder: 'importMaps',
+            mediaPrefix: 'image/', label: 'Map', article: 'an', maxMb: 25
         });
-    }
-
-    function renderMapPins() {
-        const wrapper = document.getElementById('map-editor-wrapper');
-        const list = document.getElementById('map-pins-list');
-        if (!wrapper || !list) return;
-
-        // Remove existing visual pins (keep the <img>).
-        wrapper.querySelectorAll('.admin-map-pin').forEach(p => p.remove());
-
-        mapPins.forEach((pin, i) => {
-            const pinEl = document.createElement('div');
-            pinEl.className = 'admin-map-pin';
-            pinEl.title = 'Click to remove';
-            pinEl.style.cssText = `position:absolute; left:${pin.x}%; top:${pin.y}%; transform:translate(-50%,-100%); width:22px; height:22px; cursor:pointer;`;
-            pinEl.innerHTML = `<svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#fff" stroke-width="1.2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"></path><circle cx="12" cy="9" r="2.5" fill="#fff"></circle></svg>`;
-            pinEl.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mapPins.splice(i, 1);
-                renderMapPins();
-            });
-            wrapper.appendChild(pinEl);
-        });
-
-        list.innerHTML = mapPins.length
-            ? mapPins.map((p, i) => `<span style="display:inline-block; font-family:var(--font-sans); font-size:0.8rem; background:#f0f0f0; padding:2px 8px; margin:2px; border-radius:3px;">${i + 1}. ${p.label || '(no label)'}</span>`).join('')
-            : '';
     }
 
     function getImportMap() {
         const image = document.getElementById('import-map-image')?.value.trim() || '';
         if (!image) return null;
-        return { image, pins: mapPins.slice() };
+        return { image };
     }
  
     function addDynamicItem(type, data = null) {
@@ -638,10 +587,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetNewsletterForm() {
         document.getElementById('newsletter-form').reset();
         clearAllDynamicItems();
-        mapPins = [];
-        renderMapPins();
-        document.getElementById('map-editor-wrapper').style.display = 'none';
         if (window.__resetVideoUploader) window.__resetVideoUploader();
+        if (mapUploader) mapUploader.reset();
         document.getElementById('editing-newsletter-id').value = '';
         document.getElementById('editing-indicator').style.display = 'none';
         const status = document.getElementById('prefill-status');
