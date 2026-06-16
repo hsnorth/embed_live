@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (querySnapshot.empty) {
                 console.log("No 'latest haul' found in Firestore.");
+                document.body.classList.remove('content-loading');
                 const contentWrapper = document.getElementById('page-content-wrapper');
                 if(contentWrapper) {
                    contentWrapper.innerHTML = '<h1 style="text-align: center; padding: 4rem 1rem; font-family: var(--font-serif);">No newsletter has been published yet. Check back soon!</h1>';
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = newsletterDoc.data();
             window.currentNewsletterId = newsletterDoc.id;
             renderMagazineView(data);
+            document.body.classList.remove('content-loading');
             // Hydrate like counts now that the magazine is built.
             document.dispatchEvent(new CustomEvent('newsletter-loaded'));
  
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
  
         } catch (error)            {
             console.error("Error loading latest haul:", error);
+            document.body.classList.remove('content-loading');
             const contentWrapper = document.getElementById('page-content-wrapper');
             if(contentWrapper) {
                 contentWrapper.innerHTML = '<h1 style="text-align: center; padding: 4rem 1rem;">Could not load content. Please try again later.</h1>';
