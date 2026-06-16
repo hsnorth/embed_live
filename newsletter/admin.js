@@ -11,8 +11,10 @@ import {
     getDoc, 
     setDoc, 
     updateDoc,
+    deleteDoc,
     query, 
     where,
+    orderBy,
     serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 import {
@@ -116,6 +118,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Pre-fill the form with the original homepage content as Issue #9999.
         document.getElementById('load-9999-btn')?.addEventListener('click', prefillIssue9999);
+
+        // Drafts + newsletter list management.
+        document.getElementById('save-draft-btn')?.addEventListener('click', saveDraft);
+        document.getElementById('refresh-newsletters-btn')?.addEventListener('click', loadNewslettersList);
+        document.getElementById('new-newsletter-btn')?.addEventListener('click', resetNewsletterForm);
+        loadNewslettersList();
+    }
+
+    // --- Newsletters list (drafts + published), editable/reloadable ---
+    async function loadNewslettersList() {
+        const listEl = document.getElementById('newsletters-list');
+        if (!listEl) return;
+        listEl.textContent = 'Loading…';
+        try {
+            const snap = await getDocs(collection(db, 'newsletters'));
+            const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // Sort: latest first, then published before drafts, then newest date.
+            items.sort((a, b) => {
+                if (!!b.isLatest - !!a.isLatest) return (!!b.isLatest) - (!!a.isLatest);
+                const sa = a.status === 'published' ? 0 : 1;
+                const sb = b.status === 'published' ? 0 : 1;
+                if (sa !== sb) return sa - sb;
+                return String(b.publishDate || '').localeCompare(String(a.publishDate || ''));
+            });
+
+            if (items.length === 0) { listEl.textContent = 'No newsletters yet.'; return; }
+
+            listEl.innerHTML = '';
+            items.forEach(n => {
+                const row = document.createElement('div');
+                row.className = 'newsletter-row';
+                const isDraft = n.status !== 'published';
+                const badge = n.isLatest
+                    ? '<span class="nl-badge nl-latest">LATEST</span>'
+                    : (isDraft ? '<span class="nl-badge nl-draft">DRAFT</span>' : '<span class="nl-badge nl-published">PUBLISHED</span>');
+                row.innerHTML = `
+                    <div class="nl-info">
+                        ${badge}
+                        <span class="nl-title">Issue #${n.issueNumber ?? '?'} — ${n.mainTitle || '(untitled)'}</span>
+                        <span class="nl-date">${n.publishDate || ''}</span>
+                    </div>
+                    <div class="nl-actions">
+                        <button type="button" class="btn-secondary-admin nl-edit">Edit</button>
+                        ${(!n.isLatest && !isDraft) ? '<button type="button" class="btn-secondary-admin nl-latest-btn">Set Latest</button>' : ''}
+                        <button type="button" class="btn-secondary-admin nl-delete" style="color:#e74c3c;">Delete</button>
+                    </div>`;
+                row.querySelector('.nl-edit').addEventListener('click', () => loadNewsletterIntoForm(n));
+                row.querySelector('.nl-delete').addEventListener('click', () => deleteNewsletter(n));
+                row.querySelector('.nl-latest-btn')?.addEventListener('click', () => setAsLatest(n));
+                listEl.appendChild(row);
+            });
+        } catch (e) {
+            console.error('Could not load newsletters:', e);
+            listEl.textContent = 'Could not load newsletters.';
+        }
+    }
+
+    function loadNewsletterIntoForm(n) {
+        document.getElementById('editing-newsletter-id').value = n.id;
+        document.getElementById('issue-number').value = n.issueNumber ?? '';
+        document.getElementById('publish-date').value = n.publishDate || '';
+        document.getElementById('main-title').value = n.mainTitle || '';
+        document.getElementById('harrys-note').value = n.harrysNote || '';
+        document.getElementById('set-latest-haul').checked = !!n.isLatest;
+
+        // Media: load existing URLs back into the uploader UIs.
+        if (videoUploader) videoUploader.setExisting(n.welcomeVideo || '');
+        if (audioUploader) audioUploader.setExisting(n.audioUrl || '');
+
+        // Map + pins.
+        const mapInput = document.getElementById('import-map-image');
+        mapPins = (n.importMap && Array.isArray(n.importMap.pins)) ? n.importMap.pins.slice() : [];
+        if (mapInput) {
+            mapInput.value = (n.importMap && n.importMap.image) || '';
+            mapInput.dispatchEvent(new Event('input'));
+        }
+        renderMapPins();
+
+        // Dynamic sections.
+        clearAllDynamicItems();
+        (n.essentials || []).forEach(item => addDynamicItem('essential', item));
+        (n.imports || []).forEach(item => addDynamicItem('import', item));
+        (n.deliveries || []).forEach(item => addDynamicItem('delivery', item));
+        (n.cannoli || []).forEach(item => addDynamicItem('cannoli', item));
+        (n.coffee || []).forEach(item => addDynamicItem('coffee', item));
+
+        const indicator = document.getElementById('editing-indicator');
+        document.getElementById('editing-issue').textContent = `Issue #${n.issueNumber ?? '?'} (${n.status || 'draft'})`;
+        indicator.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function setAsLatest(n) {
+        try {
+            const q = query(collection(db, 'newsletters'), where('isLatest', '==', true));
+            const snap = await getDocs(q);
+            for (const d of snap.docs) {
+                if (d.id !== n.id) await updateDoc(doc(db, 'newsletters', d.id), { isLatest: false });
+            }
+            await updateDoc(doc(db, 'newsletters', n.id), { isLatest: true });
+            loadNewslettersList();
+        } catch (e) {
+            console.error('Could not set latest:', e);
+            alert('Could not set as latest: ' + e.message);
+        }
+    }
+
+    async function deleteNewsletter(n) {
+        if (!confirm(`Delete Issue #${n.issueNumber ?? '?'}? This cannot be undone.`)) return;
+        try {
+            await deleteDoc(doc(db, 'newsletters', n.id));
+            // If we were editing it, clear the form.
+            if (document.getElementById('editing-newsletter-id').value === n.id) resetNewsletterForm();
+            loadNewslettersList();
+        } catch (e) {
+            console.error('Could not delete newsletter:', e);
+            alert('Could not delete: ' + e.message);
+        }
     }
 
     // The content that used to be hardcoded on the homepage, as structured data.
@@ -123,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
         issueNumber: 9999,
         publishDate: new Date().toISOString().split('T')[0],
         mainTitle: '5-3-2-1 newsletter: What mattered most this week in Montreal',
-        mainSummary: "This is the primary summary of the week's newsletter, giving readers an overview of the most essential stories and what they can expect from the full haul. It's designed to be engaging and draw the reader in.",
         harrysNote: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings.",
         essentials: [
             { title: '1. BLAH BLAH BLAH', content: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings as a cast of competitive coalition partners and critics from...\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus." },
@@ -156,7 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('issue-number').value = d.issueNumber;
         document.getElementById('publish-date').value = d.publishDate;
         document.getElementById('main-title').value = d.mainTitle;
-        document.getElementById('main-summary').value = d.mainSummary;
         document.getElementById('harrys-note').value = d.harrysNote;
 
         // Clear existing dynamic items, then add each section's items.
@@ -176,17 +294,17 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- Vertical video upload to Firebase Storage ---
-    function initializeVideoUploader() {
-        const fileInput = document.getElementById('welcome-video-file');
-        const hiddenUrl = document.getElementById('welcome-video');
-        const statusEl = document.getElementById('video-upload-status');
-        const progWrap = document.getElementById('video-upload-progress-wrap');
-        const progBar = document.getElementById('video-upload-progress-bar');
-        const preview = document.getElementById('video-upload-preview');
-        const removeBtn = document.getElementById('video-remove-btn');
+    // --- Generic media (video/audio) upload to Firebase Storage ---
+    function initializeMediaUploader(cfg) {
+        const fileInput = document.getElementById(cfg.fileInputId);
+        const hiddenUrl = document.getElementById(cfg.hiddenUrlId);
+        const statusEl = document.getElementById(cfg.statusId);
+        const progWrap = document.getElementById(cfg.progWrapId);
+        const progBar = document.getElementById(cfg.progBarId);
+        const preview = document.getElementById(cfg.previewId);
+        const removeBtn = document.getElementById(cfg.removeBtnId);
         const publishBtn = document.querySelector('#newsletter-form .btn-primary-admin');
-        if (!fileInput || !hiddenUrl) return;
+        if (!fileInput || !hiddenUrl) return null;
 
         const resetUI = () => {
             statusEl.textContent = '';
@@ -197,36 +315,42 @@ document.addEventListener('DOMContentLoaded', () => {
             removeBtn.style.display = 'none';
         };
 
+        // Programmatically load an already-uploaded URL into the UI (used when
+        // editing/reloading a saved newsletter).
+        const setExisting = (url) => {
+            if (!url) { resetUI(); hiddenUrl.value = ''; return; }
+            hiddenUrl.value = url;
+            statusEl.textContent = `${cfg.label} loaded ✓`;
+            preview.src = url;
+            preview.style.display = 'block';
+            removeBtn.style.display = 'inline-block';
+        };
+
         fileInput.addEventListener('change', () => {
             const file = fileInput.files && fileInput.files[0];
             if (!file) return;
 
-            // Basic guardrails.
-            if (!file.type.startsWith('video/')) {
-                statusEl.textContent = 'Please choose a video file.';
+            if (!file.type.startsWith(cfg.mediaPrefix)) {
+                statusEl.textContent = `Please choose ${cfg.article} ${cfg.label.toLowerCase()} file.`;
                 fileInput.value = '';
                 return;
             }
-            const MAX_MB = 200;
+            const MAX_MB = cfg.maxMb;
             if (file.size > MAX_MB * 1024 * 1024) {
                 statusEl.textContent = `That file is ${(file.size / 1048576).toFixed(0)}MB — please keep it under ${MAX_MB}MB.`;
                 fileInput.value = '';
                 return;
             }
 
-            // Unique path so re-uploads don't clobber each other.
             const safeName = file.name.replace(/[^\w.\-]/g, '_');
-            const path = `welcomeVideos/${Date.now()}_${safeName}`;
+            const path = `${cfg.folder}/${Date.now()}_${safeName}`;
             const fileRef = storageRef(storage, path);
             const task = uploadBytesResumable(fileRef, file, { contentType: file.type });
 
-            // Disable publishing while the upload is in flight.
             if (publishBtn) publishBtn.disabled = true;
             progWrap.style.display = 'block';
             statusEl.textContent = 'Uploading…';
 
-            // Watchdog: if no progress event arrives within 15s, something is
-            // wrong at the network/CORS/bucket level rather than just "slow".
             let sawProgress = false;
             const watchdog = setTimeout(() => {
                 if (!sawProgress) {
@@ -243,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 (err) => {
                     clearTimeout(watchdog);
-                    console.error('Video upload failed:', err.code, err.message);
+                    console.error(`${cfg.label} upload failed:`, err.code, err.message);
                     statusEl.textContent = `Upload failed (${err.code || 'error'}): ${err.message}`;
                     if (publishBtn) publishBtn.disabled = false;
                     progWrap.style.display = 'none';
@@ -254,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const url = await getDownloadURL(task.snapshot.ref);
                         hiddenUrl.value = url;
                         hiddenUrl.dataset.storagePath = path;
-                        statusEl.textContent = 'Video uploaded ✓';
+                        statusEl.textContent = `${cfg.label} uploaded ✓`;
                         preview.src = url;
                         preview.style.display = 'block';
                         removeBtn.style.display = 'inline-block';
@@ -270,10 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         removeBtn.addEventListener('click', async () => {
             const path = hiddenUrl.dataset.storagePath;
-            // Best-effort delete from Storage; clear the field regardless.
             if (path) {
                 try { await deleteObject(storageRef(storage, path)); }
-                catch (e) { console.warn('Could not delete uploaded video (continuing):', e); }
+                catch (e) { console.warn(`Could not delete uploaded ${cfg.label} (continuing):`, e); }
             }
             hiddenUrl.value = '';
             delete hiddenUrl.dataset.storagePath;
@@ -281,8 +404,33 @@ document.addEventListener('DOMContentLoaded', () => {
             resetUI();
         });
 
-        // Expose for publish() to reset after a successful publish.
-        window.__resetVideoUploader = () => { hiddenUrl.value = ''; delete hiddenUrl.dataset.storagePath; if (fileInput) fileInput.value = ''; resetUI(); };
+        const reset = () => { hiddenUrl.value = ''; delete hiddenUrl.dataset.storagePath; if (fileInput) fileInput.value = ''; resetUI(); };
+        return { reset, setExisting };
+    }
+
+    let videoUploader = null;
+    let audioUploader = null;
+
+    function initializeVideoUploader() {
+        videoUploader = initializeMediaUploader({
+            fileInputId: 'welcome-video-file', hiddenUrlId: 'welcome-video',
+            statusId: 'video-upload-status', progWrapId: 'video-upload-progress-wrap',
+            progBarId: 'video-upload-progress-bar', previewId: 'video-upload-preview',
+            removeBtnId: 'video-remove-btn', folder: 'welcomeVideos',
+            mediaPrefix: 'video/', label: 'Video', article: 'a', maxMb: 200
+        });
+        audioUploader = initializeMediaUploader({
+            fileInputId: 'audio-file', hiddenUrlId: 'newsletter-audio',
+            statusId: 'audio-upload-status', progWrapId: 'audio-upload-progress-wrap',
+            progBarId: 'audio-upload-progress-bar', previewId: 'audio-upload-preview',
+            removeBtnId: 'audio-remove-btn', folder: 'newsletterAudio',
+            mediaPrefix: 'audio/', label: 'Audio', article: 'an', maxMb: 100
+        });
+        // Reset both after publishing.
+        window.__resetVideoUploader = () => {
+            if (videoUploader) videoUploader.reset();
+            if (audioUploader) audioUploader.reset();
+        };
     }
 
     function initializeMapEditor() {
@@ -395,56 +543,109 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
  
-    async function publishNewsletter(e) {
-        e.preventDefault();
-        
-        const newsletterData = {
+    function gatherNewsletterData(status) {
+        return {
             issueNumber: parseInt(document.getElementById('issue-number').value),
             publishDate: document.getElementById('publish-date').value,
             mainTitle: document.getElementById('main-title').value,
-            mainSummary: document.getElementById('main-summary').value,
             harrysNote: document.getElementById('harrys-note').value,
             welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
+            audioUrl: document.getElementById('newsletter-audio').value.trim() || null,
             importMap: getImportMap(),
             essentials: collectDynamicItems('#essentials-container'),
             imports: collectDynamicItems('#imports-container'),
             deliveries: collectDynamicItems('#deliveries-container'),
             cannoli: collectDynamicItems('#cannoli-container'),
             coffee: collectDynamicItems('#coffee-container'),
-            isLatest: document.getElementById('set-latest-haul').checked,
-            createdAt: serverTimestamp()
+            status: status, // 'draft' | 'published'
+            // Only a published newsletter can be the latest haul.
+            isLatest: status === 'published' ? document.getElementById('set-latest-haul').checked : false,
+            updatedAt: serverTimestamp()
         };
- 
+    }
+
+    async function publishNewsletter(e) {
+        e.preventDefault();
+        await saveNewsletter('published');
+    }
+
+    async function saveDraft() {
+        await saveNewsletter('draft');
+    }
+
+    async function saveNewsletter(status) {
+        // Drafts can skip the browser's required-field validation; published
+        // newsletters must pass it.
+        const form = document.getElementById('newsletter-form');
+        if (status === 'published' && form && !form.reportValidity()) return;
+
+        const newsletterData = gatherNewsletterData(status);
+        if (!newsletterData.issueNumber) {
+            alert('Please enter an issue number.');
+            return;
+        }
+        const editingId = document.getElementById('editing-newsletter-id').value;
+
         try {
-            // If this is set as latest, unset all others
+            // If this is set as latest, unset all others first.
             if (newsletterData.isLatest) {
                 const q = query(collection(db, 'newsletters'), where('isLatest', '==', true));
                 const snapshot = await getDocs(q);
                 for (const docSnapshot of snapshot.docs) {
-                    await updateDoc(doc(db, 'newsletters', docSnapshot.id), { isLatest: false });
+                    if (docSnapshot.id !== editingId) {
+                        await updateDoc(doc(db, 'newsletters', docSnapshot.id), { isLatest: false });
+                    }
                 }
             }
- 
-            // Save newsletter
-            const docRef = await addDoc(collection(db, 'newsletters'), newsletterData);
-            
-            // Send emails if needed
-            if (confirm('Newsletter published! Send email to subscribers?')) {
-                await sendNewsletterEmails(newsletterData, docRef.id);
+
+            let docId = editingId;
+            if (editingId) {
+                // Update existing newsletter in place.
+                await updateDoc(doc(db, 'newsletters', editingId), newsletterData);
+            } else {
+                newsletterData.createdAt = serverTimestamp();
+                const docRef = await addDoc(collection(db, 'newsletters'), newsletterData);
+                docId = docRef.id;
             }
-            
-            alert('Newsletter published successfully!');
-            document.getElementById('newsletter-form').reset();
-            clearAllDynamicItems();
-            mapPins = [];
-            renderMapPins();
-            document.getElementById('map-editor-wrapper').style.display = 'none';
-            if (window.__resetVideoUploader) window.__resetVideoUploader();
-            
+
+            // Mirror audio into the 'episodes' collection (published only).
+            if (status === 'published' && newsletterData.audioUrl) {
+                try {
+                    await addDoc(collection(db, 'episodes'), {
+                        title: newsletterData.mainTitle || `Issue #${newsletterData.issueNumber}`,
+                        date: newsletterData.publishDate,
+                        description: newsletterData.harrysNote || '',
+                        audioUrl: newsletterData.audioUrl,
+                        issueNumber: newsletterData.issueNumber,
+                        newsletterId: docId,
+                        createdAt: serverTimestamp()
+                    });
+                } catch (epErr) {
+                    console.error('Saved, but creating the audio episode failed:', epErr);
+                }
+            }
+
+            alert(status === 'published' ? 'Newsletter published successfully!' : 'Draft saved.');
+            resetNewsletterForm();
+            loadNewslettersList();
+
         } catch (error) {
-            console.error('Error publishing:', error);
-            alert('Error publishing newsletter: ' + error.message);
+            console.error('Error saving newsletter:', error);
+            alert('Error saving newsletter: ' + error.message);
         }
+    }
+
+    function resetNewsletterForm() {
+        document.getElementById('newsletter-form').reset();
+        clearAllDynamicItems();
+        mapPins = [];
+        renderMapPins();
+        document.getElementById('map-editor-wrapper').style.display = 'none';
+        if (window.__resetVideoUploader) window.__resetVideoUploader();
+        document.getElementById('editing-newsletter-id').value = '';
+        document.getElementById('editing-indicator').style.display = 'none';
+        const status = document.getElementById('prefill-status');
+        if (status) status.textContent = '';
     }
  
     async function sendNewsletterEmails(newsletterData, newsletterId) {
@@ -548,7 +749,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="content">
             <div class="eyebrow">THIS WEEK</div>
             <h2 class="title">${data.mainTitle}</h2>
-            <p class="summary">${data.mainSummary}</p>
             
             ${data.harrysNote ? `
             <div style="background-color: #fefae0; padding: 20px; margin: 30px 0; border-left: 3px solid #ffde3f;">
@@ -607,9 +807,9 @@ document.addEventListener('DOMContentLoaded', () => {
             issueNumber: parseInt(document.getElementById('issue-number').value) || 1,
             publishDate: document.getElementById('publish-date').value || new Date().toISOString().split('T')[0],
             mainTitle: document.getElementById('main-title').value || 'Preview Title',
-            mainSummary: document.getElementById('main-summary').value || 'Preview summary...',
             harrysNote: document.getElementById('harrys-note').value || '',
             welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
+            audioUrl: document.getElementById('newsletter-audio').value.trim() || null,
             importMap: getImportMap(),
             essentials: collectDynamicItems('#essentials-container'),
             imports: collectDynamicItems('#imports-container'),
