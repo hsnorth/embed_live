@@ -130,12 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
  
     function renderMagazineView(data) {
-        // Populate Header/Welcome section
-        const welcomeEyebrow = document.querySelector('.welcome-main-content .eyebrow');
-        if (welcomeEyebrow) welcomeEyebrow.textContent = `Issue #${data.issueNumber}`;
-        
-        const welcomeTitle = document.querySelector('.welcome-main-content .article-title');
-        if (welcomeTitle) welcomeTitle.textContent = data.mainTitle;
+        // Populate Header/Welcome section.
+        // The issue eyebrow + title are no longer shown on the magazine page,
+        // but we keep the title for the social feed and Past Issues panel.
+        window.currentIssueTitle = data.mainTitle || '';
  
         const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
@@ -170,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSection('coffee', data.coffee, 'Coffee Review');
     }
 
-    // Render the imports world map and drop any pins the admin placed.
+    // Render the imports map: just the admin-uploaded image (no pins).
     function renderImportMap(importMap) {
         const wrapper = document.querySelector('#imports .map-pin-wrapper');
         const mapContainer = document.querySelector('#imports .map-container');
@@ -178,23 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const imageSrc = importMap && importMap.image;
         if (!imageSrc) {
-            // No custom map provided: leave the default image in place, no pins.
+            // No map for this issue — hide the map area entirely.
+            mapContainer.style.display = 'none';
+            wrapper.innerHTML = '';
             return;
         }
 
         mapContainer.style.display = 'block';
-        wrapper.innerHTML = `<img src="${imageSrc}" alt="World map of imports" class="map-image">`;
-        (importMap.pins || []).forEach(pin => {
-            const pinEl = document.createElement('div');
-            pinEl.className = 'map-pin';
-            pinEl.style.left = `${Number(pin.x)}%`;
-            pinEl.style.top = `${Number(pin.y)}%`;
-            pinEl.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="#e74c3c" stroke="#ffffff" stroke-width="1.2"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"></path><circle cx="12" cy="9" r="2.5" fill="#ffffff"></circle></svg>
-                <span class="pin-label"></span>`;
-            pinEl.querySelector('.pin-label').textContent = pin.label || '';
-            wrapper.appendChild(pinEl);
-        });
+        wrapper.innerHTML = `<img src="${imageSrc}" alt="Imports map" class="map-image">`;
     }
  
     function renderSection(type, items, defaultTitle) {
@@ -609,7 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const avatarContent = avatarSrc.startsWith('https') ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>` : `<div class="post-avatar ${avatarSrc}"></div>`;
         const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
         const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
-        const headerHTML = !isThread ? `<div class="post-header"><span class="post-author-name">${authorName}</span></div>` : '';
+        const verified = `<svg class="post-verified" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.5l.9-2.9-.9-2.9 2.4-1.8 1-2.8 3-.1L12 2z" fill="#1d9bf0"/><path d="M10.6 14.6l-2.3-2.3 1.1-1.1 1.2 1.2 3.3-3.3 1.1 1.1-4.4 4.4z" fill="#fff"/></svg>`;
+        const handle = '@' + authorName.toLowerCase().replace(/[^a-z0-9]+/g, '');
+        const headerHTML = !isThread
+            ? `<div class="post-header">
+                   <span class="post-author-name">${authorName}</span>
+                   ${verified}
+                   <span class="post-handle">${handle}</span>
+               </div>`
+            : '';
         // Only top-level posts get a like bar and comment thread; continuation threads do not.
         const actionsHTML = (!isThread && postId)
             ? `<div class="post-actions" data-post-id="${postId}">
@@ -631,6 +628,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateSocialFeed() {
         if (isSocialFeedGenerated || !pageContentWrapper || !socialFeedView) return;
         socialFeedView.innerHTML = '';
+        // A sticky feed header for a polished, app-like top.
+        const feedHeader = document.createElement('div');
+        feedHeader.className = 'social-feed-header';
+        feedHeader.innerHTML = `<span class="social-feed-title">Harry's Haul</span><span class="social-feed-sub">The feed</span>`;
+        socialFeedView.appendChild(feedHeader);
         const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
         const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
         const processSectionItems = (selector, titlePrefix, avatarClass, sectionImageSrc = null, idPrefix = '') => {
@@ -648,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 paragraphs.forEach(para => socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true)));
             });
         };
-        const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
+        const welcomeTitle = window.currentIssueTitle || pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
         const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body p')?.innerText || '';
         const welcomeContent = `<p><strong>${welcomeTitle}</strong></p>`;
         socialFeedView.appendChild(createSocialPost("Harry's Haul", haulAvatar, welcomeContent, false, null, 'welcome-0'));
@@ -911,8 +913,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (howItWorksPanelOverlay) howItWorksPanelOverlay.addEventListener('click', (e) => { if (e.target === howItWorksPanelOverlay) closeHowItWorksPanel(); });
     if (howItWorksPanelCloseBtn) howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
 
-    // Past Issues archive panel
-    const pastIssuesTriggers = document.querySelectorAll('.js-past-issues-trigger');
+    // "Watch" ticker → smooth-scroll to the homepage video and start it.
+    const watchTicker = document.getElementById('watch-ticker');
+    if (watchTicker) {
+        watchTicker.addEventListener('click', (e) => {
+            e.preventDefault();
+            const anchor = document.getElementById('welcome-video-anchor');
+            const video = document.getElementById('welcome-video');
+            const wrapper = document.getElementById('welcome-video-wrapper');
+            if (wrapper && wrapper.style.display !== 'none' && anchor) {
+                anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (video) { try { video.play(); } catch (_) {} }
+            } else {
+                // No video this issue — just go to the top of the content.
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
     const pastIssuesOverlay = document.getElementById('past-issues-panel-overlay');
     const pastIssuesCloseBtn = document.getElementById('past-issues-panel-close-btn');
     function openPastIssuesPanel() {
