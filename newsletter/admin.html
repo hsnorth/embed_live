@@ -36,6 +36,15 @@
         .remove-item-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; }
         .publish-actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 1rem; }
         .checkbox-group { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-sans); }
+        .newsletter-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 1px solid var(--color-border); padding: 0.75rem 1rem; flex-wrap: wrap; }
+        .nl-info { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; font-family: var(--font-sans); }
+        .nl-title { font-weight: 700; font-size: 0.95rem; }
+        .nl-date { color: #888; font-size: 0.85rem; }
+        .nl-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .nl-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 3px; }
+        .nl-latest { background: #1a7f37; color: #fff; }
+        .nl-published { background: #ddd; color: #333; }
+        .nl-draft { background: #f0d98a; color: #5a4a00; }
     </style>
 </head>
 <body>
@@ -75,7 +84,6 @@
                         <div class="form-group"><label for="issue-number">Issue Number</label><input type="number" id="issue-number" class="form-input-admin" required></div>
                         <div class="form-group"><label for="publish-date">Publish Date</label><input type="date" id="publish-date" class="form-input-admin" required></div>
                         <div class="form-group"><label for="main-title">Main Title</label><input type="text" id="main-title" class="form-input-admin" placeholder="What mattered most this week..." required></div>
-                        <div class="form-group"><label for="main-summary">Main Summary Paragraph</label><textarea id="main-summary" class="form-input-admin" required></textarea></div>
                         <div class="form-group"><label for="harrys-note">Harry's Note</label><textarea id="harrys-note" class="form-input-admin"></textarea></div>
                         <div class="form-group">
                             <label for="welcome-video-file">Welcome Vertical Video (.mp4, optional)</label>
@@ -87,6 +95,18 @@
                             <video id="video-upload-preview" style="display:none; width:180px; margin-top:0.6rem; border:1px solid var(--color-border);" controls playsinline preload="metadata"></video>
                             <button type="button" id="video-remove-btn" class="btn-secondary-admin" style="display:none; margin-top:0.5rem;">Remove video</button>
                             <input type="hidden" id="welcome-video" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="audio-file">Audio Version (.mp3/.m4a, optional)</label>
+                            <input type="file" id="audio-file" class="form-input-admin" accept="audio/mpeg,audio/mp4,audio/x-m4a,audio/wav,audio/webm">
+                            <div id="audio-upload-status" style="font-family: var(--font-sans); font-size: 0.85rem; color: #555; margin-top: 0.4rem;"></div>
+                            <div id="audio-upload-progress-wrap" style="display:none; height: 6px; background:#eee; border-radius:3px; overflow:hidden; margin-top:0.4rem;">
+                                <div id="audio-upload-progress-bar" style="height:100%; width:0%; background: var(--color-text); transition: width 0.15s ease;"></div>
+                            </div>
+                            <audio id="audio-upload-preview" style="display:none; width:100%; margin-top:0.6rem;" controls preload="metadata"></audio>
+                            <button type="button" id="audio-remove-btn" class="btn-secondary-admin" style="display:none; margin-top:0.5rem;">Remove audio</button>
+                            <input type="hidden" id="newsletter-audio" value="">
                         </div>
                         
                         <hr class="divider">
@@ -129,12 +149,28 @@
 
                         <div class="publish-actions">
                              <button type="submit" class="btn-primary-admin">Publish Newsletter</button>
+                             <button type="button" id="save-draft-btn" class="btn-secondary-admin">Save as Draft</button>
                              <div class="checkbox-group">
                                  <input type="checkbox" id="set-latest-haul" name="set-latest-haul">
                                  <label for="set-latest-haul">Set as Latest Haul on Homepage</label>
                              </div>
                         </div>
+                        <div id="editing-indicator" style="display:none; font-family:var(--font-sans); font-size:0.9rem; background:#fff7e0; border:1px solid #f0d98a; padding:0.6rem 0.9rem; margin-top:0.5rem;">
+                            Editing existing newsletter — <span id="editing-issue"></span>.
+                            <button type="button" id="new-newsletter-btn" class="btn-secondary-admin" style="margin-left:0.5rem;">Start a new one instead</button>
+                        </div>
+                        <input type="hidden" id="editing-newsletter-id" value="">
                     </form>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">
+                    <h2>Newsletters</h2>
+                    <button type="button" id="refresh-newsletters-btn" class="btn-secondary-admin">Refresh</button>
+                </div>
+                <div class="dashboard-card-content">
+                    <div id="newsletters-list" style="display:flex; flex-direction:column; gap:0.75rem;">Loading…</div>
                 </div>
             </div>
 
