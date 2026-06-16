@@ -10,6 +10,80 @@ window.auth = auth;
 document.addEventListener('DOMContentLoaded', () => {
  
     // --- DYNAMIC CONTENT LOADING (NEW) ---
+    // Render a specific newsletter document into the magazine view.
+    function renderIssue(docId, data) {
+        window.currentNewsletterId = docId;
+        renderMagazineView(data);
+        document.body.classList.remove('content-loading');
+        document.dispatchEvent(new CustomEvent('newsletter-loaded'));
+    }
+
+    // Load a specific past issue by its document ID (used by the archive panel).
+    async function loadIssueById(docId) {
+        try {
+            document.body.classList.add('content-loading');
+            const snap = await getDoc(doc(db, 'newsletters', docId));
+            if (snap.exists()) {
+                renderIssue(snap.id, snap.data());
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.body.classList.remove('content-loading');
+            }
+        } catch (e) {
+            console.error('Could not load issue:', e);
+            document.body.classList.remove('content-loading');
+        }
+    }
+    window.loadIssueById = loadIssueById;
+
+    // Populate the "Past Issues" archive panel with all published newsletters.
+    async function loadPastIssues() {
+        const listEl = document.getElementById('past-issues-list');
+        if (!listEl) return;
+        listEl.innerHTML = '<p style="font-family: var(--font-sans); color:#888;">Loading…</p>';
+        try {
+            const snap = await getDocs(collection(db, 'newsletters'));
+            // Treat legacy docs without a status field as published.
+            const issues = snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(n => n.status !== 'draft');
+            // Latest first, then newest publish date.
+            issues.sort((a, b) => {
+                if ((!!b.isLatest) - (!!a.isLatest)) return (!!b.isLatest) - (!!a.isLatest);
+                return String(b.publishDate || '').localeCompare(String(a.publishDate || ''));
+            });
+
+            if (issues.length === 0) {
+                listEl.innerHTML = '<p style="font-family: var(--font-sans); color:#888;">No issues published yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            issues.forEach(issue => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'past-issue-item' + (issue.isLatest ? ' is-latest' : '');
+                const dateStr = issue.publishDate
+                    ? new Date(String(issue.publishDate).replace(/-/g, '/')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : '';
+                item.innerHTML = `
+                    <span class="past-issue-meta">Issue #${issue.issueNumber ?? '?'}${issue.isLatest ? ' · Latest' : ''}</span>
+                    <span class="past-issue-title">${issue.mainTitle || '(untitled)'}</span>
+                    <span class="past-issue-date">${dateStr}</span>`;
+                item.addEventListener('click', () => {
+                    loadIssueById(issue.id);
+                    document.getElementById('past-issues-panel-overlay')?.classList.remove('is-open');
+                    document.body.classList.remove('no-scroll');
+                });
+                listEl.appendChild(item);
+            });
+        } catch (e) {
+            console.error('Could not load past issues:', e);
+            listEl.innerHTML = '<p style="font-family: var(--font-sans); color:#888;">Could not load issues.</p>';
+        }
+    }
+    window.loadPastIssues = loadPastIssues;
+
     async function loadLatestHaul() {
         try {
             // 1. Fetch Latest Newsletter from Firestore
@@ -29,12 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
  
             const newsletterDoc = querySnapshot.docs[0];
-            const data = newsletterDoc.data();
-            window.currentNewsletterId = newsletterDoc.id;
-            renderMagazineView(data);
-            document.body.classList.remove('content-loading');
-            // Hydrate like counts now that the magazine is built.
-            document.dispatchEvent(new CustomEvent('newsletter-loaded'));
+            renderIssue(newsletterDoc.id, newsletterDoc.data());
+ 
+            // Populate the archive panel in the background.
+            loadPastIssues();
  
             // 2. Fetch "How It Works" Content from Firestore
             const howItWorksDoc = await getDoc(doc(db, 'siteContent', 'howItWorks'));
@@ -64,9 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const welcomeTitle = document.querySelector('.welcome-main-content .article-title');
         if (welcomeTitle) welcomeTitle.textContent = data.mainTitle;
- 
-        const welcomeSummary = document.querySelector('.welcome-main-content .article-body-wrapper p');
-        if (welcomeSummary) welcomeSummary.textContent = data.mainSummary;
  
         const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
@@ -580,9 +649,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         const welcomeTitle = pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
-        const welcomeBody = pageContentWrapper.querySelector('.welcome-main-content .article-body-wrapper p')?.innerText || '';
         const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body p')?.innerText || '';
-        const welcomeContent = `<p><strong>${welcomeTitle}</strong></p><p>${welcomeBody}</p>`;
+        const welcomeContent = `<p><strong>${welcomeTitle}</strong></p>`;
         socialFeedView.appendChild(createSocialPost("Harry's Haul", haulAvatar, welcomeContent, false, null, 'welcome-0'));
         if (harrysNoteBody) socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`, false, null, 'harrysnote-0'));
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
@@ -842,6 +910,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (howItWorksPanelOverlay) howItWorksPanelOverlay.addEventListener('click', (e) => { if (e.target === howItWorksPanelOverlay) closeHowItWorksPanel(); });
     if (howItWorksPanelCloseBtn) howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
+
+    // Past Issues archive panel
+    const pastIssuesTriggers = document.querySelectorAll('.js-past-issues-trigger');
+    const pastIssuesOverlay = document.getElementById('past-issues-panel-overlay');
+    const pastIssuesCloseBtn = document.getElementById('past-issues-panel-close-btn');
+    function openPastIssuesPanel() {
+        if (pastIssuesOverlay) {
+            pastIssuesOverlay.classList.add('is-open');
+            document.body.classList.add('no-scroll');
+            loadPastIssues();
+        }
+    }
+    function closePastIssuesPanel() {
+        if (pastIssuesOverlay) { pastIssuesOverlay.classList.remove('is-open'); document.body.classList.remove('no-scroll'); }
+    }
+    pastIssuesTriggers.forEach(trigger => trigger.addEventListener('click', (e) => { e.preventDefault(); openPastIssuesPanel(); }));
+    if (pastIssuesOverlay) pastIssuesOverlay.addEventListener('click', (e) => { if (e.target === pastIssuesOverlay) closePastIssuesPanel(); });
+    if (pastIssuesCloseBtn) pastIssuesCloseBtn.addEventListener('click', closePastIssuesPanel);
  
     const menuToggle = document.querySelector('.menu-toggle');
     const mobileNav = document.querySelector('.mobile-nav');
