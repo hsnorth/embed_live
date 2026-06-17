@@ -327,43 +327,39 @@ body.logged-in #mobile-account-trigger {
     margin: 0;
     color: var(--color-text);
     line-height: 1;
-    white-space: nowrap;
     transition: font-size 0.3s ease-in-out;
     padding: 0 1rem;
-    /* The main word is centered in the column; script words are positioned
-       around it without shifting its center. */
-    position: relative;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+}
+.logo .logo-the {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    line-height: 1;
+    align-self: center;
+    margin-bottom: -0.1em;
 }
 .logo .logo-main {
     font-family: var(--font-serif);
     font-weight: 800;
-    font-size: clamp(3.5rem, 10vw, 5rem);
+    font-size: clamp(3rem, 9vw, 5rem);
     text-transform: uppercase;
     letter-spacing: -0.06em;
     line-height: 1;
-    display: inline-block;
+    white-space: nowrap;
 }
-.logo .logo-script {
+.logo .logo-suffix {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 700;
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    letter-spacing: -0.01em;
-    text-transform: none;
-    position: absolute;
-    top: -0.15em;            /* raised relative to NEWS HAUL */
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    line-height: 1;
+    margin-top: 0.1em;
     white-space: nowrap;
-}
-.logo .logo-the {
-    right: 100%;             /* sits just left of the main word */
-    margin-right: 0.25em;
-}
-.logo .logo-suffix {
-    left: 100%;              /* sits just right of the main word */
-    margin-left: 0.25em;
-    font-weight: 800;
 }
 .header-date {
     font-family: var(--font-sans);
@@ -1521,11 +1517,9 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     body.logged-in .header-top-bar { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
-    .logo { display: inline-flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0.15em 0.3em; }
-    .logo .logo-main { font-size: clamp(2.8rem, 12vw, 4rem); order: 2; }
-    .logo .logo-script { position: static; top: 0; font-size: clamp(1.1rem, 4.5vw, 1.6rem); transform: translateY(-0.4em); }
-    .logo .logo-the { order: 1; right: auto; margin-right: 0; }
-    .logo .logo-suffix { order: 3; left: auto; margin-left: 0; }
+    .logo .logo-main { font-size: clamp(2.6rem, 13vw, 4rem); }
+    .logo .logo-the,
+    .logo .logo-suffix { font-size: clamp(1.1rem, 5vw, 1.6rem); }
     
     .desktop-only {
         display: none;
@@ -2011,6 +2005,20 @@ body.social-layout #social-feed-view { display: block; }
 .post-avatar--delivery { background-color: #e1d4f5; }
 .post-avatar--cannoli { background-color: #f5d4d4; }
 .post-avatar--coffee { background-color: #d4f5e7; }
+
+/* Numbered colored avatars (essentials 1-5, imports 1-3, etc.) */
+.post-avatar--num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.post-avatar-num {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--color-text);
+    line-height: 1;
+}
 
 /* Threaded replies: tuck under parent, draw the connector line. */
 .post-thread { border-top: none; padding-top: 0; }
@@ -2533,10 +2541,12 @@ html {
     width: 100%;
     max-width: 300px;
     margin: 0 auto;
-    /* Yellow frame (same accent as the Watch bar) with a thick black underline */
+    /* Thin yellow frame around the sides/top, rounded, with a thick black
+       underline at the bottom (no yellow there). */
     background-color: var(--color-accent);
-    padding: 10px;
+    padding: 4px 4px 0;
     border-bottom: 8px solid var(--color-text);
+    border-radius: 12px 12px 0 0;
     box-sizing: border-box;
 }
 .welcome-video {
@@ -2547,6 +2557,7 @@ html {
     background: #000;
     display: block;
     margin: 0;
+    border-radius: 9px 9px 0 0;
 }
 /* When the sidebar only holds the (optional) video, drop its divider
    so an empty sidebar leaves no stray border. */
@@ -2918,7 +2929,19 @@ body.content-loading .welcome-grid::after {
     line-height: 1.15;
     letter-spacing: -0.02em;
     margin: 0 0 1.5rem 0;
+    padding-bottom: 1.25rem;
     color: var(--color-text);
+    position: relative;
+}
+/* A short, thick black rule from the left to separate it from Harry's Note */
+.welcome-mattered-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    height: 4px;
+    background-color: var(--color-text);
 }
 @media (max-width: 600px) {
     .welcome-mattered-title {
