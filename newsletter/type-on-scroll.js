@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuration for which sections get an animated subtitle
+    // Configuration for which sections get an animated subtitle.
+    // 'essentials' is intentionally omitted so "Five essentials" shows
+    // straight away with no typewriter intro.
     const sectionsToAnimate = [
-        { id: 'essentials', subtitle: 'What mattered this week in Montreal' },
         { id: 'imports', subtitle: 'Stories abroad that mattered here' },
         { id: 'deliveries', subtitle: "What are we monitoring next week?" },
         { id: 'cannoli', subtitle: 'The sweet treat' }
