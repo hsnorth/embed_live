@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // A sticky feed header for a polished, app-like top.
         const feedHeader = document.createElement('div');
         feedHeader.className = 'social-feed-header';
-        feedHeader.innerHTML = `<span class="social-feed-title">Harry's Haul</span><span class="social-feed-sub">The feed</span>`;
+        feedHeader.innerHTML = `<span class="social-feed-title">My feed</span>`;
         socialFeedView.appendChild(feedHeader);
         const haulAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fbag.png?alt=media&token=222e6f04-fefb-4091-8678-cbab7840ce7c';
         const harryAvatar = 'https://firebasestorage.googleapis.com/v0/b/newsletter-496de.firebasestorage.app/o/images%2Fharrygraphic2.png?alt=media&token=ebb5eaca-c15e-43eb-a546-4a692fc48134';
@@ -914,7 +914,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    function openHowItWorksPanel() { if (howItWorksPanelOverlay) { howItWorksPanelOverlay.classList.add('is-open'); document.body.classList.add('no-scroll'); } }
+    function closeMobileNavIfOpen() {
+        const mn = document.querySelector('.mobile-nav');
+        if (mn && mn.classList.contains('is-open')) {
+            mn.classList.remove('is-open');
+            document.body.classList.remove('no-scroll');
+        }
+    }
+
+    function openHowItWorksPanel() { closeMobileNavIfOpen(); if (howItWorksPanelOverlay) { howItWorksPanelOverlay.classList.add('is-open'); document.body.classList.add('no-scroll'); } }
     function closeHowItWorksPanel() { if (howItWorksPanelOverlay) { howItWorksPanelOverlay.classList.remove('is-open'); document.body.classList.remove('no-scroll'); } }
  
     if (howItWorksTriggers.length > 0) {
@@ -923,11 +931,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (howItWorksPanelOverlay) howItWorksPanelOverlay.addEventListener('click', (e) => { if (e.target === howItWorksPanelOverlay) closeHowItWorksPanel(); });
     if (howItWorksPanelCloseBtn) howItWorksPanelCloseBtn.addEventListener('click', closeHowItWorksPanel);
 
-    // "Watch" ticker → smooth-scroll to the homepage video and start it.
+    // "Watch" ticker → scroll to the video in the CURRENT layout and play it.
     const watchTicker = document.getElementById('watch-ticker');
     if (watchTicker) {
         watchTicker.addEventListener('click', (e) => {
             e.preventDefault();
+            const isSocial = document.body.classList.contains('social-layout');
+            if (isSocial) {
+                // Social feed: find Harry North's post video.
+                const socialVideo = document.querySelector('#social-feed-view .post-video-el');
+                if (socialVideo) {
+                    socialVideo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    try { socialVideo.play(); } catch (_) {}
+                } else {
+                    document.getElementById('social-feed-view')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return;
+            }
+            // Magazine: scroll to the welcome video.
             const anchor = document.getElementById('welcome-video-anchor');
             const video = document.getElementById('welcome-video');
             const wrapper = document.getElementById('welcome-video-wrapper');
@@ -935,7 +956,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 if (video) { try { video.play(); } catch (_) {} }
             } else {
-                // No video this issue — just go to the top of the content.
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
@@ -943,6 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pastIssuesOverlay = document.getElementById('past-issues-panel-overlay');
     const pastIssuesCloseBtn = document.getElementById('past-issues-panel-close-btn');
     function openPastIssuesPanel() {
+        closeMobileNavIfOpen();
         if (pastIssuesOverlay) {
             pastIssuesOverlay.classList.add('is-open');
             document.body.classList.add('no-scroll');
@@ -956,11 +977,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pastIssuesOverlay) pastIssuesOverlay.addEventListener('click', (e) => { if (e.target === pastIssuesOverlay) closePastIssuesPanel(); });
     if (pastIssuesCloseBtn) pastIssuesCloseBtn.addEventListener('click', closePastIssuesPanel);
  
-    const menuToggle = document.querySelector('.menu-toggle');
     const mobileNav = document.querySelector('.mobile-nav');
-    const closeMenuBtn = document.querySelector('.close-menu-btn');
-    function toggleMenu() { if (mobileNav) document.body.classList.toggle('no-scroll', mobileNav.classList.toggle('is-open')); }
-    if (menuToggle && closeMenuBtn) { menuToggle.addEventListener('click', toggleMenu); closeMenuBtn.addEventListener('click', toggleMenu); }
+    function setMenuOpen(open) {
+        if (!mobileNav) return;
+        mobileNav.classList.toggle('is-open', open);
+        document.body.classList.toggle('no-scroll', open);
+        mobileNav.setAttribute('aria-hidden', String(!open));
+    }
+    // Delegated so it works even if other init code above throws.
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.menu-toggle')) { e.preventDefault(); setMenuOpen(!mobileNav?.classList.contains('is-open')); return; }
+        if (e.target.closest('.close-menu-btn')) { e.preventDefault(); setMenuOpen(false); return; }
+        // Tapping a link inside the mobile nav closes it.
+        if (e.target.closest('.mobile-nav a')) { setMenuOpen(false); }
+    });
  
     function handleScrollLock() { if (isScrollLocked && window.scrollY > scrollLockPosition) { window.scrollTo(0, scrollLockPosition); } }
     if (stickyBanner) {
