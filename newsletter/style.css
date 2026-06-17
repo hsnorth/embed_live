@@ -557,9 +557,10 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
 
 .live-ticker-bar {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.75rem;
-    flex-wrap: nowrap;
     background-color: var(--color-accent);
     color: var(--color-text);
     text-decoration: none;
@@ -571,6 +572,8 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
 }
+.live-ticker-bar .ticker-static-section { flex: 0 0 auto; }
+.live-ticker-bar .headlines-container { flex: 1 1 0; min-width: 0; overflow: hidden; }
 @media (max-width: 500px) {
     .live-ticker-container {
         max-width: 100%;
@@ -2033,6 +2036,18 @@ body.social-layout #social-feed-view { display: block; }
     border: 1px solid var(--color-border);
     display: block;
 }
+.post-video { margin-top: 0.85rem; }
+.post-video-el {
+    width: 100%;
+    max-width: 320px;
+    max-height: 70vh;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: #000;
+    display: block;
+}
 
 /* --- Feature Disabled State in Control Centre --- */
 .newsletter-toggle.feature-disabled {
@@ -2386,26 +2401,31 @@ html {
     margin-bottom: 2.5rem;
 }
 
-/* Improved live ticker on small screens */
+/* Live ticker on small screens: keep Watch on the left, headlines sliding beside it */
 @media (max-width: 500px) {
     .live-ticker-bar {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
         gap: 0.5rem;
-        padding: 1rem;
+        padding: 0.7rem 1rem;
     }
-    
     .ticker-static-section {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        flex-shrink: 0;
+        justify-content: flex-start;
     }
-    
     .ticker-separator {
         display: none;
     }
-    
     .headlines-container {
-        width: 100%;
+        flex: 1 1 auto;
+        min-width: 0;
+        width: auto;
+        overflow: hidden;
+    }
+    .ticker-title {
+        font-size: 1rem;
     }
 }
 
@@ -2811,4 +2831,38 @@ body.content-loading .welcome-grid::after {
 .past-issue-date {
     font-size: 0.8rem;
     color: #888;
+}
+
+/* ============================================================
+   Larger, more readable text on small screens
+   ============================================================ */
+@media (max-width: 600px) {
+    .eyebrow {
+        font-size: 0.95rem;
+        letter-spacing: 1.2px;
+    }
+    .harrys-note-top .harrys-note-body p,
+    .article-body-wrapper p {
+        font-size: 1.18rem;
+        line-height: 1.65;
+    }
+    .essential-item .item-title {
+        font-size: 1.45rem;
+    }
+    .essential-item .item-description {
+        font-size: 1.18rem;
+        line-height: 1.7;
+    }
+    .section-title {
+        font-size: 1.9rem;
+    }
+    .post-body p {
+        font-size: 1.12rem;
+    }
+    .post-author-name {
+        font-size: 1.02rem;
+    }
+    .post-handle {
+        font-size: 0.95rem;
+    }
 }
