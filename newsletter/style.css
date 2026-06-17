@@ -330,10 +330,11 @@ body.logged-in #mobile-account-trigger {
     white-space: nowrap;
     transition: font-size 0.3s ease-in-out;
     padding: 0 1rem;
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.25em;
+    /* The main word is centered in the column; script words are positioned
+       around it without shifting its center. */
+    position: relative;
+    display: inline-block;
+    text-align: center;
 }
 .logo .logo-main {
     font-family: var(--font-serif);
@@ -342,6 +343,7 @@ body.logged-in #mobile-account-trigger {
     text-transform: uppercase;
     letter-spacing: -0.06em;
     line-height: 1;
+    display: inline-block;
 }
 .logo .logo-script {
     font-family: var(--font-serif);
@@ -350,8 +352,17 @@ body.logged-in #mobile-account-trigger {
     font-size: clamp(1.4rem, 4vw, 2rem);
     letter-spacing: -0.01em;
     text-transform: none;
+    position: absolute;
+    top: -0.15em;            /* raised relative to NEWS HAUL */
+    white-space: nowrap;
+}
+.logo .logo-the {
+    right: 100%;             /* sits just left of the main word */
+    margin-right: 0.25em;
 }
 .logo .logo-suffix {
+    left: 100%;              /* sits just right of the main word */
+    margin-left: 0.25em;
     font-weight: 800;
 }
 .header-date {
@@ -1510,9 +1521,11 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     body.logged-in .header-top-bar { top: 0; }
     .header-branding { grid-template-columns: 1fr; padding: 1rem 0; }
     .branding-col-left, .branding-col-right { display: none; }
-    .logo { flex-wrap: wrap; gap: 0.2em 0.25em; }
-    .logo .logo-main { font-size: clamp(2.8rem, 12vw, 4rem); }
-    .logo .logo-script { font-size: clamp(1.1rem, 4.5vw, 1.6rem); }
+    .logo { display: inline-flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0.15em 0.3em; }
+    .logo .logo-main { font-size: clamp(2.8rem, 12vw, 4rem); order: 2; }
+    .logo .logo-script { position: static; top: 0; font-size: clamp(1.1rem, 4.5vw, 1.6rem); transform: translateY(-0.4em); }
+    .logo .logo-the { order: 1; right: auto; margin-right: 0; }
+    .logo .logo-suffix { order: 3; left: auto; margin-left: 0; }
     
     .desktop-only {
         display: none;
@@ -2518,17 +2531,22 @@ html {
 /* Vertical video in the welcome sidebar: right on big screens */
 .welcome-video-wrapper {
     width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    /* Yellow frame (same accent as the Watch bar) with a thick black underline */
+    background-color: var(--color-accent);
+    padding: 10px;
+    border-bottom: 8px solid var(--color-text);
+    box-sizing: border-box;
 }
 .welcome-video {
     width: 100%;
-    max-width: 300px;
     max-height: 55vh;
     aspect-ratio: 9 / 16;
     object-fit: cover;
     background: #000;
     display: block;
-    margin: 0 auto;
-    border: 1px solid var(--color-border);
+    margin: 0;
 }
 /* When the sidebar only holds the (optional) video, drop its divider
    so an empty sidebar leaves no stray border. */
@@ -2539,10 +2557,11 @@ html {
 
 @media (max-width: 900px) {
     /* Video stacks under the content on small screens */
+    .welcome-video-wrapper {
+        max-width: 340px;
+    }
     .welcome-video {
         max-height: 60vh;
-        margin: 0 auto;
-        max-width: 360px;
     }
 }
 
