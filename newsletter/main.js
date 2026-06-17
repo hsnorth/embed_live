@@ -7,6 +7,31 @@ console.log("Firebase is connected via shared module!");
  
 window.auth = auth; 
  
+// --- MOBILE NAV (isolated) ---
+// Registered in its own listener and via event delegation so the hamburger
+// always works, regardless of anything that happens in the main init block.
+document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest('.menu-toggle');
+    const closeBtn = e.target.closest('.close-menu-btn');
+    const navLink = e.target.closest('.mobile-nav a');
+    if (!openBtn && !closeBtn && !navLink) return;
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (!mobileNav) return;
+    if (openBtn) {
+        e.preventDefault();
+        const willOpen = !mobileNav.classList.contains('is-open');
+        mobileNav.classList.toggle('is-open', willOpen);
+        document.body.classList.toggle('no-scroll', willOpen);
+        mobileNav.setAttribute('aria-hidden', String(!willOpen));
+    } else {
+        // close button OR a link inside the nav
+        if (closeBtn) e.preventDefault();
+        mobileNav.classList.remove('is-open');
+        document.body.classList.remove('no-scroll');
+        mobileNav.setAttribute('aria-hidden', 'true');
+    }
+});
+ 
 document.addEventListener('DOMContentLoaded', () => {
  
     // --- DYNAMIC CONTENT LOADING (NEW) ---
@@ -962,6 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const pastIssuesOverlay = document.getElementById('past-issues-panel-overlay');
     const pastIssuesCloseBtn = document.getElementById('past-issues-panel-close-btn');
+    const pastIssuesTriggers = document.querySelectorAll('.js-past-issues-trigger');
     function openPastIssuesPanel() {
         closeMobileNavIfOpen();
         if (pastIssuesOverlay) {
@@ -976,21 +1002,6 @@ document.addEventListener('DOMContentLoaded', () => {
     pastIssuesTriggers.forEach(trigger => trigger.addEventListener('click', (e) => { e.preventDefault(); openPastIssuesPanel(); }));
     if (pastIssuesOverlay) pastIssuesOverlay.addEventListener('click', (e) => { if (e.target === pastIssuesOverlay) closePastIssuesPanel(); });
     if (pastIssuesCloseBtn) pastIssuesCloseBtn.addEventListener('click', closePastIssuesPanel);
- 
-    const mobileNav = document.querySelector('.mobile-nav');
-    function setMenuOpen(open) {
-        if (!mobileNav) return;
-        mobileNav.classList.toggle('is-open', open);
-        document.body.classList.toggle('no-scroll', open);
-        mobileNav.setAttribute('aria-hidden', String(!open));
-    }
-    // Delegated so it works even if other init code above throws.
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.menu-toggle')) { e.preventDefault(); setMenuOpen(!mobileNav?.classList.contains('is-open')); return; }
-        if (e.target.closest('.close-menu-btn')) { e.preventDefault(); setMenuOpen(false); return; }
-        // Tapping a link inside the mobile nav closes it.
-        if (e.target.closest('.mobile-nav a')) { setMenuOpen(false); }
-    });
  
     function handleScrollLock() { if (isScrollLocked && window.scrollY > scrollLockPosition) { window.scrollTo(0, scrollLockPosition); } }
     if (stickyBanner) {
