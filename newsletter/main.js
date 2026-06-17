@@ -145,9 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.welcomeVideo) {
                 videoEl.src = data.welcomeVideo;
                 videoWrapper.style.display = 'block';
+                window.currentWelcomeVideo = data.welcomeVideo;
             } else {
                 videoEl.removeAttribute('src');
                 videoWrapper.style.display = 'none';
+                window.currentWelcomeVideo = null;
             }
         }
         
@@ -591,19 +593,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (goToJoinBtnFromSignIn) goToJoinBtnFromSignIn.addEventListener('click', () => { closeModal(signInModal); openModal(joinModal); });
     if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', () => { closeModal(joinModal); openModal(signInModal); });
  
-    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, postId = null) {
+    function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, postId = null, opts = {}) {
+        const { verified = false, videoSrc = null } = opts;
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
         if (postId) post.dataset.postId = postId;
         const avatarContent = avatarSrc.startsWith('https') ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>` : `<div class="post-avatar ${avatarSrc}"></div>`;
         const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
         const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
-        const verified = `<svg class="post-verified" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.5l.9-2.9-.9-2.9 2.4-1.8 1-2.8 3-.1L12 2z" fill="#1d9bf0"/><path d="M10.6 14.6l-2.3-2.3 1.1-1.1 1.2 1.2 3.3-3.3 1.1 1.1-4.4 4.4z" fill="#fff"/></svg>`;
+        const videoHTML = videoSrc ? `<div class="post-video"><video src="${videoSrc}" class="post-video-el" controls playsinline preload="metadata"></video></div>` : '';
+        const verifiedSvg = verified
+            ? `<svg class="post-verified" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.5l.9-2.9-.9-2.9 2.4-1.8 1-2.8 3-.1L12 2z" fill="#1d9bf0"/><path d="M10.6 14.6l-2.3-2.3 1.1-1.1 1.2 1.2 3.3-3.3 1.1 1.1-4.4 4.4z" fill="#fff"/></svg>`
+            : '';
         const handle = '@' + authorName.toLowerCase().replace(/[^a-z0-9]+/g, '');
         const headerHTML = !isThread
             ? `<div class="post-header">
                    <span class="post-author-name">${authorName}</span>
-                   ${verified}
+                   ${verifiedSvg}
                    <span class="post-handle">${handle}</span>
                </div>`
             : '';
@@ -621,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
                </div>
                <div class="post-comments" data-post-id="${postId}" hidden></div>`
             : '';
-        post.innerHTML = `${isThread ? avatarPlaceholder : avatarContent}<div class="post-content">${headerHTML}<div class="post-body">${content}</div>${imageHTML}${actionsHTML}</div>`;
+        post.innerHTML = `${isThread ? avatarPlaceholder : avatarContent}<div class="post-content">${headerHTML}<div class="post-body">${content}</div>${imageHTML}${videoHTML}${actionsHTML}</div>`;
         return post;
     }
 
@@ -650,11 +656,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 paragraphs.forEach(para => socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true)));
             });
         };
-        const welcomeTitle = window.currentIssueTitle || pageContentWrapper.querySelector('.welcome-main-content .article-title')?.innerText || '';
         const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body p')?.innerText || '';
-        const welcomeContent = `<p><strong>${welcomeTitle}</strong></p>`;
-        socialFeedView.appendChild(createSocialPost("Harry's Haul", haulAvatar, welcomeContent, false, null, 'welcome-0'));
-        if (harrysNoteBody) socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`, false, null, 'harrysnote-0'));
+        // The welcome "what mattered most" post is removed — the feed starts with
+        // Harry's note. Only this post is verified, and the welcome video plays
+        // at the end of it.
+        const welcomeVideoEl = document.getElementById('welcome-video');
+        const welcomeVideoSrc = (welcomeVideoEl && welcomeVideoEl.getAttribute('src')) ? welcomeVideoEl.getAttribute('src') : (window.currentWelcomeVideo || null);
+        if (harrysNoteBody) {
+            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc }));
+        }
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
         // The import map is intentionally NOT rendered in the social feed.
         processSectionItems('#essentials .essential-item', 'Essential #', 'post-avatar--essential', null, 'essential');
