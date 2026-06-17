@@ -2541,12 +2541,8 @@ html {
     width: 100%;
     max-width: 300px;
     margin: 0 auto;
-    /* Thin yellow frame around the sides/top, rounded, with a thick black
-       underline at the bottom (no yellow there). */
-    background-color: var(--color-accent);
-    padding: 4px 4px 0;
+    /* Thick black underline at the bottom (no frame). */
     border-bottom: 8px solid var(--color-text);
-    border-radius: 12px 12px 0 0;
     box-sizing: border-box;
 }
 .welcome-video {
@@ -2557,7 +2553,6 @@ html {
     background: #000;
     display: block;
     margin: 0;
-    border-radius: 9px 9px 0 0;
 }
 /* When the sidebar only holds the (optional) video, drop its divider
    so an empty sidebar leaves no stray border. */
