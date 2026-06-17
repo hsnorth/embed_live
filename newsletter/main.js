@@ -619,23 +619,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (goToSignInBtnFromJoin) goToSignInBtnFromJoin.addEventListener('click', () => { closeModal(joinModal); openModal(signInModal); });
  
     function createSocialPost(authorName, avatarSrc, content, isThread = false, imageSrc = null, postId = null, opts = {}) {
-        const { verified = false, videoSrc = null } = opts;
+        const { verified = false, videoSrc = null, avatarNumber = null } = opts;
         const post = document.createElement('div');
         post.className = `social-post ${isThread ? 'post-thread' : ''}`;
         if (postId) post.dataset.postId = postId;
-        const avatarContent = avatarSrc.startsWith('https') ? `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>` : `<div class="post-avatar ${avatarSrc}"></div>`;
+        let avatarContent;
+        if (avatarSrc.startsWith('https')) {
+            avatarContent = `<div class="post-avatar"><img src="${avatarSrc}" alt="${authorName}"></div>`;
+        } else if (avatarNumber != null) {
+            // Numbered colored avatar (essentials 1-5, imports 1-3, etc.)
+            avatarContent = `<div class="post-avatar post-avatar--num ${avatarSrc}"><span class="post-avatar-num">${avatarNumber}</span></div>`;
+        } else {
+            avatarContent = `<div class="post-avatar ${avatarSrc}"></div>`;
+        }
         const avatarPlaceholder = `<div class="post-avatar-placeholder"></div>`;
         const imageHTML = imageSrc ? `<div class="post-image"><img src="${imageSrc}" alt=""></div>` : '';
         const videoHTML = videoSrc ? `<div class="post-video"><video src="${videoSrc}" class="post-video-el" controls playsinline preload="metadata"></video></div>` : '';
         const verifiedSvg = verified
             ? `<svg class="post-verified" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.5l.9-2.9-.9-2.9 2.4-1.8 1-2.8 3-.1L12 2z" fill="#1d9bf0"/><path d="M10.6 14.6l-2.3-2.3 1.1-1.1 1.2 1.2 3.3-3.3 1.1 1.1-4.4 4.4z" fill="#fff"/></svg>`
             : '';
-        const handle = '@' + authorName.toLowerCase().replace(/[^a-z0-9]+/g, '');
         const headerHTML = !isThread
             ? `<div class="post-header">
                    <span class="post-author-name">${authorName}</span>
                    ${verifiedSvg}
-                   <span class="post-handle">${handle}</span>
                </div>`
             : '';
         // Only top-level posts get a like bar and comment thread; continuation threads do not.
@@ -677,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const firstPostContent = `<p><strong>${title}</strong></p><p>${firstPara}</p>`;
                 const imageForPost = (index === 0) ? sectionImageSrc : null;
                 const postId = `${idPrefix}-${index}`;
-                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost, postId));
+                socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, firstPostContent, false, imageForPost, postId, { avatarNumber: index + 1 }));
                 paragraphs.forEach(para => socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true)));
             });
         };
