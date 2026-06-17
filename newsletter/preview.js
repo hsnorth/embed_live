@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return post;
         };
 
-        socialFeedView.appendChild(createSocialPost("Harry's Haul", `<p><strong>${data.mainTitle}</strong></p>`));
         if (data.harrysNote) {
             socialFeedView.appendChild(createSocialPost('Harry North', `<p>${data.harrysNote}</p>`));
         }
