@@ -106,7 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (data.harrysNote) {
-            socialFeedView.appendChild(createSocialPost('Harry North', `<p>${data.harrysNote}</p>`));
+            let noteHtml = `<p>${data.harrysNote}</p>`;
+            if (data.readTime) noteHtml += `<p>⏰ ${data.readTime}</p>`;
+            if (data.coffeeSpot) noteHtml += `<p>☕ ${data.coffeeSpot}</p>`;
+            socialFeedView.appendChild(createSocialPost('Harry North', noteHtml));
         }
 
         // Render every content section (previously only essentials were rendered)
