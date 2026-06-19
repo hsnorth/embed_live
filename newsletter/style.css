@@ -2944,3 +2944,26 @@ body.content-loading .welcome-grid::after {
         margin-bottom: 1.2rem;
     }
 }
+
+/* Read-time / coffee lines inside Harry's Note */
+.harrys-note-body .note-extra-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #444;
+    margin: 0.75rem 0 0;
+}
+.harrys-note-body .note-extra-line .note-emoji {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+/* In the social feed, the same lines render as plain paragraphs */
+.social-post .note-extra-line {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0.5rem 0 0;
+}
