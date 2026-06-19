@@ -160,8 +160,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // but we keep the title for the social feed and Past Issues panel.
         window.currentIssueTitle = data.mainTitle || '';
  
-        const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body p');
+        const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body > p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
+
+        // Optional read-time and coffee lines (each on its own line, emoji-led).
+        const readTimeLine = document.querySelector('.harrys-note-top .note-read-time');
+        if (readTimeLine) {
+            if (data.readTime) {
+                readTimeLine.querySelector('.note-extra-text').textContent = data.readTime;
+                readTimeLine.style.display = '';
+            } else {
+                readTimeLine.style.display = 'none';
+            }
+        }
+        const coffeeLine = document.querySelector('.harrys-note-top .note-coffee');
+        if (coffeeLine) {
+            if (data.coffeeSpot) {
+                coffeeLine.querySelector('.note-extra-text').textContent = data.coffeeSpot;
+                coffeeLine.style.display = '';
+            } else {
+                coffeeLine.style.display = 'none';
+            }
+        }
 
         // Vertical video in the welcome sidebar (where Harry's Note used to be)
         const videoWrapper = document.getElementById('welcome-video-wrapper');
@@ -687,14 +707,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 paragraphs.forEach(para => socialFeedView.appendChild(createSocialPost(postAuthorName, avatarClass, `<p>${para.trim()}</p>`, true)));
             });
         };
-        const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body p')?.innerText || '';
+        const harrysNoteBody = pageContentWrapper.querySelector('.harrys-note-top .harrys-note-body > p')?.innerText || '';
+        const noteReadTime = pageContentWrapper.querySelector('.harrys-note-top .note-read-time')?.style.display !== 'none'
+            ? pageContentWrapper.querySelector('.harrys-note-top .note-read-time .note-extra-text')?.innerText || ''
+            : '';
+        const noteCoffee = pageContentWrapper.querySelector('.harrys-note-top .note-coffee')?.style.display !== 'none'
+            ? pageContentWrapper.querySelector('.harrys-note-top .note-coffee .note-extra-text')?.innerText || ''
+            : '';
         // The welcome "what mattered most" post is removed — the feed starts with
         // Harry's note. Only this post is verified, and the welcome video plays
         // at the end of it.
         const welcomeVideoEl = document.getElementById('welcome-video');
         const welcomeVideoSrc = (welcomeVideoEl && welcomeVideoEl.getAttribute('src')) ? welcomeVideoEl.getAttribute('src') : (window.currentWelcomeVideo || null);
         if (harrysNoteBody) {
-            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, `<p>${harrysNoteBody}</p>`, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc }));
+            let noteHtml = `<p>${harrysNoteBody}</p>`;
+            if (noteReadTime) noteHtml += `<p class="note-extra-line">⏰ ${noteReadTime}</p>`;
+            if (noteCoffee) noteHtml += `<p class="note-extra-line">☕ ${noteCoffee}</p>`;
+            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, noteHtml, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc }));
         }
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
         // The import map is intentionally NOT rendered in the social feed.
