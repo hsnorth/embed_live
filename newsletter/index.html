@@ -186,7 +186,19 @@
                 </a>
             </div>
         </main>
-        
+
+        <section id="data-strip" class="content-section data-strip-section">
+            <div class="data-strip-header">
+                <h2 class="data-strip-title">Montreal Data</h2>
+                <span class="data-strip-sub">Five-year context</span>
+            </div>
+            <div class="data-strip-scroller">
+                <button class="data-scroll-btn data-scroll-prev" aria-label="Scroll left" type="button">&#8249;</button>
+                <div class="data-cards" id="data-cards"></div>
+                <button class="data-scroll-btn data-scroll-next" aria-label="Scroll right" type="button">&#8250;</button>
+            </div>
+        </section>
+
         <section id="essentials" class="content-section">
             <h2 class="section-title">Five essentials</h2>
             <div class="essentials-container"></div>
@@ -468,6 +480,7 @@
     <script type="module" src="main.js"></script>
     <script src="scroll-spy.js"></script>
     <script src="type-on-scroll.js" defer></script>
+    <script src="data-strip.js" defer></script>
     <script type="module" src="commenting.js"></script>
 </body>
 
