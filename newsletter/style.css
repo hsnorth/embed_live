@@ -809,7 +809,8 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     text-align: center;
 }
 .page-scroll-indicator {
-    text-align: center;
+    display: flex;
+    justify-content: center;
     padding: 0;
     margin: 1.5rem 0 0;
 }
@@ -861,7 +862,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
 .section-title {
     font-family: var(--font-serif);
     font-size: 2.8rem;
-    font-weight: 400;
+    font-weight: 800;
     margin-top: 0;
     margin-bottom: 3rem;
     text-align: center;
@@ -1501,12 +1502,15 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     }
 
     .welcome-main-content .article-title {
-        text-align: center;
+        text-align: left;
     }
-    
+
+    /* Keep the Harry's Note pic + label left-aligned on mobile */
+    .welcome-main-content .eyebrow-container {
+        justify-content: flex-start;
+    }
     .welcome-main-content .eyebrow {
-        text-align: center;
-        display: block;
+        text-align: left;
     }
 }
 
@@ -1530,6 +1534,17 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     
     .header-top-bar.scrolled .scrolled-logo-link {
         font-size: 1.8rem;
+    }
+    /* Show the centered logo in the mobile sticky bar immediately, not only
+       after scrolling, and keep it shown when scrolled (no bag swap). */
+    .scrolled-logo-link,
+    .header-top-bar.scrolled .scrolled-logo-link {
+        display: block;
+        font-size: 1.6rem;
+    }
+    .scrolled-icon-link,
+    .header-top-bar.scrolled .scrolled-icon-link {
+        display: none;
     }
     
 }
@@ -2919,7 +2934,7 @@ body.content-loading .welcome-grid::after {
 .welcome-mattered-title {
     font-family: var(--font-serif);
     font-size: 2.8rem;
-    font-weight: 400;
+    font-weight: 800;
     line-height: 1.15;
     letter-spacing: -0.02em;
     margin: 0 0 1.5rem 0;
@@ -2959,11 +2974,12 @@ body.content-loading .welcome-grid::after {
     font-size: 1.15rem;
     flex-shrink: 0;
 }
-/* In the social feed, the same lines render as plain paragraphs */
+/* In the social feed, the read-time/coffee lines match the note body */
 .social-post .note-extra-line {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    color: #555;
+    font-family: var(--font-serif);
+    font-size: 1.06rem;
+    line-height: 1.6;
+    color: #15181b;
     margin: 0.5rem 0 0;
 }
 
@@ -3154,8 +3170,8 @@ body.snap-sections .data-strip-section {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 0 !important;
-    max-width: 820px;
     width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -3178,29 +3194,41 @@ body.snap-sections .data-strip-section {
 }
 .carousel-track > .essential-item:first-child { padding-top: 0; }
 
-/* Controls: counter + arrows on the right */
-.carousel-controls {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    max-width: 820px;
-    margin: 1.5rem auto 0;
-    padding: 0 1.5rem;
+/* Carousel wrapper lets arrows sit on each side, vertically centered */
+.carousel-wrapper {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 60px;
+    box-sizing: border-box;
 }
-.carousel-counter {
+.carousel-controls {
+    pointer-events: none;
+}
+.carousel-side {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    pointer-events: auto;
+}
+.carousel-side-prev { left: 0; }
+.carousel-side-next { right: 0; }
+.carousel-num {
     font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #5a6570;
+    color: #8a949c;
     font-variant-numeric: tabular-nums;
-    min-width: 3.5em;
-    text-align: center;
+    min-height: 1em;
 }
 .carousel-prev,
 .carousel-next {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     border: 1px solid var(--color-border);
     background: var(--color-background);
@@ -3209,18 +3237,13 @@ body.snap-sections .data-strip-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 .carousel-prev:hover:not(:disabled),
 .carousel-next:hover:not(:disabled) {
     background: var(--color-text);
     color: var(--color-background);
     border-color: var(--color-text);
-}
-.carousel-prev:disabled,
-.carousel-next:disabled {
-    opacity: 0.3;
-    cursor: default;
 }
 
 /* Cannoli: text carousels, image stays beside it. The track inside the text
@@ -3239,7 +3262,35 @@ body.snap-sections .data-strip-section {
     }
     .carousel-track > .essential-item {
         max-height: none;
-        padding: 0 1rem !important;
+        padding: 0 0.5rem !important;
     }
-    .carousel-prev, .carousel-next { width: 40px; height: 40px; }
+    .carousel-wrapper { padding: 0 44px; }
+    .carousel-prev, .carousel-next { width: 38px; height: 38px; }
+    .carousel-num { font-size: 0.78rem; }
+}
+
+/* ===== Mobile welcome/video/data-strip spacing fixes ===== */
+@media (max-width: 900px) {
+    /* Tighter gap between the open button (end of text) and the video */
+    .welcome-grid { gap: 1rem; }
+    .page-scroll-indicator { margin-top: 1rem; }
+    /* A touch more breathing room before the data strip on small screens */
+    .data-strip-section { padding-top: 1.75rem; }
+}
+
+/* ===== Phone: NYT-style welcome — note then video immediately ===== */
+@media (max-width: 720px) {
+    /* Hide the open/scroll button on phones */
+    .page-scroll-indicator { display: none; }
+    /* Video sits directly under the note, no divider/extra top padding */
+    .welcome-grid { gap: 1.25rem; }
+    .welcome-sidebar {
+        border-top: none !important;
+        padding-top: 0 !important;
+        margin-top: 0.5rem;
+    }
+    /* Video fills the column width like NYT's hero media */
+    .welcome-video-wrapper {
+        max-width: 100%;
+    }
 }
