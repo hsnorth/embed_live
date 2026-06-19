@@ -723,6 +723,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let noteHtml = `<p>${harrysNoteBody}</p>`;
             if (noteReadTime) noteHtml += `<p class="note-extra-line">⏰ ${noteReadTime}</p>`;
             if (noteCoffee) noteHtml += `<p class="note-extra-line">☕ ${noteCoffee}</p>`;
+            // Append the Montreal data strip under the video note.
+            if (typeof window.buildDataStripHTML === 'function') {
+                noteHtml += `<div class="social-data-strip">${window.buildDataStripHTML()}</div>`;
+            }
             socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, noteHtml, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc }));
         }
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
