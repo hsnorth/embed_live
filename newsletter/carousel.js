@@ -29,32 +29,43 @@
         }
         sectionEl.dataset.carousel = 'true';
         track.classList.add('carousel-track');
+        // Wrap the track so arrows can sit on each side, vertically centered.
+        const wrapper = document.createElement('div');
+        wrapper.className = 'carousel-wrapper';
+        track.parentNode.insertBefore(wrapper, track);
+        wrapper.appendChild(track);
 
-        // Build the controls bar (counter + arrow) once per section.
         const controls = document.createElement('div');
         controls.className = 'carousel-controls';
         controls.innerHTML = `
-            <button class="carousel-prev" type="button" aria-label="Previous">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <span class="carousel-counter"><span class="carousel-current">1</span> / <span class="carousel-total">${items.length}</span></span>
-            <button class="carousel-next" type="button" aria-label="Next">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
+            <div class="carousel-side carousel-side-prev">
+                <button class="carousel-prev" type="button" aria-label="Previous">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <span class="carousel-num carousel-num-prev"></span>
+            </div>
+            <div class="carousel-side carousel-side-next">
+                <button class="carousel-next" type="button" aria-label="Next">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <span class="carousel-num carousel-num-next"></span>
+            </div>
         `;
-        // Place the controls after the track.
-        track.insertAdjacentElement('afterend', controls);
+        wrapper.appendChild(controls);
         // Single-item sections don't need navigation.
         if (items.length <= 1) controls.style.display = 'none';
 
         const prev = controls.querySelector('.carousel-prev');
         const next = controls.querySelector('.carousel-next');
-        const currentEl = controls.querySelector('.carousel-current');
+        const numPrev = controls.querySelector('.carousel-num-prev');
+        const numNext = controls.querySelector('.carousel-num-next');
 
         const getIndex = () => {
-            // Nearest snapped item to the current scroll position.
+            if (!items.length) return 0;
             const itemW = track.scrollWidth / items.length;
-            return Math.round(track.scrollLeft / itemW);
+            if (!itemW || !isFinite(itemW)) return 0;
+            const idx = Math.round(track.scrollLeft / itemW);
+            return isFinite(idx) ? Math.max(0, Math.min(items.length - 1, idx)) : 0;
         };
         const goTo = (i) => {
             const clamped = Math.max(0, Math.min(items.length - 1, i));
@@ -67,9 +78,15 @@
 
         const updateUI = () => {
             const i = getIndex();
-            currentEl.textContent = i + 1;
+            // Number under each arrow = the item it will take you to (clamped).
+            const prevTarget = Math.max(1, i);          // 1-based of previous item
+            const nextTarget = Math.min(items.length, i + 2); // 1-based of next item
+            numPrev.textContent = i > 0 ? prevTarget : '';
+            numNext.textContent = i < items.length - 1 ? nextTarget : '';
             prev.disabled = i <= 0;
             next.disabled = i >= items.length - 1;
+            controls.querySelector('.carousel-side-prev').style.visibility = i <= 0 ? 'hidden' : 'visible';
+            controls.querySelector('.carousel-side-next').style.visibility = i >= items.length - 1 ? 'hidden' : 'visible';
         };
         let raf = null;
         track.addEventListener('scroll', () => {
@@ -77,18 +94,18 @@
             raf = requestAnimationFrame(updateUI);
         });
 
-        // Keyboard support when the section is focused.
         sectionEl.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') { e.preventDefault(); goTo(getIndex() + 1); }
             if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(getIndex() - 1); }
         });
 
-        updateUI();
+        // Defer first measure until layout settles (avoids NaN on 0-width).
+        requestAnimationFrame(updateUI);
+        setTimeout(updateUI, 300);
     }
 
     function refreshControls(sectionEl, track, items) {
-        const totalEl = sectionEl.querySelector('.carousel-total');
-        if (totalEl) totalEl.textContent = items.length;
+        // Counters update live on scroll; nothing static to refresh now.
     }
 
     function initAll() {
