@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 3; // Monday to Friday
+    const isWeekday = dayOfWeek >= 4 && dayOfWeek <= 5; // Monday to Friday
     const weekdayClosedOverlay = document.getElementById('weekday-closed-overlay');
  
     // Only run the "closed" flow on pages that actually have the overlay (i.e. the homepage).
@@ -723,11 +723,19 @@ document.addEventListener('DOMContentLoaded', () => {
             let noteHtml = `<p>${harrysNoteBody}</p>`;
             if (noteReadTime) noteHtml += `<p class="note-extra-line">⏰ ${noteReadTime}</p>`;
             if (noteCoffee) noteHtml += `<p class="note-extra-line">☕ ${noteCoffee}</p>`;
-            // Append the Montreal data strip under the video note.
+            const notePost = createSocialPost('Harry North', harryAvatar, noteHtml, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc });
+            // Data strip goes AFTER the video: append it to the post body, below
+            // the video element.
             if (typeof window.buildDataStripHTML === 'function') {
-                noteHtml += `<div class="social-data-strip">${window.buildDataStripHTML()}</div>`;
+                const stripWrap = document.createElement('div');
+                stripWrap.className = 'social-data-strip';
+                stripWrap.innerHTML = window.buildDataStripHTML();
+                const content = notePost.querySelector('.post-content');
+                const actions = content.querySelector('.post-actions');
+                if (actions) content.insertBefore(stripWrap, actions);
+                else content.appendChild(stripWrap);
             }
-            socialFeedView.appendChild(createSocialPost('Harry North', harryAvatar, noteHtml, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc }));
+            socialFeedView.appendChild(notePost);
         }
         const cannoliImgSrc = pageContentWrapper.querySelector('#cannoli .cannoli-image')?.src || null;
         // The import map is intentionally NOT rendered in the social feed.
