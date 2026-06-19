@@ -163,7 +163,7 @@ function buildDataStripHTML() {
                 <div class="data-card-source">${metric.source}</div>
             </div>`;
     });
-    return `<div class="data-strip-header"><span class="data-strip-title">Montreal Data</span><span class="data-strip-sub">Five-year context</span></div><div class="data-cards data-cards--social">${cards}</div>`;
+    return `<div class="data-cards data-cards--social">${cards}</div>`;
 }
 
 // Expose for the social feed (main.js) to reuse.
