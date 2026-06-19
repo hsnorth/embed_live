@@ -3116,3 +3116,130 @@ body.content-loading .welcome-grid::after {
 .data-cards--social .data-card {
     flex: 0 0 60%;
 }
+
+/* ============================================================
+   HORIZONTAL SECTION CAROUSELS + full-height vertical snap
+   ============================================================ */
+
+/* Full-height snapping sections (enabled once carousels init).
+   'proximity' on the scrolling root gently snaps near section boundaries
+   without trapping the user mid-scroll. */
+body.snap-sections {
+    scroll-snap-type: y proximity;
+}
+html:has(body.snap-sections) {
+    scroll-snap-type: y proximity;
+}
+body.snap-sections .content-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+}
+/* The data strip and welcome shouldn't be forced full-height */
+body.snap-sections .data-strip-section {
+    min-height: 0;
+    display: block;
+    scroll-snap-align: none;
+    justify-content: initial;
+}
+
+/* The item container becomes a horizontal scroll-snap track */
+.carousel-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+
+/* Each item fills the track and snaps */
+.carousel-track > .essential-item {
+    flex: 0 0 100%;
+    width: 100%;
+    box-sizing: border-box;
+    scroll-snap-align: center;
+    border-top: none !important;
+    padding: 0 1.5rem !important;
+    /* Keep long items readable; scroll within the card if needed */
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.carousel-track > .essential-item:first-child { padding-top: 0; }
+
+/* Controls: counter + arrows on the right */
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    max-width: 820px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
+}
+.carousel-counter {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #5a6570;
+    font-variant-numeric: tabular-nums;
+    min-width: 3.5em;
+    text-align: center;
+}
+.carousel-prev,
+.carousel-next {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+.carousel-prev:hover:not(:disabled),
+.carousel-next:hover:not(:disabled) {
+    background: var(--color-text);
+    color: var(--color-background);
+    border-color: var(--color-text);
+}
+.carousel-prev:disabled,
+.carousel-next:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Cannoli: text carousels, image stays beside it. The track inside the text
+   column should not exceed the column. */
+#cannoli .cannoli-text-content.carousel-track {
+    max-width: 100%;
+}
+
+/* On small screens, drop full-height sections back to natural flow so content
+   isn't cramped; the horizontal swipe per section remains. */
+@media (max-width: 720px) {
+    body.snap-sections .content-section {
+        min-height: 0;
+        padding-top: 3rem;
+        padding-bottom: 2rem;
+    }
+    .carousel-track > .essential-item {
+        max-height: none;
+        padding: 0 1rem !important;
+    }
+    .carousel-prev, .carousel-next { width: 40px; height: 40px; }
+}
