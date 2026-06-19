@@ -690,7 +690,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
 }
 /* --- MAIN CONTENT & HOMEPAGE SECTIONS --- */
 .content-wrapper {
-    margin: 3rem auto;
+    margin: 2.5rem auto 1.5rem;
     padding: 0 1rem;
 }
 .main-article {
@@ -809,10 +809,9 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     text-align: center;
 }
 .page-scroll-indicator {
-    text-align: center;
-    padding: 0.5rem 0 2rem;
-    max-width: 800px;
-    margin: -1rem auto 0;
+    text-align: left;
+    padding: 0;
+    margin: 1.5rem 0 0;
 }
 .open-haul-button {
     display: inline-flex;
@@ -2189,7 +2188,7 @@ body.social-layout #social-feed-view { display: block; }
 
 /* Better spacing for welcome section */
 .welcome-grid {
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
 }
 
 /* Improved typography hierarchy */
@@ -2974,7 +2973,7 @@ body.content-loading .welcome-grid::after {
 .data-strip-section {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 3rem;
+    padding: 0.5rem 1.5rem 2.5rem;
     border-bottom: 1px solid var(--color-border);
 }
 .data-strip-header {
