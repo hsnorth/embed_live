@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 4 && dayOfWeek <= 5; // Monday to Friday
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 3; // Monday to Friday
     const weekdayClosedOverlay = document.getElementById('weekday-closed-overlay');
  
     // Only run the "closed" flow on pages that actually have the overlay (i.e. the homepage).
