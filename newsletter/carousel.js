@@ -54,12 +54,11 @@
 
         const getIndex = () => {
             if (!items.length) return 0;
-            // Find the item whose center is closest to the track's viewport center.
-            const trackCenter = track.scrollLeft + track.clientWidth / 2;
+            // The active item is the one nearest the left edge of the viewport.
+            const viewLeft = track.scrollLeft + 16;
             let best = 0, bestDist = Infinity;
             items.forEach((it, idx) => {
-                const itemCenter = it.offsetLeft + it.offsetWidth / 2;
-                const d = Math.abs(itemCenter - trackCenter);
+                const d = Math.abs(it.offsetLeft - track.offsetLeft - viewLeft);
                 if (d < bestDist) { bestDist = d; best = idx; }
             });
             return best;
@@ -68,12 +67,14 @@
             const clamped = Math.max(0, Math.min(items.length - 1, i));
             const target = items[clamped];
             if (!target) return;
-            // Center the target item within the track viewport, clamped to range.
-            const itemCenter = target.offsetLeft + target.offsetWidth / 2;
-            let left = itemCenter - track.clientWidth / 2;
-            const maxLeft = track.scrollWidth - track.clientWidth;
-            left = Math.max(0, Math.min(maxLeft, left));
-            track.scrollTo({ left, behavior: 'smooth' });
+            // Mark active first so widths update, then scroll it to the left edge.
+            items.forEach((it, idx) => it.classList.toggle('is-active', idx === clamped));
+            requestAnimationFrame(() => {
+                let left = target.offsetLeft - track.offsetLeft - 16;
+                const maxLeft = track.scrollWidth - track.clientWidth;
+                left = Math.max(0, Math.min(maxLeft, left));
+                track.scrollTo({ left, behavior: 'smooth' });
+            });
         };
 
         prev.addEventListener('click', () => goTo(getIndex() - 1));
