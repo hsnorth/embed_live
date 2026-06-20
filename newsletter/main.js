@@ -740,6 +740,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyLayoutPreference(layout) {
+        // Video feed is temporarily disabled — always fall back to magazine.
+        if (layout === 'social') layout = 'magazine';
         if (layoutToggleContainer) {
             layoutToggleContainer.querySelector('.active')?.classList.remove('active');
             layoutToggleContainer.querySelector(`[data-layout="${layout}"]`)?.classList.add('active');
@@ -755,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (layoutToggleContainer) {
         layoutToggleContainer.addEventListener('click', (e) => {
             const button = e.target.closest('.layout-toggle-btn');
-            if (button) {
+            if (button && !button.disabled) {
                 const newLayout = button.dataset.layout;
                 applyLayoutPreference(newLayout);
                 updateLayoutPreference(newLayout);
