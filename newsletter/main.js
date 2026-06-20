@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const harrysNote = document.querySelector('.harrys-note-top .harrys-note-body > p');
         if (harrysNote) harrysNote.textContent = data.harrysNote;
 
-        // Optional read-time and coffee lines (each on its own line, emoji-led).
+        // Optional read-time line (emoji-led, below the note).
         const readTimeLine = document.querySelector('.harrys-note-top .note-read-time');
         if (readTimeLine) {
             if (data.readTime) {
@@ -171,15 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 readTimeLine.style.display = '';
             } else {
                 readTimeLine.style.display = 'none';
-            }
-        }
-        const coffeeLine = document.querySelector('.harrys-note-top .note-coffee');
-        if (coffeeLine) {
-            if (data.coffeeSpot) {
-                coffeeLine.querySelector('.note-extra-text').textContent = data.coffeeSpot;
-                coffeeLine.style.display = '';
-            } else {
-                coffeeLine.style.display = 'none';
             }
         }
 
@@ -191,6 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoEl.src = data.welcomeVideo;
                 videoWrapper.style.display = 'block';
                 window.currentWelcomeVideo = data.welcomeVideo;
+                videoEl.muted = true;
+                const p = videoEl.play();
+                if (p && p.catch) p.catch(() => {}); // ignore autoplay block
             } else {
                 videoEl.removeAttribute('src');
                 videoWrapper.style.display = 'none';
@@ -377,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 3; // Monday to Friday
+    const isWeekday = dayOfWeek >= 4 && dayOfWeek <= 5; // Monday to Friday
     const weekdayClosedOverlay = document.getElementById('weekday-closed-overlay');
  
     // Only run the "closed" flow on pages that actually have the overlay (i.e. the homepage).
@@ -711,9 +705,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const noteReadTime = pageContentWrapper.querySelector('.harrys-note-top .note-read-time')?.style.display !== 'none'
             ? pageContentWrapper.querySelector('.harrys-note-top .note-read-time .note-extra-text')?.innerText || ''
             : '';
-        const noteCoffee = pageContentWrapper.querySelector('.harrys-note-top .note-coffee')?.style.display !== 'none'
-            ? pageContentWrapper.querySelector('.harrys-note-top .note-coffee .note-extra-text')?.innerText || ''
-            : '';
         // The welcome "what mattered most" post is removed — the feed starts with
         // Harry's note. Only this post is verified, and the welcome video plays
         // at the end of it.
@@ -722,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (harrysNoteBody) {
             let noteHtml = `<p>${harrysNoteBody}</p>`;
             if (noteReadTime) noteHtml += `<p class="note-extra-line">⏰ ${noteReadTime}</p>`;
-            if (noteCoffee) noteHtml += `<p class="note-extra-line">☕ ${noteCoffee}</p>`;
             const notePost = createSocialPost('Harry North', harryAvatar, noteHtml, false, null, 'harrysnote-0', { verified: true, videoSrc: welcomeVideoSrc });
             // Data strip goes AFTER the video: append it to the post body, below
             // the video element.
