@@ -31,6 +31,18 @@ document.addEventListener('click', (e) => {
         mobileNav.setAttribute('aria-hidden', 'true');
     }
 });
+
+// Logout — delegated so it always fires even if main init had an issue.
+document.addEventListener('click', (e) => {
+    if (e.target.closest('#logout-btn')) {
+        e.preventDefault();
+        if (window.auth) {
+            import("https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js").then(({ signOut }) => {
+                signOut(window.auth).then(() => { window.location.reload(); }).catch(() => {});
+            });
+        }
+    }
+});
  
 document.addEventListener('DOMContentLoaded', () => {
  
@@ -371,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- WEEKDAY CLOSED LOGIC ---
     const today = new Date();
     const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 3; // Monday to Friday
+    const isWeekday = dayOfWeek >= 4 && dayOfWeek <= 5; // Monday to Friday
     const weekdayClosedOverlay = document.getElementById('weekday-closed-overlay');
  
     // Only run the "closed" flow on pages that actually have the overlay (i.e. the homepage).
@@ -592,6 +604,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             await signOut(auth);
             showToast('You have been signed out.', 'info');
+            // Reset the UI to the logged-out state.
+            setTimeout(() => window.location.reload(), 600);
         } catch (error) { showToast(error.message, 'error'); }
     };
     
