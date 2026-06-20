@@ -704,7 +704,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
 .welcome-grid {
     display: flex;
     justify-content: space-between;
-    gap: 4rem;
+    gap: 2.5rem;
     align-items: flex-start;
 }
 
@@ -864,7 +864,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     font-size: 2.8rem;
     font-weight: 800;
     margin-top: 0;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     text-align: center;
 }
 
@@ -872,7 +872,7 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
 .section-title-container {
     position: relative;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 .typewriter-subtitle {
     font-family: var(--font-sans);
@@ -1430,17 +1430,24 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     gap: 1rem;
 }
 .footer-logo {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: 1.8rem;
-    text-transform: uppercase;
-    letter-spacing: -0.06em;
-    color: var(--color-text);
     text-decoration: none;
-    transition: color 0.2s ease;
     margin-bottom: 0.5rem;
 }
-.footer-logo:hover {
+/* Footer masthead: same stacked style as the header logo, scaled down */
+.footer-masthead.logo {
+    padding: 0;
+    align-items: center;
+}
+.footer-masthead .logo-the,
+.footer-masthead .logo-suffix {
+    font-size: 1rem;
+}
+.footer-masthead .logo-main {
+    font-size: 2.2rem;
+}
+.footer-masthead:hover .logo-main,
+.footer-masthead:hover .logo-the,
+.footer-masthead:hover .logo-suffix {
     color: #888;
 }
 .footer-tagline {
@@ -1545,11 +1552,9 @@ body.social-layout .header-top-bar.scrolled .scrolled-icon-link {
     .header-top-bar.scrolled .scrolled-icon-link {
         display: block;
     }
-    /* Big text masthead hidden on phones — the bag-icon sticky bar is the logo.
-       Keep the date line. */
-    
+    /* Masthead shown on phones (stacked, centered) above the content. */
     .main-header { padding-top: 0.5rem; }
-    .main-header .header-date { margin-top: 0; }
+    .main-header .header-date { margin-top: 0.25rem; }
     
 }
 
@@ -2547,11 +2552,12 @@ html {
 
 /* Harry's Note now sits directly under the title (no summary above it) */
 .harrys-note-top {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 .harrys-note-top .harrys-note-body p {
     font-size: 1.05rem;
-    line-height: 1.7;
+    line-height: 1.55;
+    margin: 0 0 0.6rem;
 }
 
 /* Vertical video in the welcome sidebar: right on big screens */
@@ -2939,10 +2945,10 @@ body.content-loading .welcome-grid::after {
     font-family: var(--font-serif);
     font-size: 2.8rem;
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.1;
     letter-spacing: -0.02em;
-    margin: 0 0 1.5rem 0;
-    padding-bottom: 1.25rem;
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
     color: var(--color-text);
     position: relative;
 }
@@ -2959,7 +2965,7 @@ body.content-loading .welcome-grid::after {
 @media (max-width: 600px) {
     .welcome-mattered-title {
         font-size: 2.1rem;
-        margin-bottom: 1.2rem;
+        margin-bottom: 0.9rem;
     }
 }
 
@@ -2967,15 +2973,15 @@ body.content-loading .welcome-grid::after {
 .harrys-note-body .note-extra-line {
     display: flex;
     align-items: baseline;
-    gap: 0.45rem;
+    gap: 0.4rem;
     font-family: var(--font-sans);
-    font-size: 0.88rem;
-    line-height: 1.4;
-    color: #8a949c;
-    margin: 0.6rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: #9aa3ab;
+    margin: 0.5rem 0 0;
 }
 .harrys-note-body .note-extra-line .note-emoji {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     flex-shrink: 0;
 }
 /* In the social feed, the read-time/coffee lines match the note body */
@@ -3307,3 +3313,29 @@ body.snap-sections .data-strip-section {
         max-width: 100%;
     }
 }
+
+/* Disabled layout toggle (Video Feed — coming soon) */
+.layout-toggle-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Vital Signs heading for the data strip */
+.data-strip-heading {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin: 0 0 0.4rem;
+}
+.data-strip-subline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: #8a949c;
+    margin: 0 0 1.5rem;
+}
+.data-strip-subline .note-emoji { font-size: 0.92rem; }
