@@ -181,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('main-title').value = n.mainTitle || '';
         document.getElementById('harrys-note').value = n.harrysNote || '';
         document.getElementById('read-time').value = n.readTime || '';
-        document.getElementById('coffee-spot').value = n.coffeeSpot || '';
         document.getElementById('set-latest-haul').checked = !!n.isLatest;
 
         // Media: load existing URLs back into the uploader UIs.
@@ -238,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mainTitle: '5-3-2-1 newsletter: What mattered most this week in Montreal',
         harrysNote: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings.",
         readTime: "The haul takes about four minutes to read.",
-        coffeeSpot: "Writing from Caf\u00e9 Tere in the Plateau this week. An allong\u00e9 is in hand (and a pain au chocolat). No milk, no sugar.",
         essentials: [
             { title: '1. BLAH BLAH BLAH', content: "It\u2019s not always easy being rich \u2013 just ask Norway\u2019s prime minister. Following re-election last week, Jonas Gahr St\u00f8re holds the nation\u2019s purse strings as a cast of competitive coalition partners and critics from...\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dictum non consectetur a erat nam at lectus. Ultricies mi quis hendrit dolor magna. Massa tempor nec feugiat nisl pretium fusce id velit ut. Sed libero enim sed faucibus turpis in eu mi. Facilisi nullam vehicula ipsum a arcu cursus vitae congue. Accumsan lacus vel facilisis volutpat est velit egestas dui. Velit laoreet id donec ultrices tincidunt arcu non sodales. Viverra justo nec ultrices dui sapien eget mi proin. Id diam vel quam elementum pulvinar etiam non quam lacus." },
             { title: '2. A Global Stance', content: "Britain, Canada and Australia confirmed on Sunday that they now formally recognize Palestinian statehood, piling pressure on Israel to ease the humanitarian crisis in Gaza and putting three major American allies at odds with the Trump administration. The widely expected announcements came on the eve of the annual gathering of the United Nations General Assembly in New York. France and Portugal have also pledged to vote for recognition of Palestinian statehood at the U.N. this week, joining some 150 members of the body who have already done so." },
@@ -272,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('main-title').value = d.mainTitle;
         document.getElementById('harrys-note').value = d.harrysNote;
         document.getElementById('read-time').value = d.readTime || '';
-        document.getElementById('coffee-spot').value = d.coffeeSpot || '';
 
         // Clear existing dynamic items, then add each section's items.
         clearAllDynamicItems();
@@ -505,7 +502,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mainTitle: document.getElementById('main-title').value,
             harrysNote: document.getElementById('harrys-note').value,
             readTime: document.getElementById('read-time').value.trim() || null,
-            coffeeSpot: document.getElementById('coffee-spot').value.trim() || null,
             welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
             audioUrl: document.getElementById('newsletter-audio').value.trim() || null,
             importMap: getImportMap(),
@@ -764,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mainTitle: document.getElementById('main-title').value || 'Preview Title',
             harrysNote: document.getElementById('harrys-note').value || '',
             readTime: document.getElementById('read-time').value.trim() || null,
-            coffeeSpot: document.getElementById('coffee-spot').value.trim() || null,
             welcomeVideo: document.getElementById('welcome-video').value.trim() || null,
             audioUrl: document.getElementById('newsletter-audio').value.trim() || null,
             importMap: getImportMap(),
