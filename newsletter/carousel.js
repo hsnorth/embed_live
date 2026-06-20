@@ -54,15 +54,26 @@
 
         const getIndex = () => {
             if (!items.length) return 0;
-            const itemW = track.scrollWidth / items.length;
-            if (!itemW || !isFinite(itemW)) return 0;
-            const idx = Math.round(track.scrollLeft / itemW);
-            return isFinite(idx) ? Math.max(0, Math.min(items.length - 1, idx)) : 0;
+            // Find the item whose center is closest to the track's viewport center.
+            const trackCenter = track.scrollLeft + track.clientWidth / 2;
+            let best = 0, bestDist = Infinity;
+            items.forEach((it, idx) => {
+                const itemCenter = it.offsetLeft + it.offsetWidth / 2;
+                const d = Math.abs(itemCenter - trackCenter);
+                if (d < bestDist) { bestDist = d; best = idx; }
+            });
+            return best;
         };
         const goTo = (i) => {
             const clamped = Math.max(0, Math.min(items.length - 1, i));
             const target = items[clamped];
-            if (target) track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+            if (!target) return;
+            // Center the target item within the track viewport, clamped to range.
+            const itemCenter = target.offsetLeft + target.offsetWidth / 2;
+            let left = itemCenter - track.clientWidth / 2;
+            const maxLeft = track.scrollWidth - track.clientWidth;
+            left = Math.max(0, Math.min(maxLeft, left));
+            track.scrollTo({ left, behavior: 'smooth' });
         };
 
         prev.addEventListener('click', () => goTo(getIndex() - 1));
