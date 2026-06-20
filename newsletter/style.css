@@ -2999,7 +2999,7 @@ body.content-loading .welcome-grid::after {
 .data-strip-section {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0.5rem 1.5rem 2.5rem;
+    padding: 2.5rem 1.5rem;
     border-bottom: 1px solid var(--color-border);
 }
 .data-strip-header {
@@ -3147,31 +3147,17 @@ body.content-loading .welcome-grid::after {
    HORIZONTAL SECTION CAROUSELS + full-height vertical snap
    ============================================================ */
 
-/* Full-height snapping sections (enabled once carousels init).
-   'proximity' on the scrolling root gently snaps near section boundaries
-   without trapping the user mid-scroll. */
-body.snap-sections {
-    scroll-snap-type: y proximity;
-}
-html:has(body.snap-sections) {
-    scroll-snap-type: y proximity;
-}
+/* Sections flow naturally with consistent tight spacing (no forced
+   full-height snap — keeps vertical rhythm even across the page). */
 body.snap-sections .content-section {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     scroll-snap-align: start;
     box-sizing: border-box;
-    padding-top: 5rem;
+    padding-top: 3rem;
     padding-bottom: 3rem;
 }
 /* The data strip and welcome shouldn't be forced full-height */
 body.snap-sections .data-strip-section {
-    min-height: 0;
-    display: block;
     scroll-snap-align: none;
-    justify-content: initial;
 }
 
 /* Carousel wrapper holds the peek track + side arrows */
@@ -3206,12 +3192,12 @@ body.snap-sections .data-strip-section {
 .carousel-next { right: 0; }
 .carousel-arrow:disabled { opacity: 0; pointer-events: none; }
 
-/* Track: active item centered, neighbors peek in dimmed */
+/* Track: active item shown fully; neighbors collapse to just their grey title */
 .carousel-track {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    gap: 0 !important;
+    gap: 2.5rem !important;
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
@@ -3219,24 +3205,40 @@ body.snap-sections .data-strip-section {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0 12%;
-    scroll-padding: 0 12%;
+    padding: 0 1rem;
+    scroll-padding-left: 1rem;
+    align-items: flex-start;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
 .carousel-track > .essential-item {
-    flex: 0 0 76%;
-    width: 76%;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 680px;
     box-sizing: border-box;
-    scroll-snap-align: center;
+    scroll-snap-align: start;
     border-top: none !important;
-    padding: 0 1.75rem !important;
-    max-height: 62vh;
-    overflow-y: auto;
-    opacity: 0.32;
-    transition: opacity 0.3s ease;
+    padding: 0 !important;
+    transition: opacity 0.25s ease;
 }
-.carousel-track > .essential-item.is-active { opacity: 1; }
+/* Non-active items: shrink to just the title, greyed out */
+.carousel-track > .essential-item:not(.is-active) {
+    width: auto;
+    max-width: 240px;
+    opacity: 0.45;
+}
+.carousel-track > .essential-item:not(.is-active) .item-description,
+.carousel-track > .essential-item:not(.is-active) .post-actions,
+.carousel-track > .essential-item:not(.is-active) .post-comments,
+.carousel-track > .essential-item:not(.is-active) img,
+.carousel-track > .essential-item:not(.is-active) .essential-image {
+    display: none !important;
+}
+.carousel-track > .essential-item:not(.is-active) .item-title {
+    color: #9aa3ab;
+    white-space: normal;
+}
+/* Active item title gets the underline accent */
 .carousel-track > .essential-item .item-title {
     position: relative;
     display: inline-block;
@@ -3339,3 +3341,30 @@ body.snap-sections .data-strip-section {
     margin: 0 0 1.5rem;
 }
 .data-strip-subline .note-emoji { font-size: 0.92rem; }
+
+/* "Open the newsletter" text link (replaces the round open button) */
+.open-newsletter-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 2px;
+    transition: opacity 0.15s ease;
+}
+.open-newsletter-link:hover { opacity: 0.6; }
+
+/* ===== Responsive overflow guards ===== */
+html, body { max-width: 100%; overflow-x: hidden; }
+.content-section, .data-strip-section, .main-article, .content-wrapper {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+@media (max-width: 720px) {
+    .content-section { padding-left: 1rem; padding-right: 1rem; }
+    .data-strip-section { padding-left: 1rem; padding-right: 1rem; }
+}
