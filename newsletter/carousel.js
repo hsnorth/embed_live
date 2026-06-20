@@ -38,18 +38,12 @@
         const controls = document.createElement('div');
         controls.className = 'carousel-controls';
         controls.innerHTML = `
-            <div class="carousel-side carousel-side-prev">
-                <button class="carousel-prev" type="button" aria-label="Previous">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                </button>
-                <span class="carousel-num carousel-num-prev"></span>
-            </div>
-            <div class="carousel-side carousel-side-next">
-                <button class="carousel-next" type="button" aria-label="Next">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
-                <span class="carousel-num carousel-num-next"></span>
-            </div>
+            <button class="carousel-arrow carousel-prev" type="button" aria-label="Previous">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button class="carousel-arrow carousel-next" type="button" aria-label="Next">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
         `;
         wrapper.appendChild(controls);
         // Single-item sections don't need navigation.
@@ -57,8 +51,6 @@
 
         const prev = controls.querySelector('.carousel-prev');
         const next = controls.querySelector('.carousel-next');
-        const numPrev = controls.querySelector('.carousel-num-prev');
-        const numNext = controls.querySelector('.carousel-num-next');
 
         const getIndex = () => {
             if (!items.length) return 0;
@@ -78,15 +70,10 @@
 
         const updateUI = () => {
             const i = getIndex();
-            // Number under each arrow = the item it will take you to (clamped).
-            const prevTarget = Math.max(1, i);          // 1-based of previous item
-            const nextTarget = Math.min(items.length, i + 2); // 1-based of next item
-            numPrev.textContent = i > 0 ? prevTarget : '';
-            numNext.textContent = i < items.length - 1 ? nextTarget : '';
             prev.disabled = i <= 0;
             next.disabled = i >= items.length - 1;
-            controls.querySelector('.carousel-side-prev').style.visibility = i <= 0 ? 'hidden' : 'visible';
-            controls.querySelector('.carousel-side-next').style.visibility = i >= items.length - 1 ? 'hidden' : 'visible';
+            // Dim non-centered items (the "peek" effect).
+            items.forEach((it, idx) => it.classList.toggle('is-active', idx === i));
         };
         let raf = null;
         track.addEventListener('scroll', () => {
