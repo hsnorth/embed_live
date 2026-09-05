@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quebec Party Promises</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #f4f4f4; font-family: Georgia, serif; color: #333; }
+    .timeline-wrapper { max-width: 1200px; margin: auto; padding: 2rem 1rem 3rem; position: relative; }
+    .timeline { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 2rem; -ms-overflow-style: none; scrollbar-width: none; }
+    .timeline::-webkit-scrollbar { display: none; }
+    .event-card { flex: 0 0 calc((100% / 3) - 1rem); background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); scroll-snap-align: start; display: flex; flex-direction: column; padding: 1.5rem; position: relative; border-top: 6px solid #b30000; }
+    @media (min-width: 750px) { .event-card:first-child { flex: 0 0 calc((100% * 2 / 3) - 1rem); } }
+    @media (max-width: 900px) { .event-card { flex: 0 0 calc((100% / 2) - 1rem); } }
+    @media (max-width: 600px) { .event-card { flex: 0 0 90%; } }
+    .event-date { margin: 0; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 1.5rem; color: #b30000; }
+    .event-title { margin: 0.25rem 0 1rem; font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 1.5rem; color: #000; }
+    .scroll-instruction { font-size: 0.9rem; color: #666; text-align: right; margin-bottom: 1rem; font-family: Georgia, serif; }
+    .event-text p { margin: 0.75rem 0; font-size: 1.05rem; line-height: 1.55; }
+    .card-footer { margin-top: auto; }
+    .card-timeline { height: 4px; background: #b30000; border-radius: 2px; position: relative; margin-bottom: 1rem; }
+    .card-marker { width: 12px; height: 12px; background: #b30000; border-radius: 2px; position: absolute; top: -4px; left: 50%; transform: translateX(-50%); }
+
+    /* Intro card */
+    .intro-card { justify-content: center; border-top: 6px solid #555; }
+    .intro-card .event-date { color: #333; }
+    .intro-card .card-timeline, .intro-card .card-marker { background: #555; }
+
+    /* Party colour schemes */
+    .caq { border-top-color: #7fbfe6; }
+    .caq .event-date { color: #3a90c9; }
+    .caq .card-timeline, .caq .card-marker { background: #7fbfe6; }
+
+    .plq { border-top-color: #d0021b; }
+    .plq .event-date { color: #d0021b; }
+    .plq .card-timeline, .plq .card-marker { background: #d0021b; }
+
+    .pcq { border-top-color: #16294d; }
+    .pcq .event-date { color: #16294d; }
+    .pcq .card-timeline, .pcq .card-marker { background: #16294d; }
+
+    .pq { border-top-color: #1f7ecf; }
+    .pq .event-date { color: #1f7ecf; }
+    .pq .card-timeline, .pq .card-marker { background: #1f7ecf; }
+
+    .qs { border-top-color: #f28c1e; }
+    .qs .event-date { color: #f28c1e; }
+    .qs .card-timeline, .qs .card-marker { background: #f28c1e; }
+
+    .progress-bar { position: absolute; bottom: 2.5rem; left: 25%; right: 25%; height: 6px; background: #ddd; border-radius: 3px; overflow: hidden; }
+    .progress-filled { width: 0; height: 100%; background: #555; transition: width 0.1s ease-out; }
+    .progress-dot { position: absolute; top: 50%; width: 10px; height: 10px; background: #000; border-radius: 50%; transform: translate(-50%, -50%); }
+    .credit { position: absolute; bottom: 1rem; right: 1rem; font-family: Georgia, serif; font-size: 0.9rem; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="timeline-wrapper">
+    <div class="timeline">
+      <!-- Intro Card -->
+      <div class="event-card intro-card">
+        <h2 class="event-date">Quebec Election</h2>
+        <h2 class="event-title">What are the parties big pledges so far?</h2>
+        <div class="scroll-instruction">Swipe to see each party's pledges →</div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+
+      <!-- PQ -->
+      <div class="event-card pq">
+        <h2 class="event-date">Parti Québécois</h2>
+        <div class="event-text">
+          <p>Hold a <strong>referendum on independence</strong> (after Trump leaves office).</p>
+          <p>Extend the <strong>Charter of the French Language (Bill 101)</strong> to CEGEPs.</p>
+          <p>Cut <strong>temporary immigration</strong> in half — from 500,000+ to 200,000–250,000 — and lower permanent targets to 35,000/year.</p>
+          <p>Remove the <strong>QST</strong> on secondhand and used goods.</p>
+        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+
+      <!-- QS -->
+      <div class="event-card qs">
+        <h2 class="event-date">Québec Solidaire</h2>
+        <div class="event-text">
+          <p>A <strong>wealth tax</strong> on ~4,000 households with a net worth over $25 million.</p>
+          <p>Create a network of <strong>public grocery stores</strong> to compete with big players and drive prices down.</p>
+          <p><strong>Cap profit margins</strong> of major retailers.</p>
+          <p>Invest in <strong>public transportation</strong>.</p>
+        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+
+      <!-- PCQ -->
+      <div class="event-card pcq">
+        <h2 class="event-date">Conservative Party of Quebec</h2>
+        <div class="event-text">
+          <p>Bring nearly all government services <strong>online</strong>, inspired by Estonia's digital system.</p>
+          <p>Save <strong>$3.45 billion</strong> in administrative costs over 5 years.</p>
+          <p>Cut <strong>regulatory requirements by 30%</strong> over 4 years ("simplify before digitizing").</p>
+          <p>End reliance on external consultants by building internal tech expertise.</p>
+          <p>Integrate <strong>AI</strong> into government, with mandatory human oversight on high-impact decisions.</p>
+        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+
+      <!-- PLQ -->
+      <div class="event-card plq">
+        <h2 class="event-date">Quebec Liberals</h2>
+        <div class="event-text">
+          <p><strong>100,000 new housing units</strong> per year.</p>
+          <p>Refund <strong>36% of the QST</strong> on the purchase of a new house or condo.</p>
+          <p>Involve the <strong>regions</strong> in determining their capacity to receive immigrants.</p>
+          <p>Make <strong>reading a national priority</strong>.</p>
+          <p>Impose an immediate <strong>moratorium</strong> on new rules or regulations.</p>
+        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+
+      <!-- CAQ -->
+      <div class="event-card caq">
+        <h2 class="event-date">Coalition Avenir Québec</h2>
+        <div class="event-text">
+          <p>A total of <strong>$9.7 billion</strong> in election promises this campaign.</p>
+          <p><strong>$1 billion</strong> for home care.</p>
+          <p><strong>$304 million</strong> to support the regions.</p>
+          <p><strong>$241 million</strong> to build 2,000 affordable housing units for seniors.</p>
+          <p>A further <strong>$8 billion</strong> in other pledges "are to come."</p>
+        </div>
+        <div class="card-footer"><div class="card-timeline"><div class="card-marker"></div></div></div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-filled"></div>
+      <div class="progress-dot"></div>
+    </div>
+    <div class="credit">Graphic: The Gazette</div>
+  </div>
+  <script>
+    const timeline = document.querySelector('.timeline');
+    const progress = document.querySelector('.progress-filled');
+    const dot = document.querySelector('.progress-dot');
+    timeline.addEventListener('scroll', () => {
+      const maxScroll = timeline.scrollWidth - timeline.clientWidth;
+      const pct = (timeline.scrollLeft / maxScroll) * 100;
+      progress.style.width = pct + '%';
+      dot.style.left = `calc(${pct}% )`;
+    });
+  </script>
+</body>
+</html>
