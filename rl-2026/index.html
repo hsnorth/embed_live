@@ -316,7 +316,6 @@ const CONFIG = {
   year: 2026,
   prevYear: 2025,
   greyscalePhotos: true,   // photos in black and white; the selected face shows in colour
-  draftNote: "Draft figures for layout only. Replace with final reporting before publishing.",
   // The title rotates through these, one every few seconds.
   questions: [
     "Who’s the richest person in Quebec?",
@@ -1097,8 +1096,7 @@ const OFF_LIST = [
   const off = OFF_LIST.map(o => `${esc(o.name)} (No. ${o.rankPrev} in ${CONFIG.prevYear}) ${esc(o.note || "")}`.trim()).join("; ");
   $("rl-notes").innerHTML =
     (OFF_LIST.length ? `<p><strong>Off the list since ${CONFIG.prevYear}:</strong> ${off}.</p>` : "") +
-    `<details><summary>How the fortunes were estimated</summary><p>${esc(CONFIG.method)}</p></details>` +
-    `<p>All figures in Canadian dollars.${CONFIG.draftNote ? ` <span class="rl-draft">${esc(CONFIG.draftNote)}</span>` : ""}</p>`;
+    `<p>All figures in Canadian dollars</p>`;
 
   /* ---------- boot ---------- */
   build();
