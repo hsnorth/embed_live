@@ -194,12 +194,13 @@ html,body{margin:0;background:var(--bg);}
 /* Each profile. Phones: rank, name and net worth on top, then the photo, then the details.
    Wider screens: details take two thirds, net worth and photo sit centred in the last third. */
 .rl-item{
+  --rk:2.4rem;
   display:grid;grid-template-columns:minmax(0,1fr) auto;
   grid-template-areas:"head val" "pic pic" "body body";
   column-gap:12px;padding:18px 4px 20px;border-bottom:1px solid var(--hair);
 }
 .rl-txt,.rl-side{display:contents;}
-.rl-head{grid-area:head;display:grid;grid-template-columns:2.4rem minmax(0,1fr);column-gap:10px;align-items:start;}
+.rl-head{grid-area:head;display:grid;grid-template-columns:var(--rk) minmax(0,1fr);column-gap:10px;align-items:start;}
 .rl-rank{font-weight:300;font-size:24px;line-height:1.05;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;}
 .rl-mv{display:flex;align-items:center;gap:3px;margin-top:5px;font-size:12.5px;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
 .rl-mv .dash{font-weight:800;color:var(--ink);}
@@ -212,19 +213,28 @@ html,body{margin:0;background:var(--bg);}
 .rl-val{grid-area:val;font-weight:700;font-size:19px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
 /* toonie-sized portrait */
 .rl-pic{
-  grid-area:pic;justify-self:start;margin:14px 0 0 calc(2.4rem + 10px);
+  grid-area:pic;justify-self:center;margin:16px 0 0;
   width:96px;height:96px;border-radius:50%;overflow:hidden;flex:none;
   background:var(--face-bg);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--hair-2);
   display:grid;place-items:center;
 }
 .rl-pic img{width:100%;height:100%;object-fit:cover;display:block;}
 .rl-pic span{font-weight:600;font-size:30px;color:var(--face-ink);letter-spacing:.02em;}
-.rl-body{grid-area:body;padding:14px 0 0 calc(2.4rem + 10px);min-width:0;}
+.rl-body{grid-area:body;padding:16px 0 0 calc(var(--rk) + 10px);min-width:0;}
 .rl-body p{margin:0 0 14px;max-width:60ch;font-size:16.5px;line-height:1.5;}
-.rl-facts{margin:0 0 14px;border-top:1px solid var(--hair);}
-.rl-facts div{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--hair);}
-.rl-facts dt{font-size:14px;color:var(--muted);}
-.rl-facts dd{margin:0;font-weight:600;font-size:15.5px;line-height:1.35;font-variant-numeric:lining-nums tabular-nums;}
+@media (max-width:639px){
+  .rl-item{--rk:2.9rem;padding:20px 2px 22px;}
+  .rl-rank{font-size:30px;}
+  .rl-mv{font-size:13.5px;}
+  .rl-name{font-size:21px;}
+  .rl-co{font-size:16.5px;}
+  .rl-val{font-size:22px;}
+  .rl-pic{width:104px;height:104px;}
+  .rl-pic span{font-size:32px;}
+  .rl-body p{font-size:18.5px;line-height:1.5;}
+  .rl-brands{font-size:15.5px;}
+  .rl-brands .rl-chip{font-size:15px;padding:3px 11px;}
+}
 @media (min-width:640px){
   .rl-item{grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
   .rl-txt{display:block;}
@@ -246,10 +256,6 @@ html,body{margin:0;background:var(--bg);}
 .rl-notes{margin-top:22px;font-size:14.5px;color:var(--muted);}
 .rl-notes p{margin:0 0 8px;}
 .rl-notes strong{color:var(--ink-2);font-weight:600;}
-.rl-notes details{margin:0 0 8px;}
-.rl-notes summary{cursor:pointer;color:var(--ink-2);}
-.rl-notes details p{margin:6px 0 0;}
-.rl-draft{color:var(--ink);font-weight:600;}
 
 @media (max-width:639px){
   .rl{padding-top:18px;}
@@ -334,7 +340,6 @@ const CONFIG = {
   year: 2026,
   prevYear: 2025,
   greyscalePhotos: true,   // photos in black and white; the selected face shows in colour
-  draftNote: "Draft figures for layout only. Replace with final reporting before publishing.",
   // The title rotates through these, one every few seconds.
   questions: [
     "Who’s the richest person in Quebec?",
@@ -348,7 +353,6 @@ const CONFIG = {
   questionSeconds: 3,
   spinSeconds: 4,          // faces rotate clockwise, one full turn every N seconds (0 = keep still)
   flagImage: "",           // optional: URL of artwork for the big flag on Place Ville Marie ("" = Quebec flag)
-  method: "Each person or family had to be worth more than $1 billion. Private holdings are hard to value, so these figures probably understate real wealth.",
 };
 
 const SECTORS = {
@@ -361,136 +365,136 @@ const SECTORS = {
 };
 
 const PEOPLE = [
-  { id:"azrieli", name:"Naomi, Sharon and Danna Azrieli", short:"Azrieli sisters", photo:"", worth:12.1, worthPrev:7.7, rankPrev:2,
-    company:"Azrieli Group", sector:"finance",
-    brands:["Azrieli Group","Azrieli Foundation"], aliases:[],
-    blurb:"Daughters of David Azrieli, who built a real estate empire in Montreal and Israel. The three sisters together hold about 46 per cent of Azrieli Group.",
-    src:"Forbes, March 2026: US$2.9 billion each for Naomi and Sharon. Danna assumed equal." },
-  { id:"bouchard", name:"Alain Bouchard and family", short:"Bouchard", photo:"", worth:11.0, worthPrev:9.0, rankPrev:1,
-    company:"Alimentation Couche-Tard", sector:"retail",
-    brands:["Couche-Tard","Circle K"], aliases:["couche tard"],
-    blurb:"Opened his first convenience store in 1980 and built Couche-Tard into a global chain of more than 17,000 stores, including Circle K.",
-    src:"Forbes, March 2026 (US$7.9 billion)." },
-  { id:"saputo", name:"Saputo family", short:"Saputo family", photo:"", worth:8.9, worthPrev:6.0, rankPrev:4,
-    company:"Saputo Inc.", sector:"food",
-    brands:["Saputo","Dairyland","Armstrong","Neilson","CF Montréal"], aliases:["stade saputo","cheese"],
-    blurb:"Giuseppe Saputo started making cheese in Montreal in 1954. His son Lino turned Saputo into one of the world’s biggest dairy processors. The family also owns CF Montréal.",
-    src:"Forbes, March 2026 (US$6.4 billion, Emanuele “Lino” Saputo and family)." },
-  { id:"desmarais", name:"Desmarais family", short:"Desmarais family", photo:"", worth:7.0, worthPrev:7.0, rankPrev:3,
-    company:"Power Corporation of Canada", sector:"finance",
-    brands:["Power Corporation","Canada Life","IG Wealth Management","Mackenzie Investments","Wealthsimple"], aliases:["sagard","great-west lifeco","igm"],
-    blurb:"Paul Desmarais Sr. bought a struggling Sudbury bus line for $1 in 1951 and built it into Power Corporation. His sons and grandsons run the financial empire today.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"cohen", name:"Ryan Cohen", short:"Cohen", photo:"", worth:7.0, worthPrev:4.8, rankPrev:7,
-    company:"Chewy co-founder, GameStop", sector:"retail",
-    brands:["Chewy","GameStop"], aliases:[],
-    blurb:"Montreal-born co-founder of online pet retailer Chewy, sold in 2017. Now chief executive of GameStop.",
-    src:"Forbes, March 2026 (US$5.0 billion)." },
-  { id:"stroll", name:"Lawrence Stroll", short:"Stroll", photo:"", worth:5.3, worthPrev:5.0, rankPrev:6,
-    company:"Aston Martin, fashion investments", sector:"sport",
-    brands:["Aston Martin","Michael Kors","Tommy Hilfiger","Circuit Mont-Tremblant"], aliases:["formula one","f1"],
-    blurb:"Montreal-born investor who made his fortune backing Tommy Hilfiger and Michael Kors. Now runs the Aston Martin Formula One team.",
-    src:"Forbes, March 2026 (US$3.8 billion)." },
-  { id:"damours", name:"Jacques D’Amours", short:"D’Amours", photo:"", worth:5.1, worthPrev:4.3, rankPrev:8,
-    company:"Alimentation Couche-Tard", sector:"retail",
-    brands:["Couche-Tard","Circle K"], aliases:["couche tard","damours","d'amours"],
-    blurb:"One of Couche-Tard’s four co-founders. Left the board in 2023 still holding about six per cent of the company.",
-    src:"Forbes, March 2026 (US$3.7 billion)." },
-  { id:"coutu", name:"Coutu family", short:"Coutu family", photo:"", worth:5.1, worthPrev:3.8, rankPrev:10,
-    company:"Groupe Jean Coutu", sector:"retail",
-    brands:["Jean Coutu","PJC"], aliases:["pharmacy","metro"],
-    blurb:"Pharmacist Jean Coutu opened his first discount drugstore in Montreal in 1969. Metro bought the chain for $4.5 billion in 2018.",
-    src:"Forbes, March 2026 (US$3.7 billion)." },
-  { id:"peladeau", name:"Pierre Karl Péladeau", short:"Péladeau", photo:"", worth:4.7, worthPrev:3.1, rankPrev:12,
-    company:"Québecor", sector:"tech",
-    brands:["Québecor","Vidéotron","Freedom Mobile","Fizz","TVA","Journal de Montréal"], aliases:["pkp","freedom"],
-    blurb:"Controlling shareholder of Québecor, the media and telecom group his father founded in 1965 and parent of Vidéotron and Freedom Mobile.",
-    src:"Forbes, March 2026 (US$3.4 billion)." },
-  { id:"lutfy", name:"Andrew Lutfy", short:"Lutfy", photo:"", worth:4.7, worthPrev:2.5, rankPrev:14,
-    company:"Groupe Dynamite, Carbonleo", sector:"retail",
-    brands:["Garage","Dynamite","Royalmount"], aliases:["groupe dynamite"],
-    blurb:"Started at the first Garage store at 18 and became sole owner of Groupe Dynamite in the early 2000s. Took it public in 2024. Also behind Royalmount.",
-    src:"Stand-in: value of his Groupe Dynamite stake, mid-2026." },
-  { id:"cretier", name:"Stephan Crétier", short:"Crétier", photo:"", worth:3.8, worthPrev:3.8, rankPrev:9,
-    company:"GardaWorld", sector:"industry",
-    brands:["GardaWorld","Crisis24"], aliases:["garda","cretier"],
-    blurb:"Founded GardaWorld in 1995 with $25,000, partly raised on a second mortgage. It is now one of the world’s largest private security firms.",
-    src:"Forbes, March 2026 (US$2.7 billion)." },
-  { id:"miller", name:"Robert Miller", short:"Miller", photo:"", worth:3.6, worthPrev:5.3, rankPrev:5,
-    company:"Future Electronics", sector:"tech",
-    brands:["Future Electronics"], aliases:[],
-    blurb:"Founded electronic-components distributor Future Electronics in 1968 and sold it in 2024.",
-    src:"Forbes, March 2026 (US$2.6 billion)." },
-  { id:"bronfman", name:"Charles Bronfman", short:"Bronfman", photo:"", worth:3.5, worthPrev:null, rankPrev:null,
-    company:"Seagram, Claridge", sector:"food",
-    brands:["Seagram","Claridge"], aliases:["expos"],
-    blurb:"Heir to the Seagram liquor fortune; the family sold the company to Vivendi in 2000. Founding owner of the Montreal Expos.",
-    src:"Forbes, March 2026 (US$2.5 billion). Stand-in for the open spot." },
-  { id:"godin", name:"Serge Godin", short:"Godin", photo:"", worth:2.9, worthPrev:3.7, rankPrev:11,
-    company:"CGI", sector:"tech",
-    brands:["CGI"], aliases:[],
-    blurb:"Co-founded IT consulting firm CGI in Quebec City in 1976. It is now one of the world’s largest IT services companies.",
-    src:"Forbes, March 2026 (US$2.1 billion)." },
-  { id:"fortin", name:"Richard Fortin", short:"Fortin", photo:"", worth:2.9, worthPrev:2.3, rankPrev:15,
-    company:"Alimentation Couche-Tard", sector:"retail",
-    brands:["Couche-Tard","Circle K"], aliases:["couche tard"],
-    blurb:"Couche-Tard co-founder who joined Alain Bouchard in 1984 and ran the company’s finances through its biggest acquisitions.",
-    src:"Forbes, March 2026 (US$2.1 billion)." },
-  { id:"bombardier", name:"Bombardier and Beaudoin families", short:"Bombardier-Beaudoin", photo:"", worth:2.9, worthPrev:2.9, rankPrev:13,
-    company:"Bombardier, BRP", sector:"industry",
-    brands:["Bombardier","BRP","Ski-Doo","Sea-Doo","Can-Am"], aliases:["snowmobile","beaudier"],
-    blurb:"Heirs of Joseph-Armand Bombardier, inventor of the snowmobile. The family controls both Bombardier and BRP, maker of Ski-Doo and Sea-Doo.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"laliberte", name:"Guy Laliberté", short:"Laliberté", photo:"", worth:2.4, worthPrev:1.3, rankPrev:22,
-    company:"Cirque du Soleil, Lune Rouge", sector:"sport",
-    brands:["Cirque du Soleil","Lune Rouge"], aliases:["cirque","laliberte"],
-    blurb:"Former street performer who co-founded Cirque du Soleil in 1984 and sold his last stake in 2020.",
-    src:"Forbes, March 2026 (US$1.7 billion)." },
-  { id:"fayer", name:"Philip Fayer", short:"Fayer", photo:"", worth:2.1, worthPrev:2.1, rankPrev:16,
-    company:"Nuvei", sector:"tech",
-    brands:["Nuvei"], aliases:["payments"],
-    blurb:"Founded payments company Nuvei in 2003 and stayed on as chief executive after it was taken private in 2024.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"molson", name:"Molson family", short:"Molson family", photo:"", worth:2.0, worthPrev:2.0, rankPrev:17,
-    company:"Molson Coors, Groupe CH", sector:"food",
-    brands:["Molson","Canadiens","Bell Centre","Evenko","Laval Rocket"], aliases:["habs","centre bell","molson coors","beer"],
-    blurb:"Montreal’s oldest business dynasty: the brewery dates to 1786. The family also owns the Canadiens, the Bell Centre and Evenko.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"plourde", name:"Réal Plourde", short:"Plourde", photo:"", worth:1.9, worthPrev:1.5, rankPrev:21,
-    company:"Alimentation Couche-Tard", sector:"retail",
-    brands:["Couche-Tard","Circle K"], aliases:["couche tard"],
-    blurb:"Couche-Tard co-founder who served as its chief operating officer and, from 2011 to 2014, chaired its board.",
-    src:"Forbes, March 2026 (US$1.4 billion)." },
-  { id:"kruger", name:"Kruger family", short:"Kruger family", photo:"", worth:1.9, worthPrev:1.9, rankPrev:18,
-    company:"Kruger Inc.", sector:"industry",
-    brands:["Kruger","Cashmere","Purex","SpongeTowels","Scotties"], aliases:["toilet paper","tissue"],
-    blurb:"Paper company founded in Montreal in 1904. Its tissue arm makes Cashmere, Purex and SpongeTowels.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"goodman", name:"Goodman family", short:"Goodman family", photo:"", worth:1.7, worthPrev:1.7, rankPrev:19,
-    company:"Pharmascience", sector:"industry",
-    brands:["Pharmascience"], aliases:["generic drugs","pms"],
-    blurb:"Morris Goodman co-founded generic drug maker Pharmascience in Montreal in 1983.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"rossy", name:"Rossy family", short:"Rossy family", photo:"", worth:1.2, worthPrev:1.2, rankPrev:23,
-    company:"Dollarama", sector:"retail",
-    brands:["Dollarama"], aliases:["dollar store"],
-    blurb:"Larry Rossy turned the family’s variety stores, first opened in 1910, into Dollarama in 1992.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"lassonde", name:"Lassonde family", short:"Lassonde family", photo:"", worth:1.2, worthPrev:1.2, rankPrev:24,
-    company:"Franco-Nevada", sector:"finance",
-    brands:["Franco-Nevada"], aliases:["gold"],
-    blurb:"Pierre Lassonde co-founded gold royalty company Franco-Nevada in 1983.",
-    src:"Last year’s figure, not yet updated." },
-  { id:"macbain", name:"John Macbain", short:"Macbain", photo:"", worth:1.1, worthPrev:1.1, rankPrev:25,
-    company:"Trader Classified Media", sector:"tech",
-    brands:["Trader Classified Media"], aliases:["classifieds"],
-    blurb:"Built a fortune in classified ads, starting with the purchase of what became Trader Classified Media in 1987.",
-    src:"Last year’s figure, not yet updated." },
+  { id:"vautrin", name:"Margaux, Élise and Clara Vautrin", short:"Vautrin sisters", photo:"", worth:12.1, worthPrev:7.7, rankPrev:2,
+    company:"Groupe Vautrin", sector:"finance",
+    brands:["Groupe Vautrin", "Fondation Vautrin"], aliases:[],
+    blurb:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus, posuere velit aliquet.",
+    src:"Placeholder." },
+  { id:"ostiguy", name:"Rémi Ostiguy and family", short:"Ostiguy", photo:"", worth:11.0, worthPrev:9.0, rankPrev:1,
+    company:"Dépanneurs Lumen", sector:"retail",
+    brands:["Lumen", "Lumen Express"], aliases:[],
+    blurb:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
+    src:"Placeholder." },
+  { id:"fiorelli", name:"Fiorelli family", short:"Fiorelli family", photo:"", worth:8.9, worthPrev:6.0, rankPrev:4,
+    company:"Fromagerie Fiorelli", sector:"food",
+    brands:["Fiorelli", "Laiterie Belcrest"], aliases:[],
+    blurb:"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit. Neque porro quisquam est qui dolorem ipsum.",
+    src:"Placeholder." },
+  { id:"delorme-ashby", name:"Delorme-Ashby family", short:"Delorme-Ashby family", photo:"", worth:7.0, worthPrev:7.0, rankPrev:3,
+    company:"Corporation Belvédère", sector:"finance",
+    brands:["Belvédère Vie", "Placements Ardoise"], aliases:[],
+    blurb:"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi.",
+    src:"Placeholder." },
+  { id:"weisberg", name:"Nathan Weisberg", short:"Weisberg", photo:"", worth:7.0, worthPrev:4.8, rankPrev:7,
+    company:"PawPal, Arcade Nine", sector:"retail",
+    brands:["PawPal", "Arcade Nine"], aliases:[],
+    blurb:"Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
+    src:"Placeholder." },
+  { id:"marchetti", name:"Julian Marchetti", short:"Marchetti", photo:"", worth:5.3, worthPrev:5.0, rankPrev:6,
+    company:"Marchetti Motorsport", sector:"sport",
+    brands:["Marchetti Motorsport", "Maison Vela"], aliases:[],
+    blurb:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.",
+    src:"Placeholder." },
+  { id:"beaupre", name:"Gilles Beaupré", short:"Beaupré", photo:"", worth:5.1, worthPrev:4.3, rankPrev:8,
+    company:"Dépanneurs Lumen", sector:"retail",
+    brands:["Lumen", "Lumen Express"], aliases:[],
+    blurb:"Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat.",
+    src:"Placeholder." },
+  { id:"lacasse", name:"Lacasse family", short:"Lacasse family", photo:"", worth:5.1, worthPrev:3.8, rankPrev:10,
+    company:"Pharmacies Lacasse", sector:"retail",
+    brands:["Pharmacies Lacasse"], aliases:[],
+    blurb:"Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae.",
+    src:"Placeholder." },
+  { id:"rousseau-vail", name:"Étienne Rousseau-Vail", short:"Rousseau-Vail", photo:"", worth:4.7, worthPrev:3.1, rankPrev:12,
+    company:"Médias Boréal", sector:"tech",
+    brands:["Boréal Mobile", "Télé Boréal", "Le Quotidien"], aliases:[],
+    blurb:"Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis.",
+    src:"Placeholder." },
+  { id:"khoury", name:"Adrian Khoury", short:"Khoury", photo:"", worth:4.7, worthPrev:2.5, rankPrev:14,
+    company:"Groupe Comète", sector:"retail",
+    brands:["Comète", "Atelier Nord"], aliases:[],
+    blurb:"Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper.",
+    src:"Placeholder." },
+  { id:"lapointe", name:"Sébastien Lapointe", short:"Lapointe", photo:"", worth:3.8, worthPrev:3.8, rankPrev:9,
+    company:"Sentinelle Sécurité", sector:"industry",
+    brands:["Sentinelle", "Vigie360"], aliases:[],
+    blurb:"Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur, vitae elementum.",
+    src:"Placeholder." },
+  { id:"kessler", name:"Howard Kessler", short:"Kessler", photo:"", worth:3.6, worthPrev:5.3, rankPrev:5,
+    company:"Kessler Components", sector:"tech",
+    brands:["Kessler Components"], aliases:[],
+    blurb:"Maecenas faucibus mollis interdum. Nullam quis risus eget urna mollis ornare vel eu leo.",
+    src:"Placeholder." },
+  { id:"aschenberg", name:"Leonard Aschenberg", short:"Aschenberg", photo:"", worth:3.5, worthPrev:null, rankPrev:null,
+    company:"Distilleries Aschenberg", sector:"food",
+    brands:["Aschenberg", "Capitale Partners"], aliases:[],
+    blurb:"Etiam porta sem malesuada magna mollis euismod. Curabitur blandit tempus porttitor, cras justo odio dapibus ac facilisis.",
+    src:"Placeholder." },
+  { id:"archambeault", name:"Denis Archambeault", short:"Archambeault", photo:"", worth:2.9, worthPrev:3.7, rankPrev:11,
+    company:"Nexa Conseil", sector:"tech",
+    brands:["Nexa"], aliases:[],
+    blurb:"Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Morbi leo risus, porta ac consectetur ac.",
+    src:"Placeholder." },
+  { id:"frechette", name:"Pascal Fréchette", short:"Fréchette", photo:"", worth:2.9, worthPrev:2.3, rankPrev:15,
+    company:"Dépanneurs Lumen", sector:"retail",
+    brands:["Lumen", "Lumen Express"], aliases:[],
+    blurb:"Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Fusce dapibus, tellus ac cursus commodo.",
+    src:"Placeholder." },
+  { id:"duquette-hamelin", name:"Duquette and Hamelin families", short:"Duquette-Hamelin", photo:"", worth:2.9, worthPrev:2.9, rankPrev:13,
+    company:"Groupe Arctus", sector:"industry",
+    brands:["Arctus", "Glissoire", "Motoneige Polaris Nord"], aliases:[],
+    blurb:"Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.",
+    src:"Placeholder." },
+  { id:"sauve", name:"Yannick Sauvé", short:"Sauvé", photo:"", worth:2.4, worthPrev:1.3, rankPrev:22,
+    company:"Cirque Aurore", sector:"sport",
+    brands:["Cirque Aurore", "Studio Halo"], aliases:[],
+    blurb:"Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum, nulla vitae elit libero.",
+    src:"Placeholder." },
+  { id:"haddad", name:"Omar Haddad", short:"Haddad", photo:"", worth:2.1, worthPrev:2.1, rankPrev:16,
+    company:"PayLoop", sector:"tech",
+    brands:["PayLoop"], aliases:[],
+    blurb:"Sed posuere consectetur est at lobortis. Donec sed odio dui, integer posuere erat a ante.",
+    src:"Placeholder." },
+  { id:"whitcombe", name:"Whitcombe family", short:"Whitcombe family", photo:"", worth:2.0, worthPrev:2.0, rankPrev:17,
+    company:"Brasserie Whitcombe", sector:"food",
+    brands:["Whitcombe", "Aréna Saint-Laurent"], aliases:[],
+    blurb:"Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.",
+    src:"Placeholder." },
+  { id:"desrosiers", name:"Luc Desrosiers", short:"Desrosiers", photo:"", worth:1.9, worthPrev:1.5, rankPrev:21,
+    company:"Dépanneurs Lumen", sector:"retail",
+    brands:["Lumen", "Lumen Express"], aliases:[],
+    blurb:"Nullam id dolor id nibh ultricies vehicula ut id elit. Maecenas sed diam eget risus varius blandit sit amet non magna.",
+    src:"Placeholder." },
+  { id:"lindqvist", name:"Lindqvist family", short:"Lindqvist family", photo:"", worth:1.9, worthPrev:1.9, rankPrev:18,
+    company:"Papeterie Nordale", sector:"industry",
+    brands:["Nordale", "Douceur"], aliases:[],
+    blurb:"Curabitur blandit tempus porttitor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
+    src:"Placeholder." },
+  { id:"brenner", name:"Brenner family", short:"Brenner family", photo:"", worth:1.7, worthPrev:1.7, rankPrev:19,
+    company:"Laboratoires Brenner", sector:"industry",
+    brands:["Brenner"], aliases:[],
+    blurb:"Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper.",
+    src:"Placeholder." },
+  { id:"abdo", name:"Abdo family", short:"Abdo family", photo:"", worth:1.2, worthPrev:1.2, rankPrev:23,
+    company:"Magasins Mille Sous", sector:"retail",
+    brands:["Mille Sous"], aliases:[],
+    blurb:"Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras justo odio, dapibus ac facilisis in.",
+    src:"Placeholder." },
+  { id:"perreault", name:"Perreault family", short:"Perreault family", photo:"", worth:1.2, worthPrev:1.2, rankPrev:24,
+    company:"Redevances Aurifère", sector:"finance",
+    brands:["Aurifère"], aliases:[],
+    blurb:"Etiam porta sem malesuada magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur.",
+    src:"Placeholder." },
+  { id:"mactavish", name:"Gordon MacTavish", short:"MacTavish", photo:"", worth:1.1, worthPrev:1.1, rankPrev:25,
+    company:"Annonces Express", sector:"tech",
+    brands:["Annonces Express"], aliases:[],
+    blurb:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vitae elit libero, a pharetra augue.",
+    src:"Placeholder." },
 ];
 
 // People on last year's list who are not on this one.
 const OFF_LIST = [
-  { name:"Stephen Jarislowsky", rankPrev:20, worthPrev:1.5, note:"died Oct. 8, 2026" },
+  { name:"Armand Tessier", rankPrev:20, worthPrev:1.5, note:"fell below $1 billion" },
 ];
 
 /* =====================================================================
@@ -513,8 +517,8 @@ const OFF_LIST = [
   function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
   function initialsOf(p){
     const letter = (w) => (w.match(/[A-Za-zÀ-ÿ]/) || [""])[0].toUpperCase();
-    if (/\s/.test(p.short)) return letter(p.short);                 // "Saputo family" -> S
-    return letter(p.name.split(/\s+/)[0]) + letter(p.short);          // "Alain Bouchard" -> AB
+    if (/\s/.test(p.short)) return letter(p.short);                 // "Fiorelli family" -> F
+    return letter(p.name.split(/\s+/)[0]) + letter(p.short);          // "Nathan Weisberg" -> NW
   }
 
   PEOPLE.forEach((p, i) => {
@@ -1036,11 +1040,6 @@ const OFF_LIST = [
         </div>
         <div class="rl-body">
           <p>${esc(p.blurb)}</p>
-          <dl class="rl-facts">
-            <div><dt>${CONFIG.prevYear}</dt><dd>${p.rankPrev ? `No. ${p.rankPrev}, ${short(p.worthPrev)}` : "Not on list"}</dd></div>
-            <div><dt>Change</dt><dd>${chg === null ? "New" : chg === 0 ? "No change" : `${chg > 0 ? "+" : "−"}${short(Math.abs(chg))}`}</dd></div>
-            <div><dt>Sector</dt><dd>${esc(SECTORS[p.sector])}</dd></div>
-          </dl>
           <div class="rl-brands"><span>Behind:</span>${(p.brands||[]).map(b => `<button type="button" class="rl-chip" data-brand="${esc(b)}">${esc(b)}</button>`).join("")}</div>
         </div>
       </div>
@@ -1107,8 +1106,7 @@ const OFF_LIST = [
   const off = OFF_LIST.map(o => `${esc(o.name)} (No. ${o.rankPrev} in ${CONFIG.prevYear}) ${esc(o.note || "")}`.trim()).join("; ");
   $("rl-notes").innerHTML =
     (OFF_LIST.length ? `<p><strong>Off the list since ${CONFIG.prevYear}:</strong> ${off}.</p>` : "") +
-    `<details><summary>How the fortunes were estimated</summary><p>${esc(CONFIG.method)}</p></details>` +
-    `<p>All figures in Canadian dollars.${CONFIG.draftNote ? ` <span class="rl-draft">${esc(CONFIG.draftNote)}</span>` : ""}</p>`;
+    `<p>All figures in Canadian dollars.</p>`;
 
   /* ---------- boot ---------- */
   build();
