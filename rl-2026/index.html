@@ -160,7 +160,7 @@ html,body{margin:0;background:var(--bg);}
   grid-area:worth;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
   padding-left:14px;border-left:1px solid var(--hair-2);
 }
-.rl-card-worth .amt{font-weight:300;font-size:34px;line-height:1;letter-spacing:-.015em;font-variant-numeric:lining-nums;white-space:nowrap;}
+.rl-card-worth .amt{font-weight:700;font-size:34px;line-height:1;letter-spacing:-.015em;font-variant-numeric:lining-nums;white-space:nowrap;}
 .rl-card-worth .unit{margin-top:4px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
 .rl-card-foot{grid-area:foot;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:5px;}
 .rl-bigsub{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;color:var(--ink-2);font-size:15px;line-height:1.35;}
@@ -235,8 +235,8 @@ html,body{margin:0;background:var(--bg);}
 
 @media (max-width:639px){
   .rl{padding-top:18px;}
-  .rl-title{font-size:clamp(1.85rem,7.6vw,2.2rem);margin-bottom:8px;}
-  .rl-dek{font-size:1.15rem;margin-bottom:16px;color:var(--ink-2);}
+  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);margin-bottom:8px;}
+  .rl-dek{font-size:1.24rem;margin-bottom:16px;color:var(--ink-2);}
   .rl-card{margin-top:16px;}
   .rl-chart{margin-top:4px;}
   .rl-cap{font-size:14px;}
@@ -1109,6 +1109,7 @@ const OFF_LIST = [
   const hash = decodeURIComponent(location.hash.replace(/^#(p=)?/, ""));
   const hi = PEOPLE.findIndex(p => p.id === hash);
   if (hi >= 0) { select(hi); toggleRow(hi, true); }
+  else toggleRow(0, true);          // No. 1's profile starts open
 
   // Towers rise once, the first time the chart scrolls into view.
   function reveal(){
