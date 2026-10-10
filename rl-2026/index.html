@@ -108,7 +108,7 @@ html,body{margin:0;background:var(--bg);}
   border-bottom:2px solid transparent;font-variant-numeric:lining-nums;
 }
 .rl-seg button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600;}
-.rl-chart{position:relative;margin-top:16px;}
+.rl-chart{position:relative;margin-top:8px;}
 .rl-bg{position:absolute;left:0;top:0;width:100%;pointer-events:none;will-change:transform;}
 .rl-sky{position:relative;display:block;width:100%;touch-action:pan-y;cursor:pointer;user-select:none;-webkit-user-select:none;overflow:visible;}
 .rl-sky:focus{outline:none;}
@@ -143,33 +143,54 @@ html,body{margin:0;background:var(--bg);}
 .rl-sky.paused .spinner{animation-play-state:paused;}
 @keyframes rl-turn{to{transform:rotate(360deg);}}
 @media (prefers-reduced-motion:reduce){ .rl-sky .spinner{animation:none;} }
-.rl-sky .sel-label{
-  fill:var(--ink);font-size:14px;font-weight:600;font-family:var(--font);
-  paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round;
-}
-.rl-cap{margin:8px 0 0;font-size:14.5px;color:var(--muted);}
+.rl-cap{margin:0;font-size:14.5px;color:var(--muted);}
 
 /* Selected card */
-.rl-card{margin-top:18px;padding-top:14px;border-top:1px solid var(--ink);}
-.rl-card-top{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:'rank name nav' '. tags tags';column-gap:14px;align-items:start;}
-.rl-card-rank{grid-area:rank;font-weight:300;font-size:38px;line-height:.95;min-width:1.3ch;font-variant-numeric:lining-nums;}
-.rl-card-id{grid-area:name;min-width:0;}
-.rl-card-name{margin:0;font-size:21px;line-height:1.2;font-weight:600;}
-.rl-card-co{margin:2px 0 0;color:var(--muted);font-size:16px;}
-.rl-tags{grid-area:tags;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.rl-tag{font-size:14px;padding:1px 9px;border-radius:999px;border:1px solid var(--hair-2);color:var(--ink-2);}
-.rl-nav{grid-area:nav;display:flex;gap:8px;}
+.rl-card{margin-top:16px;padding-top:12px;border-top:1px solid var(--ink);}
+.rl-card-main{
+  display:grid;grid-template-columns:2.75rem minmax(0,max-content) auto 1fr;
+  grid-template-areas:"rank id worth ." ". foot foot foot";
+  column-gap:10px;align-items:center;
+}
+.rl-card-rank{grid-area:rank;align-self:start;font-weight:300;font-size:32px;line-height:1;padding-top:1px;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
+.rl-card-id{grid-area:id;min-width:0;}
+.rl-card-name{margin:0;font-size:19.5px;line-height:1.2;font-weight:600;}
+.rl-card-cat{margin:3px 0 0;color:var(--muted);font-size:15px;line-height:1.3;}
+.rl-card-worth{
+  grid-area:worth;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+  padding-left:14px;border-left:1px solid var(--hair-2);
+}
+.rl-card-worth .amt{font-weight:300;font-size:34px;line-height:1;letter-spacing:-.015em;font-variant-numeric:lining-nums;white-space:nowrap;}
+.rl-card-worth .unit{margin-top:4px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
+.rl-card-foot{grid-area:foot;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:5px;}
+.rl-bigsub{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;color:var(--ink-2);font-size:15px;line-height:1.35;}
+.rl-bigsub .mv{display:inline-flex;align-items:center;gap:5px;color:var(--ink);font-weight:600;}
+.rl-bigsub .ic{display:inline-flex;justify-content:center;width:10px;font-weight:800;}
+.rl-bigsub .delta{color:var(--ink-2);font-variant-numeric:lining-nums;}
+.rl-nav{display:flex;gap:8px;flex:none;}
 .rl-nav button{
-  width:36px;height:36px;border-radius:50%;border:1px solid var(--hair-2);background:var(--bg);
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--hair-2);background:var(--bg);
   cursor:pointer;display:grid;place-items:center;
 }
 .rl-nav button:disabled{opacity:.3;cursor:default;}
-.rl-big{margin:14px 0 0;font-weight:300;line-height:1;letter-spacing:-.015em;font-size:clamp(2.4rem,9vw,3.1rem);font-variant-numeric:lining-nums;}
-.rl-big small{font-size:.42em;font-weight:400;letter-spacing:0;margin-left:6px;color:var(--ink-2);}
-.rl-bigsub{margin:8px 0 0;color:var(--ink-2);font-size:16px;max-width:60ch;}
+@media (min-width:640px){
+  .rl-card-main{grid-template-columns:3.1rem minmax(0,max-content) auto 1fr;}
+  .rl-card-rank{font-size:36px;}
+  .rl-card-name{font-size:21px;}
+  .rl-card-worth{padding-left:18px;}
+  .rl-card-worth .amt{font-size:40px;}
+}
 
 /* List */
-.rl-list{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--ink);}
+.rl-under{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:6px;}
+.rl-under .rl-cap{align-self:flex-start;}
+.rl-jump{
+  display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;cursor:pointer;
+  font-size:15.5px;font-weight:600;color:var(--ink);
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;
+}
+.rl-jump svg{flex:none;}
+.rl-list{list-style:none;margin:26px 0 0;scroll-margin-top:12px;padding:0;border-top:1px solid var(--ink);}
 .rl-item{border-bottom:1px solid var(--hair);}
 .rl-row{
   display:grid;grid-template-columns:2.2rem 1fr auto 14px;column-gap:10px;row-gap:6px;align-items:baseline;
@@ -212,6 +233,16 @@ html,body{margin:0;background:var(--bg);}
 .rl-notes details p{margin:6px 0 0;}
 .rl-draft{color:var(--ink);font-weight:600;}
 
+@media (max-width:639px){
+  .rl{padding-top:18px;}
+  .rl-title{font-size:clamp(1.85rem,7.6vw,2.2rem);margin-bottom:8px;}
+  .rl-dek{font-size:1.15rem;margin-bottom:16px;color:var(--ink-2);}
+  .rl-card{margin-top:16px;}
+  .rl-chart{margin-top:4px;}
+  .rl-cap{font-size:14px;}
+  .rl-list{margin-top:16px;}
+  .rl-bg{opacity:.7;}             /* let the sketch recede behind the towers */
+}
 @media (prefers-reduced-motion:reduce){ .rl *{transition:none !important;} }
 </style>
 </head>
@@ -231,6 +262,24 @@ html,body{margin:0;background:var(--bg);}
     <p class="rl-summary" id="rl-summary" aria-live="polite" hidden></p>
   </div>
 
+  <section class="rl-card" id="rl-card" aria-label="Selected fortune">
+    <div class="rl-card-main">
+      <div class="rl-card-rank" id="rl-c-rank"></div>
+      <div class="rl-card-id">
+        <h3 class="rl-card-name" id="rl-c-name"></h3>
+        <p class="rl-card-cat" id="rl-c-cat"></p>
+      </div>
+      <div class="rl-card-worth" id="rl-c-big"></div>
+      <div class="rl-card-foot">
+        <p class="rl-bigsub" id="rl-c-sub"></p>
+        <div class="rl-nav">
+          <button type="button" id="rl-prev" aria-label="Previous on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button type="button" id="rl-next" aria-label="Next on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="rl-chart">
     <div class="rl-seg" role="group" aria-label="Tower heights by year">
       <button type="button" id="rl-y-now" aria-pressed="true"></button>
@@ -239,24 +288,12 @@ html,body{margin:0;background:var(--bg);}
     <svg class="rl-bg" id="rl-bg" aria-hidden="true" focusable="false"></svg>
     <svg class="rl-sky" id="rl-sky" role="slider" tabindex="0" aria-label="Skyline of fortunes. Use left and right arrow keys to move through the list." aria-valuemin="1" aria-valuemax="25" aria-valuenow="1"></svg>
   </div>
-  <p class="rl-cap" id="rl-cap">Drag across the towers or tap one.</p>
+  <div class="rl-under">
+    <p class="rl-cap" id="rl-cap">Drag across the towers or tap one.</p>
+    <button type="button" class="rl-jump" id="rl-jump">Read the full profiles<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+  </div>
 
-  <section class="rl-card" id="rl-card" aria-label="Selected fortune">
-    <div class="rl-card-top">
-      <div class="rl-card-rank" id="rl-c-rank"></div>
-      <div class="rl-card-id">
-        <h3 class="rl-card-name" id="rl-c-name"></h3>
-        <p class="rl-card-co" id="rl-c-co"></p>
-      </div>
-      <div class="rl-tags" id="rl-c-tags"></div>
-      <div class="rl-nav">
-        <button type="button" id="rl-prev" aria-label="Previous on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-        <button type="button" id="rl-next" aria-label="Next on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-      </div>
-    </div>
-    <div class="rl-big" id="rl-c-big"></div>
-    <p class="rl-bigsub" id="rl-c-sub"></p>
-  </section>
+
 
   <ol class="rl-list" id="rl-list" aria-label="The list, ranked by fortune"></ol>
   <p class="rl-empty" id="rl-empty" hidden></p>
@@ -533,7 +570,10 @@ const OFF_LIST = [
   /* ---------- search ---------- */
   const qEl = $("rl-q"), clearEl = $("rl-clear");
   function setQuery(v){ qEl.value = v; onQuery(); }
-  function onQuery(){ state.q = norm(qEl.value); clearEl.hidden = !qEl.value; applyFilter(); }
+  function onQuery(){
+    state.q = norm(qEl.value); clearEl.hidden = !qEl.value;
+    applyFilter();
+  }
   qEl.addEventListener("input", onQuery);
   clearEl.addEventListener("click", () => { setQuery(""); qEl.focus(); });
 
@@ -674,7 +714,7 @@ const OFF_LIST = [
   let geo = null;
   let cur = PEOPLE.map(() => 0);   // drawn tower heights, px
   let towers = [];                 // { g, body, win, face, faceBg, ring, img, txt }
-  let selLabel = null, ticks = null;
+  let ticks = null;
   let revealed = false, anim = null;
 
   function el(tag, attrs, parent){
@@ -687,13 +727,13 @@ const OFF_LIST = [
   function layout(){
     const W = Math.max(280, Math.round(svg.getBoundingClientRect().width || svg.parentNode.clientWidth));
     const narrow = W < 520;
-    const padX = narrow ? 4 : 12;
-    const gap = narrow ? 2 : 4;
+    const padX = narrow ? 6 : 12;
+    const gap = narrow ? 3 : 4;
     const tw = (W - padX * 2 - gap * (N - 1)) / N;
-    const smallD = Math.min(tw - (narrow ? 0 : 1), 26);
-    const bigD = narrow ? 38 : 46;
-    const H = narrow ? 268 : 318;
-    const top = 22 + bigD + 6;              // room for the name and the enlarged face
+    const smallD = narrow ? Math.max(7, tw - 2) : Math.min(tw - 1, 26);
+    const bigD = narrow ? 42 : 46;
+    const H = narrow ? 300 : 318;
+    const top = bigD + 14;                  // room for the enlarged face
     const groundY = H - 26;
     return { W, H, padX, gap, tw, smallD, bigD, top, groundY, plotH: groundY - top, narrow };
   }
@@ -767,7 +807,6 @@ const OFF_LIST = [
 
     el("line", { class:"baseline", x1:0, x2:W, y1:groundY + .5, y2:groundY + .5 }, svg);
     ticks = el("g", {}, svg);
-    selLabel = el("text", { class:"sel-label", "aria-hidden":"true" }, svg);
 
     drawSelection();
     drawHeights();
@@ -793,19 +832,6 @@ const OFF_LIST = [
       t.txt.style.display = show ? "" : "none";
       t.txt.setAttribute("x", cx); t.txt.setAttribute("y", cy + d * 0.15);
       t.txt.setAttribute("font-size", (d * (t.txt.textContent.length > 1 ? .38 : .46)).toFixed(1));
-    }
-    if (isSel) {
-      selLabel.textContent = PEOPLE[i].short;
-      selLabel.setAttribute("y", cy - d / 2 - 7);
-      selLabel.setAttribute("x", cx);
-      selLabel.setAttribute("text-anchor", "middle");
-      try {
-        const w = selLabel.getComputedTextLength();
-        let x = cx;
-        if (cx - w / 2 < 4) x = 4 + w / 2;
-        if (cx + w / 2 > geo.W - 4) x = geo.W - 4 - w / 2;
-        selLabel.setAttribute("x", x);
-      } catch (e) {}
     }
   }
 
@@ -931,29 +957,36 @@ const OFF_LIST = [
   $("rl-y-now").addEventListener("click", () => setYear("now"));
   $("rl-y-prev").addEventListener("click", () => setYear("prev"));
 
+  const arrowUp = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9.5 8h-9z" fill="currentColor"/></svg>`;
+  const arrowDown = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 .5 2h9z" fill="currentColor"/></svg>`;
+
   /* ---------- selected card ---------- */
   const card = {
-    rank:$("rl-c-rank"), name:$("rl-c-name"), co:$("rl-c-co"), tags:$("rl-c-tags"),
+    rank:$("rl-c-rank"), name:$("rl-c-name"), cat:$("rl-c-cat"),
     big:$("rl-c-big"), sub:$("rl-c-sub"), prev:$("rl-prev"), next:$("rl-next"),
   };
   function renderCard(){
     const p = PEOPLE[state.sel];
     const mv = rankMove(p);
-    card.rank.textContent = p.rank;
+    card.rank.textContent = `${p.rank}.`;
     card.name.textContent = p.name;
-    card.co.textContent = p.company;
-    card.tags.innerHTML = `<span class="rl-tag">${esc(SECTORS[p.sector])}</span>`;
+    card.cat.textContent = SECTORS[p.sector];
     if (state.year === "prev") {
-      card.big.innerHTML = p.worthPrev ? `${b1(p.worthPrev)}<small>billion in ${CONFIG.prevYear}</small>` : `—`;
-      card.sub.textContent = p.worthPrev
-        ? `No. ${p.rankPrev} last year. Now ${money(p.worth)}, No. ${p.rank}.`
-        : `Not on the ${CONFIG.prevYear} list. Now ${money(p.worth)}, No. ${p.rank}.`;
+      card.big.innerHTML = p.worthPrev
+        ? `<span class="amt">${short(p.worthPrev)}</span><span class="unit">Net worth, ${CONFIG.prevYear}</span>`
+        : `<span class="amt">—</span><span class="unit">Not on ${CONFIG.prevYear} list</span>`;
+      card.sub.innerHTML = p.worthPrev
+        ? `<span>No. ${p.rankPrev} in ${CONFIG.prevYear}</span><span class="delta">Now No. ${p.rank}, ${short(p.worth)}</span>`
+        : `<span class="mv">New this year</span><span class="delta">Now No. ${p.rank}, ${short(p.worth)}</span>`;
     } else {
-      card.big.innerHTML = `${b1(p.worth)}<small>billion</small>`;
+      card.big.innerHTML = `<span class="amt">${short(p.worth)}</span><span class="unit">Net worth</span>`;
       const chg = p.worthPrev ? p.worth - p.worthPrev : null;
-      card.sub.textContent = mv.kind === "new"
-        ? `New on the list this year.`
-        : `${mv.text}, when the estimate was ${money(p.worthPrev)}` + (chg ? ` (${chg > 0 ? "+" : "−"}${b1(Math.abs(chg))}B).` : ".");
+      const delta = chg ? `<span class="delta">${chg > 0 ? "+" : "−"}${short(Math.abs(chg))} since ${CONFIG.prevYear}</span>` : "";
+      const icon = `<span class="ic">${mv.kind === "up" ? arrowUp : mv.kind === "down" ? arrowDown : mv.kind === "same" ? "–" : "+"}</span>`;
+      card.sub.innerHTML =
+        mv.kind === "new" ? `<span class="mv">${icon}New on the list</span>` :
+        mv.kind === "same" ? `<span class="mv">${icon}Same rank as ${CONFIG.prevYear}</span>${delta}` :
+        `<span class="mv">${icon}${mv.kind === "up" ? "Up" : "Down"} ${mv.d} from No. ${p.rankPrev}</span>${delta}`;
     }
     const vis = visibleIdx(), pos = vis.indexOf(state.sel);
     card.prev.disabled = pos <= 0;
@@ -965,19 +998,17 @@ const OFF_LIST = [
   /* ---------- list ---------- */
   const list = $("rl-list");
   const chevron = `<svg class="rl-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
-  const arrowUp = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9.5 8h-9z" fill="currentColor"/></svg>`;
-  const arrowDown = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 .5 2h9z" fill="currentColor"/></svg>`;
   function changeCell(p){
     const mv = rankMove(p);
     if (mv.kind === "new") return `<span class="rl-new">New</span>`;
-    if (mv.kind === "same") return `<span aria-label="${mv.text}">–</span>`;
+    if (mv.kind === "same") return `<span aria-label="${mv.text}" style="font-weight:800;color:var(--ink)">–</span>`;
     return `<span aria-label="${mv.text}" style="display:inline-flex;align-items:center;gap:3px">${mv.kind === "up" ? arrowUp : arrowDown}${mv.d}</span>`;
   }
   list.innerHTML = PEOPLE.map((p, i) => {
     const chg = p.worthPrev ? p.worth - p.worthPrev : null;
     return `<li class="rl-item" id="rl-i-${p.id}" data-i="${i}">
       <button type="button" class="rl-row" aria-expanded="false" aria-controls="rl-p-${p.id}">
-        <span class="rl-rank">${p.rank}</span>
+        <span class="rl-rank">${p.rank}.</span>
         <span class="rl-who"><span class="rl-name">${esc(p.name)}</span><span class="rl-co" data-co>${esc(p.company)}</span></span>
         <span class="rl-val">${short(p.worth)}</span>
         ${chevron}
@@ -996,6 +1027,14 @@ const OFF_LIST = [
     </li>`;
   }).join("");
   const items = [...list.querySelectorAll(".rl-item")];
+
+  // "See the full list" scrolls down to the top of the list. Inside an iframe it also
+  // asks the host page to scroll, since the embed itself never has a scrollbar.
+  $("rl-jump").addEventListener("click", () => {
+    const offset = Math.round(list.getBoundingClientRect().top + window.scrollY);
+    try { list.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); } catch (e) {}
+    if (window.parent !== window) window.parent.postMessage({ type:"richlist:scrollTo", offset }, "*");
+  });
 
   list.addEventListener("click", e => {
     const brand = e.target.closest("[data-brand]");
