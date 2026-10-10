@@ -193,10 +193,9 @@ html,body{margin:0;background:var(--bg);}
 .rl-list{list-style:none;margin:26px 0 0;scroll-margin-top:12px;padding:0;border-top:1px solid var(--ink);}
 .rl-item{border-bottom:1px solid var(--hair);}
 .rl-row{
-  display:grid;grid-template-columns:2.2rem 1fr auto 14px;column-gap:10px;row-gap:6px;align-items:baseline;
-  width:100%;padding:13px 6px 13px 10px;border:0;background:none;text-align:left;cursor:pointer;
+  display:grid;grid-template-columns:2.2rem 1fr auto;column-gap:10px;row-gap:6px;align-items:baseline;
+  width:100%;padding:14px 6px 10px 10px;
 }
-.rl-row:hover{background:var(--chip);}
 .rl-rank{grid-row:1 / span 2;font-weight:300;font-size:24px;line-height:1.05;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;}
 .rl-who{min-width:0;}
 .rl-name{display:block;font-weight:600;font-size:17.5px;line-height:1.25;}
@@ -204,8 +203,6 @@ html,body{margin:0;background:var(--bg);}
 .rl-hit{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;border:1px solid var(--hair-2);color:var(--ink);font-size:13.5px;line-height:1.5;}
 .rl-hit::before{content:"Behind ";color:var(--muted);}
 .rl-val{font-weight:600;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;text-align:right;}
-.rl-chev{align-self:center;grid-row:1 / span 2;grid-column:4;color:var(--muted);transition:transform .2s ease;}
-.rl-row[aria-expanded="true"] .rl-chev{transform:rotate(180deg);}
 .rl-barwrap{grid-column:2;align-self:center;height:4px;}
 .rl-bar{height:4px;background:var(--tower);}
 .rl-chg{grid-column:3;font-size:13.5px;color:var(--muted);white-space:nowrap;text-align:right;display:inline-flex;align-items:center;justify-content:flex-end;gap:3px;font-variant-numeric:lining-nums tabular-nums;}
@@ -316,6 +313,7 @@ const CONFIG = {
   year: 2026,
   prevYear: 2025,
   greyscalePhotos: true,   // photos in black and white; the selected face shows in colour
+  draftNote: "Draft figures for layout only. Replace with final reporting before publishing.",
   // The title rotates through these, one every few seconds.
   questions: [
     "Who’s the richest person in Quebec?",
@@ -996,7 +994,6 @@ const OFF_LIST = [
 
   /* ---------- list ---------- */
   const list = $("rl-list");
-  const chevron = `<svg class="rl-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;
   function changeCell(p){
     const mv = rankMove(p);
     if (mv.kind === "new") return `<span class="rl-new">New</span>`;
@@ -1006,15 +1003,14 @@ const OFF_LIST = [
   list.innerHTML = PEOPLE.map((p, i) => {
     const chg = p.worthPrev ? p.worth - p.worthPrev : null;
     return `<li class="rl-item" id="rl-i-${p.id}" data-i="${i}">
-      <button type="button" class="rl-row" aria-expanded="false" aria-controls="rl-p-${p.id}">
+      <div class="rl-row">
         <span class="rl-rank">${p.rank}.</span>
         <span class="rl-who"><span class="rl-name">${esc(p.name)}</span><span class="rl-co" data-co>${esc(p.company)}</span></span>
         <span class="rl-val">${short(p.worth)}</span>
-        ${chevron}
         <span class="rl-barwrap" aria-hidden="true"><span class="rl-bar" style="display:block;width:${(p.worth / maxWorth * 100).toFixed(2)}%"></span></span>
         <span class="rl-chg">${changeCell(p)}</span>
-      </button>
-      <div class="rl-panel" id="rl-p-${p.id}" hidden>
+      </div>
+      <div class="rl-panel" id="rl-p-${p.id}">
         <p>${esc(p.blurb)}</p>
         <dl class="rl-facts">
           <div><dt>${CONFIG.prevYear}</dt><dd>${p.rankPrev ? `No. ${p.rankPrev}, ${short(p.worthPrev)}` : "Not on list"}</dd></div>
@@ -1037,22 +1033,8 @@ const OFF_LIST = [
 
   list.addEventListener("click", e => {
     const brand = e.target.closest("[data-brand]");
-    if (brand) { setQuery(brand.dataset.brand); return; }
-    const row = e.target.closest(".rl-row"); if (!row) return;
-    const i = +row.closest(".rl-item").dataset.i;
-    toggleRow(i);
-    select(i);
+    if (brand) setQuery(brand.dataset.brand);
   });
-  // One profile open at a time: opening a row closes whichever was open before.
-  function toggleRow(i, force){
-    const row = items[i].querySelector(".rl-row");
-    const open = force !== undefined ? force : row.getAttribute("aria-expanded") !== "true";
-    items.forEach((li, k) => {
-      const show = open && k === i;
-      li.querySelector(".rl-row").setAttribute("aria-expanded", show);
-      li.querySelector(".rl-panel").hidden = !show;
-    });
-  }
 
   /* ---------- filtering (search) ---------- */
   function applyFilter(){
@@ -1096,18 +1078,18 @@ const OFF_LIST = [
   const off = OFF_LIST.map(o => `${esc(o.name)} (No. ${o.rankPrev} in ${CONFIG.prevYear}) ${esc(o.note || "")}`.trim()).join("; ");
   $("rl-notes").innerHTML =
     (OFF_LIST.length ? `<p><strong>Off the list since ${CONFIG.prevYear}:</strong> ${off}.</p>` : "") +
-    `<p>All figures in Canadian dollars</p>`;
+    `<details><summary>How the fortunes were estimated</summary><p>${esc(CONFIG.method)}</p></details>` +
+    `<p>All figures in Canadian dollars.${CONFIG.draftNote ? ` <span class="rl-draft">${esc(CONFIG.draftNote)}</span>` : ""}</p>`;
 
   /* ---------- boot ---------- */
   build();
   select(0, { force:true });
   applyFilter();
 
-  // Deep link: embed URL ending in #lutfy (or #p=lutfy) opens that entry.
+  // Deep link: embed URL ending in #lutfy (or #p=lutfy) selects that person and jumps to their profile.
   const hash = decodeURIComponent(location.hash.replace(/^#(p=)?/, ""));
   const hi = PEOPLE.findIndex(p => p.id === hash);
-  if (hi >= 0) { select(hi); toggleRow(hi, true); }
-  else toggleRow(0, true);          // No. 1's profile starts open
+  if (hi >= 0) { select(hi); requestAnimationFrame(() => items[hi].scrollIntoView({ block:"start" })); }
 
   // Towers rise once, the first time the chart scrolls into view.
   function reveal(){
