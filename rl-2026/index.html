@@ -232,8 +232,7 @@ html,body{margin:0;background:var(--bg);}
   .rl-pic{width:104px;height:104px;}
   .rl-pic span{font-size:32px;}
   .rl-body p{font-size:18.5px;line-height:1.5;}
-  .rl-brands{font-size:15.5px;}
-  .rl-brands .rl-chip{font-size:15px;padding:3px 11px;}
+  .rl-item .rl-body .rl-cat{font-size:16.5px;}
 }
 @media (min-width:640px){
   .rl-item{grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
@@ -244,7 +243,8 @@ html,body{margin:0;background:var(--bg);}
   .rl-pic span{font-size:32px;}
   .rl-rank{font-size:26px;}
 }
-.rl-brands{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--muted);}
+.rl-body .rl-cat{margin:0;font-size:15px;line-height:1.4;color:var(--ink);font-weight:600;}
+.rl-body .rl-cat span{color:var(--muted);font-weight:400;}
 .rl-chip{
   display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;border:1px solid var(--hair-2);
   background:var(--bg);font-size:14px;cursor:pointer;color:var(--ink);
@@ -1040,7 +1040,7 @@ const OFF_LIST = [
         </div>
         <div class="rl-body">
           <p>${esc(p.blurb)}</p>
-          <div class="rl-brands"><span>Behind:</span>${(p.brands||[]).map(b => `<button type="button" class="rl-chip" data-brand="${esc(b)}">${esc(b)}</button>`).join("")}</div>
+          <p class="rl-cat"><span>Category:</span> ${esc(SECTORS[p.sector])}</p>
         </div>
       </div>
       <div class="rl-side">
@@ -1057,11 +1057,6 @@ const OFF_LIST = [
     const offset = Math.round(list.getBoundingClientRect().top + window.scrollY);
     try { list.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); } catch (e) {}
     if (window.parent !== window) window.parent.postMessage({ type:"richlist:scrollTo", offset }, "*");
-  });
-
-  list.addEventListener("click", e => {
-    const brand = e.target.closest("[data-brand]");
-    if (brand) setQuery(brand.dataset.brand);
   });
 
   /* ---------- filtering (search) ---------- */
