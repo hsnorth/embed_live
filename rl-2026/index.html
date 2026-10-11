@@ -52,9 +52,9 @@ html,body{margin:0;background:var(--bg);}
 /* Rotating question */
 /* Opening screen: question, picture, link. On its own it fills exactly one screen,
    so the list starts just below the fold. */
-.rl-intro{display:flex;flex-direction:column;padding:28px 0 36px;}
+.rl-intro{--gap:32px;display:flex;flex-direction:column;padding:28px 0 calc(var(--gap) - 4px);}
 .rl-title{
-  margin:0 0 20px;font-weight:400;letter-spacing:-.01em;line-height:1.08;
+  margin:0 0 var(--gap);font-weight:400;letter-spacing:-.01em;line-height:1.08;
   font-size:clamp(1.6rem,5.2vw,2.3rem);
 }
 .rl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
@@ -100,7 +100,7 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
   html.rl-fill .rl-flick{min-height:260px;max-height:calc((100vw - 32px) * 1.6);}
 }
 .rl .rl-jump{
-  align-self:center;display:inline-flex;align-items:center;gap:6px;margin-top:26px;padding:4px 2px;
+  align-self:center;display:inline-flex;align-items:center;gap:6px;margin-top:calc(var(--gap) - 4px);padding:4px 2px;
   border:0;background:none;cursor:pointer;font:inherit;font-size:17px;font-weight:500;color:var(--ink);
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;
 }
@@ -168,9 +168,8 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
 .rl-notes strong{color:var(--ink-2);font-weight:600;}
 
 @media (max-width:639px){
-  .rl-intro{padding:24px 0 32px;}
-  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);margin-bottom:18px;}
-  .rl .rl-jump{margin-top:22px;}
+  .rl-intro{--gap:26px;padding-top:24px;}
+  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);}
 }
 @media (prefers-reduced-motion:reduce){ .rl *{transition:none !important;} }
 </style>
