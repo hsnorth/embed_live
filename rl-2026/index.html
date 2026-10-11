@@ -95,6 +95,9 @@ html,body{margin:0;background:var(--bg);}
 @media (max-width:639px){ .rl-flick{aspect-ratio:4 / 5;} }
 /* filling the screen: the picture takes whatever height is left, within sensible limits */
 html.rl-fill .rl-intro{min-height:var(--screen,100svh);}
+/* Keep the list well clear of the fold: phone browsers show extra page when their bars
+   shrink or float over the content, so leave at least that much room, plus some. */
+html.rl-fill .rl-list{margin-top:max(110px, 100lvh - 100svh + 56px);}
 html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:min(100vw - 32px, 728px);}
 @media (max-width:639px){
   html.rl-fill .rl-flick{min-height:260px;max-height:calc((100vw - 32px) * 1.6);}
@@ -210,7 +213,7 @@ const CONFIG = {
     "Who used to breathe fire for spare change?",
     "Who’s new on the list this year?",
   ],
-  questionSeconds: 3,
+  questionSeconds: 2.5,
   flickerSeconds: 1,       // the big picture under the title cuts to a new person this often
 };
 
