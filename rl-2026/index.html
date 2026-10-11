@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
 <style>
 /* ------------------------------------------------------------------
-   House style: black serif type on white, light display headline.
+   House style: black serif type on white.
    Newsreader is the web stand-in; swap the font-family below for the
    house faces if they are available to embeds.
 ------------------------------------------------------------------- */
@@ -21,30 +21,20 @@
   --muted:#6b6b6b;
   --hair:#e4e4e4;
   --hair-2:#cdcdcd;
-  --chip:#f2f2f2;
-  --tower:#2b57a6;
-  --tower-sel:#dd2b3e;
-  --win:#ffffff;
-  --pencil:#8a8a8a;
-  --sketch:#ffffff;
-  --hill:#fbfbfb;
   --face-bg:#e8e8e8;
   --face-ink:#4a4a4a;
-  --ring:#ffffff;
   --focus:#111111;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d; --chip:#1e1e1e;
-    --tower:#6390de; --tower-sel:#ff5a6e; --win:#121212; --pencil:#707070; --sketch:#121212; --hill:#161616;
-    --face-bg:#2c2c2c; --face-ink:#c4c4c4; --ring:#121212; --focus:#f2f2f2; color-scheme:dark;
+    --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d;
+    --face-bg:#2c2c2c; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d; --chip:#1e1e1e;
-  --tower:#6390de; --tower-sel:#ff5a6e; --win:#121212; --pencil:#707070; --sketch:#121212; --hill:#161616;
-  --face-bg:#2c2c2c; --face-ink:#c4c4c4; --ring:#121212; --focus:#f2f2f2; color-scheme:dark;
+  --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d;
+  --face-bg:#2c2c2c; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
 }
 
 html,body{margin:0;background:var(--bg);}
@@ -55,15 +45,12 @@ html,body{margin:0;background:var(--bg);}
   font-size:17px;line-height:1.45;color:var(--ink);
   -webkit-font-smoothing:antialiased;
 }
-.rl button{font:inherit;color:inherit;}
 .rl [hidden]{display:none !important;}
 .rl :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
-.rl .rl-search input:focus-visible{outline:none;}
-.num{font-variant-numeric:lining-nums tabular-nums;}
 
-/* Header — matches the house chart header: light display serif + serif dek */
+/* Rotating question */
 .rl-title{
-  margin:0 0 10px;font-weight:700;letter-spacing:-.015em;line-height:1.06;
+  margin:0 0 10px;font-weight:400;letter-spacing:-.01em;line-height:1.08;
   font-size:clamp(1.6rem,5.2vw,2.3rem);
 }
 .rl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
@@ -82,115 +69,30 @@ html,body{margin:0;background:var(--bg);}
   opacity:0;transform:translateY(-.22em);filter:blur(2px);
   transition-duration:.32s;transition-delay:calc(var(--i) * 12ms);
 }
+
+/* Flickering portraits: landscape on wide screens, portrait on phones */
+.rl-flick{position:relative;margin:6px 0 18px;aspect-ratio:3 / 2;overflow:hidden;background:#33312f;}
+.rl-flick .fr{position:absolute;inset:0;margin:0;display:none;}
+.rl-flick .fr.on{display:block;}
+.rl-flick .fr.dark{background:#33312f repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 1px,transparent 1px 4px);}
+.rl-flick .fr.light{background:#e7e7e3;}
+.rl-flick .fr svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.rl-flick .fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;}
+.rl-flick .fr.dark img{filter:grayscale(1) brightness(.55) contrast(1.2);}
+.rl-flick .fr.light img{filter:grayscale(1) brightness(1.06) contrast(.95);}
+/* grain that jumps on every cut, for the printed, flickering feel */
+.rl-flick .grain{position:absolute;inset:-40px;pointer-events:none;opacity:.5;}
+.rl-flick .fr.light .grain{mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+.rl-flick .fr.dark .grain{mix-blend-mode:screen;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+.rl-flick figcaption{position:absolute;left:12px;bottom:12px;max-width:calc(100% - 24px);padding:4px 10px 5px;font-size:15px;line-height:1.3;font-weight:600;}
+.rl-flick figcaption span{font-weight:400;opacity:.75;margin-right:6px;font-variant-numeric:lining-nums;}
+.rl-flick .fr.dark figcaption{color:#111;background:#f2f0ec;}
+.rl-flick .fr.light figcaption{color:#f2f0ec;background:#111;}
+@media (max-width:639px){ .rl-flick{aspect-ratio:4 / 5;margin:4px 0 16px;} }
 @media (prefers-reduced-motion:reduce){ .rl-rot .w{transition:none !important;filter:none !important;transform:none !important;} }
-.rl-dek{margin:0 0 20px;font-size:clamp(1.06rem,2.6vw,1.25rem);line-height:1.4;max-width:60ch;}
-
-/* Search */
-.rl-search{
-  display:flex;align-items:center;gap:10px;height:46px;padding:0 6px 0 12px;
-  border:1px solid var(--hair-2);border-radius:4px;background:var(--bg);
-}
-.rl-search:focus-within{border-color:var(--ink);}
-.rl-search svg{flex:none;color:var(--muted);}
-.rl-search input{
-  flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;
-  font:inherit;font-size:17px;color:var(--ink);
-}
-.rl-search input::placeholder{color:var(--muted);}
-.rl-search input::-webkit-search-cancel-button{display:none;}
-.rl-clear{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:var(--chip);cursor:pointer;display:grid;place-items:center;}
-.rl-summary{margin:10px 0 0;font-size:15.5px;color:var(--ink-2);}
-
-/* Chart */
-.rl-seg{position:absolute;top:0;right:0;z-index:2;display:inline-flex;gap:14px;}
-.rl-seg button{
-  border:0;background:none;padding:0 0 2px;font-size:15.5px;cursor:pointer;color:var(--muted);
-  border-bottom:2px solid transparent;font-variant-numeric:lining-nums;
-}
-.rl-seg button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600;}
-.rl-chart{position:relative;margin-top:8px;}
-.rl-bg{position:absolute;left:0;top:0;width:100%;pointer-events:none;will-change:transform;}
-.rl-sky{position:relative;display:block;width:100%;touch-action:pan-y;cursor:pointer;user-select:none;-webkit-user-select:none;overflow:visible;}
-.rl-sky:focus{outline:none;}
-.rl-chart:has(.rl-sky:focus-visible){outline:2px solid var(--focus);outline-offset:4px;}
-/* pencil sketch of Montreal */
-.rl-bg .sk-f{fill:var(--sketch);stroke:var(--pencil);stroke-width:1;vector-effect:non-scaling-stroke;stroke-linejoin:round;}
-.rl-bg .sk-l{fill:none;stroke:var(--pencil);stroke-width:1;vector-effect:non-scaling-stroke;stroke-linecap:round;}
-.rl-bg .sk-faint{opacity:.55;}
-.rl-bg .sk-hill{fill:var(--hill);stroke:var(--pencil);stroke-width:1;vector-effect:non-scaling-stroke;}
-.rl-bg .sk-hatch{fill:url(#rl-hatch);stroke:none;opacity:.55;}
-.rl-bg .sk-beam{fill:none;stroke:var(--pencil);stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:1 5;opacity:.6;}
-.rl-bg .hatchline{stroke:var(--pencil);stroke-width:.5;}
-.rl-bg .sk-flagblue{fill:#1f5fa8;}
-.rl-bg .sk-flagwhite,.rl-bg .sk-fleur{fill:#ffffff;}
-/* towers */
-.rl-sky .body{fill:var(--tower);transition:fill .15s ease;}
-.rl-sky .tw.is-sel .body{fill:var(--tower-sel);}
-.rl-sky .winpane{fill:#ffffff;opacity:.22;}
-.rl-sky .tw{transition:opacity .2s ease;}
-.rl-sky .tw.dim{opacity:.16;}
-.rl-sky .baseline{stroke:var(--ink);stroke-width:1;}
-.rl-sky .tick{fill:var(--muted);font-size:12.5px;font-family:var(--font);font-variant-numeric:lining-nums tabular-nums;}
-.rl-sky .tick.sel{fill:var(--ink);font-weight:700;}
-.rl-sky .tickbg{fill:var(--bg);}
-/* faces */
-.rl-sky .face-bg{fill:var(--face-bg);}
-.rl-sky .face-ring{fill:none;stroke:var(--ring);stroke-width:1.5;}
-.rl-sky .tw.is-sel .face-ring{stroke:var(--tower-sel);stroke-width:2;}
-.rl-sky .face-t{fill:var(--face-ink);font-family:var(--font);font-weight:600;letter-spacing:.02em;}
-/* faces turn slowly clockwise, each about its own centre */
-.rl-sky .spinner{transform-box:fill-box;transform-origin:center;animation:rl-turn var(--turn,4s) linear infinite;}
-.rl-sky.paused .spinner{animation-play-state:paused;}
-@keyframes rl-turn{to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion:reduce){ .rl-sky .spinner{animation:none;} }
-.rl-cap{margin:0;font-size:14.5px;color:var(--muted);}
-
-/* Selected card */
-.rl-card{margin-top:16px;padding-top:12px;border-top:1px solid var(--ink);}
-.rl-card-main{
-  display:grid;grid-template-columns:2.75rem minmax(0,max-content) auto 1fr;
-  grid-template-areas:"rank id worth ." ". foot foot foot";
-  column-gap:10px;align-items:center;
-}
-.rl-card-rank{grid-area:rank;align-self:start;font-weight:300;font-size:32px;line-height:1;padding-top:1px;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
-.rl-card-id{grid-area:id;min-width:0;}
-.rl-card-name{margin:0;font-size:19.5px;line-height:1.2;font-weight:600;}
-.rl-card-cat{margin:3px 0 0;color:var(--muted);font-size:15px;line-height:1.3;}
-.rl-card-worth{
-  grid-area:worth;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
-  padding-left:14px;border-left:1px solid var(--hair-2);
-}
-.rl-card-worth .amt{font-weight:700;font-size:34px;line-height:1;letter-spacing:-.015em;font-variant-numeric:lining-nums;white-space:nowrap;}
-.rl-card-worth .unit{margin-top:4px;font-size:13.5px;color:var(--muted);white-space:nowrap;}
-.rl-card-foot{grid-area:foot;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:5px;}
-.rl-bigsub{margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;color:var(--ink-2);font-size:15px;line-height:1.35;}
-.rl-bigsub .mv{display:inline-flex;align-items:center;gap:5px;color:var(--ink);font-weight:600;}
-.rl-bigsub .ic{display:inline-flex;justify-content:center;width:10px;font-weight:800;}
-.rl-bigsub .delta{color:var(--ink-2);font-variant-numeric:lining-nums;}
-.rl-nav{display:flex;gap:8px;flex:none;}
-.rl-nav button{
-  width:34px;height:34px;border-radius:50%;border:1px solid var(--hair-2);background:var(--bg);
-  cursor:pointer;display:grid;place-items:center;
-}
-.rl-nav button:disabled{opacity:.3;cursor:default;}
-@media (min-width:640px){
-  .rl-card-main{grid-template-columns:3.1rem minmax(0,max-content) auto 1fr;}
-  .rl-card-rank{font-size:36px;}
-  .rl-card-name{font-size:21px;}
-  .rl-card-worth{padding-left:18px;}
-  .rl-card-worth .amt{font-size:40px;}
-}
 
 /* List */
-.rl-under{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:6px;}
-.rl-under .rl-cap{align-self:flex-start;}
-.rl-jump{
-  display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;cursor:pointer;
-  font-size:15.5px;font-weight:600;color:var(--ink);
-  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;
-}
-.rl-jump svg{flex:none;}
-.rl-list{list-style:none;margin:26px 0 0;scroll-margin-top:12px;padding:0;border-top:1px solid var(--ink);}
+.rl-list{list-style:none;margin:6px 0 0;padding:0;border-top:1px solid var(--ink);}
 /* Each profile. Phones: rank, name and net worth on top, then the photo, then the details.
    Wider screens: details take two thirds, net worth and photo sit centred in the last third. */
 .rl-item{
@@ -198,6 +100,7 @@ html,body{margin:0;background:var(--bg);}
   display:grid;grid-template-columns:minmax(0,1fr) auto;
   grid-template-areas:"head val" "pic pic" "body body";
   column-gap:12px;padding:18px 4px 20px;border-bottom:1px solid var(--hair);
+  scroll-margin-top:12px;
 }
 .rl-txt,.rl-side{display:contents;}
 .rl-head{grid-area:head;display:grid;grid-template-columns:var(--rk) minmax(0,1fr);column-gap:10px;align-items:start;}
@@ -206,10 +109,8 @@ html,body{margin:0;background:var(--bg);}
 .rl-mv .dash{font-weight:800;color:var(--ink);}
 .rl-new{font-size:11.5px;font-weight:600;padding:0 6px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);}
 .rl-who{min-width:0;}
-.rl-name{display:block;margin:0;font-weight:600;font-size:18px;line-height:1.25;}
+.rl-name{display:block;margin:0;font-weight:400;font-size:20px;line-height:1.25;}
 .rl-co{display:block;font-size:15px;color:var(--muted);line-height:1.35;margin-top:2px;}
-.rl-hit{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;border:1px solid var(--hair-2);color:var(--ink);font-size:13.5px;line-height:1.5;}
-.rl-hit::before{content:"Behind ";color:var(--muted);}
 .rl-val{grid-area:val;font-weight:700;font-size:19px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
 /* toonie-sized portrait */
 .rl-pic{
@@ -222,17 +123,17 @@ html,body{margin:0;background:var(--bg);}
 .rl-pic span{font-weight:600;font-size:30px;color:var(--face-ink);letter-spacing:.02em;}
 .rl-body{grid-area:body;padding:16px 0 0 calc(var(--rk) + 10px);min-width:0;}
 .rl-body p{margin:0 0 14px;max-width:60ch;font-size:16.5px;line-height:1.5;}
+.rl-body p:last-child{margin-bottom:0;}
 @media (max-width:639px){
   .rl-item{--rk:2.9rem;padding:20px 2px 22px;}
   .rl-rank{font-size:30px;}
   .rl-mv{font-size:13.5px;}
-  .rl-name{font-size:21px;}
+  .rl-name{font-size:23px;}
   .rl-co{font-size:16.5px;}
   .rl-val{font-size:22px;}
   .rl-pic{width:104px;height:104px;}
   .rl-pic span{font-size:32px;}
   .rl-body p{font-size:18.5px;line-height:1.5;}
-  .rl-item .rl-body .rl-cat{font-size:16.5px;}
 }
 @media (min-width:640px){
   .rl-item{grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
@@ -243,14 +144,6 @@ html,body{margin:0;background:var(--bg);}
   .rl-pic span{font-size:32px;}
   .rl-rank{font-size:26px;}
 }
-.rl-body .rl-cat{margin:0;font-size:15px;line-height:1.4;color:var(--ink);font-weight:600;}
-.rl-body .rl-cat span{color:var(--muted);font-weight:400;}
-.rl-chip{
-  display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;border:1px solid var(--hair-2);
-  background:var(--bg);font-size:14px;cursor:pointer;color:var(--ink);
-}
-.rl-chip:hover{border-color:var(--ink);}
-.rl-empty{margin:18px 0;padding:16px;background:var(--chip);color:var(--ink-2);}
 
 /* Notes */
 .rl-notes{margin-top:22px;font-size:14.5px;color:var(--muted);}
@@ -259,13 +152,7 @@ html,body{margin:0;background:var(--bg);}
 
 @media (max-width:639px){
   .rl{padding-top:18px;}
-  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);margin-bottom:8px;}
-  .rl-dek{font-size:1.24rem;margin-bottom:16px;color:var(--ink-2);}
-  .rl-card{margin-top:16px;}
-  .rl-chart{margin-top:4px;}
-  .rl-cap{font-size:14px;}
-  .rl-list{margin-top:16px;}
-  .rl-bg{opacity:.7;}             /* let the sketch recede behind the towers */
+  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);margin-bottom:12px;}
 }
 @media (prefers-reduced-motion:reduce){ .rl *{transition:none !important;} }
 </style>
@@ -273,55 +160,8 @@ html,body{margin:0;background:var(--bg);}
 <body>
 <main class="rl" id="rl">
   <h2 class="rl-title"><span class="rl-sr" id="rl-title-sr">Quebec’s 2026 rich list</span><span class="rl-rot" id="rl-rot" aria-hidden="true"></span></h2>
-  <p class="rl-dek" id="rl-dek"></p>
-
-  <div role="search">
-    <label class="rl-search">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input id="rl-q" type="search" placeholder="Search a name or a brand you buy" autocomplete="off" spellcheck="false" aria-label="Search names, companies and brands">
-      <button class="rl-clear" id="rl-clear" type="button" aria-label="Clear search" hidden>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
-    </label>
-    <p class="rl-summary" id="rl-summary" aria-live="polite" hidden></p>
-  </div>
-
-  <section class="rl-card" id="rl-card" aria-label="Selected fortune">
-    <div class="rl-card-main">
-      <div class="rl-card-rank" id="rl-c-rank"></div>
-      <div class="rl-card-id">
-        <h3 class="rl-card-name" id="rl-c-name"></h3>
-        <p class="rl-card-cat" id="rl-c-cat"></p>
-      </div>
-      <div class="rl-card-worth" id="rl-c-big"></div>
-      <div class="rl-card-foot">
-        <p class="rl-bigsub" id="rl-c-sub"></p>
-        <div class="rl-nav">
-          <button type="button" id="rl-prev" aria-label="Previous on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-          <button type="button" id="rl-next" aria-label="Next on the list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="rl-chart">
-    <div class="rl-seg" role="group" aria-label="Tower heights by year">
-      <button type="button" id="rl-y-now" aria-pressed="true"></button>
-      <button type="button" id="rl-y-prev" aria-pressed="false"></button>
-    </div>
-    <svg class="rl-bg" id="rl-bg" aria-hidden="true" focusable="false"></svg>
-    <svg class="rl-sky" id="rl-sky" role="slider" tabindex="0" aria-label="Skyline of fortunes. Use left and right arrow keys to move through the list." aria-valuemin="1" aria-valuemax="25" aria-valuenow="1"></svg>
-  </div>
-  <div class="rl-under">
-    <p class="rl-cap" id="rl-cap">Drag across the towers or tap one.</p>
-    <button type="button" class="rl-jump" id="rl-jump">Read the full profiles<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
-  </div>
-
-
-
+  <div class="rl-flick" id="rl-flick" aria-hidden="true"></div>
   <ol class="rl-list" id="rl-list" aria-label="The list, ranked by fortune"></ol>
-  <p class="rl-empty" id="rl-empty" hidden></p>
-
   <footer class="rl-notes" id="rl-notes"></footer>
 </main>
 
@@ -332,14 +172,14 @@ html,body{margin:0;background:var(--bg);}
    order you want them ranked. worth / worthPrev in C$ billions.
    rankPrev: last year's rank (null = new this year).
    photo: URL of a square headshot (head and shoulders, face centred).
-          Leave "" to show initials instead.
-   brands: shown in the profile and searchable. aliases: searchable only.
+          Used in the profile circle and the flickering picture.
+          Leave "" to show initials and a filler picture instead.
+   sector, brands, aliases: not shown at the moment; kept for reference.
    src: your note on where the figure came from (not shown to readers).
    ===================================================================== */
 const CONFIG = {
   year: 2026,
   prevYear: 2025,
-  greyscalePhotos: true,   // photos in black and white; the selected face shows in colour
   // The title rotates through these, one every few seconds.
   questions: [
     "Who’s the richest person in Quebec?",
@@ -351,17 +191,7 @@ const CONFIG = {
     "Who’s new on the list this year?",
   ],
   questionSeconds: 3,
-  spinSeconds: 4,          // faces rotate clockwise, one full turn every N seconds (0 = keep still)
-  flagImage: "",           // optional: URL of artwork for the big flag on Place Ville Marie ("" = Quebec flag)
-};
-
-const SECTORS = {
-  retail:   "Retail",
-  food:     "Food & drink",
-  finance:  "Finance & real estate",
-  tech:     "Tech & media",
-  industry: "Industry",
-  sport:    "Entertainment",
+  flickerSeconds: 1,       // the big picture under the title cuts to a new person this often
 };
 
 const PEOPLE = [
@@ -507,12 +337,8 @@ const OFF_LIST = [
   if (params.get("theme") === "light" || params.get("theme") === "dark") root.dataset.theme = params.get("theme");
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const N = PEOPLE.length;
 
-  function norm(s){ return (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g," ").trim(); }
-  function sum(a){ return a.reduce((x,y)=>x+y,0); }
   function b1(v){ return "$" + v.toFixed(1); }
-  function money(v){ return b1(v) + " billion"; }
   function short(v){ return b1(v) + "B"; }
   function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
   function initialsOf(p){
@@ -524,13 +350,7 @@ const OFF_LIST = [
   PEOPLE.forEach((p, i) => {
     p.rank = i + 1;
     p.initials = p.initials || initialsOf(p);
-    p.haystack = norm([p.name, p.short, p.company, SECTORS[p.sector], ...(p.brands||[]), ...(p.aliases||[])].join(" | "));
   });
-  const total = sum(PEOPLE.map(p => p.worth));
-  const totalPrev = sum(PEOPLE.map(p => p.worthPrev || 0)) + sum(OFF_LIST.map(p => p.worthPrev || 0));
-  const maxWorth = Math.max(...PEOPLE.map(p => Math.max(p.worth, p.worthPrev || 0)));
-
-  const state = { sel: 0, q: "", year: "now" };
 
   function rankMove(p){
     if (!p.rankPrev) return { kind:"new", text:`New on the list this year` };
@@ -539,20 +359,6 @@ const OFF_LIST = [
     if (d < 0) return { kind:"down", d:-d, text:`Down ${-d} from No. ${p.rankPrev} in ${CONFIG.prevYear}` };
     return { kind:"same", text:`Same rank as ${CONFIG.prevYear}` };
   }
-  function matches(p){ return !state.q || p.haystack.includes(state.q); }
-  function matchedBrand(p){
-    if (!state.q) return null;
-    if (norm(p.name).includes(state.q) || norm(p.company).includes(state.q)) return null;
-    return (p.brands||[]).find(b => norm(b).includes(state.q)) || null;
-  }
-  function visibleIdx(){ return PEOPLE.map((p,i)=>matches(p)?i:-1).filter(i=>i>=0); }
-
-  /* ---------- header ---------- */
-  $("rl-dek").textContent =
-    `View profiles and compare estimated fortunes.`;
-  $("rl-y-now").textContent = CONFIG.year;
-  $("rl-y-prev").textContent = CONFIG.prevYear;
-  $("rl-sky").setAttribute("aria-valuemax", N);
 
   /* ---------- rotating title ---------- */
   (function rotator(){
@@ -589,435 +395,60 @@ const OFF_LIST = [
     sync();
   })();
 
-  /* ---------- search ---------- */
-  const qEl = $("rl-q"), clearEl = $("rl-clear");
-  function setQuery(v){ qEl.value = v; onQuery(); }
-  function onQuery(){
-    state.q = norm(qEl.value); clearEl.hidden = !qEl.value;
-    applyFilter();
-  }
-  qEl.addEventListener("input", onQuery);
-  clearEl.addEventListener("click", () => { setQuery(""); qEl.focus(); });
-
-  /* ---------- skyline ---------- */
-  // Montreal skyline in a 1000 x 320 drawing space, ground at y = 320.
-  function montrealSketch(){
-    let s = 11;
-    const R = () => (s = (s * 16807) % 2147483647) / 2147483647;
-    const f = (n) => (+n).toFixed(1);
-    const rect = (x, y, w, h) => `<rect class="sk-f" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
-    const line = (x1, y1, x2, y2, cls = "sk-l") => `<path class="${cls}" d="M${f(x1)} ${f(y1)} L${f(x2)} ${f(y2)}"/>`;
-    const path = (d, cls = "sk-f") => `<path class="${cls}" d="${d}"/>`;
-    let out = "";
-
-    // Mount Royal, with a ragged treeline and the cross on its eastern summit
-    const ridge = (x) => 320 - 210 * Math.exp(-Math.pow((x - 762) / (x < 762 ? 330 : 215), 2));
-    let m = `M200 320 L200 ${f(ridge(200))}`;
-    for (let x = 200; x < 1000;) {
-      const nx = Math.min(1000, x + 6 + R() * 8);
-      const top = Math.min(ridge(x), ridge(nx));
-      m += ` Q${f((x + nx) / 2)} ${f(top - (x > 330 ? 2 + R() * 4.5 : 1))} ${f(nx)} ${f(ridge(nx))}`;
-      x = nx;
-    }
-    m += " L1000 320 Z";
-    out += path(m, "sk-hill") + path(m, "sk-hatch");
-    // a second, fainter ridge for depth
-    let m2 = "M430 320";
-    for (let x = 430; x <= 1000; x += 10) m2 += ` L${x} ${f(ridge(x) + 34 + Math.sin(x / 37) * 5)}`;
-    out += path(m2, "sk-l sk-faint");
-    // the cross
-    out += line(762, 112, 762, 70) + line(763.6, 112, 763.6, 70) + line(752, 82, 773, 82) + line(752, 83.6, 773, 83.6);
-
-    // Jacques Cartier Bridge
-    const truss = [[14,262],[40,238],[66,224],[92,219],[118,224],[144,238],[170,262]];
-    const ty = (x) => { for (let i = 0; i < truss.length - 1; i++) { const [x1,y1] = truss[i], [x2,y2] = truss[i+1]; if (x >= x1 && x <= x2) return y1 + (y2 - y1) * (x - x1) / (x2 - x1); } return 262; };
-    out += path(`M0 262 L196 262 M0 267 L196 267 M${truss.map(p => p.join(" ")).join(" L")}`, "sk-l");
-    for (let x = 27; x < 170; x += 13) out += line(x, ty(x), x, 262);
-    for (let x = 27; x < 157; x += 13) out += line(x, ty(x), x + 13, 262, "sk-l sk-faint");
-    out += rect(38, 267, 8, 53) + rect(140, 267, 8, 53);
-
-    // Habitat 67
-    [[198,300,22,20],[214,288,22,14],[230,300,20,20],[222,276,20,12],[240,286,22,14],[252,300,15,20],[246,273,16,13]]
-      .forEach(([x,y,w,h]) => { out += rect(x,y,w,h) + line(x+3, y+h/2, x+w-3, y+h/2, "sk-l sk-faint"); });
-
-    // Notre-Dame Basilica
-    const tower = (x) => {
-      let d = `M${x} 320 L${x} 198`;
-      for (let k = 0; k < 4; k++) d += ` L${x + k*4} 198 L${x + k*4} 192 L${x + k*4 + 2} 192 L${x + k*4 + 2} 198`;
-      d += ` L${x+14} 198 L${x+14} 320 Z`;
-      return path(d) + path(`M${x+4} 236 L${x+4} 218 Q${x+7} 210 ${x+10} 218 L${x+10} 236`, "sk-l");
+  /* ---------- flickering portraits under the title ---------- */
+  (function flicker(){
+    const host = $("rl-flick");
+    // Filler portrait until real photos are added: a bust on a textured ground.
+    // Light frames read like ink on paper, dark frames like a blind emboss.
+    const filler = (p, k, dark) => {
+      const x = [118, 150, 182, 136, 166][k % 5], hs = [1, .92, 1.08, .96, 1.04][(k * 3) % 5];
+      const head = `<ellipse cx="${x}" cy="${78 * hs + 6}" rx="${29 * hs}" ry="${35 * hs}"/>`;
+      const body = `<path d="M${x - 86} 205 C${x - 80} 146 ${x - 44} ${128 * hs + 6} ${x} ${126 * hs + 6} C${x + 44} ${128 * hs + 6} ${x + 80} 146 ${x + 86} 205 Z"/>`;
+      const fig = head + body;
+      return dark
+        ? `<svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice">
+             <g fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2.2" transform="translate(-1.6 -1.6)">${fig}</g>
+             <g fill="#3a3836" stroke="#141312" stroke-width="2.2">${fig}</g>
+           </svg>`
+        : `<svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice"><g fill="#1b1b1b">${fig}</g></svg>`;
     };
-    out += path("M286 320 L286 244 L295 230 L304 244 L304 320 Z") + tower(272) + tower(304);
-    out += path("M276 320 L276 306 Q281 298 286 306 L286 320 M290 320 L290 304 Q295 295 300 304 L300 320 M308 320 L308 306 Q313 298 318 306 L318 320", "sk-l");
-
-    // Old Montreal low-rise
-    out += rect(322, 282, 18, 38) + rect(340, 292, 20, 28);
-
-    // Tour de la Bourse
-    out += rect(362, 118, 34, 202) + line(366, 130, 366, 320) + line(392, 130, 392, 320)
-         + line(362, 125, 396, 125) + line(362, 130, 396, 130) + line(362, 186, 396, 186) + line(362, 190, 396, 190)
-         + line(362, 252, 396, 252) + line(362, 256, 396, 256);
-
-    // Château Champlain and its half-moon windows
-    out += rect(400, 150, 28, 170);
-    let arches = "";
-    for (let y = 160; y < 312; y += 11) for (let x = 403; x < 424; x += 8) arches += `M${x} ${y+5} L${x} ${y+2} Q${x+2.5} ${y-1.5} ${x+5} ${y+2} L${x+5} ${y+5} `;
-    out += path(arches, "sk-l sk-faint");
-
-    // 1000 de la Gauchetière: podium, shaft, copper pyramid
-    out += rect(438, 270, 54, 50) + rect(444, 78, 42, 192) + path("M444 78 L465 28 L486 78 Z") + path("M455 78 L465 52 L475 78", "sk-l sk-faint");
-    for (let y = 94; y < 266; y += 13) out += line(447, y, 483, y, "sk-l sk-faint");
-    out += line(465, 78, 465, 270, "sk-l sk-faint");
-
-    // 1250 René-Lévesque, with its stepped crown
-    out += path("M500 320 L500 64 L504 64 L504 56 L510 56 L510 46 L526 46 L526 56 L532 56 L532 64 L536 64 L536 320 Z")
-         + line(512, 64, 512, 320, "sk-l sk-faint") + line(524, 64, 524, 320, "sk-l sk-faint") + line(500, 72, 536, 72, "sk-l sk-faint");
-
-    // Place Ville Marie and its rooftop beacon
-    out += path("M583 90 L462 60 M583 90 L708 58", "sk-beam");
-    out += path("M548 320 L548 96 L578 96 L581 101 L585 101 L588 96 L618 96 L618 320 Z") + rect(580, 88, 6, 8);
-    for (let y = 108; y < 316; y += 12) out += line(551, y, 615, y, "sk-l sk-faint");
-    out += line(583, 101, 583, 320, "sk-l sk-faint");
-
-    // A big flag flying from the roof of Place Ville Marie
-    {
-      const px = 606, top = 16, fw = 122, fh = 72;
-      const wave = (x) => top + 3.2 * Math.sin(((x - px) / fw) * Math.PI * 2.1 - .4) * ((x - px) / fw + .25);
-      let edgeTop = "", edgeBot = "";
-      for (let x = px; x <= px + fw; x += 4) {
-        edgeTop += `${edgeTop ? " L" : "M"}${f(x)} ${f(wave(x))}`;
-        edgeBot = ` L${f(x)} ${f(wave(x) + fh)}` + edgeBot;
-      }
-      const flagD = `${edgeTop}${edgeBot} Z`;
-      out += line(px, 96, px, 10) + `<circle class="sk-f" cx="${px}" cy="8.5" r="2.6"/>`;
-      out += `<clipPath id="rl-flagclip"><path d="${flagD}"/></clipPath>`;
-      if (CONFIG.flagImage) {
-        out += `<image href="${CONFIG.flagImage.replace(/"/g, "&quot;")}" x="${px}" y="${top - 6}" width="${fw}" height="${fh + 12}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rl-flagclip)"/>`;
-      } else {
-        // Quebec's fleurdelisé: white cross on blue, an upright fleur-de-lis in each quarter
-        const fleur = (cx, cy, k) => `<path class="sk-fleur" transform="translate(${f(cx - 5 * k)} ${f(cy - 5 * k)}) scale(${k})" d="M5 0C6.4 1.6 6.4 3.6 5 5.6C3.6 3.6 3.6 1.6 5 0Z M4.6 5.4C3.2 3.2 1 3.4 .6 5C.3 6.3 1.6 7.1 2.6 6.4C1.8 6.2 1.6 5.4 2.2 5C3 4.6 3.9 5.2 4.6 6Z M5.4 5.4C6.8 3.2 9 3.4 9.4 5C9.7 6.3 8.4 7.1 7.4 6.4C8.2 6.2 8.4 5.4 7.8 5C7 4.6 6.1 5.2 5.4 6Z M2.6 5.9H7.4V6.8H2.6Z M5 6.8 4.2 8.6 5 9.4 5.8 8.6Z"/>`;
-        const cw = fh * .14, mx = px + fw / 2, my = top + fh / 2;
-        out += `<g clip-path="url(#rl-flagclip)">
-          <rect class="sk-flagblue" x="${px}" y="${top - 6}" width="${fw}" height="${fh + 12}"/>
-          <rect class="sk-flagwhite" x="${f(mx - cw / 2)}" y="${top - 6}" width="${f(cw)}" height="${fh + 12}"/>
-          <rect class="sk-flagwhite" x="${px}" y="${f(my - cw / 2)}" width="${fw}" height="${f(cw)}"/>
-          ${[[.25, .26], [.75, .26], [.25, .74], [.75, .74]].map(([a, b]) => fleur(px + a * fw, top + b * fh + 1, 1.9)).join("")}
-          <path class="sk-l sk-faint" d="M${px + fw * .3} ${top - 4} L${px + fw * .34} ${top + fh + 6} M${px + fw * .72} ${top - 4} L${px + fw * .76} ${top + fh + 6}"/>
-        </g>`;
-      }
-      out += `<path class="sk-l" d="${flagD}"/>`;
-    }
-
-    // CIBC tower
-    out += rect(626, 124, 26, 196) + line(635, 124, 635, 320, "sk-l sk-faint") + line(643, 124, 643, 320, "sk-l sk-faint");
-
-    // Mary Queen of the World Cathedral
-    out += rect(664, 270, 40, 50) + rect(674, 256, 20, 14) + path("M672 256 Q684 224 696 256 Z") + rect(682, 222, 4, 8)
-         + line(684, 222, 684, 213) + line(681, 216, 687, 216);
-    out += rect(708, 288, 24, 32) + rect(732, 297, 30, 23) + rect(762, 292, 22, 28);
-
-    // Olympic Stadium: the bowl, the leaning tower, the roof cables
-    out += path("M790 320 A70 42 0 0 1 930 320 Z");
-    for (let x = 800; x <= 920; x += 10) { const yb = 320 - 42 * Math.sqrt(Math.max(0, 1 - Math.pow((x - 860) / 70, 2))); out += line(x, yb, x, 320, "sk-l sk-faint"); }
-    [[849,148,872,281],[843,160,888,280],[837,173,903,282],[831,188,916,287]].forEach(c => { out += line(...c, "sk-l sk-faint"); });
-    out += path("M798 320 Q810 222 852 140 L871 134 L867 151 Q829 230 818 320 Z");
-    out += line(812, 260, 828, 262, "sk-l sk-faint") + line(822, 210, 839, 214, "sk-l sk-faint");
-
-    // Biosphère
-    out += `<circle class="sk-f" cx="966" cy="300" r="25"/>`;
-    out += path("M943 290 Q966 284 989 290 M941 302 Q966 296 991 302 M944 313 Q966 307 988 313 M954 278 L978 320 M978 278 L954 320 M966 275 L966 320", "sk-l sk-faint");
-
-    return out;
-  }
-
-  const svg = $("rl-sky");
-  const bg = $("rl-bg");
-  const NS = "http://www.w3.org/2000/svg";
-  let geo = null;
-  let cur = PEOPLE.map(() => 0);   // drawn tower heights, px
-  let towers = [];                 // { g, body, win, face, faceBg, ring, img, txt }
-  let ticks = null;
-  let revealed = false, anim = null;
-
-  function el(tag, attrs, parent){
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    if (parent) parent.appendChild(n);
-    return n;
-  }
-
-  function layout(){
-    const W = Math.max(280, Math.round(svg.getBoundingClientRect().width || svg.parentNode.clientWidth));
-    const narrow = W < 520;
-    const padX = narrow ? 6 : 12;
-    const gap = narrow ? 3 : 4;
-    const tw = (W - padX * 2 - gap * (N - 1)) / N;
-    const smallD = narrow ? Math.max(7, tw - 2) : Math.min(tw - 1, 26);
-    const bigD = narrow ? 42 : 46;
-    const H = narrow ? 300 : 318;
-    const top = bigD + 14;                  // room for the enlarged face
-    const groundY = H - 26;
-    return { W, H, padX, gap, tw, smallD, bigD, top, groundY, plotH: groundY - top, narrow };
-  }
-  function targetH(i){
-    const p = PEOPLE[i];
-    return (state.year === "now" ? p.worth : (p.worthPrev || 0)) / maxWorth * geo.plotH;
-  }
-  function xOf(i){ return geo.padX + i * (geo.tw + geo.gap); }
-
-  // Static back layer: the pencil sketch. Its own SVG, so scrubbing never redraws it.
-  function buildBackground(){
-    const { W, H, groundY, narrow, top } = geo;
-    const skH = narrow ? geo.plotH + 18 : groundY - 16;
-    const fit = narrow ? "xMaxYMax slice" : "xMidYMax meet";
-    bg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    bg.setAttribute("height", H);
-    bg.innerHTML =
-      `<defs>
-        <pattern id="rl-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><line class="hatchline" x1="0" y1="0" x2="0" y2="4"/></pattern>
-        <filter id="rl-pencil" x="-2%" y="-5%" width="104%" height="110%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="warp"/>
-          <feDisplacementMap in="SourceGraphic" in2="warp" scale="3" xChannelSelector="R" yChannelSelector="G" result="wobble"/>
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="9" result="grain"/>
-          <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.7" result="grainAlpha"/>
-          <feComposite in="wobble" in2="grainAlpha" operator="in"/>
-        </filter>
-      </defs>
-      <svg x="0" y="${groundY - skH}" width="${W}" height="${skH}" viewBox="0 0 1000 320" preserveAspectRatio="${fit}">
-        <g filter="url(#rl-pencil)">${montrealSketch()}</g>
-      </svg>`;
-  }
-
-  function build(){
-    geo = layout();
-    const { W, H, groundY, tw } = geo;
-    buildBackground();
-    svg.innerHTML = "";
-    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-    svg.setAttribute("height", H);
-
-    const defs = el("defs", {}, svg);
-    const pat = el("pattern", { id:"rl-win", width:6, height:9, patternUnits:"userSpaceOnUse" }, defs);
-    el("rect", { class:"winpane", x:1.5, y:2.5, width:3, height:4 }, pat);
-    const clip = el("clipPath", { id:"rl-round", clipPathUnits:"objectBoundingBox" }, defs);
-    el("circle", { cx:.5, cy:.5, r:.5 }, clip);
-    const grey = el("filter", { id:"rl-grey" }, defs);
-    el("feColorMatrix", { type:"saturate", values:0 }, grey);
-
-    const tg = el("g", {}, svg);
-    towers = PEOPLE.map((p, i) => {
-      const g = el("g", { class:"tw", "data-i":i }, tg);
-      const body = el("rect", { class:"body", x:xOf(i), width:tw }, g);
-      const win = el("rect", { x:xOf(i), width:tw, fill:"url(#rl-win)" }, g);
-      const face = el("g", { class:"face" }, g);
-      // staggered start angles so the faces don't all turn in lockstep
-      const spinner = el("g", CONFIG.spinSeconds > 0
-        ? { class:"spinner", style:`--turn:${CONFIG.spinSeconds}s;animation-delay:${(-i * CONFIG.spinSeconds / N * 3).toFixed(2)}s` }
-        : {}, face);
-      const faceBg = el("circle", { class:"face-bg" }, spinner);
-      let img = null, txt = null;
-      if (p.photo) {
-        img = el("image", { preserveAspectRatio:"xMidYMid slice", "clip-path":"url(#rl-round)" }, spinner);
-        img.setAttribute("href", p.photo);
-      } else {
-        txt = el("text", { class:"face-t", "text-anchor":"middle" }, spinner);
-        txt.textContent = p.initials;
-      }
-      const ring = el("circle", { class:"face-ring" }, spinner);
-      return { g, body, win, face, spinner, faceBg, ring, img, txt };
-    });
-
-    el("line", { class:"baseline", x1:0, x2:W, y1:groundY + .5, y2:groundY + .5 }, svg);
-    ticks = el("g", {}, svg);
-
-    drawSelection();
-    drawHeights();
-    drawDim();
-  }
-
-  function placeFace(i){
-    const t = towers[i], isSel = i === state.sel;
-    const d = isSel ? geo.bigD : geo.smallD;
-    // keep the enlarged face fully inside the chart at the left and right edges
-    const cx = Math.min(geo.W - d / 2 - 1, Math.max(d / 2 + 1, xOf(i) + geo.tw / 2));
-    const roof = geo.groundY - Math.max(cur[i], revealed ? 2 : 0);
-    const cy = roof - d / 2 - (isSel ? 5 : 2);
-    t.faceBg.setAttribute("cx", cx); t.faceBg.setAttribute("cy", cy); t.faceBg.setAttribute("r", d / 2);
-    t.ring.setAttribute("cx", cx); t.ring.setAttribute("cy", cy); t.ring.setAttribute("r", d / 2);
-    if (t.img) {
-      t.img.setAttribute("x", cx - d / 2); t.img.setAttribute("y", cy - d / 2);
-      t.img.setAttribute("width", d); t.img.setAttribute("height", d);
-      if (CONFIG.greyscalePhotos && !isSel) t.img.setAttribute("filter", "url(#rl-grey)"); else t.img.removeAttribute("filter");
-    }
-    if (t.txt) {
-      const show = d >= 17;
-      t.txt.style.display = show ? "" : "none";
-      t.txt.setAttribute("x", cx); t.txt.setAttribute("y", cy + d * 0.15);
-      t.txt.setAttribute("font-size", (d * (t.txt.textContent.length > 1 ? .38 : .46)).toFixed(1));
-    }
-  }
-
-  function drawHeights(){
-    for (let i = 0; i < N; i++) {
-      const h = Math.max(cur[i], revealed ? 2 : 0);
-      const y = geo.groundY - h;
-      towers[i].body.setAttribute("y", y); towers[i].body.setAttribute("height", h);
-      towers[i].win.setAttribute("y", y + 3); towers[i].win.setAttribute("height", Math.max(0, h - 5));
-      placeFace(i);
-    }
-  }
-
-  function drawTicks(){
-    ticks.innerHTML = "";
-    const marks = [1, 5, 10, 15, 20, N];
-    const selRank = state.sel + 1;
-    const y = geo.groundY + 18;
-    marks.forEach(r => {
-      if (r !== selRank && Math.abs(r - selRank) * (geo.tw + geo.gap) < 22) return;
-      el("text", { class:"tick", x:xOf(r - 1) + geo.tw / 2, y, "text-anchor":"middle" }, ticks).textContent = r;
-    });
-    const sx = xOf(selRank - 1) + geo.tw / 2;
-    el("rect", { class:"tickbg", x:sx - 12, y:geo.groundY + 4, width:24, height:18 }, ticks);
-    el("text", { class:"tick sel", x:sx, y, "text-anchor":"middle" }, ticks).textContent = selRank;
-  }
-
-  // The face you're on stops turning and settles upright; the rest keep turning.
-  let heldSpinner = null;
-  function holdUpright(sp){
-    if (!sp || !sp.classList.contains("spinner")) return;
-    let ang = 0;
-    const m = getComputedStyle(sp).transform.match(/matrix\(([^)]+)\)/);
-    if (m) { const [a, b] = m[1].split(",").map(parseFloat); ang = (Math.atan2(b, a) * 180 / Math.PI + 360) % 360; }
-    sp.style.animation = "none";
-    sp.style.transition = "none";
-    sp.style.transform = `rotate(${ang.toFixed(1)}deg)`;
-    sp.getBoundingClientRect();
-    if (reduceMotion) { sp.style.transform = "rotate(0deg)"; return; }
-    sp.style.transition = "transform .45s cubic-bezier(.2,.75,.25,1)";
-    sp.style.transform = ang < 2 ? "rotate(0deg)" : "rotate(360deg)";   // finish the turn clockwise
-  }
-  function letGo(sp){
-    if (!sp || !sp.isConnected) return;
-    sp.style.transition = ""; sp.style.transform = "";
-    sp.style.animation = ""; sp.style.animationDelay = "0s";             // resume from upright, no jump
-  }
-
-  function drawSelection(){
-    if (!geo) return;
-    towers.forEach((t, k) => t.g.classList.toggle("is-sel", k === state.sel));
-    const t = towers[state.sel];
-    t.g.parentNode.appendChild(t.g);          // bring the selected tower and its face to the front
-    if (heldSpinner !== t.spinner) { letGo(heldSpinner); holdUpright(t.spinner); heldSpinner = t.spinner; }
-    for (let i = 0; i < N; i++) placeFace(i);
-    drawTicks();
-    const p = PEOPLE[state.sel];
-    svg.setAttribute("aria-valuenow", p.rank);
-    svg.setAttribute("aria-valuetext", `No. ${p.rank}, ${p.name}, ${money(state.year === "now" ? p.worth : (p.worthPrev||0))}`);
-  }
-
-  function drawDim(){
-    if (!geo) return;
-    PEOPLE.forEach((p, i) => towers[i].g.classList.toggle("dim", !matches(p)));
-  }
-
-  function animateTo(duration, stagger){
-    if (anim) cancelAnimationFrame(anim);
-    const from = cur.slice();
-    const to = PEOPLE.map((_, i) => targetH(i));
-    if (reduceMotion || duration === 0) { cur = to; drawHeights(); return; }
-    const t0 = performance.now();
-    const ease = (t) => 1 - Math.pow(1 - t, 3);
-    const step = (now) => {
-      let done = true;
-      for (let i = 0; i < N; i++) {
-        const t = Math.min(1, Math.max(0, (now - t0 - i * stagger) / duration));
-        if (t < 1) done = false;
-        cur[i] = from[i] + (to[i] - from[i]) * ease(t);
-      }
-      drawHeights();
-      anim = done ? null : requestAnimationFrame(step);
+    // a shuffled running order, so the cuts feel random but never repeat back to back
+    let seed = 17;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const order = PEOPLE.map((_, i) => i).sort(() => rnd() - .5);
+    host.innerHTML = order.map((i, k) => {
+      const p = PEOPLE[i], dark = k % 2 === 0;
+      return `<figure class="fr ${dark ? "dark" : "light"}">
+        ${p.photo ? `<img src="${esc(p.photo)}" alt="" loading="lazy">` : filler(p, k, dark)}
+        <div class="grain"></div>
+        <figcaption><span>No. ${p.rank}</span>${esc(p.name)}</figcaption>
+      </figure>`;
+    }).join("");
+    const frames = [...host.children];
+    let at = 0, timer = null, visible = true;
+    const show = (k) => {
+      frames.forEach((f, j) => f.classList.toggle("on", j === k));
+      const g = frames[k].querySelector(".grain");
+      g.style.backgroundPosition = `${Math.floor(rnd() * 220)}px ${Math.floor(rnd() * 220)}px`;
     };
-    anim = requestAnimationFrame(step);
-  }
-
-  // Pointer scrubbing
-  let dragging = false;
-  function idxFromEvent(e){
-    const r = svg.getBoundingClientRect();
-    const x = (e.clientX - r.left) * (geo.W / r.width);
-    let i = Math.floor((x - geo.padX + geo.gap / 2) / (geo.tw + geo.gap));
-    i = Math.max(0, Math.min(N - 1, i));
-    const vis = visibleIdx();
-    if (vis.length && !vis.includes(i)) i = vis.reduce((a, b) => Math.abs(b - i) < Math.abs(a - i) ? b : a);
-    return i;
-  }
-  svg.addEventListener("pointerdown", e => { dragging = true; try { svg.setPointerCapture(e.pointerId); } catch(_){} select(idxFromEvent(e)); });
-  svg.addEventListener("pointermove", e => { if (dragging || e.pointerType === "mouse") select(idxFromEvent(e)); });
-  ["pointerup","pointercancel","lostpointercapture"].forEach(t => svg.addEventListener(t, () => dragging = false));
-  svg.addEventListener("keydown", e => {
-    const vis = visibleIdx(); if (!vis.length) return;
-    const pos = vis.indexOf(state.sel);
-    let next = null;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = vis[Math.min(vis.length - 1, pos + 1)];
-    if (e.key === "ArrowLeft"  || e.key === "ArrowUp")   next = vis[Math.max(0, pos - 1)];
-    if (e.key === "Home") next = vis[0];
-    if (e.key === "End") next = vis[vis.length - 1];
-    if (next !== null && next !== undefined) { e.preventDefault(); select(next); }
-  });
-
-  function setYear(y){
-    state.year = y;
-    $("rl-y-now").setAttribute("aria-pressed", y === "now");
-    $("rl-y-prev").setAttribute("aria-pressed", y === "prev");
-    $("rl-cap").textContent = y === "now"
-      ? "Drag across the towers or tap one."
-      : `Towers now show ${CONFIG.prevYear} fortunes, kept in ${CONFIG.year} order. Short stubs are new this year.`;
-    animateTo(480, 0);
-    drawSelection();
-    renderCard();
-  }
-  $("rl-y-now").addEventListener("click", () => setYear("now"));
-  $("rl-y-prev").addEventListener("click", () => setYear("prev"));
-
-  const arrowUp = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9.5 8h-9z" fill="currentColor"/></svg>`;
-  const arrowDown = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 .5 2h9z" fill="currentColor"/></svg>`;
-
-  /* ---------- selected card ---------- */
-  const card = {
-    rank:$("rl-c-rank"), name:$("rl-c-name"), cat:$("rl-c-cat"),
-    big:$("rl-c-big"), sub:$("rl-c-sub"), prev:$("rl-prev"), next:$("rl-next"),
-  };
-  function renderCard(){
-    const p = PEOPLE[state.sel];
-    const mv = rankMove(p);
-    card.rank.textContent = `${p.rank}.`;
-    card.name.textContent = p.name;
-    card.cat.textContent = SECTORS[p.sector];
-    if (state.year === "prev") {
-      card.big.innerHTML = p.worthPrev
-        ? `<span class="amt">${short(p.worthPrev)}</span><span class="unit">Net worth, ${CONFIG.prevYear}</span>`
-        : `<span class="amt">—</span><span class="unit">Not on ${CONFIG.prevYear} list</span>`;
-      card.sub.innerHTML = p.worthPrev
-        ? `<span>No. ${p.rankPrev} in ${CONFIG.prevYear}</span><span class="delta">Now No. ${p.rank}, ${short(p.worth)}</span>`
-        : `<span class="mv">New this year</span><span class="delta">Now No. ${p.rank}, ${short(p.worth)}</span>`;
-    } else {
-      card.big.innerHTML = `<span class="amt">${short(p.worth)}</span><span class="unit">Net worth</span>`;
-      const chg = p.worthPrev ? p.worth - p.worthPrev : null;
-      const delta = chg ? `<span class="delta">${chg > 0 ? "+" : "−"}${short(Math.abs(chg))} since ${CONFIG.prevYear}</span>` : "";
-      const icon = `<span class="ic">${mv.kind === "up" ? arrowUp : mv.kind === "down" ? arrowDown : mv.kind === "same" ? "–" : "+"}</span>`;
-      card.sub.innerHTML =
-        mv.kind === "new" ? `<span class="mv">${icon}New on the list</span>` :
-        mv.kind === "same" ? `<span class="mv">${icon}Same rank as ${CONFIG.prevYear}</span>${delta}` :
-        `<span class="mv">${icon}${mv.kind === "up" ? "Up" : "Down"} ${mv.d} from No. ${p.rankPrev}</span>${delta}`;
+    show(0);
+    if (reduceMotion || frames.length < 2) return;      // one still portrait for people who turn motion off
+    const tick = () => { at = (at + 1) % frames.length; show(at); };
+    const sync = () => {
+      const run = visible && !document.hidden;
+      if (run && !timer) timer = setInterval(tick, (CONFIG.flickerSeconds || 1) * 1000);
+      if (!run && timer) { clearInterval(timer); timer = null; }
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); sync(); }).observe(host);
     }
-    const vis = visibleIdx(), pos = vis.indexOf(state.sel);
-    card.prev.disabled = pos <= 0;
-    card.next.disabled = pos === -1 || pos >= vis.length - 1;
-  }
-  card.prev.addEventListener("click", () => { const v = visibleIdx(), pos = v.indexOf(state.sel); if (pos > 0) select(v[pos - 1]); });
-  card.next.addEventListener("click", () => { const v = visibleIdx(), pos = v.indexOf(state.sel); if (pos < v.length - 1) select(v[pos + 1]); });
+    document.addEventListener("visibilitychange", sync);
+    sync();
+  })();
 
   /* ---------- list ---------- */
+  const arrowUp = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1 9.5 8h-9z" fill="currentColor"/></svg>`;
+  const arrowDown = `<svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 9 .5 2h9z" fill="currentColor"/></svg>`;
   const list = $("rl-list");
   function changeCell(p){
     const mv = rankMove(p);
@@ -1030,72 +461,21 @@ const OFF_LIST = [
       ? `<img src="${esc(p.photo)}" alt="" loading="lazy">`
       : `<span aria-hidden="true">${esc(p.initials)}</span>`;
   }
-  list.innerHTML = PEOPLE.map((p, i) => {
-    const chg = p.worthPrev ? p.worth - p.worthPrev : null;
-    return `<li class="rl-item" id="rl-i-${p.id}" data-i="${i}">
+  list.innerHTML = PEOPLE.map((p, i) => `<li class="rl-item" id="rl-i-${p.id}">
       <div class="rl-txt">
         <div class="rl-head">
           <div><div class="rl-rank">${p.rank}.</div><div class="rl-mv">${changeCell(p)}</div></div>
-          <div class="rl-who"><h4 class="rl-name">${esc(p.name)}</h4><span class="rl-co" data-co>${esc(p.company)}</span></div>
+          <div class="rl-who"><h4 class="rl-name">${esc(p.name)}</h4><span class="rl-co">${esc(p.company)}</span></div>
         </div>
         <div class="rl-body">
           <p>${esc(p.blurb)}</p>
-          <p class="rl-cat"><span>Category:</span> ${esc(SECTORS[p.sector])}</p>
         </div>
       </div>
       <div class="rl-side">
         <div class="rl-val">${short(p.worth)}</div>
         <div class="rl-pic">${portrait(p)}</div>
       </div>
-    </li>`;
-  }).join("");
-  const items = [...list.querySelectorAll(".rl-item")];
-
-  // "See the full list" scrolls down to the top of the list. Inside an iframe it also
-  // asks the host page to scroll, since the embed itself never has a scrollbar.
-  $("rl-jump").addEventListener("click", () => {
-    const offset = Math.round(list.getBoundingClientRect().top + window.scrollY);
-    try { list.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }); } catch (e) {}
-    if (window.parent !== window) window.parent.postMessage({ type:"richlist:scrollTo", offset }, "*");
-  });
-
-  /* ---------- filtering (search) ---------- */
-  function applyFilter(){
-    const vis = visibleIdx();
-    items.forEach((li, i) => {
-      const show = vis.includes(i);
-      li.hidden = !show;
-      const co = li.querySelector("[data-co]");
-      const mb = show ? matchedBrand(PEOPLE[i]) : null;
-      co.innerHTML = esc(PEOPLE[i].company) + (mb && norm(PEOPLE[i].company).indexOf(norm(mb)) === -1 ? `<span class="rl-hit">${esc(mb)}</span>` : "");
-    });
-    const empty = $("rl-empty"), summary = $("rl-summary");
-    if (!vis.length) {
-      empty.hidden = false;
-      empty.textContent = `No one on the list matches “${qEl.value}”. Try a company, a brand or a family name.`;
-      summary.hidden = false;
-      summary.textContent = "No matches.";
-    } else {
-      empty.hidden = true;
-      summary.hidden = vis.length === N;
-      if (vis.length < N) {
-        const s = sum(vis.map(i => PEOPLE[i].worth));
-        summary.textContent = `${vis.length} of ${N}: ${money(s)} combined, ${Math.round(s / total * 100)}% of the total.`;
-      }
-      if (!vis.includes(state.sel)) select(vis[0]);
-    }
-    drawDim();
-    renderCard();
-  }
-
-  /* ---------- selection ---------- */
-  function select(i, opts = {}){
-    if (i === undefined || i === null) return;
-    const changed = i !== state.sel;
-    state.sel = i;
-    items.forEach((li, k) => { if (k === i) li.setAttribute("aria-current", "true"); else li.removeAttribute("aria-current"); });
-    if (changed || opts.force) { drawSelection(); renderCard(); }
-  }
+    </li>`).join("");
 
   /* ---------- notes ---------- */
   const off = OFF_LIST.map(o => `${esc(o.name)} (No. ${o.rankPrev} in ${CONFIG.prevYear}) ${esc(o.note || "")}`.trim()).join("; ");
@@ -1103,46 +483,13 @@ const OFF_LIST = [
     (OFF_LIST.length ? `<p><strong>Off the list since ${CONFIG.prevYear}:</strong> ${off}.</p>` : "") +
     `<p>All figures in Canadian dollars.</p>`;
 
-  /* ---------- boot ---------- */
-  build();
-  select(0, { force:true });
-  applyFilter();
-
-  // Deep link: embed URL ending in #lutfy (or #p=lutfy) selects that person and jumps to their profile.
+  // Deep link: embed URL ending in #weisberg (or #p=weisberg) jumps to that profile.
   const hash = decodeURIComponent(location.hash.replace(/^#(p=)?/, ""));
-  const hi = PEOPLE.findIndex(p => p.id === hash);
-  if (hi >= 0) { select(hi); requestAnimationFrame(() => items[hi].scrollIntoView({ block:"start" })); }
-
-  // Towers rise once, the first time the chart scrolls into view.
-  function reveal(){
-    if (revealed) return;
-    revealed = true;
-    animateTo(620, 22);
-  }
-  // Faces only turn while the chart is on screen and the tab is visible.
-  let chartOnScreen = true;
-  const syncSpin = () => svg.classList.toggle("paused", !chartOnScreen || document.hidden);
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(es => { chartOnScreen = es.some(e => e.isIntersecting); syncSpin(); }).observe(svg);
-  }
-  document.addEventListener("visibilitychange", syncSpin);
-  if ("IntersectionObserver" in window && !reduceMotion) {
-    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { reveal(); io.disconnect(); } }, { threshold:.35 });
-    io.observe(svg);
-    setTimeout(reveal, 4000);
-  } else { revealed = true; cur = PEOPLE.map((_, i) => targetH(i)); drawHeights(); }
-
-  // Rebuild when the width changes
-  let lastW = 0;
-  new ResizeObserver(() => {
-    const w = Math.round(svg.getBoundingClientRect().width);
-    if (w && Math.abs(w - lastW) > 1) {
-      lastW = w;
-      const keep = revealed && !anim;
-      build();
-      if (keep) { cur = PEOPLE.map((_, i) => targetH(i)); drawHeights(); }
-    }
-  }).observe(svg.parentNode);
+  const target = hash && document.getElementById("rl-i-" + hash);
+  if (target) requestAnimationFrame(() => {
+    target.scrollIntoView({ block:"start" });
+    if (window.parent !== window) window.parent.postMessage({ type:"richlist:scrollTo", offset: Math.round(target.getBoundingClientRect().top + window.scrollY) }, "*");
+  });
 
   // Tell the host page our height so the iframe never needs its own scrollbar.
   let lastH = 0;
