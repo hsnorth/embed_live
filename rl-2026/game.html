@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who’s Who: match the fortune to the story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
+<style>
+/* House fonts, softer surfaces: rounded cards that float on the page. */
+:root{
+  --font:"Newsreader","Tiempos Text",Georgia,"Times New Roman",serif;
+  --bg:#ffffff;
+  --ink:#111111;
+  --ink-2:#3a3a3a;
+  --muted:#6b6b6b;
+  --hair:#ececec;
+  --line:#dcdcdc;
+  --surface:#ffffff;
+  --surface-2:#f5f5f2;
+  --tint:#efefec;
+  --hover:#f7f7f5;
+  --right-bg:#e6f4ea; --right-ink:#188038;
+  --wrong-bg:#fce8e6; --wrong-ink:#c5221f;
+  --shadow:0 1px 2px rgba(0,0,0,.07),0 3px 12px rgba(0,0,0,.07);
+  --face-bg:#ececea;
+  --face-ink:#4a4a4a;
+  --focus:#111111;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121212; --ink:#f2f2f2; --ink-2:#d0d0d0; --muted:#a3a3a3; --hair:#262626; --line:#353535;
+    --surface:#1c1c1c; --surface-2:#252525; --tint:#2c2c2c; --hover:#202020;
+    --right-bg:#1d3325; --right-ink:#6dd58c; --wrong-bg:#3b2120; --wrong-ink:#f28b82;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 3px 12px rgba(0,0,0,.35);
+    --face-bg:#2e2e2e; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121212; --ink:#f2f2f2; --ink-2:#d0d0d0; --muted:#a3a3a3; --hair:#262626; --line:#353535;
+  --surface:#1c1c1c; --surface-2:#252525; --tint:#2c2c2c; --hover:#202020;
+    --right-bg:#1d3325; --right-ink:#6dd58c; --wrong-bg:#3b2120; --wrong-ink:#f28b82;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 3px 12px rgba(0,0,0,.35);
+  --face-bg:#2e2e2e; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
+}
+
+html,body{margin:0;background:var(--bg);}
+*{box-sizing:border-box;}
+.ww{
+  max-width:640px;margin:0 auto;padding:22px 16px 28px;
+  font-family:var(--font);font-optical-sizing:auto;font-size:17px;line-height:1.45;color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  /* Fixed heights, so the whole embed is the same height on every screen width
+     (600px with these cards). --card-h grows by itself if a card's text needs more room. */
+  --card-h:266px;
+  --opts-h:194px;
+  --gap:16px;
+}
+.ww [hidden]{display:none !important;}
+.ww :focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+.ww button{font:inherit;color:inherit;}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+
+/* The title is always the largest text; the card text is sized just below it.
+   Room for two lines is kept on every width, so the height never changes. */
+.ww-title{margin:0 0 18px;min-height:56px;font-weight:400;font-size:22px;line-height:1.25;color:var(--ink-2);}
+@media (min-width:600px){ .ww-title{font-size:28px;} }
+.ww-title .t{font-weight:600;color:var(--ink);}
+
+/* The card: front holds the story, back holds the answer. Both faces share one grid
+   cell, so the card is as tall as the taller face and nothing moves when it flips. */
+.ww-card{perspective:1400px;}
+.ww-inner{display:grid;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.3,.7,.2,1);}
+.ww-card.flipped .ww-inner{transform:rotateY(180deg);}
+.ww-face{
+  grid-area:1 / 1;display:flex;flex-direction:column;min-height:var(--card-h);padding:16px 20px 24px;
+  border-radius:16px;background:var(--surface);box-shadow:var(--shadow);
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+}
+.ww-back{position:relative;background:var(--surface-2);transform:rotateY(180deg);cursor:pointer;}
+.ww-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:24px;
+  font-size:14.5px;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;}
+.ww-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:14px;}
+.ww-story{margin:0;font-size:19.5px;line-height:1.3;}
+.ww-verdict{display:inline-flex;align-items:center;gap:7px;color:var(--ink);font-weight:500;font-size:15px;}
+.ww-verdict .ic{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  background:var(--ink);color:var(--bg);font-size:11.5px;font-weight:700;line-height:1;}
+.ww-verdict.is-right .ic{background:var(--right-ink);color:#fff;}
+.ww-verdict.is-wrong .ic{background:var(--wrong-ink);color:#fff;}
+.ww-ans{margin:0;font-size:19.5px;line-height:1.2;font-weight:500;}
+@media (min-width:600px){ .ww-story,.ww-ans{font-size:24px;} }
+.ww-detail{margin:4px 0 0;font-size:16px;color:var(--muted);font-variant-numeric:lining-nums;}
+.ww-reveal{margin:12px 0 0;font-size:16.5px;line-height:1.45;color:var(--ink-2);}
+.ww-card.deal .ww-front{animation:ww-deal .36s cubic-bezier(.2,.75,.25,1);}
+@keyframes ww-deal{from{opacity:0;transform:translateY(10px);}}
+
+/* Choices */
+.ww-opts{list-style:none;margin:var(--gap) 0 0;padding:0;display:grid;height:var(--opts-h);}
+.ww-opts li{display:flex;min-width:0;}
+/* wider screens: 2 x 2, spaced out to fill the same height as the stacked list on phones */
+@media (min-width:600px){
+  .ww-opts{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;column-gap:10px;row-gap:16px;}
+}
+.ww-opt{
+  display:flex;align-items:center;gap:12px;width:100%;height:100%;padding:8px 14px 8px 10px;
+  border:1px solid var(--line);border-radius:12px;background:var(--bg);
+  font-size:17px;line-height:1.25;text-align:left;cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease,opacity .2s ease;
+}
+.ww-opt.biz{padding-left:16px;}
+.ww-opt:hover:not(:disabled){background:var(--hover);}
+.ww-opt:disabled{cursor:default;}
+.ww-pic{flex:none;width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--face-bg);
+  display:grid;place-items:center;color:var(--face-ink);font-size:13px;font-weight:600;letter-spacing:.02em;}
+.ww-pic img{width:100%;height:100%;object-fit:cover;display:block;}
+.ww-opt .nm{min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+.ww-opt .mk{margin-left:auto;flex:none;font-weight:700;font-size:15px;}
+.ww-opt.right{background:var(--right-bg);border-color:var(--right-bg);}
+.ww-opt.right .nm{font-weight:500;}
+.ww-opt.right .mk{color:var(--right-ink);}
+.ww-opt.wrong{background:var(--wrong-bg);border-color:var(--wrong-bg);}
+.ww-opt.wrong .mk{color:var(--wrong-ink);}
+.ww-opts.done .ww-opt:not(.right):not(.wrong){opacity:.45;}
+/* phones: one choice per line, kept compact so the four take little more room than a 2 x 2 grid */
+@media (max-width:599px){
+  .ww-opts{grid-template-rows:repeat(4,1fr);gap:6px;}
+  .ww-opt{padding:3px 12px 3px 8px;gap:10px;font-size:16.5px;line-height:1.15;border-radius:10px;}
+  .ww-opt.biz{padding-left:14px;}
+  .ww-pic{width:30px;height:30px;font-size:11.5px;}
+}
+
+/* Buttons */
+.ww-btn{
+  display:block;width:100%;height:50px;margin-top:var(--gap);border:0;border-radius:999px;
+  background:var(--ink);color:var(--bg) !important;font-size:17px;font-weight:500;cursor:pointer;
+}
+.ww-btn.ghost{background:var(--bg);color:var(--ink) !important;border:1px solid var(--line);}
+.ww-btn.ghost:hover{background:var(--hover);}
+.ww-btn.wait{visibility:hidden;}
+
+/* End screen */
+.ww-end-card{border-radius:16px;background:var(--surface);box-shadow:var(--shadow);padding:16px 20px 26px;min-height:var(--card-h);display:flex;flex-direction:column;}
+/* the end screen takes the same height as a card plus the choices */
+#ww-end{min-height:calc(var(--card-h) + var(--gap) + var(--opts-h));}
+#ww-game{position:relative;}
+.ww-end-card .ww-body{padding-top:10px;}
+.ww-score{margin:0;font-size:22px;line-height:1.1;font-weight:600;font-variant-numeric:lining-nums;}
+.ww-score small{font-size:1em;font-weight:400;color:var(--muted);margin-left:6px;}
+.ww-line{margin:6px 0 0;font-size:19.5px;line-height:1.25;}
+@media (min-width:600px){ .ww-score{font-size:28px;} .ww-line{font-size:24px;} }
+
+@media (prefers-reduced-motion:reduce){
+  .ww-inner,.ww-opt{transition:none !important;}
+  .ww-card.deal .ww-front{animation:none;}
+}
+</style>
+</head>
+<body>
+<main class="ww" id="ww">
+  <h2 class="ww-title" id="ww-head"><span class="t" id="ww-title"></span> <span id="ww-dek"></span></h2>
+
+  <section id="ww-game" aria-labelledby="ww-head">
+    <div class="ww-card" id="ww-card">
+      <div class="ww-inner">
+        <div class="ww-face ww-front" id="ww-front">
+          <div class="ww-meta"><span id="ww-count"></span><span id="ww-tally"></span></div>
+          <div class="ww-body"><p class="ww-story" id="ww-story"></p></div>
+        </div>
+        <div class="ww-face ww-back" id="ww-back" aria-hidden="true">
+          <div class="ww-meta"><span class="ww-verdict" id="ww-verdict"></span><span id="ww-count-b"></span></div>
+          <div class="ww-body">
+            <p class="ww-ans" id="ww-ans"></p>
+            <p class="ww-detail" id="ww-detail"></p>
+            <p class="ww-reveal" id="ww-reveal"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="ww-opts" id="ww-opts" aria-labelledby="ww-story"></ul>
+    <p class="sr" id="ww-live" aria-live="polite"></p>
+  </section>
+
+  <section id="ww-end" hidden aria-live="polite">
+    <div class="ww-end-card">
+      <div class="ww-meta"><span>Final score</span></div>
+      <div class="ww-body">
+        <p class="ww-score" id="ww-score"></p>
+        <p class="ww-line" id="ww-line"></p>
+      </div>
+    </div>
+    <button type="button" class="ww-btn ghost" id="ww-again">Play again</button>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   CARDS — the only part you need to edit.
+   story:   the anecdote, written as a question.
+   options: four choices (people or companies). Shown in a random order.
+   answer:  must match one of the options exactly.
+   kind:    "person" (shows a face or initials) or "business" (name only).
+   detail:  short line under the answer, e.g. rank and net worth.
+   reveal:  one or two sentences shown when the card flips.
+   PHOTOS:  optional square headshots, keyed by the exact name used in options.
+   Everything below is placeholder: made-up names and stories.
+   ===================================================================== */
+const GAME = {
+  title: "Who’s Who",
+  dek: "Match the fortune to the story.",
+  cards: [
+    { kind:"person",
+      story:"Who remortgaged the family home for $250,000, bet it all on the company, then moved to Dubai?",
+      options:["Nathan Weisberg", "Julian Marchetti", "Adrian Khoury", "Howard Kessler"],
+      answer:"Nathan Weisberg", detail:"No. 5 · $7.0 billion",
+      reveal:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus." },
+    { kind:"business",
+      story:"Which slow-moving, century-old Quebec business grew like a tech stock this year?",
+      options:["Papeterie Nordale", "Corporation Belvédère", "Fromagerie Fiorelli", "Laboratoires Brenner"],
+      answer:"Papeterie Nordale", detail:"Owned by the Lindqvist family, No. 21",
+      reveal:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium." },
+    { kind:"person",
+      story:"Whose family fortune is older than Confederation?",
+      options:["Whitcombe family", "Lacasse family", "Fiorelli family", "Abdo family"],
+      answer:"Whitcombe family", detail:"No. 19 · $2.0 billion",
+      reveal:"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit." },
+    { kind:"person",
+      story:"Who started out with $500 and a delivery bike?",
+      options:["Rémi Ostiguy and family", "Gilles Beaupré", "Pascal Fréchette", "Luc Desrosiers"],
+      answer:"Rémi Ostiguy and family", detail:"No. 2 · $11.0 billion",
+      reveal:"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam." },
+    { kind:"person",
+      story:"Who used to breathe fire on the street for spare change?",
+      options:["Yannick Sauvé", "Julian Marchetti", "Étienne Rousseau-Vail", "Omar Haddad"],
+      answer:"Yannick Sauvé", detail:"No. 17 · $2.4 billion",
+      reveal:"Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae." },
+    { kind:"person",
+      story:"Whose fortune grew the most this year, in dollars?",
+      options:["Margaux, Élise and Clara Vautrin", "Rémi Ostiguy and family", "Fiorelli family", "Nathan Weisberg"],
+      answer:"Margaux, Élise and Clara Vautrin", detail:"No. 1 · up $4.4 billion since 2025",
+      reveal:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium." },
+    { kind:"business",
+      story:"Which company’s name is above more Quebec corner stores than any other?",
+      options:["Dépanneurs Lumen", "Groupe Comète", "Magasins Mille Sous", "Pharmacies Lacasse"],
+      answer:"Dépanneurs Lumen", detail:"Behind three people on the list",
+      reveal:"Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus." },
+    { kind:"person",
+      story:"Who is the only newcomer on this year’s list?",
+      options:["Leonard Aschenberg", "Denis Archambeault", "Sébastien Lapointe", "Gordon MacTavish"],
+      answer:"Leonard Aschenberg", detail:"New at No. 13 · $3.5 billion",
+      reveal:"Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet." },
+  ],
+  // After an answer, the next card comes up by itself.
+  nextSeconds: 1,          // seconds from answering to the next card
+  // Final line, by share of cards right (checked from the top).
+  verdicts: [
+    { min:1,   text:"A true know-it-all." },
+    { min:.75, text:"Almost a know-it-all." },
+    { min:.4,  text:"You know some of it." },
+    { min:0,   text:"Time to read the profiles." },
+  ],
+};
+const PHOTOS = {
+  // "Nathan Weisberg": "https://…/weisberg.jpg",
+};
+
+/* =====================================================================
+   Game
+   ===================================================================== */
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const root = document.documentElement;
+  const theme = new URLSearchParams(location.search).get("theme");
+  if (theme === "light" || theme === "dark") root.dataset.theme = theme;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const initials = (name) => {
+    name = name.replace(/\s+and (his |her )?family$/i, "");          // "Rémi Ostiguy and family" -> RO
+    const words = name.replace(/,/g, "").split(/\s+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w));
+    const L = (w) => w[0].toUpperCase();
+    if (/\b(family|families|sisters|brothers)$/i.test(name)) return L(words[0]);
+    return words.length > 1 ? L(words[0]) + L(words[words.length - 1]) : L(words[0]);
+  };
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  const cards = GAME.cards.filter(c => {
+    if (!c.options.includes(c.answer)) { console.warn("Who's Who: answer not among the options:", c.answer); return false; }
+    return true;
+  });
+  const N = cards.length;
+
+  $("ww-title").textContent = GAME.title + ":";
+  $("ww-dek").textContent = GAME.dek;
+
+  const card = $("ww-card"), front = $("ww-front"), back = $("ww-back");
+  const optsEl = $("ww-opts"), live = $("ww-live");
+  let at = 0, score = 0, answered = false, timer = null;
+
+  function deal(){
+    const c = cards[at];
+    answered = false;
+    // turn the card face up again without animating, then deal the new one in
+    card.querySelector(".ww-inner").style.transition = "none";
+    card.classList.remove("flipped");
+    card.getBoundingClientRect();
+    card.querySelector(".ww-inner").style.transition = "";
+    back.setAttribute("aria-hidden", "true"); front.removeAttribute("aria-hidden");
+    card.classList.remove("deal"); void card.offsetWidth; card.classList.add("deal");
+
+    $("ww-story").textContent = c.story;
+    // The answer side is filled now (hidden), so the card is already full height
+    // and nothing below it moves when it flips.
+    $("ww-verdict").className = "ww-verdict";
+    $("ww-verdict").innerHTML = `<span class="ic" aria-hidden="true">✓</span>Right`;
+    $("ww-ans").textContent = c.answer;
+    $("ww-detail").textContent = c.detail || "";
+    $("ww-detail").hidden = !c.detail;
+    $("ww-reveal").textContent = c.reveal || "";
+    $("ww-reveal").hidden = !c.reveal;
+    $("ww-count").textContent = `${at + 1} of ${N}`;
+    $("ww-count-b").textContent = `${at + 1} of ${N}`;
+    $("ww-tally").textContent = `${score} right`;
+
+    optsEl.classList.remove("done");
+    optsEl.innerHTML = shuffle(c.options).map(o => {
+      const pic = c.kind === "business" ? "" :
+        `<span class="ww-pic" aria-hidden="true">${PHOTOS[o] ? `<img src="${esc(PHOTOS[o])}" alt="">` : esc(initials(o))}</span>`;
+      return `<li><button type="button" class="ww-opt${c.kind === "business" ? " biz" : ""}" data-o="${esc(o)}">${pic}<span class="nm">${esc(o)}</span><span class="mk" aria-hidden="true"></span></button></li>`;
+    }).join("");
+  }
+
+  function choose(btn){
+    if (answered) return;
+    answered = true;
+    const c = cards[at], pick = btn.dataset.o, right = pick === c.answer;
+    if (right) score++;
+
+    optsEl.classList.add("done");
+    optsEl.querySelectorAll(".ww-opt").forEach(b => {
+      b.disabled = true;
+      if (b.dataset.o === c.answer) { b.classList.add("right"); b.querySelector(".mk").textContent = "✓"; }
+      else if (b === btn) { b.classList.add("wrong"); b.querySelector(".mk").textContent = "✕"; }
+    });
+
+    $("ww-verdict").className = "ww-verdict " + (right ? "is-right" : "is-wrong");
+    $("ww-verdict").innerHTML = right
+      ? `<span class="ic" aria-hidden="true">✓</span>Right`
+      : `<span class="ic" aria-hidden="true">✕</span>Not quite`;
+    $("ww-tally").textContent = `${score} right`;
+
+    const ms = Math.round((GAME.nextSeconds || 1) * 1000);   // includes the flip
+    card.classList.add("flipped");
+    front.setAttribute("aria-hidden", "true"); back.removeAttribute("aria-hidden");
+    live.textContent = `${right ? "Right." : "Not quite."} It was ${c.answer}. ${c.detail || ""} ${c.reveal || ""}`;
+    clearTimeout(timer);
+    timer = setTimeout(advance, ms);
+  }
+
+  // Next card (or the score), on the timer or straight away if the reader taps the answer side.
+  function advance(){
+    if (!answered) return;
+    clearTimeout(timer); timer = null;
+    const hadFocus = $("ww-game").contains(document.activeElement);
+    at++;
+    if (at < N) {
+      deal();
+      live.textContent = `Card ${at + 1} of ${N}. ${cards[at].story}`;
+      if (hadFocus) { try { optsEl.querySelector(".ww-opt").focus({ preventScroll:true }); } catch (e) {} }
+    } else end();
+  }
+
+  function end(){
+    answered = false;
+    $("ww-game").hidden = true;
+    $("ww-end").hidden = false;
+    const share = N ? score / N : 0;
+    $("ww-score").innerHTML = `${score}<small>of ${N}</small>`;
+    $("ww-line").textContent = (GAME.verdicts.find(v => share >= v.min) || { text:"" }).text;
+    try { $("ww-again").focus({ preventScroll:true }); } catch (e) {}
+  }
+
+  optsEl.addEventListener("click", (e) => { const b = e.target.closest(".ww-opt"); if (b) choose(b); });
+  back.addEventListener("click", advance);
+  document.addEventListener("keydown", (e) => {
+    if (answered && (e.key === "Enter" || e.key === " " || e.key === "ArrowRight")) { e.preventDefault(); advance(); }
+  });
+  $("ww-again").addEventListener("click", () => {
+    clearTimeout(timer); at = 0; score = 0;
+    $("ww-end").hidden = true; $("ww-game").hidden = false;
+    deal(); fitCard();
+    try { optsEl.querySelector(".ww-opt").focus({ preventScroll:true }); } catch (e) {}
+  });
+
+  // Every card gets the height of the tallest one at this width, so the embed never
+  // changes height between cards. Never less than the --card-h set in the styles.
+  const baseCardH = parseFloat(getComputedStyle($("ww")).getPropertyValue("--card-h")) || 266;
+  function fitCard(){
+    if ($("ww-game").hidden) return;
+    const probe = card.cloneNode(true);
+    probe.querySelectorAll("[id]").forEach(e => e.removeAttribute("id"));
+    probe.classList.remove("flipped", "deal");
+    probe.setAttribute("aria-hidden", "true");
+    probe.style.cssText = "position:absolute;left:0;right:0;top:0;visibility:hidden;pointer-events:none;";
+    probe.querySelectorAll(".ww-face").forEach(f => f.style.minHeight = "0");
+    $("ww-game").appendChild(probe);
+    const q = (sel) => probe.querySelector(sel);
+    let need = 0;
+    cards.forEach(c => {
+      q(".ww-story").textContent = c.story;
+      q(".ww-ans").textContent = c.answer;
+      q(".ww-detail").textContent = c.detail || ""; q(".ww-detail").hidden = !c.detail;
+      q(".ww-reveal").textContent = c.reveal || ""; q(".ww-reveal").hidden = !c.reveal;
+      need = Math.max(need, q(".ww-front").offsetHeight, q(".ww-back").offsetHeight);
+    });
+    probe.remove();
+    const h = Math.max(baseCardH, Math.ceil(need));
+    $("ww").style.setProperty("--card-h", h + "px");
+    if (h > baseCardH) console.info(`Who's Who: the longest card needs ${h}px at this width, so the embed is ${h - baseCardH}px taller than usual.`);
+  }
+  let lastW = 0;
+  new ResizeObserver(() => { const w = $("ww").clientWidth; if (w !== lastW) { lastW = w; fitCard(); } }).observe($("ww"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitCard);
+
+  if (N) { deal(); fitCard(); } else $("ww-game").hidden = true;
+
+  // Tell the host page our height so the iframe never needs its own scrollbar.
+  let lastH = 0;
+  function postHeight(){
+    const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+    if (h !== lastH && window.parent !== window) {
+      lastH = h;
+      window.parent.postMessage({ type:"richlist:game-height", height:h }, "*");
+    }
+  }
+  new ResizeObserver(postHeight).observe(document.documentElement);
+  window.addEventListener("load", postHeight);
+})();
+</script>
+</body>
+</html>
