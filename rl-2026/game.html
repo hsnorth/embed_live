@@ -77,6 +77,10 @@ html,body{margin:0;background:var(--bg);}
 .ww-ans{margin:0;font-size:19.5px;line-height:1.2;font-weight:500;}
 @media (min-width:600px){ .ww-story,.ww-ans{font-size:24px;} }
 .ww-detail{margin:4px 0 0;font-size:16px;color:var(--muted);font-variant-numeric:lining-nums;}
+/* the fortune, counted up from $0 while the answer is showing */
+.ww-worth{margin:6px 0 0;font-size:19.5px;line-height:1.2;font-weight:600;letter-spacing:.01em;
+  font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
+@media (min-width:600px){ .ww-worth{font-size:22px;} }
 .ww-reveal{margin:12px 0 0;font-size:16.5px;line-height:1.45;color:var(--ink-2);}
 .ww-card.deal .ww-front{animation:ww-deal .36s cubic-bezier(.2,.75,.25,1);}
 @keyframes ww-deal{from{opacity:0;transform:translateY(10px);}}
@@ -158,6 +162,7 @@ html,body{margin:0;background:var(--bg);}
           <div class="ww-body">
             <p class="ww-ans" id="ww-ans"></p>
             <p class="ww-detail" id="ww-detail"></p>
+            <p class="ww-worth" id="ww-worth" aria-hidden="true"></p>
             <p class="ww-reveal" id="ww-reveal"></p>
           </div>
         </div>
@@ -185,8 +190,12 @@ html,body{margin:0;background:var(--bg);}
    story:   the anecdote, written as a question.
    options: four choices (people or companies). Shown in a random order.
    answer:  must match one of the options exactly.
+   answerShown: optional, what the answer side shows if it differs from the choice
+            (e.g. the full name when the choices hide a middle name).
    kind:    "person" (shows a face or initials) or "business" (name only).
-   detail:  short line under the answer, e.g. rank and net worth.
+   detail:  short line under the answer, e.g. the rank.
+   worth:   net worth in C$ billions. It counts up from $0 on the answer side
+            while the reader waits for the next card.
    reveal:  one or two sentences shown when the card flips.
    PHOTOS:  optional square headshots, keyed by the exact name used in options.
    Cards are written from the 2026 profiles; names match the list exactly.
@@ -198,56 +207,57 @@ const GAME = {
     { kind:"person",
       story:"Who started his company with a $25,000 mortgage on his home and now lives in Dubai?",
       options:["Stephan Crétier", "Philip Fayer", "Alain Bédard", "Serge Godin"],
-      answer:"Stephan Crétier", detail:"No. 12 · $3.8 billion",
+      answer:"Stephan Crétier", detail:"No. 12 on the list", worth:3.8,
       reveal:"He founded GardaWorld in 1995. It’s now the world’s largest privately owned security company." },
     { kind:"business",
       story:"Which Quebec financial conglomerate has seen its share price roughly double since early 2025?",
       options:["Power Corporation", "Québecor", "CGI", "TFI International"],
-      answer:"Power Corporation", detail:"Controlled by the Desmarais family · No. 1",
+      answer:"Power Corporation", detail:"Desmarais family · No. 1", worth:11.5,
       reveal:"It’s behind Great-West Lifeco, Canada Life and IGM Financial." },
     { kind:"person",
       story:"Who changed his middle name from “Carl” to “Karl” as a student, after Karl Marx?",
-      options:["Pierre Karl Péladeau", "Serge Godin", "Lawrence Stroll", "Guy Laliberté"],
-      answer:"Pierre Karl Péladeau", detail:"No. 11 · $4.7 billion",
+      options:["Pierre ____ Péladeau", "Serge ____ Godin", "Lawrence ____ Stroll", "Guy ____ Laliberté"],
+      answer:"Pierre ____ Péladeau", answerShown:"Pierre Karl Péladeau", detail:"No. 11 on the list", worth:4.7,
       reveal:"He leads Québecor, owner of Vidéotron, Freedom Mobile, the Journal de Montréal and TVA." },
     { kind:"person",
       story:"Which former street performer travelled to space in 2009?",
       options:["Guy Laliberté", "Ryan Cohen", "John MacBain", "Andrew Lutfy"],
-      answer:"Guy Laliberté", detail:"No. 21 · $1.4 billion",
+      answer:"Guy Laliberté", detail:"No. 21 on the list", worth:1.4,
       reveal:"He co-founded Cirque du Soleil in 1984 and founded the One Drop Foundation." },
     { kind:"person",
-      story:"Whose family brewery was founded in Montreal in 1786?",
-      options:["Molson brothers", "Kruger family", "Saputo family", "Coutu family"],
-      answer:"Molson brothers", detail:"No. 14 · $3.2 billion",
-      reveal:"Geoff, Andrew and Justin Molson control Groupe CH, owner of the Canadiens and the Bell Centre." },
+      story:"Whose family business was founded in Montreal in 1786, more than 80 years before Confederation?",
+      options:["Molson brothers", "Kruger family", "Desmarais family", "Coutu family"],
+      answer:"Molson brothers", detail:"No. 14 on the list", worth:3.2,
+      reveal:"John Molson founded his brewery in 1786. The brothers now control Groupe CH, owner of the Canadiens." },
     { kind:"person",
       story:"Who led GameStop’s rejected bid of about US$56 billion for eBay this year?",
       options:["Ryan Cohen", "Philip Fayer", "Andrew Lutfy", "Lawrence Stroll"],
-      answer:"Ryan Cohen", detail:"No. 7 · $5.7 billion",
+      answer:"Ryan Cohen", detail:"No. 7 on the list", worth:5.7,
       reveal:"The Montreal-born CEO co-founded Chewy and sold it to PetSmart in 2017." },
     { kind:"business",
       story:"Which Quebec company agreed in August to buy Poland’s Żabka for US$8.6 billion?",
       options:["Alimentation Couche-Tard", "Saputo Inc.", "Dollarama", "Groupe Dynamite"],
-      answer:"Alimentation Couche-Tard", detail:"Founded by Alain Bouchard · No. 3",
+      answer:"Alimentation Couche-Tard", detail:"Alain Bouchard and family · No. 3", worth:10.5,
       reveal:"It came after Couche-Tard abandoned its bid for 7-Eleven’s Japanese owner in 2025." },
     { kind:"person",
-      story:"Which family fortune traces back to the inventor of the snowmobile?",
-      options:["Bombardier and Beaudoin families", "Desmarais family", "Rossy family", "Goodman family"],
-      answer:"Bombardier and Beaudoin families", detail:"No. 5 · $6 billion · up 8 spots",
-      reveal:"Their descendants still control about half the votes at both Bombardier and BRP." },
+      story:"Who married the snowmobile inventor’s daughter and built the company into a global giant?",
+      options:["Laurent Beaudoin", "Pierre Beaudoin", "Paul Desmarais Jr.", "Lino Saputo Jr."],
+      answer:"Laurent Beaudoin", detail:"Bombardier-Beaudoin families · No. 5", worth:6,
+      reveal:"He married Joseph-Armand Bombardier’s daughter, Claire. His son Pierre now chairs Bombardier." },
     { kind:"person",
       story:"Which Montreal-born billionaire bought the Force India Formula One team in 2018?",
       options:["Lawrence Stroll", "Ryan Cohen", "Philip Fayer", "Andrew Lutfy"],
-      answer:"Lawrence Stroll", detail:"No. 9 · $5.1 billion",
+      answer:"Lawrence Stroll", detail:"No. 9 on the list", worth:5.1,
       reveal:"He made his fortune backing Tommy Hilfiger and Michael Kors, and renamed the team Aston Martin." },
     { kind:"person",
       story:"Who is the only newcomer on this year’s list?",
       options:["Alain Bédard", "Pierre Lassonde", "Réal Plourde", "John MacBain"],
-      answer:"Alain Bédard", detail:"New at No. 24 · $1.1 billion",
+      answer:"Alain Bédard", detail:"New at No. 24", worth:1.1,
       reveal:"He has run TFI International since 1996, building one of North America’s largest transportation companies." },
   ],
   // After an answer, the next card comes up by itself.
-  nextSeconds: 1,          // seconds from answering to the next card
+  nextSeconds: 3,          // seconds from answering to the next card
+  countSeconds: 1.5,       // seconds from answering until the fortune finishes counting
   // Final line, by share of cards right (checked from the top).
   verdicts: [
     { min:1,   text:"A true know-it-all." },
@@ -271,7 +281,8 @@ const PHOTOS = {
 
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const initials = (name) => {
-    name = name.replace(/\s+and (his |her )?family$/i, "");          // "Rémi Ostiguy and family" -> RO
+    name = name.replace(/\s+and (his |her )?family$/i, "")           // "Alain Bouchard and family" -> AB
+               .replace(/\s+(Jr|Sr)\.?$/i, "");                          // "Lino Saputo Jr." -> LS
     const words = name.replace(/,/g, "").split(/\s+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w));
     const L = (w) => w[0].toUpperCase();
     if (/\b(family|families|sisters|brothers)$/i.test(name)) return L(words[0]);
@@ -285,6 +296,9 @@ const PHOTOS = {
     return true;
   });
   const N = cards.length;
+  const fullDollars = (b) => "$" + Math.floor(b * 1e9).toLocaleString("en-CA");      // 3.8 -> $3,800,000,000
+  const spoken = (b) => "$" + (Math.round(b * 10) / 10) + " billion";
+  let countRaf = null;
 
   $("ww-title").textContent = GAME.title + ":";
   $("ww-dek").textContent = GAME.dek;
@@ -309,9 +323,11 @@ const PHOTOS = {
     // and nothing below it moves when it flips.
     $("ww-verdict").className = "ww-verdict";
     $("ww-verdict").innerHTML = `<span class="ic" aria-hidden="true">✓</span>Right`;
-    $("ww-ans").textContent = c.answer;
+    $("ww-ans").textContent = c.answerShown || c.answer;
     $("ww-detail").textContent = c.detail || "";
     $("ww-detail").hidden = !c.detail;
+    $("ww-worth").textContent = c.worth ? fullDollars(c.worth) : "";
+    $("ww-worth").hidden = !c.worth;
     $("ww-reveal").textContent = c.reveal || "";
     $("ww-reveal").hidden = !c.reveal;
     $("ww-count").textContent = `${at + 1} of ${N}`;
@@ -346,17 +362,38 @@ const PHOTOS = {
     $("ww-tally").textContent = `${score} right`;
 
     const ms = Math.round((GAME.nextSeconds || 1) * 1000);   // includes the flip
+    countUp(c, ms);
     card.classList.add("flipped");
     front.setAttribute("aria-hidden", "true"); back.removeAttribute("aria-hidden");
-    live.textContent = `${right ? "Right." : "Not quite."} It was ${c.answer}. ${c.detail || ""} ${c.reveal || ""}`;
+    live.textContent = `${right ? "Right." : "Not quite."} It was ${c.answerShown || c.answer}. ${c.detail || ""}${c.worth ? ", worth " + spoken(c.worth) : ""}. ${c.reveal || ""}`;
     clearTimeout(timer);
     timer = setTimeout(advance, ms);
+  }
+
+  // The fortune runs up from $0 and lands just before the next card is dealt.
+  function countUp(c, ms){
+    cancelAnimationFrame(countRaf);
+    const el = $("ww-worth");
+    if (!c.worth) return;
+    const target = c.worth * 1e9;
+    if (reduceMotion) { el.textContent = fullDollars(c.worth); return; }
+    const start = performance.now() + 150;                     // as the card turns
+    const landAt = Math.min(ms - 100, (GAME.countSeconds || 1.9) * 1000);
+    const dur = Math.max(300, landAt - 150);                   // land, then hold until the next card
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    el.textContent = "$0";
+    const step = (now) => {
+      const t = Math.min(1, Math.max(0, (now - start) / dur));
+      el.textContent = t < 1 ? "$" + Math.floor(target * ease(t)).toLocaleString("en-CA") : fullDollars(c.worth);
+      if (t < 1) countRaf = requestAnimationFrame(step);
+    };
+    countRaf = requestAnimationFrame(step);
   }
 
   // Next card (or the score), on the timer or straight away if the reader taps the answer side.
   function advance(){
     if (!answered) return;
-    clearTimeout(timer); timer = null;
+    clearTimeout(timer); timer = null; cancelAnimationFrame(countRaf);
     const hadFocus = $("ww-game").contains(document.activeElement);
     at++;
     if (at < N) {
@@ -404,8 +441,9 @@ const PHOTOS = {
     let need = 0;
     cards.forEach(c => {
       q(".ww-story").textContent = c.story;
-      q(".ww-ans").textContent = c.answer;
+      q(".ww-ans").textContent = c.answerShown || c.answer;
       q(".ww-detail").textContent = c.detail || ""; q(".ww-detail").hidden = !c.detail;
+      q(".ww-worth").textContent = c.worth ? fullDollars(c.worth) : ""; q(".ww-worth").hidden = !c.worth;
       q(".ww-reveal").textContent = c.reveal || ""; q(".ww-reveal").hidden = !c.reveal;
       need = Math.max(need, q(".ww-front").offsetHeight, q(".ww-back").offsetHeight);
     });
