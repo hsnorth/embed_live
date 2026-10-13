@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light">
 <title>Who’s Who: match the fortune to the story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,23 +28,7 @@
   --face-bg:#ececea;
   --face-ink:#4a4a4a;
   --focus:#111111;
-  color-scheme:light;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#121212; --ink:#f2f2f2; --ink-2:#d0d0d0; --muted:#a3a3a3; --hair:#262626; --line:#353535;
-    --surface:#1c1c1c; --surface-2:#252525; --tint:#2c2c2c; --hover:#202020;
-    --right-bg:#1d3325; --right-ink:#6dd58c; --wrong-bg:#3b2120; --wrong-ink:#f28b82;
-    --shadow:0 1px 2px rgba(0,0,0,.5),0 3px 12px rgba(0,0,0,.35);
-    --face-bg:#2e2e2e; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#121212; --ink:#f2f2f2; --ink-2:#d0d0d0; --muted:#a3a3a3; --hair:#262626; --line:#353535;
-  --surface:#1c1c1c; --surface-2:#252525; --tint:#2c2c2c; --hover:#202020;
-    --right-bg:#1d3325; --right-ink:#6dd58c; --wrong-bg:#3b2120; --wrong-ink:#f28b82;
-  --shadow:0 1px 2px rgba(0,0,0,.5),0 3px 12px rgba(0,0,0,.35);
-  --face-bg:#2e2e2e; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
+  color-scheme:only light;
 }
 
 html,body{margin:0;background:var(--bg);}
@@ -204,52 +189,62 @@ html,body{margin:0;background:var(--bg);}
    detail:  short line under the answer, e.g. rank and net worth.
    reveal:  one or two sentences shown when the card flips.
    PHOTOS:  optional square headshots, keyed by the exact name used in options.
-   Everything below is placeholder: made-up names and stories.
+   Cards are written from the 2026 profiles; names match the list exactly.
    ===================================================================== */
 const GAME = {
   title: "Who’s Who",
   dek: "Match the fortune to the story.",
   cards: [
     { kind:"person",
-      story:"Who remortgaged the family home for $250,000, bet it all on the company, then moved to Dubai?",
-      options:["Nathan Weisberg", "Julian Marchetti", "Adrian Khoury", "Howard Kessler"],
-      answer:"Nathan Weisberg", detail:"No. 5 · $7.0 billion",
-      reveal:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus." },
+      story:"Who started his company with a $25,000 mortgage on his home and now lives in Dubai?",
+      options:["Stephan Crétier", "Philip Fayer", "Alain Bédard", "Serge Godin"],
+      answer:"Stephan Crétier", detail:"No. 12 · $3.8 billion",
+      reveal:"He founded GardaWorld in 1995. It’s now the world’s largest privately owned security company." },
     { kind:"business",
-      story:"Which slow-moving, century-old Quebec business grew like a tech stock this year?",
-      options:["Papeterie Nordale", "Corporation Belvédère", "Fromagerie Fiorelli", "Laboratoires Brenner"],
-      answer:"Papeterie Nordale", detail:"Owned by the Lindqvist family, No. 21",
-      reveal:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium." },
+      story:"Which Quebec financial conglomerate has seen its share price roughly double since early 2025?",
+      options:["Power Corporation", "Québecor", "CGI", "TFI International"],
+      answer:"Power Corporation", detail:"Controlled by the Desmarais family · No. 1",
+      reveal:"It’s behind Great-West Lifeco, Canada Life and IGM Financial." },
     { kind:"person",
-      story:"Whose family fortune is older than Confederation?",
-      options:["Whitcombe family", "Lacasse family", "Fiorelli family", "Abdo family"],
-      answer:"Whitcombe family", detail:"No. 19 · $2.0 billion",
-      reveal:"Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit." },
+      story:"Who changed his middle name from “Carl” to “Karl” as a student, after Karl Marx?",
+      options:["Pierre Karl Péladeau", "Serge Godin", "Lawrence Stroll", "Guy Laliberté"],
+      answer:"Pierre Karl Péladeau", detail:"No. 11 · $4.7 billion",
+      reveal:"He leads Québecor, owner of Vidéotron, Freedom Mobile, the Journal de Montréal and TVA." },
     { kind:"person",
-      story:"Who started out with $500 and a delivery bike?",
-      options:["Rémi Ostiguy and family", "Gilles Beaupré", "Pascal Fréchette", "Luc Desrosiers"],
-      answer:"Rémi Ostiguy and family", detail:"No. 2 · $11.0 billion",
-      reveal:"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam." },
+      story:"Which former street performer travelled to space in 2009?",
+      options:["Guy Laliberté", "Ryan Cohen", "John MacBain", "Andrew Lutfy"],
+      answer:"Guy Laliberté", detail:"No. 21 · $1.4 billion",
+      reveal:"He co-founded Cirque du Soleil in 1984 and founded the One Drop Foundation." },
     { kind:"person",
-      story:"Who used to breathe fire on the street for spare change?",
-      options:["Yannick Sauvé", "Julian Marchetti", "Étienne Rousseau-Vail", "Omar Haddad"],
-      answer:"Yannick Sauvé", detail:"No. 17 · $2.4 billion",
-      reveal:"Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae." },
+      story:"Whose family brewery was founded in Montreal in 1786?",
+      options:["Molson brothers", "Kruger family", "Saputo family", "Coutu family"],
+      answer:"Molson brothers", detail:"No. 14 · $3.2 billion",
+      reveal:"Geoff, Andrew and Justin Molson control Groupe CH, owner of the Canadiens and the Bell Centre." },
     { kind:"person",
-      story:"Whose fortune grew the most this year, in dollars?",
-      options:["Margaux, Élise and Clara Vautrin", "Rémi Ostiguy and family", "Fiorelli family", "Nathan Weisberg"],
-      answer:"Margaux, Élise and Clara Vautrin", detail:"No. 1 · up $4.4 billion since 2025",
-      reveal:"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium." },
+      story:"Who led GameStop’s rejected bid of about US$56 billion for eBay this year?",
+      options:["Ryan Cohen", "Philip Fayer", "Andrew Lutfy", "Lawrence Stroll"],
+      answer:"Ryan Cohen", detail:"No. 7 · $5.7 billion",
+      reveal:"The Montreal-born CEO co-founded Chewy and sold it to PetSmart in 2017." },
     { kind:"business",
-      story:"Which company’s name is above more Quebec corner stores than any other?",
-      options:["Dépanneurs Lumen", "Groupe Comète", "Magasins Mille Sous", "Pharmacies Lacasse"],
-      answer:"Dépanneurs Lumen", detail:"Behind three people on the list",
-      reveal:"Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus." },
+      story:"Which Quebec company agreed in August to buy Poland’s Żabka for US$8.6 billion?",
+      options:["Alimentation Couche-Tard", "Saputo Inc.", "Dollarama", "Groupe Dynamite"],
+      answer:"Alimentation Couche-Tard", detail:"Founded by Alain Bouchard · No. 3",
+      reveal:"It came after Couche-Tard abandoned its bid for 7-Eleven’s Japanese owner in 2025." },
+    { kind:"person",
+      story:"Which family fortune traces back to the inventor of the snowmobile?",
+      options:["Bombardier and Beaudoin families", "Desmarais family", "Rossy family", "Goodman family"],
+      answer:"Bombardier and Beaudoin families", detail:"No. 5 · $6 billion · up 8 spots",
+      reveal:"Their descendants still control about half the votes at both Bombardier and BRP." },
+    { kind:"person",
+      story:"Which Montreal-born billionaire bought the Force India Formula One team in 2018?",
+      options:["Lawrence Stroll", "Ryan Cohen", "Philip Fayer", "Andrew Lutfy"],
+      answer:"Lawrence Stroll", detail:"No. 9 · $5.1 billion",
+      reveal:"He made his fortune backing Tommy Hilfiger and Michael Kors, and renamed the team Aston Martin." },
     { kind:"person",
       story:"Who is the only newcomer on this year’s list?",
-      options:["Leonard Aschenberg", "Denis Archambeault", "Sébastien Lapointe", "Gordon MacTavish"],
-      answer:"Leonard Aschenberg", detail:"New at No. 13 · $3.5 billion",
-      reveal:"Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet." },
+      options:["Alain Bédard", "Pierre Lassonde", "Réal Plourde", "John MacBain"],
+      answer:"Alain Bédard", detail:"New at No. 24 · $1.1 billion",
+      reveal:"He has run TFI International since 1996, building one of North America’s largest transportation companies." },
   ],
   // After an answer, the next card comes up by itself.
   nextSeconds: 1,          // seconds from answering to the next card
@@ -272,7 +267,6 @@ const PHOTOS = {
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
   const theme = new URLSearchParams(location.search).get("theme");
-  if (theme === "light" || theme === "dark") root.dataset.theme = theme;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
@@ -281,6 +275,7 @@ const PHOTOS = {
     const words = name.replace(/,/g, "").split(/\s+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w));
     const L = (w) => w[0].toUpperCase();
     if (/\b(family|families|sisters|brothers)$/i.test(name)) return L(words[0]);
+    if (words.length === 3 && words.every(w => /^[A-ZÀ-Ý]/.test(w))) return words.map(L).join("");
     return words.length > 1 ? L(words[0]) + L(words[words.length - 1]) : L(words[0]);
   };
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
