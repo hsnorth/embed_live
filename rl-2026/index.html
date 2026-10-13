@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light">
 <script>(function(){var d=document.documentElement,top=false;try{top=window.self===window.top;}catch(e){}if(top||(window.innerHeight&&window.innerHeight<=(screen.height||0)))d.classList.add("rl-fill");if(!top)d.classList.add("rl-framed");})();</script>
 <title>Quebec rich list 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,17 +26,7 @@
   --face-bg:#e8e8e8;
   --face-ink:#4a4a4a;
   --focus:#111111;
-  color-scheme:light;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d;
-    --face-bg:#2c2c2c; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#121212; --ink:#f2f2f2; --ink-2:#d6d6d6; --muted:#a3a3a3; --hair:#2a2a2a; --hair-2:#3d3d3d;
-  --face-bg:#2c2c2c; --face-ink:#c4c4c4; --focus:#f2f2f2; color-scheme:dark;
+  color-scheme:only light;
 }
 
 html,body{margin:0;background:var(--bg);}
@@ -312,7 +303,6 @@ const OFF_LIST = [
   const $ = (id) => document.getElementById(id);
   const root = document.documentElement;
   const params = new URLSearchParams(location.search);
-  if (params.get("theme") === "light" || params.get("theme") === "dark") root.dataset.theme = params.get("theme");
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
