@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
-<title>Who’s Who: match the fortune to the story</title>
+<title>Bigshot: match the fortune to the story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
@@ -202,7 +202,7 @@ html,body{margin:0;background:var(--bg);}
    Cards are written from the 2026 profiles; names match the list exactly.
    ===================================================================== */
 const GAME = {
-  title: "Who’s Who",
+  title: "Bigshot",
   dek: "Match the fortune to the story.",
   cards: [
     { kind:"person",
@@ -315,7 +315,7 @@ const PHOTOS = {
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   const cards = GAME.cards.filter(c => {
-    if (!c.options.includes(c.answer)) { console.warn("Who's Who: answer not among the options:", c.answer); return false; }
+    if (!c.options.includes(c.answer)) { console.warn("Bigshot: answer not among the options:", c.answer); return false; }
     return true;
   });
   const N = cards.length;
@@ -481,7 +481,7 @@ const PHOTOS = {
     probe.remove();
     const h = Math.max(baseCardH, Math.ceil(need));
     $("ww").style.setProperty("--card-h", h + "px");
-    if (h > baseCardH) console.info(`Who's Who: the longest card needs ${h}px at this width, so the embed is ${h - baseCardH}px taller than usual.`);
+    if (h > baseCardH) console.info(`Bigshot: the longest card needs ${h}px at this width, so the embed is ${h - baseCardH}px taller than usual.`);
   }
   let lastW = 0;
   new ResizeObserver(() => { const w = $("ww").clientWidth; if (w !== lastW) { lastW = w; fitCard(); } }).observe($("ww"));
