@@ -73,8 +73,13 @@ html,body{margin:0;background:var(--bg);}
 .rl-flick .fr.light{background:#e7e7e3;}
 .rl-flick .fr svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
 .rl-flick .fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;}
-.rl-flick .fr.dark img{filter:grayscale(1) brightness(.55) contrast(1.2);}
-.rl-flick .fr.light img{filter:grayscale(1) brightness(1.06) contrast(.95);}
+/* Real photos: natural colour with a light, even grade so mixed sources sit together.
+   No grain over real photos. (CONFIG.bigPhotoLook = "mono" brings back black and white.) */
+.rl-flick .fr img{filter:saturate(.88) contrast(1.04);}
+.rl-flick .fr.has-photo .grain{display:none;}
+html.rl-mono .rl-flick .fr.dark img{filter:grayscale(1) brightness(.55) contrast(1.2);}
+html.rl-mono .rl-flick .fr.light img{filter:grayscale(1) brightness(1.06) contrast(.95);}
+html.rl-mono .rl-flick .fr.has-photo .grain{display:block;}
 /* grain that jumps on every cut, for the printed, flickering feel */
 .rl-flick .grain{position:absolute;inset:-40px;pointer-events:none;opacity:.5;}
 .rl-flick .fr.light .grain{mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
@@ -196,8 +201,11 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
    photos: one to three square headshots shown as circles next to the name,
           e.g. ["1.png"] or ["3.png", "4.png", "5.png"]. Paths are relative to
           this page, so the files sit in the same folder. Leave [] for initials.
-   big:   optional URL of a photo for the flickering picture at the top
-          (a filler picture shows until one is added).
+   big:   optional photo for the flickering picture at the top. Only people with
+          one take part in the flicker (fillers show if nobody has one).
+          Square, about 1600 x 1600, face in the middle two thirds. No filter needed.
+   bigCaption: optional, who is in the big photo if it isn't the name above
+          (e.g. "Geoff Molson" for the Molson brothers).
    initials: optional, shown when there is no photo (worked out from the name otherwise).
    rankPrev / worthPrev: last year's rank and fortune. The rank shows ▲/▼ under
              this year's rank (null = new this year; leave it out to show nothing).
@@ -220,16 +228,17 @@ const CONFIG = {
   ],
   questionSeconds: 2.5,
   flickerSeconds: 1,       // the big picture under the title cuts to a new person this often
+  bigPhotoLook: "colour",  // big pictures: "colour" (natural, lightly matched) or "mono" (black and white)
 };
 
 const PEOPLE = [
-  { id:"desmarais", name:"Desmarais family", short:"Desmarais family", photos:["1.png", "2.png"], worth:11.5, rankPrev:3, worthPrev:7.0,
+  { id:"desmarais", name:"Desmarais family", short:"Desmarais family", photos:["1.png", "2.png"], big:"big2.png", bigCaption:"Paul Jr. and André Desmarais", worth:11.5, rankPrev:3, worthPrev:7.0,
     company:"Power Corporation",
     blurb:"The Desmarais family controls Power Corporation, the financial conglomerate behind Great-West Lifeco, Canada Life and IGM Financial, through a family trust holding about 53 per cent of the votes. Paul Sr. built the empire; sons Paul Jr. and André remain chair and deputy chair. Power’s share price has roughly doubled since early 2025, and IGM’s James O’Sullivan took over as CEO in July." },
   { id:"azrieli", name:"Naomi, Sharon and Danna Azrieli", short:"Azrieli sisters", photos:["3.png", "4.png", "5.png"], worth:11, rankPrev:2, worthPrev:7.7,
     company:"Azrieli Group",
     blurb:"Daughters of the late Montreal developer David Azrieli, the sisters control nearly half of the Azrieli Group, one of Israel’s biggest real estate companies, with more than 20 malls, office towers such as Tel Aviv’s Azrieli Center, and data centres. Danna chairs the company, while Naomi leads the Azrieli Foundation — Canada’s largest family philanthropic foundation — which has given away more than $600 million." },
-  { id:"bouchard", name:"Alain Bouchard and family", short:"Bouchard", photos:["6.png"], worth:10.5, rankPrev:1, worthPrev:9.0,
+  { id:"bouchard", name:"Alain Bouchard and family", short:"Bouchard", photos:["6.png"], big:"big4.png", bigCaption:"Alain Bouchard", worth:10.5, rankPrev:1, worthPrev:9.0,
     company:"Alimentation Couche-Tard",
     blurb:"Bouchard opened the first Couche-Tard store in Laval in 1980 and built it into one of the world’s largest convenience-store chains, with more than 17,000 Circle K and Couche-Tard locations in 29 countries. After abandoning its bid for 7-Eleven’s Japanese owner in 2025, Couche-Tard agreed in August to buy Poland’s Żabka for US$8.6 billion. He owns about 13.5 per cent of the company." },
   { id:"saputo", name:"Saputo family", short:"Saputo family", photos:["7.png", "8.png"], worth:8.5, rankPrev:4, worthPrev:6.0,
@@ -238,7 +247,7 @@ const PEOPLE = [
   { id:"bombardier-beaudoin", name:"Bombardier and Beaudoin families", short:"Bombardier and Beaudoin families", initials:"BB", photos:["9.png", "10.png"], worth:6, rankPrev:13, worthPrev:2.9,
     company:"Bombardier and BRP",
     blurb:"Joseph-Armand Bombardier, inventor of the snowmobile, founded the company that became Bombardier and BRP. His daughter Claire married Laurent Beaudoin, who built it into a global giant. Their descendants still control about half the votes at both companies, and Bombardier’s shares have soared on the strength of its business-jet sales. Laurent’s son Pierre Beaudoin chairs Bombardier." },
-  { id:"lutfy", name:"Andrew Lutfy", short:"Lutfy", photos:["11.png"], worth:6, rankPrev:14, worthPrev:2.5,
+  { id:"lutfy", name:"Andrew Lutfy", short:"Lutfy", photos:["11.png"], big:"big1.png", worth:6, rankPrev:14, worthPrev:2.5,
     company:"Groupe Dynamite and Carbonleo",
     blurb:"Lutfy has owned Groupe Dynamite, the Montreal retailer behind the Dynamite and Garage fashion chains, since 2002. Its shares have soared since a 2024 IPO, and in April he sold $251 million of stock while keeping about 98 per cent of the votes. He also heads Carbonleo, developer of Montreal’s Royalmount retail, residential and entertainment complex." },
   { id:"cohen", name:"Ryan Cohen", short:"Cohen", photos:["12.png"], worth:5.7, rankPrev:7, worthPrev:4.8,
@@ -253,7 +262,7 @@ const PEOPLE = [
   { id:"damours", name:"Jacques D’Amours", short:"D’Amours", photos:["15.png"], worth:5, rankPrev:8, worthPrev:4.3,
     company:"Alimentation Couche-Tard",
     blurb:"A Couche-Tard co-founder, D’Amours spent 34 years with the company, helping drive its expansion across North America and Europe, and sat on its board until 2023. At last disclosure he held about 60.7 million shares, roughly six per cent of the company. His daughter, Marie-Ève D’Amours, sits on Couche-Tard’s board." },
-  { id:"peladeau", name:"Pierre Karl Péladeau", short:"Péladeau", initials:"PKP", photos:["16.png"], worth:4.7, rankPrev:12, worthPrev:3.1,
+  { id:"peladeau", name:"Pierre Karl Péladeau", short:"Péladeau", initials:"PKP", photos:["16.png"], big:"big5.png", worth:4.7, rankPrev:12, worthPrev:3.1,
     company:"Québecor",
     blurb:"Péladeau leads Québecor, the telecom and media empire founded by his father, and controls about 78 per cent of its votes. The company, which owns Vidéotron, Freedom Mobile, the Journal de Montréal and TVA, raised its dividend twice this year. He also owns the Montreal Alouettes and briefly led the Parti Québécois. As a student, he changed his middle name from “Carl” to “Karl” after Karl Marx." },
   { id:"cretier", name:"Stephan Crétier", short:"Crétier", photos:["17.png"], worth:3.8, rankPrev:9, worthPrev:3.8,
@@ -262,7 +271,7 @@ const PEOPLE = [
   { id:"coutu", name:"Coutu family", short:"Coutu family", photos:["18.png"], worth:3.6, rankPrev:10, worthPrev:3.8,
     company:"Jean Coutu Group",
     blurb:"Jean Coutu opened his first discount pharmacy in Montreal in 1969 and built the Jean Coutu Group into one of Quebec’s best-known retailers. The family sold it to Metro in 2018 in a $4.5-billion deal, taking part of the price in Metro shares. Sons François and Michel left Metro’s board in January, but grandson Jean-Michel still runs the pharmacy chain." },
-  { id:"molson", name:"Molson brothers", short:"Molson brothers", photos:["19.png", "20.png"], worth:3.2, rankPrev:17, worthPrev:2.0,
+  { id:"molson", name:"Molson brothers", short:"Molson brothers", photos:["19.png", "20.png"], big:"big3.png", bigCaption:"Geoff Molson", worth:3.2, rankPrev:17, worthPrev:2.0,
     company:"Groupe CH and Molson Coors",
     blurb:"Descendants of John Molson, who founded his Montreal brewery in 1786, brothers Geoff, Andrew and Justin Molson control Groupe CH, owner of the Canadiens, the Bell Centre and concert promoter evenko. Sportico now values the Habs at about $5.4 billion. Their family holding company remains a key shareholder in Molson Coors, where Geoff is board vice-chair. Andrew chairs PR firm Avenir Global." },
   { id:"godin", name:"Serge Godin", short:"Godin", photos:["21.png"], worth:3, rankPrev:11, worthPrev:3.7,
@@ -393,19 +402,26 @@ const OFF_LIST = [
     // a shuffled running order, so the cuts feel random but never repeat back to back
     let seed = 17;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const order = PEOPLE.map((_, i) => i).sort(() => rnd() - .5);
+    const withBig = PEOPLE.map((p, i) => p.big ? i : -1).filter(i => i >= 0);
+    const order = withBig.length ? withBig                     // only the people with a big photo, in list order
+                                 : PEOPLE.map((_, i) => i).sort(() => rnd() - .5);
+    if (CONFIG.bigPhotoLook === "mono") document.documentElement.classList.add("rl-mono");
     host.innerHTML = order.map((i, k) => {
       const p = PEOPLE[i], dark = k % 2 === 0;
-      return `<figure class="fr ${dark ? "dark" : "light"}">
+      return `<figure class="fr ${dark ? "dark" : "light"}${p.big ? " has-photo" : ""}">
         ${p.big ? `<img src="${esc(p.big)}" alt="" loading="lazy">` : filler(p, k, dark)}
         <div class="grain"></div>
-        <figcaption><span>No. ${p.rank}</span>${esc(p.name)}</figcaption>
+        <figcaption><span>No. ${p.rank}</span>${esc(p.bigCaption || p.name)}</figcaption>
       </figure>`;
     }).join("");
     const frames = [...host.children];
     let at = 0, timer = null, visible = true;
     const show = (k) => {
       frames.forEach((f, j) => f.classList.toggle("on", j === k));
+      for (let a = 0; a <= 3; a++) {                      // this frame and the next three
+        const im = frames[(k + a) % frames.length].querySelector("img");
+        if (im && im.loading !== "eager") im.loading = "eager";
+      }
       const g = frames[k].querySelector(".grain");
       g.style.backgroundPosition = `${Math.floor(rnd() * 220)}px ${Math.floor(rnd() * 220)}px`;
     };
