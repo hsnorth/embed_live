@@ -123,15 +123,24 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
 .rl-name{display:block;margin:0;font-weight:400;font-size:20px;line-height:1.25;}
 .rl-co{display:block;font-size:15px;color:var(--muted);line-height:1.35;margin-top:2px;}
 .rl-val{grid-area:val;font-weight:700;font-size:19px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
-/* toonie-sized portrait */
-.rl-pic{
+/* Portraits: one, two or three circles that scale with the screen.
+   Groups overlap slightly, each circle kept apart by a thin white ring. */
+.rl-pics{
   grid-area:pic;justify-self:center;margin:16px 0 0;
-  width:96px;height:96px;border-radius:50%;overflow:hidden;flex:none;
-  background:var(--face-bg);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--hair-2);
+  display:flex;justify-content:center;align-items:center;
+  --d:clamp(92px, 28vw, 120px);
+}
+.rl-pics.n2{--d:clamp(84px, 24vw, 108px);}
+.rl-pics.n3{--d:clamp(72px, 21vw, 96px);}
+.rl-pic{
+  position:relative;flex:none;width:var(--d);height:var(--d);border-radius:50%;overflow:hidden;
+  background:var(--bg);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--hair-2);
   display:grid;place-items:center;
 }
+.rl-pic + .rl-pic{margin-left:calc(var(--d) * -.12);}
+.rl-pic.init{background:var(--face-bg);}
 .rl-pic img{width:100%;height:100%;object-fit:cover;display:block;}
-.rl-pic span{font-weight:600;font-size:30px;color:var(--face-ink);letter-spacing:.02em;}
+.rl-pic span{font-weight:600;font-size:calc(var(--d) * .3);color:var(--face-ink);letter-spacing:.02em;}
 .rl-body{grid-area:body;padding:16px 0 0 calc(var(--rk) + 10px);min-width:0;}
 .rl-body p{margin:0 0 14px;max-width:60ch;font-size:16.5px;line-height:1.5;}
 .rl-body p:last-child{margin-bottom:0;}
@@ -142,8 +151,6 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
   .rl-name{font-size:23px;}
   .rl-co{font-size:16.5px;}
   .rl-val{font-size:22px;}
-  .rl-pic{width:104px;height:104px;}
-  .rl-pic span{font-size:32px;}
   .rl-body p{font-size:18.5px;line-height:1.5;}
 }
 @media (min-width:640px){
@@ -151,8 +158,9 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
   .rl-txt{display:block;}
   .rl-side{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:2px;}
   .rl-val{font-size:24px;text-align:center;}
-  .rl-pic{margin:0;width:104px;height:104px;justify-self:auto;}
-  .rl-pic span{font-size:32px;}
+  .rl-pics{margin:0;justify-self:auto;--d:clamp(88px, 13vw, 112px);}
+  .rl-pics.n2{--d:clamp(72px, 10.5vw, 92px);}
+  .rl-pics.n3{--d:clamp(60px, 9vw, 76px);}
   .rl-rank{font-size:26px;}
 }
 
@@ -185,9 +193,11 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
    Order the array by rank (index 0 = No. 1). Ties: put them in the
    order you want them ranked. worth in C$ billions.
    company: the line under the name.
-   photo: URL of a square headshot (head and shoulders, face centred).
-          Used in the profile circle and the flickering picture.
-          Leave "" to show initials and a filler picture instead.
+   photos: one to three square headshots shown as circles next to the name,
+          e.g. ["1.png"] or ["3.png", "4.png", "5.png"]. Paths are relative to
+          this page, so the files sit in the same folder. Leave [] for initials.
+   big:   optional URL of a photo for the flickering picture at the top
+          (a filler picture shows until one is added).
    initials: optional, shown when there is no photo (worked out from the name otherwise).
    rankPrev / worthPrev: last year's rank and fortune. The rank shows ▲/▼ under
              this year's rank (null = new this year; leave it out to show nothing).
@@ -213,79 +223,79 @@ const CONFIG = {
 };
 
 const PEOPLE = [
-  { id:"desmarais", name:"Desmarais family", short:"Desmarais family", photo:"", worth:11.5, rankPrev:3, worthPrev:7.0,
+  { id:"desmarais", name:"Desmarais family", short:"Desmarais family", photos:["1.png", "2.png"], worth:11.5, rankPrev:3, worthPrev:7.0,
     company:"Power Corporation",
     blurb:"The Desmarais family controls Power Corporation, the financial conglomerate behind Great-West Lifeco, Canada Life and IGM Financial, through a family trust holding about 53 per cent of the votes. Paul Sr. built the empire; sons Paul Jr. and André remain chair and deputy chair. Power’s share price has roughly doubled since early 2025, and IGM’s James O’Sullivan took over as CEO in July." },
-  { id:"azrieli", name:"Naomi, Sharon and Danna Azrieli", short:"Azrieli sisters", photo:"", worth:11, rankPrev:2, worthPrev:7.7,
+  { id:"azrieli", name:"Naomi, Sharon and Danna Azrieli", short:"Azrieli sisters", photos:["3.png", "4.png", "5.png"], worth:11, rankPrev:2, worthPrev:7.7,
     company:"Azrieli Group",
     blurb:"Daughters of the late Montreal developer David Azrieli, the sisters control nearly half of the Azrieli Group, one of Israel’s biggest real estate companies, with more than 20 malls, office towers such as Tel Aviv’s Azrieli Center, and data centres. Danna chairs the company, while Naomi leads the Azrieli Foundation — Canada’s largest family philanthropic foundation — which has given away more than $600 million." },
-  { id:"bouchard", name:"Alain Bouchard and family", short:"Bouchard", photo:"", worth:10.5, rankPrev:1, worthPrev:9.0,
+  { id:"bouchard", name:"Alain Bouchard and family", short:"Bouchard", photos:["6.png"], worth:10.5, rankPrev:1, worthPrev:9.0,
     company:"Alimentation Couche-Tard",
     blurb:"Bouchard opened the first Couche-Tard store in Laval in 1980 and built it into one of the world’s largest convenience-store chains, with more than 17,000 Circle K and Couche-Tard locations in 29 countries. After abandoning its bid for 7-Eleven’s Japanese owner in 2025, Couche-Tard agreed in August to buy Poland’s Żabka for US$8.6 billion. He owns about 13.5 per cent of the company." },
-  { id:"saputo", name:"Saputo family", short:"Saputo family", photo:"", worth:8.5, rankPrev:4, worthPrev:6.0,
+  { id:"saputo", name:"Saputo family", short:"Saputo family", photos:["7.png", "8.png"], worth:8.5, rankPrev:4, worthPrev:6.0,
     company:"Saputo Inc.",
     blurb:"Emanuele “Lino” Saputo turned a small family cheese business into Saputo Inc., one of the world’s 10 largest dairy processors, and the family remains its largest shareholder. His son Lino Jr. is chair. Another son, Joey, owns CF Montréal and Italy’s Bologna FC, which won the Coppa Italia in 2025, and controls the forestry company Arbec." },
-  { id:"bombardier-beaudoin", name:"Bombardier and Beaudoin families", short:"Bombardier and Beaudoin families", initials:"BB", photo:"", worth:6, rankPrev:13, worthPrev:2.9,
+  { id:"bombardier-beaudoin", name:"Bombardier and Beaudoin families", short:"Bombardier and Beaudoin families", initials:"BB", photos:["9.png", "10.png"], worth:6, rankPrev:13, worthPrev:2.9,
     company:"Bombardier and BRP",
     blurb:"Joseph-Armand Bombardier, inventor of the snowmobile, founded the company that became Bombardier and BRP. His daughter Claire married Laurent Beaudoin, who built it into a global giant. Their descendants still control about half the votes at both companies, and Bombardier’s shares have soared on the strength of its business-jet sales. Laurent’s son Pierre Beaudoin chairs Bombardier." },
-  { id:"lutfy", name:"Andrew Lutfy", short:"Lutfy", photo:"", worth:6, rankPrev:14, worthPrev:2.5,
+  { id:"lutfy", name:"Andrew Lutfy", short:"Lutfy", photos:["11.png"], worth:6, rankPrev:14, worthPrev:2.5,
     company:"Groupe Dynamite and Carbonleo",
     blurb:"Lutfy has owned Groupe Dynamite, the Montreal retailer behind the Dynamite and Garage fashion chains, since 2002. Its shares have soared since a 2024 IPO, and in April he sold $251 million of stock while keeping about 98 per cent of the votes. He also heads Carbonleo, developer of Montreal’s Royalmount retail, residential and entertainment complex." },
-  { id:"cohen", name:"Ryan Cohen", short:"Cohen", photo:"", worth:5.7, rankPrev:7, worthPrev:4.8,
+  { id:"cohen", name:"Ryan Cohen", short:"Cohen", photos:["12.png"], worth:5.7, rankPrev:7, worthPrev:4.8,
     company:"GameStop",
     blurb:"Montreal-born Cohen co-founded Chewy and sold it to PetSmart for about $4.5 billion in 2017. He became GameStop’s largest individual shareholder and, in 2023, its CEO. This year he led GameStop’s rejected bid of about US$56 billion for eBay and gave up a proposed pay package reportedly worth US$35 billion. He also holds large stakes in Apple and Alibaba." },
-  { id:"miller", name:"Robert Miller", short:"Miller", photo:"", worth:5.3, rankPrev:5, worthPrev:5.3,
+  { id:"miller", name:"Robert Miller", short:"Miller", photos:["13.png"], worth:5.3, rankPrev:5, worthPrev:5.3,
     company:"Future Electronics",
     blurb:"Miller founded Future Electronics in 1968 and built it into one of the world’s largest electronics distributors, selling it in 2024 to Taiwan’s WT Microelectronics for about US$3.8 billion. He was arrested that year on sex-related charges, which he denies. The criminal case was stayed in 2025 because of his health, but a class-action lawsuit against him is proceeding." },
-  { id:"stroll", name:"Lawrence Stroll", short:"Stroll", photo:"", worth:5.1, rankPrev:6, worthPrev:5.0,
+  { id:"stroll", name:"Lawrence Stroll", short:"Stroll", photos:["14.png"], worth:5.1, rankPrev:6, worthPrev:5.0,
     company:"Aston Martin",
     blurb:"Montreal-born Stroll made his fortune backing fashion brands Tommy Hilfiger and Michael Kors. He bought the Force India Formula One team in 2018, later renaming it Aston Martin, and became executive chair of the British carmaker in 2020. The F1 team, valued at more than US$3 billion, brought in New York Jets owner Woody Johnson as an investor this year." },
-  { id:"damours", name:"Jacques D’Amours", short:"D’Amours", photo:"", worth:5, rankPrev:8, worthPrev:4.3,
+  { id:"damours", name:"Jacques D’Amours", short:"D’Amours", photos:["15.png"], worth:5, rankPrev:8, worthPrev:4.3,
     company:"Alimentation Couche-Tard",
     blurb:"A Couche-Tard co-founder, D’Amours spent 34 years with the company, helping drive its expansion across North America and Europe, and sat on its board until 2023. At last disclosure he held about 60.7 million shares, roughly six per cent of the company. His daughter, Marie-Ève D’Amours, sits on Couche-Tard’s board." },
-  { id:"peladeau", name:"Pierre Karl Péladeau", short:"Péladeau", initials:"PKP", photo:"", worth:4.7, rankPrev:12, worthPrev:3.1,
+  { id:"peladeau", name:"Pierre Karl Péladeau", short:"Péladeau", initials:"PKP", photos:["16.png"], worth:4.7, rankPrev:12, worthPrev:3.1,
     company:"Québecor",
     blurb:"Péladeau leads Québecor, the telecom and media empire founded by his father, and controls about 78 per cent of its votes. The company, which owns Vidéotron, Freedom Mobile, the Journal de Montréal and TVA, raised its dividend twice this year. He also owns the Montreal Alouettes and briefly led the Parti Québécois. As a student, he changed his middle name from “Carl” to “Karl” after Karl Marx." },
-  { id:"cretier", name:"Stephan Crétier", short:"Crétier", photo:"", worth:3.8, rankPrev:9, worthPrev:3.8,
+  { id:"cretier", name:"Stephan Crétier", short:"Crétier", photos:["17.png"], worth:3.8, rankPrev:9, worthPrev:3.8,
     company:"GardaWorld",
     blurb:"Crétier founded GardaWorld in 1995 with a $25,000 mortgage on his home and built it into the world’s largest privately owned security company, operating in more than 45 countries. A 2024 recapitalization deal with HPS Investment Partners valued the company at $13.5 billion, with Crétier and management keeping about 70 per cent. He remains chair and CEO and lives in Dubai." },
-  { id:"coutu", name:"Coutu family", short:"Coutu family", photo:"", worth:3.6, rankPrev:10, worthPrev:3.8,
+  { id:"coutu", name:"Coutu family", short:"Coutu family", photos:["18.png"], worth:3.6, rankPrev:10, worthPrev:3.8,
     company:"Jean Coutu Group",
     blurb:"Jean Coutu opened his first discount pharmacy in Montreal in 1969 and built the Jean Coutu Group into one of Quebec’s best-known retailers. The family sold it to Metro in 2018 in a $4.5-billion deal, taking part of the price in Metro shares. Sons François and Michel left Metro’s board in January, but grandson Jean-Michel still runs the pharmacy chain." },
-  { id:"molson", name:"Molson brothers", short:"Molson brothers", photo:"", worth:3.2, rankPrev:17, worthPrev:2.0,
+  { id:"molson", name:"Molson brothers", short:"Molson brothers", photos:["19.png", "20.png"], worth:3.2, rankPrev:17, worthPrev:2.0,
     company:"Groupe CH and Molson Coors",
     blurb:"Descendants of John Molson, who founded his Montreal brewery in 1786, brothers Geoff, Andrew and Justin Molson control Groupe CH, owner of the Canadiens, the Bell Centre and concert promoter evenko. Sportico now values the Habs at about $5.4 billion. Their family holding company remains a key shareholder in Molson Coors, where Geoff is board vice-chair. Andrew chairs PR firm Avenir Global." },
-  { id:"godin", name:"Serge Godin", short:"Godin", photo:"", worth:3, rankPrev:11, worthPrev:3.7,
+  { id:"godin", name:"Serge Godin", short:"Godin", photos:["21.png"], worth:3, rankPrev:11, worthPrev:3.7,
     company:"CGI",
     blurb:"Godin co-founded CGI in Quebec City in 1976 and built it into one of the world’s largest IT and business-consulting firms, serving as CEO until 2006. His daughter Julie became executive chair in 2025, while he serves as co-chair. Through multiple-voting shares, he controls about 57 per cent of CGI’s votes and owns nearly 12 per cent of its equity." },
-  { id:"fortin", name:"Richard Fortin", short:"Fortin", photo:"", worth:2.5, rankPrev:15, worthPrev:2.3,
+  { id:"fortin", name:"Richard Fortin", short:"Fortin", photos:["22.png"], worth:2.5, rankPrev:15, worthPrev:2.3,
     company:"Alimentation Couche-Tard",
     blurb:"Fortin co-founded Couche-Tard, served as its chief financial officer until 2008 and chaired its board from 2008 to 2011. A key architect of the acquisitions behind its global growth, he remains a director and holds about 30.5 million shares. He also invests in Quebec start-ups in fintech and cleantech." },
-  { id:"kruger", name:"Kruger family", short:"Kruger family", photo:"", worth:2.5, rankPrev:18, worthPrev:1.9,
+  { id:"kruger", name:"Kruger family", short:"Kruger family", photos:["23.png"], worth:2.5, rankPrev:18, worthPrev:1.9,
     company:"Kruger Inc.",
     blurb:"Founded in 1904 by New York paper merchant Joseph Kruger after he moved to Montreal, family-owned Kruger Inc. spans tissue, packaging, paper, recycling and renewable energy. Its Kruger Products arm, maker of Cashmere and SpongeTowels, posted strong earnings growth this year, and Kruger Energy is building a 196-megawatt wind farm in Quebec. Joseph Kruger II is chair and CEO." },
-  { id:"plourde", name:"Réal Plourde", short:"Plourde", photo:"", worth:2.1, rankPrev:21, worthPrev:1.5,
+  { id:"plourde", name:"Réal Plourde", short:"Plourde", photos:["24.png"], worth:2.1, rankPrev:21, worthPrev:1.5,
     company:"Alimentation Couche-Tard",
     blurb:"An engineer by training, Plourde co-founded Couche-Tard and helped steer its acquisitions and operations for decades. Retired from day-to-day management, he remains a director and holds about 21 million shares. He chairs engineering firm CIMA+ and is an angel investor in Quebec’s cleantech and fintech sectors." },
-  { id:"fayer", name:"Philip Fayer", short:"Fayer", photo:"", worth:2.1, rankPrev:16, worthPrev:2.1,
+  { id:"fayer", name:"Philip Fayer", short:"Fayer", photos:["25.png"], worth:2.1, rankPrev:16, worthPrev:2.1,
     company:"Nuvei",
     blurb:"Fayer founded Montreal payments company Nuvei in 2003, took it public in 2020 and private again in 2024 in a US$6.3-billion deal led by Advent International, keeping about a quarter of the company. Still chair and CEO, he is pushing its global expansion, including an agreement this year to buy Nasdaq-listed Payoneer for US$2.75 billion." },
-  { id:"goodman", name:"Goodman family", short:"Goodman family", photo:"", worth:1.7, rankPrev:19, worthPrev:1.7,
+  { id:"goodman", name:"Goodman family", short:"Goodman family", photos:["26.png"], worth:1.7, rankPrev:19, worthPrev:1.7,
     company:"Pharmascience and Knight Therapeutics",
     blurb:"Morris Goodman co-founded Pharmascience, one of Canada’s largest generic drug makers. His son Jonathan founded Paladin Labs, sold in 2014, and chairs TSX-listed Knight Therapeutics, while son David helps lead the family’s other ventures. The Goodman Foundation is also active." },
-  { id:"laliberte", name:"Guy Laliberté", short:"Laliberté", photo:"", worth:1.4, rankPrev:22, worthPrev:1.3,
+  { id:"laliberte", name:"Guy Laliberté", short:"Laliberté", photos:["27.png"], worth:1.4, rankPrev:22, worthPrev:1.3,
     company:"Lune Rouge",
     blurb:"A former street performer, Laliberté co-founded Cirque du Soleil in 1984 and turned it into a global entertainment brand before selling his stake between 2015 and 2020. He travelled to space in 2009 and founded the One Drop Foundation to improve access to water. His Montreal investment firm, Lune Rouge, backs entertainment, technology and real estate projects." },
-  { id:"rossy", name:"Rossy family", short:"Rossy family", photo:"", worth:1.2, rankPrev:23, worthPrev:1.2,
+  { id:"rossy", name:"Rossy family", short:"Rossy family", photos:["28.png"], worth:1.2, rankPrev:23, worthPrev:1.2,
     company:"Dollarama",
     blurb:"Larry Rossy turned his family’s variety stores into Dollarama in 1992, building a discount chain with more than 1,600 stores across Canada. His son Neil succeeded him as CEO in 2016 and in 2025 took the company into Australia with the purchase of The Reject Shop. The family has sold down much of its stake, and the Rossy Foundation supports arts, health and education." },
-  { id:"lassonde", name:"Pierre Lassonde", short:"Lassonde", photo:"", worth:1.2, rankPrev:24, worthPrev:1.2,
+  { id:"lassonde", name:"Pierre Lassonde", short:"Lassonde", photos:["29.png"], worth:1.2, rankPrev:24, worthPrev:1.2,
     company:"Franco-Nevada",
     blurb:"Lassonde co-founded gold-royalty firm Franco-Nevada, now a multibillion-dollar mining player, and remains a major investor in gold producers. A passionate art collector, he helped fund the Pierre Lassonde Pavilion at Quebec City’s fine arts museum. In 2025 he gave $50 million to Polytechnique Montréal, the largest gift in its history." },
-  { id:"bedard", name:"Alain Bédard", short:"Bédard", photo:"", worth:1.1, rankPrev:null, worthPrev:null,
+  { id:"bedard", name:"Alain Bédard", short:"Bédard", photos:["30.png"], worth:1.1, rankPrev:null, worthPrev:null,
     company:"TFI International",
     blurb:"Bédard has run TFI International since 1996, turning a small Quebec trucking firm into one of North America’s largest transportation and logistics companies through a long string of acquisitions, including UPS Freight in 2021. Chair, president and CEO, he owns about six per cent of the Montreal-based company, a stake that has swung with its volatile share price." },
-  { id:"macbain", name:"John MacBain", short:"MacBain", photo:"", worth:1.1, rankPrev:25, worthPrev:1.1,
+  { id:"macbain", name:"John MacBain", short:"MacBain", photos:["31.png"], worth:1.1, rankPrev:25, worthPrev:1.1,
     company:"McCall MacBain Foundation",
     blurb:"MacBain bought Trader classified ads in 1987 and turned them into a global company before selling the business in 2006. Through the McCall MacBain Foundation, he and his wife, Marcy, have given more than $200 million, including a 2019 gift to McGill University that created the McCall MacBain Scholarships, and funding for climate initiatives." },
 ];
@@ -387,7 +397,7 @@ const OFF_LIST = [
     host.innerHTML = order.map((i, k) => {
       const p = PEOPLE[i], dark = k % 2 === 0;
       return `<figure class="fr ${dark ? "dark" : "light"}">
-        ${p.photo ? `<img src="${esc(p.photo)}" alt="" loading="lazy">` : filler(p, k, dark)}
+        ${p.big ? `<img src="${esc(p.big)}" alt="" loading="lazy">` : filler(p, k, dark)}
         <div class="grain"></div>
         <figcaption><span>No. ${p.rank}</span>${esc(p.name)}</figcaption>
       </figure>`;
@@ -426,9 +436,10 @@ const OFF_LIST = [
     return `<span aria-label="${mv.text}" style="display:inline-flex;align-items:center;gap:3px">${mv.kind === "up" ? arrowUp : arrowDown}${mv.d}</span>`;
   }
   function portrait(p){
-    return p.photo
-      ? `<img src="${esc(p.photo)}" alt="" loading="lazy">`
-      : `<span aria-hidden="true">${esc(p.initials)}</span>`;
+    const ph = (p.photos || []).filter(Boolean).slice(0, 3);
+    if (!ph.length) return `<div class="rl-pics n1"><div class="rl-pic init"><span aria-hidden="true">${esc(p.initials)}</span></div></div>`;
+    return `<div class="rl-pics n${ph.length}">${ph.map(src =>
+      `<div class="rl-pic"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>`;
   }
   list.innerHTML = PEOPLE.map((p, i) => `<li class="rl-item" id="rl-i-${p.id}">
       <div class="rl-txt">
@@ -442,9 +453,18 @@ const OFF_LIST = [
       </div>
       <div class="rl-side">
         <div class="rl-val">${short(p.worth)}</div>
-        <div class="rl-pic">${portrait(p)}</div>
+        ${portrait(p)}
       </div>
     </li>`).join("");
+
+  // If a photo file is missing, that circle falls back to the person's initials.
+  list.addEventListener("error", (e) => {
+    const img = e.target;
+    if (!img || img.tagName !== "IMG") return;
+    const pic = img.closest(".rl-pic"), li = img.closest(".rl-item");
+    const p = PEOPLE.find(x => "rl-i-" + x.id === (li && li.id));
+    if (pic && p) { pic.classList.add("init"); pic.innerHTML = `<span aria-hidden="true">${esc(p.initials)}</span>`; }
+  }, true);
 
   /* ---------- notes ---------- */
   const off = OFF_LIST.map(o => `${esc(o.name)} (No. ${o.rankPrev} in ${CONFIG.prevYear}) ${esc(o.note || "")}`.trim()).join("; ");
