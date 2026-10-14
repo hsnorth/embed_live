@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
-<title>Bigshot: match the fortune to the story</title>
+<title>BigShot: match the fortune to the story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
@@ -38,8 +38,9 @@ html,body{margin:0;background:var(--bg);}
   font-family:var(--font);font-optical-sizing:auto;font-size:17px;line-height:1.45;color:var(--ink);
   -webkit-font-smoothing:antialiased;
   /* Fixed heights, so the whole embed is the same height on every screen width
-     (600px with these cards). --card-h grows by itself if a card's text needs more room. */
+     (628px with these cards). --card-h grows by itself if a card's text needs more room. */
   --card-h:266px;
+  --title-h:84px;          /* two lines of the title at its largest */
   --opts-h:194px;
   --gap:16px;
 }
@@ -50,9 +51,14 @@ html,body{margin:0;background:var(--bg);}
 
 /* The title is always the largest text; the card text is sized just below it.
    Room for two lines is kept on every width, so the height never changes. */
-.ww-title{margin:0 0 18px;min-height:56px;font-weight:400;font-size:22px;line-height:1.25;color:var(--ink-2);}
-@media (min-width:600px){ .ww-title{font-size:28px;} }
-.ww-title .t{font-weight:600;color:var(--ink);}
+/* Same size, weight and colour as the list embed's title. Room for the most lines it can
+   take is always kept (--title-h), so the embed stays the same height on every width. */
+.ww-title{margin:0 0 18px;min-height:var(--title-h);font-weight:400;letter-spacing:-.01em;line-height:1.08;color:var(--ink);
+  font-size:clamp(1.6rem,5.2vw,2.3rem);}
+@media (max-width:639px){ .ww-title{font-size:clamp(2rem,8.2vw,2.4rem);} }
+/* the very narrowest phones: a hair smaller, so the title still fits on two lines */
+@media (max-width:349px){ .ww-title{font-size:29px;} }
+.ww-title .t{font-weight:600;}
 
 /* The card: front holds the story, back holds the answer. Both faces share one grid
    cell, so the card is as tall as the taller face and nothing moves when it flips. */
@@ -202,7 +208,7 @@ html,body{margin:0;background:var(--bg);}
    Cards are written from the 2026 profiles; names match the list exactly.
    ===================================================================== */
 const GAME = {
-  title: "Bigshot",
+  title: "BigShot",
   dek: "Match the fortune to the story.",
   cards: [
     { kind:"person",
@@ -315,7 +321,7 @@ const PHOTOS = {
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   const cards = GAME.cards.filter(c => {
-    if (!c.options.includes(c.answer)) { console.warn("Bigshot: answer not among the options:", c.answer); return false; }
+    if (!c.options.includes(c.answer)) { console.warn("BigShot: answer not among the options:", c.answer); return false; }
     return true;
   });
   const N = cards.length;
@@ -481,7 +487,7 @@ const PHOTOS = {
     probe.remove();
     const h = Math.max(baseCardH, Math.ceil(need));
     $("ww").style.setProperty("--card-h", h + "px");
-    if (h > baseCardH) console.info(`Bigshot: the longest card needs ${h}px at this width, so the embed is ${h - baseCardH}px taller than usual.`);
+    if (h > baseCardH) console.info(`BigShot: the longest card needs ${h}px at this width, so the embed is ${h - baseCardH}px taller than usual.`);
   }
   let lastW = 0;
   new ResizeObserver(() => { const w = $("ww").clientWidth; if (w !== lastW) { lastW = w; fitCard(); } }).observe($("ww"));
