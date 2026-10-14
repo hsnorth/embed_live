@@ -103,7 +103,8 @@ html,body{margin:0;background:var(--bg);}
 .ww-opt:disabled{cursor:default;}
 .ww-pic{flex:none;width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--face-bg);
   display:grid;place-items:center;color:var(--face-ink);font-size:13px;font-weight:600;letter-spacing:.02em;}
-.ww-pic img{width:100%;height:100%;object-fit:cover;display:block;}
+.ww-pic img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.78) contrast(1.06) brightness(1.02) sepia(.07);}
+.ww-pic.has-img{background:var(--bg);box-shadow:0 0 0 1px var(--line);}
 .ww-opt .nm{min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
 .ww-opt .mk{margin-left:auto;flex:none;font-weight:700;font-size:15px;}
 .ww-opt.right{background:var(--right-bg);border-color:var(--right-bg);}
@@ -267,7 +268,29 @@ const GAME = {
   ],
 };
 const PHOTOS = {
-  // "Nathan Weisberg": "https://…/weisberg.jpg",
+  // The list’s headshots (same folder as this page), keyed by the exact choice text.
+  "Stephan Crétier": "17.png",
+  "Philip Fayer": "25.png",
+  "Alain Bédard": "30.png",
+  "Serge Godin": "21.png",
+  "Pierre ____ Péladeau": "16.png",
+  "Serge ____ Godin": "21.png",
+  "Lawrence ____ Stroll": "14.png",
+  "Guy ____ Laliberté": "27.png",
+  "Guy Laliberté": "27.png",
+  "Ryan Cohen": "12.png",
+  "John MacBain": "31.png",
+  "Andrew Lutfy": "11.png",
+  "Lawrence Stroll": "14.png",
+  "Pierre Lassonde": "29.png",
+  "Réal Plourde": "24.png",
+  "Molson brothers": "19.png",
+  "Kruger family": "23.png",
+  "Desmarais family": "1.png",
+  "Coutu family": "18.png",
+  // Snowmobile card: initials until we know which family photo is which person.
+  // "Laurent Beaudoin": "9.png", "Pierre Beaudoin": "10.png",
+  // "Paul Desmarais Jr.": "1.png", "Lino Saputo Jr.": "7.png",
 };
 
 /* =====================================================================
@@ -319,6 +342,9 @@ const PHOTOS = {
     card.classList.remove("deal"); void card.offsetWidth; card.classList.add("deal");
 
     $("ww-story").textContent = c.story;
+    // fetch the next card's photos now, so its circles are ready when it's dealt
+    const nx = cards[at + 1];
+    if (nx) nx.options.forEach(o => { if (PHOTOS[o]) { const im = new Image(); im.src = PHOTOS[o]; } });
     // The answer side is filled now (hidden), so the card is already full height
     // and nothing below it moves when it flips.
     $("ww-verdict").className = "ww-verdict";
@@ -337,7 +363,7 @@ const PHOTOS = {
     optsEl.classList.remove("done");
     optsEl.innerHTML = shuffle(c.options).map(o => {
       const pic = c.kind === "business" ? "" :
-        `<span class="ww-pic" aria-hidden="true">${PHOTOS[o] ? `<img src="${esc(PHOTOS[o])}" alt="">` : esc(initials(o))}</span>`;
+        `<span class="ww-pic${PHOTOS[o] ? " has-img" : ""}" aria-hidden="true">${PHOTOS[o] ? `<img src="${esc(PHOTOS[o])}" alt="" decoding="async">` : esc(initials(o))}</span>`;
       return `<li><button type="button" class="ww-opt${c.kind === "business" ? " biz" : ""}" data-o="${esc(o)}">${pic}<span class="nm">${esc(o)}</span><span class="mk" aria-hidden="true"></span></button></li>`;
     }).join("");
   }
@@ -414,6 +440,11 @@ const PHOTOS = {
   }
 
   optsEl.addEventListener("click", (e) => { const b = e.target.closest(".ww-opt"); if (b) choose(b); });
+  optsEl.addEventListener("error", (e) => {
+    const img = e.target; if (!img || img.tagName !== "IMG") return;
+    const pic = img.closest(".ww-pic"), btn = img.closest(".ww-opt");
+    if (pic && btn) { pic.classList.remove("has-img"); pic.textContent = initials(btn.dataset.o); }
+  }, true);
   back.addEventListener("click", advance);
   document.addEventListener("keydown", (e) => {
     if (answered && (e.key === "Enter" || e.key === " " || e.key === "ArrowRight")) { e.preventDefault(); advance(); }
