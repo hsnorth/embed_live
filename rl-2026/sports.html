@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="only light">
+<title>Quebec’s highest-paid sports stars 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------
+   House style: black serif type on white.
+   Newsreader is the web stand-in; swap the font-family below for the
+   house faces if they are available to embeds.
+------------------------------------------------------------------- */
+:root{
+  --grade:saturate(.78) contrast(1.06) brightness(1.02) sepia(.07);
+  --wash:rgba(238, 224, 204, .22);
+  --font:"Newsreader","Tiempos Text",Georgia,"Times New Roman",serif;
+  --bg:#ffffff;
+  --ink:#111111;
+  --ink-2:#333333;
+  --muted:#6b6b6b;
+  --hair:#e4e4e4;
+  --hair-2:#cdcdcd;
+  --face-bg:#e8e8e8;
+  --face-ink:#4a4a4a;
+  --focus:#111111;
+  color-scheme:only light;
+}
+
+html,body{margin:0;background:var(--bg);}
+*{box-sizing:border-box;}
+.rl{
+  max-width:760px;margin:0 auto;padding:0 16px 24px;
+  font-family:var(--font);font-optical-sizing:auto;
+  font-size:17px;line-height:1.45;color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+.rl [hidden]{display:none !important;}
+.rl :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
+
+/* Title: same face, size and weight as the rich list's rotating question */
+.rl-title{
+  margin:0;padding:28px 0 28px;font-weight:400;letter-spacing:-.01em;line-height:1.08;
+  font-size:clamp(1.6rem,5.2vw,2.3rem);
+}
+@media (max-width:639px){ .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);padding:24px 0 24px;} }
+
+/* List */
+.rl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink);scroll-margin-top:0;}
+/* Each profile. Phones: rank, name and pay on top, then the photo, then the details.
+   Wider screens: details take two thirds, pay and photo sit centred in the last third. */
+.rl-item{
+  --rk:2.4rem;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  grid-template-areas:"head val" "pic pic" "body body";
+  column-gap:12px;padding:18px 4px 20px;border-bottom:1px solid var(--hair);
+  scroll-margin-top:12px;
+}
+.rl-txt,.rl-side{display:contents;}
+.rl-head{grid-area:head;display:grid;grid-template-columns:var(--rk) minmax(0,1fr);column-gap:10px;align-items:start;}
+.rl-rank{font-weight:300;font-size:24px;line-height:1.05;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;}
+.rl-mv{display:flex;align-items:center;gap:3px;margin-top:5px;font-size:12.5px;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
+.rl-mv .dash{font-weight:800;color:var(--ink);}
+.rl-new{font-size:11.5px;font-weight:600;padding:0 6px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);}
+.rl-who{min-width:0;}
+.rl-name{display:block;margin:0;font-weight:400;font-size:20px;line-height:1.25;}
+.rl-co{display:block;font-size:15px;color:var(--muted);line-height:1.35;margin-top:2px;}
+.rl-val{grid-area:val;font-weight:700;font-size:19px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
+/* Portraits: one, two or three circles that scale with the screen.
+   Groups overlap slightly, each circle kept apart by a thin white ring. */
+.rl-pics{
+  grid-area:pic;justify-self:center;margin:16px 0 0;
+  display:flex;justify-content:center;align-items:center;
+  --d:clamp(92px, 28vw, 120px);
+}
+.rl-pics.n2{--d:clamp(84px, 24vw, 108px);}
+.rl-pics.n3{--d:clamp(72px, 21vw, 96px);}
+.rl-pic{
+  position:relative;flex:none;width:var(--d);height:var(--d);border-radius:50%;overflow:hidden;
+  background:var(--bg);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--hair-2);
+  display:grid;place-items:center;
+}
+.rl-pic + .rl-pic{margin-left:calc(var(--d) * -.12);}
+.rl-pic.init{background:var(--face-bg);}
+.rl-pic img{width:100%;height:100%;object-fit:cover;display:block;filter:var(--grade);}
+.rl-pic:not(.init)::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--wash);mix-blend-mode:multiply;pointer-events:none;}
+.rl-pic span{font-weight:600;font-size:calc(var(--d) * .3);color:var(--face-ink);letter-spacing:.02em;}
+.rl-body{grid-area:body;padding:16px 0 0 calc(var(--rk) + 10px);min-width:0;}
+.rl-body p{margin:0 0 14px;max-width:60ch;font-size:16.5px;line-height:1.5;}
+.rl-body p:last-child{margin-bottom:0;}
+@media (max-width:639px){
+  .rl-item{--rk:2.9rem;padding:20px 2px 22px;}
+  .rl-rank{font-size:30px;}
+  .rl-mv{font-size:13.5px;}
+  .rl-name{font-size:23px;}
+  .rl-co{font-size:16.5px;}
+  .rl-val{font-size:22px;}
+  .rl-body p{font-size:18.5px;line-height:1.5;}
+}
+@media (min-width:640px){
+  .rl-item{grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
+  .rl-txt{display:block;}
+  .rl-side{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:2px;}
+  .rl-val{font-size:24px;text-align:center;}
+  .rl-pics{margin:0;justify-self:auto;--d:clamp(88px, 13vw, 112px);}
+  .rl-pics.n2{--d:clamp(72px, 10.5vw, 92px);}
+  .rl-pics.n3{--d:clamp(60px, 9vw, 76px);}
+  .rl-rank{font-size:26px;}
+}
+
+/* Notes */
+.rl-notes{margin-top:22px;font-size:14.5px;color:var(--muted);}
+.rl-notes p{margin:0 0 8px;}
+.rl-notes strong{color:var(--ink-2);font-weight:600;}
+</style>
+</head>
+<body>
+<main class="rl" id="rl">
+  <h2 class="rl-title" id="rl-title"></h2>
+  <ol class="rl-list" id="rl-list" aria-labelledby="rl-title"></ol>
+  <footer class="rl-notes" id="rl-notes"></footer>
+</main>
+
+<script>
+/* =====================================================================
+   DATA — the only part you need to edit.
+   Order the array by rank (index 0 = No. 1).
+   pay:    estimated annual pay in C$ millions (shown as $49M, $10.9M).
+   team:   the line under the name.
+   photos: one to three square headshots shown as circles, e.g. ["s1.png"].
+           Paths are relative to this page. Leave [] for initials.
+   initials: shown in the circle while there is no photo.
+   ===================================================================== */
+const CONFIG = {
+  title: "Quebec’s highest-paid sports stars",
+  notes: ["Estimated annual pay in Canadian dollars."],
+};
+
+const ATHLETES = [
+  { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:[], pay:49,
+    team:"Toronto Blue Jays · Baseball",
+    blurb:"Born in Montreal while his Hall of Fame father starred for the Expos, Guerrero has become one of baseball’s most feared hitters as the Blue Jays’ first baseman. In 2025 he signed a 14-year, US$500-million extension, one of the richest contracts in the sport’s history." },
+  { id:"dort", name:"Luguentz “Lu” Dort", initials:"LD", photos:[], pay:24,
+    team:"Oklahoma City Thunder · Basketball",
+    blurb:"Raised in Montréal-Nord, Dort went undrafted in 2019 before signing with Oklahoma City, where he became one of the NBA’s toughest perimeter defenders. He won an NBA championship with the Thunder in 2025." },
+  { id:"stroll", name:"Lance Stroll", initials:"LS", photos:[], pay:21,
+    team:"Aston Martin · Formula One",
+    blurb:"The Montreal-born driver made his F1 debut with Williams in 2017 and, at 18, became the youngest driver to reach the podium in his rookie season. He has raced for Aston Martin, the team controlled by his father, Lawrence, since its rebrand in 2021." },
+  { id:"bounou", name:"Yassine “Bono” Bounou", initials:"YB", photos:[], pay:20,
+    team:"Al-Hilal · Soccer",
+    blurb:"Born in Montreal and raised in Morocco, Bounou was the star goalkeeper of Morocco’s run to the 2022 World Cup semifinals. He joined Saudi club Al-Hilal from Sevilla in 2023." },
+  { id:"huberdeau", name:"Jonathan Huberdeau", initials:"JH", photos:[], pay:14.5,
+    team:"Calgary Flames · Hockey",
+    blurb:"The Saint-Jérôme native spent a decade with the Florida Panthers, setting a franchise record with 115 points in 2021-22. Traded to Calgary that summer, he signed an eight-year, US$84-million extension." },
+  { id:"dobson", name:"Noah Dobson", initials:"ND", photos:[], pay:13,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"The P.E.I.-born defenceman, who played junior hockey in the QMJHL, was acquired from the New York Islanders in 2025. He signed an eight-year, US$76-million contract on arrival in Montreal." },
+  { id:"dubois", name:"Pierre-Luc Dubois", initials:"PD", photos:[], pay:11.7,
+    team:"Washington Capitals · Hockey",
+    blurb:"Raised in Sainte-Agathe-des-Monts, Dubois was the third overall pick in 2016 and has played for Columbus, Winnipeg and Los Angeles. He was traded to Washington in 2024 and carries an eight-year, US$68-million contract." },
+  { id:"hutson", name:"Lane Hutson", initials:"LH", photos:[], pay:11.5,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"The slick defenceman won the Calder Trophy as the NHL’s top rookie in 2025, his first full season with the Canadiens. A second-round pick in 2022, he has quickly become a cornerstone of the team’s rebuild." },
+  { id:"suzuki", name:"Nick Suzuki", initials:"NS", photos:[], pay:10.9,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"Named captain of the Canadiens in 2022, the London, Ont., native has been one of the team’s top scorers ever since. He is signed through 2030 on an eight-year, US$63-million deal." },
+  { id:"caufield", name:"Cole Caufield", initials:"CC", photos:[], pay:10.8,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"The Wisconsin-born winger is the Canadiens’ most dangerous goal scorer and topped 35 goals in 2024-25. He signed an eight-year, US$62.8-million extension in 2023." },
+  { id:"slafkovsky", name:"Juraj Slafkovsky", initials:"JS", photos:[], pay:10.5,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"The Slovak forward was the first overall pick in the 2022 NHL draft, held in Montreal. His eight-year, US$60.8-million extension kicked in last season." },
+  { id:"mathurin", name:"Bennedict Mathurin", initials:"BM", photos:[], pay:10.4,
+    team:"Indiana Pacers · Basketball",
+    blurb:"Raised in Montréal-Nord, Mathurin was the sixth overall pick in the 2022 NBA draft and an all-rookie selection. He helped the Pacers reach the NBA Finals in 2025." },
+  { id:"lafreniere", name:"Alexis Lafrenière", initials:"AL", photos:[], pay:10.3,
+    team:"New York Rangers · Hockey",
+    blurb:"The Saint-Eustache native was the first overall pick in 2020, the first Quebecer taken first since Vincent Lecavalier. He signed a seven-year, US$52.15-million extension with the Rangers in 2024." },
+  { id:"letang", name:"Kristopher Letang", initials:"KL", photos:[], pay:8.4,
+    team:"Pittsburgh Penguins · Hockey",
+    blurb:"The Montreal-born defenceman has spent his whole NHL career with Pittsburgh, winning the Stanley Cup in 2009, 2016 and 2017. He has twice returned to play after suffering strokes." },
+  { id:"matheson", name:"Mike Matheson", initials:"MM", photos:[], pay:6.7,
+    team:"Montreal Canadiens · Hockey",
+    blurb:"The Pointe-Claire native came home in a 2022 trade with Pittsburgh and has become a minutes-eating anchor on the Canadiens’ blue line. He set career highs with 62 points in 2023-24." },
+];
+
+/* =====================================================================
+   App
+   ===================================================================== */
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const pay = (v) => "$" + (Math.round(v * 10) / 10) + "M";               // 49 -> $49M, 10.9 -> $10.9M
+
+  $("rl-title").textContent = CONFIG.title;
+  ATHLETES.forEach((p, i) => { p.rank = i + 1; });
+
+  function portrait(p){
+    const ph = (p.photos || []).filter(Boolean).slice(0, 3);
+    if (!ph.length) return `<div class="rl-pics n1"><div class="rl-pic init"><span aria-hidden="true">${esc(p.initials || "")}</span></div></div>`;
+    return `<div class="rl-pics n${ph.length}">${ph.map(src =>
+      `<div class="rl-pic"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>`;
+  }
+
+  const list = $("rl-list");
+  list.innerHTML = ATHLETES.map(p => `<li class="rl-item" id="rl-i-${p.id}">
+      <div class="rl-txt">
+        <div class="rl-head">
+          <div><div class="rl-rank">${p.rank}.</div></div>
+          <div class="rl-who"><h3 class="rl-name">${esc(p.name)}</h3><span class="rl-co">${esc(p.team)}</span></div>
+        </div>
+        <div class="rl-body"><p>${esc(p.blurb)}</p></div>
+      </div>
+      <div class="rl-side">
+        <div class="rl-val">${pay(p.pay)}</div>
+        ${portrait(p)}
+      </div>
+    </li>`).join("");
+
+  // A missing photo falls back to initials.
+  list.addEventListener("error", (e) => {
+    const img = e.target; if (!img || img.tagName !== "IMG") return;
+    const pic = img.closest(".rl-pic"), li = img.closest(".rl-item");
+    const p = ATHLETES.find(x => "rl-i-" + x.id === (li && li.id));
+    if (pic && p) { pic.classList.add("init"); pic.innerHTML = `<span aria-hidden="true">${esc(p.initials || "")}</span>`; }
+  }, true);
+
+  $("rl-notes").innerHTML = (CONFIG.notes || []).map(t => `<p>${esc(t)}</p>`).join("");
+
+  // Deep link: embed URL ending in #suzuki jumps to that profile.
+  const hash = decodeURIComponent(location.hash.replace(/^#(p=)?/, ""));
+  const target = hash && document.getElementById("rl-i-" + hash);
+  if (target) requestAnimationFrame(() => {
+    target.scrollIntoView({ block:"start" });
+    if (window.parent !== window) window.parent.postMessage({ type:"richlist:sports-scrollTo", offset: Math.round(target.getBoundingClientRect().top + window.scrollY) }, "*");
+  });
+
+  // Tell the host page our height so the iframe never needs its own scrollbar.
+  let lastH = 0;
+  function postHeight(){
+    const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+    if (h !== lastH && window.parent !== window) {
+      lastH = h;
+      window.parent.postMessage({ type:"richlist:sports-height", height:h }, "*");
+    }
+  }
+  new ResizeObserver(postHeight).observe(document.documentElement);
+  window.addEventListener("load", postHeight);
+})();
+</script>
+</body>
+</html>
