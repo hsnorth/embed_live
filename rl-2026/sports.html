@@ -53,6 +53,23 @@ html,body{margin:0;background:var(--bg);}
   .rl-intro{--gap:26px;padding-top:24px;}
   .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);}
 }
+.rl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+/* All questions share one grid cell, so the block is always as tall as the longest
+   question and nothing below it jumps when the question changes. */
+.rl-rot{display:grid;align-items:end;}
+.rl-rot .q{grid-area:1 / 1;visibility:hidden;}
+.rl-rot .q.on,.rl-rot .q.out{visibility:visible;}
+.rl-rot .w{
+  display:inline-block;opacity:0;transform:translateY(.38em);filter:blur(3px);
+  transition:opacity .5s ease,transform .6s cubic-bezier(.2,.75,.25,1),filter .5s ease;
+  transition-delay:calc(var(--i) * 40ms);
+}
+.rl-rot .q.on .w{opacity:1;transform:none;filter:none;}
+.rl-rot .q.out .w{
+  opacity:0;transform:translateY(-.22em);filter:blur(2px);
+  transition-duration:.32s;transition-delay:calc(var(--i) * 12ms);
+}
+@media (prefers-reduced-motion:reduce){ .rl-rot .w{transition:none !important;filter:none !important;transform:none !important;} }
 
 /* Flickering photos: landscape on wide screens, portrait on phones.
    Same light grade and warm wash as the circles, so mixed sources match. */
@@ -157,7 +174,7 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
 <body>
 <main class="rl" id="rl">
   <header class="rl-intro">
-    <h2 class="rl-title" id="rl-title"></h2>
+    <h2 class="rl-title" id="rl-title"><span class="rl-sr" id="rl-title-sr"></span><span class="rl-rot" id="rl-rot" aria-hidden="true"></span></h2>
     <div class="rl-flick" id="rl-flick" aria-hidden="true"></div>
     <button type="button" class="rl-jump" id="rl-jump">Read the full profiles<svg width="11" height="15" viewBox="0 0 11 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 1v12.5M1.5 9.5l4 4 4-4"/></svg></button>
   </header>
@@ -185,7 +202,15 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
            ("50% 30%" = centred, upper third, the default).
    ===================================================================== */
 const CONFIG = {
-  title: "Who are Montreal’s highest-paid sports stars?",
+  title: "Montreal’s highest-paid sports stars",   // read out by screen readers in place of the questions
+  // The title rotates through these, one every few seconds, as on the rich list.
+  questions: [
+    "Who are Montreal’s highest-paid sports stars?",
+    "Which Hab was called too small for the NHL?",
+    "Which Montrealer plays in goal for Morocco?",
+    "How many athletes make over $10 million a year?",   // 13 of the 15, in Canadian dollars
+  ],
+  questionSeconds: 3,
   flickerSeconds: 1.5,     // the big picture under the title cuts to the next athlete this often
   // Bank of Canada daily rate, Oct. 16, 2026: US$1 = C$1.4154. If you change it, change the note too,
   // and the converted amounts written into the profiles.
@@ -256,9 +281,44 @@ const ATHLETES = [
     return "$" + (tied ? (Math.round(v * 100) / 100) : r1(v)) + "M";
   };
 
-  $("rl-title").textContent = CONFIG.title;
   ATHLETES.forEach((p, i) => { p.rank = i + 1; });
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- rotating title ---------- */
+  (function rotator(){
+    const host = $("rl-rot");
+    $("rl-title-sr").textContent = CONFIG.title;
+    const qs = (CONFIG.questions || []).filter(Boolean);
+    if (!qs.length) { host.textContent = CONFIG.title; return; }
+    host.innerHTML = qs.map(q => `<span class="q">${
+      q.split(/\s+/).map((w, i) => `<span class="w" style="--i:${i}">${esc(w)}</span>`).join(" ")
+    }</span>`).join("");
+    const els = [...host.children];
+    let at = 0, timer = null, visible = true, hovered = false;
+    els[0].classList.add("on");
+    if (reduceMotion || els.length < 2) return;      // one still question for people who turn motion off
+    function advance(){
+      const cur = els[at];
+      at = (at + 1) % els.length;
+      const nxt = els[at];
+      cur.classList.remove("on"); cur.classList.add("out");
+      setTimeout(() => cur.classList.remove("out"), 420);
+      setTimeout(() => nxt.classList.add("on"), 180);
+    }
+    function sync(){
+      const run = visible && !hovered && !document.hidden;
+      if (run && !timer) timer = setInterval(advance, (CONFIG.questionSeconds || 3) * 1000);
+      if (!run && timer) { clearInterval(timer); timer = null; }
+    }
+    // Only rotates while it's on screen, and holds still while a mouse rests on it.
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); sync(); }).observe(host);
+    }
+    host.addEventListener("mouseenter", () => { hovered = true; sync(); });
+    host.addEventListener("mouseleave", () => { hovered = false; sync(); });
+    document.addEventListener("visibilitychange", sync);
+    sync();
+  })();
 
   /* ---------- flickering photos under the title ---------- */
   (function flicker(){
