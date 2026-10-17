@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
+<script>(function(){var d=document.documentElement,top=false;try{top=window.self===window.top;}catch(e){}if(top||(window.innerHeight&&window.innerHeight<=(screen.height||0)))d.classList.add("rl-fill");if(!top)d.classList.add("rl-framed");})();</script>
 <title>Montreal’s highest-paid sports stars 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,12 +42,48 @@ html,body{margin:0;background:var(--bg);}
 .rl [hidden]{display:none !important;}
 .rl :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
 
-/* Title: same face, size and weight as the rich list's rotating question */
+/* Opening screen: question, picture, link, laid out exactly like the rich list.
+   On its own it fills one screen, so the list starts just below the fold. */
+.rl-intro{--gap:32px;display:flex;flex-direction:column;padding:28px 0 calc(var(--gap) - 4px);}
 .rl-title{
-  margin:0;padding:28px 0 28px;font-weight:400;letter-spacing:-.01em;line-height:1.08;
+  margin:0 0 var(--gap);font-weight:400;letter-spacing:-.01em;line-height:1.08;
   font-size:clamp(1.6rem,5.2vw,2.3rem);
 }
-@media (max-width:639px){ .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);padding:24px 0 24px;} }
+@media (max-width:639px){
+  .rl-intro{--gap:26px;padding-top:24px;}
+  .rl-title{font-size:clamp(2rem,8.2vw,2.4rem);}
+}
+
+/* Flickering photos: landscape on wide screens, portrait on phones.
+   Same light grade and warm wash as the circles, so mixed sources match. */
+.rl-flick{position:relative;margin:0;aspect-ratio:3 / 2;overflow:hidden;background:#33312f;}
+.rl-flick .fr{position:absolute;inset:0;margin:0;display:none;}
+.rl-flick .fr.on{display:block;}
+.rl-flick .fr.dark{background:#33312f;}
+.rl-flick .fr.light{background:#e7e7e3;}
+.rl-flick .fr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;filter:var(--grade);}
+.rl-flick .fr::after{content:"";position:absolute;inset:0;background:var(--wash);mix-blend-mode:multiply;pointer-events:none;}
+.rl-flick figcaption{position:absolute;left:12px;bottom:12px;z-index:1;max-width:calc(100% - 24px);padding:4px 10px 5px;font-size:15px;line-height:1.3;font-weight:600;}
+.rl-flick figcaption span{font-weight:400;opacity:.75;margin-right:6px;font-variant-numeric:lining-nums;}
+.rl-flick .fr.dark figcaption{color:#111;background:#f2f0ec;}
+.rl-flick .fr.light figcaption{color:#f2f0ec;background:#111;}
+@media (max-width:639px){ .rl-flick{aspect-ratio:4 / 5;} }
+/* filling the screen: the picture takes whatever height is left, within sensible limits */
+html.rl-fill .rl-intro{min-height:var(--screen,100svh);}
+/* Keep the list well clear of the fold: phone browsers show extra page when their bars
+   shrink or float over the content, so leave at least that much room, plus some. */
+html.rl-fill .rl-list{margin-top:max(110px, 100lvh - 100svh + 56px);}
+html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:min(100vw - 32px, 728px);}
+@media (max-width:639px){
+  html.rl-fill .rl-flick{min-height:260px;max-height:calc((100vw - 32px) * 1.6);}
+}
+.rl .rl-jump{
+  align-self:center;display:inline-flex;align-items:center;gap:6px;margin-top:calc(var(--gap) - 4px);padding:4px 2px;
+  border:0;background:none;cursor:pointer;font:inherit;font-size:17px;font-weight:500;color:var(--ink);
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;
+}
+.rl .rl-jump svg{flex:none;transform:translateY(1px);}
+.rl .rl-jump:hover{text-decoration-thickness:2px;}
 
 /* List */
 .rl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink);scroll-margin-top:0;}
@@ -119,7 +156,11 @@ html,body{margin:0;background:var(--bg);}
 </head>
 <body>
 <main class="rl" id="rl">
-  <h2 class="rl-title" id="rl-title"></h2>
+  <header class="rl-intro">
+    <h2 class="rl-title" id="rl-title"></h2>
+    <div class="rl-flick" id="rl-flick" aria-hidden="true"></div>
+    <button type="button" class="rl-jump" id="rl-jump">Read the full profiles<svg width="11" height="15" viewBox="0 0 11 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 1v12.5M1.5 9.5l4 4 4-4"/></svg></button>
+  </header>
   <ol class="rl-list" id="rl-list" aria-labelledby="rl-title"></ol>
   <footer class="rl-notes" id="rl-notes"></footer>
 </main>
@@ -133,12 +174,19 @@ html,body{margin:0;background:var(--bg);}
    blank:  true keeps the spot and its number but shows nothing else.
    team:   the line under the name.
    blurb:  the profile (a list of strings makes separate paragraphs).
-   photos: one to three square headshots shown as circles, e.g. ["s1.png"].
-           Paths are relative to this page. Leave [] for initials.
+   photos: one to three square headshots shown as circles, e.g. ["32.png"].
+           Paths are relative to this page, so the files sit in the same folder.
+           Leave [] for initials.
    initials: shown in the circle while there is no photo.
+   big:    optional photo for the flickering picture under the title. Only athletes with
+           one take part, in list order, captioned with their rank and name.
+           Files sit in the same folder; spaces in the names are fine.
+   bigPos: optional, which part of the big photo to keep when it's cropped
+           ("50% 30%" = centred, upper third, the default).
    ===================================================================== */
 const CONFIG = {
-  title: "Montreal’s highest-paid sports stars",
+  title: "Who are Montreal’s highest-paid sports stars?",
+  flickerSeconds: 1.5,     // the big picture under the title cuts to the next athlete this often
   // Bank of Canada daily rate, Oct. 16, 2026: US$1 = C$1.4154. If you change it, change the note too,
   // and the converted amounts written into the profiles.
   usdToCad: 1.4154,
@@ -146,49 +194,49 @@ const CONFIG = {
 };
 
 const ATHLETES = [
-  { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:[], pay:35.7,
+  { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:["32.png"], big:"0327 spt col cowan - 5417.jpg", pay:35.7,
     team:"Toronto Blue Jays · First baseman",
     blurb:"Montrealers have seen the 27-year-old Blue Jays first baseman in an Expos uniform: in 2002, aged three, he joined his father, Expos star Vladimir Guerrero, on the diamond. His 14-year contract, worth about $708 million, averages about $50.5 million a year, though because of the way it’s structured he will actually make about $42.5 million this year, after $68.6 million last year. Like his dad, he’s known for hitting home runs, with 192 in his career, and was named an all-star for the sixth year in a row this season." },
-  { id:"dort", name:"Luguentz “Lu” Dort", initials:"LD", photos:[], pay:17.7,
+  { id:"dort", name:"Luguentz “Lu” Dort", initials:"LD", photos:["33.png"], pay:17.7,
     team:"Atlanta Hawks · Guard",
     blurb:"The son of Haitian immigrants, Dort grew up in Montreal North playing soccer before discovering basketball in neighbourhood parks and joining his first team, in Parc-Ex, at about 12 or 13. Known for his defence, he played for Canada at the Paris Olympics and regularly returns to Montreal North for community events. He’s earning about $25.1 million this season on the five-year, $123.8-million contract he signed in 2022." },
-  { id:"stroll", name:"Lance Stroll", initials:"LS", photos:[], pay:12.75,
+  { id:"stroll", name:"Lance Stroll", initials:"LS", photos:["34.png"], big:"0522 spt gp 8383.jpg", pay:12.75,
     team:"Aston Martin Aramco · Formula One driver",
     blurb:"The Montreal-born driver’s salary isn’t declared, but Aston Martin, owned by his billionaire father, Lawrence Stroll, paid £9.6 million (about $18.1 million) in 2025 for “racing services” to Golden Eagle Racing, a company he controls. Those payments may not exactly match his pay, but it’s not a bad payday for a driver who has never finished better than third in an F1 race and hasn’t reached the podium since 2020." },
-  { id:"bounou", name:"Yassine “Bono” Bounou", initials:"YB", photos:[], pay:11,
+  { id:"bounou", name:"Yassine “Bono” Bounou", initials:"YB", photos:["35.png"], pay:11,
     team:"Al-Hilal · Goalkeeper",
     blurb:"Born in Montreal, Bono moved with his parents to their native Morocco as a small child and grew up in Casablanca. He spent most of his career in Spain, most recently with Sevilla, before joining Riyadh-based Al-Hilal, and plays for Morocco internationally. His salary isn’t disclosed, so the figure is an estimate based on several sources." },
-  { id:"huberdeau", name:"Jonathan Huberdeau", initials:"JH", photos:[], pay:10.5,
+  { id:"huberdeau", name:"Jonathan Huberdeau", initials:"JH", photos:["36.png"], pay:10.5,
     team:"Calgary Flames · Centre",
     blurb:"Raised around Saint-Jérôme, where his father owned a car dealership in Prévost, Huberdeau broke through as a teenager with the Saint-Eustache Vikings, leading the Quebec Midget AAA league in scoring in 2008-09. After winning the 2011 Memorial Cup with the Saint John Sea Dogs, he won the Calder Trophy with the Florida Panthers and was traded to Calgary in 2022. He hosts an annual golf tournament for Laval’s Cité-de-la-Santé hospital and is the spokesman for Quebec ball hockey equipment maker Knapper." },
-  { id:"dobson", name:"Noah Dobson", initials:"ND", photos:[], pay:9.5,
+  { id:"dobson", name:"Noah Dobson", initials:"ND", photos:["37.png"], pay:9.5,
     team:"Montreal Canadiens · Defenceman",
     blurb:"The Summerside, P.E.I., native won back-to-back Memorial Cups, with Acadie-Bathurst in 2018 and then with Rouyn-Noranda after a trade. Drafted by the New York Islanders in 2018, he was traded to the Habs in 2025 and is on an eight-year, $107.6-million contract. Last season, the defenceman had 12 goals and 35 assists." },
-  { id:"hutson", name:"Lane Hutson", initials:"LH", photos:[], pay:8.85,
+  { id:"hutson", name:"Lane Hutson", initials:"LH", photos:["38.png"], pay:8.85,
     team:"Montreal Canadiens · Defenceman",
     blurb:"The Michigan-born defenceman, who grew up near Chicago, played for Boston University before making his Canadiens debut in 2024, two years after Montreal drafted him. Scouts questioned whether he was big enough for the NHL, but he won the Calder Trophy as a rookie, the Habs’ first since Ken Dryden in 1972. According to The Athletic’s Dom Luszczyszyn, his eight-year, $100.2-million deal is the best in the league for his team, as his play could be worth around $28 million a year." },
-  { id:"dubois", name:"Pierre-Luc Dubois", initials:"PD", photos:[], pay:8.5,
+  { id:"dubois", name:"Pierre-Luc Dubois", initials:"PD", photos:["39.png"], pay:8.5,
     team:"Washington Capitals · Left wing",
     blurb:"Born in Sainte-Agathe-des-Monts and raised in Rimouski, Dubois played junior hockey for Cape Breton and Blainville-Boisbriand before Columbus drafted him. Traded to Winnipeg in 2021, he reportedly sought a move to Montreal, but the Habs passed; after a season in Los Angeles, he was traded to Washington. He is starting his third season with the Capitals after injuries cost him much of last season." },
-  { id:"suzuki", name:"Nick Suzuki", initials:"NS", photos:[], pay:7.875,
+  { id:"suzuki", name:"Nick Suzuki", initials:"NS", photos:["40.png"], pay:7.875,
     team:"Montreal Canadiens · Captain and centre",
     blurb:"The Habs captain from London, Ont., signed his eight-year, $89.2-million deal in 2021 and has acknowledged it now pays less than contracts signed by other stars as salaries rise. Some Canadiens have accepted less than they could earn elsewhere because they want to win in Montreal, he said in August, adding that he and his teammates still earn enough to live comfortably for the rest of their lives. Off the ice, he has done ads for Bauer, Tim Hortons and Hellmann’s, among others." },
-  { id:"caufield", name:"Cole Caufield", initials:"CC", photos:[], pay:7.85,
+  { id:"caufield", name:"Cole Caufield", initials:"CC", photos:["41.png"], big:"0408 spt habs (7).jpg", pay:7.85,
     team:"Montreal Canadiens · Forward",
     blurb:"Born in Mosinee, Wis., Caufield was drafted by Montreal in 2019 and won the Hobey Baker Award as U.S. college hockey’s top player at the University of Wisconsin in 2021. He made his NHL debut with the Habs that spring and joined their run to the Stanley Cup final. He earns an average of $11.1 million a year on an eight-year, $88.9-million extension, and has done ads for Old Spice and McDonald’s." },
-  { id:"slafkovsky", name:"Juraj Slafkovsky", initials:"JS", photos:[], pay:7.6,
+  { id:"slafkovsky", name:"Juraj Slafkovsky", initials:"JS", photos:["42.png"], pay:7.6,
     team:"Montreal Canadiens · Left wing",
     blurb:"The Slovak forward from Košice was drafted by Montreal in 2022 after leading that year’s Winter Olympics in scoring and being named MVP as Slovakia won its first Olympic hockey medal, a bronze. Last April, he scored his first hat trick, leading the Canadiens to a 4-3 overtime win over Tampa Bay in the first round of the playoffs." },
-  { id:"mathurin", name:"Bennedict Mathurin", initials:"BM", photos:[], pay:7.5,
+  { id:"mathurin", name:"Bennedict Mathurin", initials:"BM", photos:["43.png"], pay:7.5,
     team:"New Orleans Pelicans · Guard and small forward",
     blurb:"Like Lu Dort, the Montreal North native got his start with Montreal teams such as the Parc-Ex Knights and Brookwood Elite, then starred for the University of Arizona. Drafted by Indiana in 2022, he finished fourth in rookie of the year voting and was traded last season to the Los Angeles Clippers. He asked the Clippers to withdraw an extension offer so he could join New Orleans, where he is competing for a starting spot." },
-  { id:"lafreniere", name:"Alexis Lafrenière", initials:"AL", photos:[], pay:7.45,
+  { id:"lafreniere", name:"Alexis Lafrenière", initials:"AL", photos:["44.png"], big:"0310 spt habsgamer.jpg", pay:7.45,
     team:"New York Rangers · Left wing",
     blurb:"The Saint-Eustache native was named the QMJHL’s rookie of the year with the Rimouski Océanic before the New York Rangers drafted him first overall in 2020. After a breakout finish to a lacklustre 2025-26 season for the team, he has seven goals and 10 points so far this year, as the Rangers have won six of their eight games." },
-  { id:"letang", name:"Kristopher Letang", initials:"KL", photos:[], pay:6.1,
+  { id:"letang", name:"Kristopher Letang", initials:"KL", photos:["45.png"], pay:6.1,
     team:"Pittsburgh Penguins · Defenceman",
     blurb:"The 39-year-old Montreal native has spent his entire NHL career with the Pittsburgh Penguins, who drafted him in 2005. He has played 20 seasons alongside Sidney Crosby and Evgeni Malkin, a record in North American sport, and won three Stanley Cups." },
-  { id:"matheson", name:"Mike Matheson", initials:"MM", photos:[], pay:6,
+  { id:"matheson", name:"Mike Matheson", initials:"MM", photos:["46.png"], pay:6,
     team:"Montreal Canadiens · Defenceman",
     blurb:"The only player on the list who is both from Montreal and plays for Montreal, the Pointe-Claire native played two seasons for the Lac-Saint-Louis Lions in Dollard-des-Ormeaux before heading to Boston College. Drafted by the Florida Panthers and traded to Pittsburgh in 2020, he came home in a trade to the Canadiens two years later." },
 ];
@@ -210,7 +258,50 @@ const ATHLETES = [
 
   $("rl-title").textContent = CONFIG.title;
   ATHLETES.forEach((p, i) => { p.rank = i + 1; });
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* ---------- flickering photos under the title ---------- */
+  (function flicker(){
+    const host = $("rl-flick");
+    const pics = ATHLETES.filter(p => p.big && !p.blank);     // in list order
+    if (!pics.length) { host.hidden = true; return; }
+    host.innerHTML = pics.map((p, k) => `<figure class="fr ${k % 2 ? "light" : "dark"}">
+        <img src="${esc(encodeURI(p.big))}" alt="" loading="lazy" decoding="async"${p.bigPos ? ` style="object-position:${esc(p.bigPos)}"` : ""}>
+        <figcaption><span>No. ${p.rank}</span>${esc(p.bigCaption || p.name)}</figcaption>
+      </figure>`).join("");
+    let frames = [...host.children], at = 0, timer = null, visible = true;
+    const show = (k) => {
+      frames.forEach((f, j) => f.classList.toggle("on", j === k));
+      for (let a = 0; a <= 2; a++) {                        // load this photo and the next two
+        const im = frames[(k + a) % frames.length].querySelector("img");
+        if (im.loading !== "eager") im.loading = "eager";
+      }
+    };
+    // A photo that fails to load (wrong file name, say) drops out instead of showing an empty box.
+    host.addEventListener("error", (e) => {
+      const f = e.target.closest && e.target.closest(".fr");
+      if (!f) return;
+      const wasOn = f.classList.contains("on");
+      f.remove();
+      frames = [...host.children];
+      if (!frames.length) { host.hidden = true; return; }
+      at = at % frames.length;
+      if (wasOn) show(at);
+    }, true);
+    show(0);
+    if (reduceMotion || frames.length < 2) return;        // one still photo for people who turn motion off
+    const tick = () => { if (frames.length > 1) { at = (at + 1) % frames.length; show(at); } };
+    const sync = () => {
+      const run = visible && !document.hidden;
+      if (run && !timer) timer = setInterval(tick, (CONFIG.flickerSeconds || 1.5) * 1000);
+      if (!run && timer) { clearInterval(timer); timer = null; }
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(es => { visible = es.some(e => e.isIntersecting); sync(); }).observe(host);
+    }
+    document.addEventListener("visibilitychange", sync);
+    sync();
+  })();
   function portrait(p){
     const ph = (p.photos || []).filter(Boolean).slice(0, 3);
     if (!ph.length) return `<div class="rl-pics n1"><div class="rl-pic init"><span aria-hidden="true">${esc(p.initials || "")}</span></div></div>`;
@@ -252,6 +343,40 @@ const ATHLETES = [
     target.scrollIntoView({ block:"start" });
     if (window.parent !== window) window.parent.postMessage({ type:"richlist:sports-scrollTo", offset: Math.round(target.getBoundingClientRect().top + window.scrollY) }, "*");
   });
+
+  // "Read the full profiles" scrolls down to the list. If this page scrolls by itself
+  // (opened directly, or in a preview), scroll it here; inside an article iframe sized to
+  // fit its content, ask the host page to scroll.
+  const root = document.documentElement;
+  const scrollsItself = () => window.parent === window || root.scrollHeight > window.innerHeight + 2;
+  $("rl-jump").addEventListener("click", () => {
+    if (scrollsItself()) {
+      list.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" });
+    } else {
+      window.parent.postMessage({ type:"richlist:sports-scrollTo", offset: Math.round(list.getBoundingClientRect().top + window.scrollY) }, "*");
+    }
+  });
+
+  // Inside an iframe, the host page can say how tall the reader's screen is,
+  // so the opening screen fills it (the same message the rich list listens for).
+  let hostViewport = false;
+  window.addEventListener("message", (e) => {
+    if (e.source !== window.parent || !e.data || (e.data.type !== "richlist:viewport" && e.data.type !== "richlist:sports-viewport")) return;
+    const h = Math.round(+e.data.height);
+    if (!(h > 300)) return;
+    hostViewport = true;
+    root.style.setProperty("--screen", h + "px");
+    root.classList.add("rl-fill");
+  });
+  // Without word from the host, a frame fills its own height only while that height is
+  // screen-sized, so the opening screen never grows along with a stretched frame.
+  if (window.parent !== window) {
+    window.addEventListener("resize", () => {
+      if (hostViewport) return;
+      root.classList.toggle("rl-fill", window.innerHeight <= (screen.height || 0));
+    });
+    window.parent.postMessage({ type:"richlist:sports-ready" }, "*");
+  }
 
   // Tell the host page our height so the iframe never needs its own scrollbar.
   let lastH = 0;
