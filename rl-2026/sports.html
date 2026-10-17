@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
-<title>Quebec’s highest-paid sports stars 2026</title>
+<title>Montreal’s highest-paid sports stars 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200..800&display=swap" rel="stylesheet">
@@ -128,63 +128,69 @@ html,body{margin:0;background:var(--bg);}
 /* =====================================================================
    DATA — the only part you need to edit.
    Order the array by rank (index 0 = No. 1).
-   pay:    estimated annual pay in C$ millions (shown as $49M, $10.9M).
+   pay:    annual salary in US$ millions, as reported. The page converts it to
+           Canadian dollars with usdToCad below (35.7 shows as $50.5M).
+   blank:  true keeps the spot and its number but shows nothing else.
    team:   the line under the name.
+   blurb:  the profile (a list of strings makes separate paragraphs).
    photos: one to three square headshots shown as circles, e.g. ["s1.png"].
            Paths are relative to this page. Leave [] for initials.
    initials: shown in the circle while there is no photo.
    ===================================================================== */
 const CONFIG = {
-  title: "Who are Quebec’s highest-paid sports stars?",
-  notes: ["Estimated annual pay in Canadian dollars."],
+  title: "Montreal’s highest-paid sports stars",
+  // Bank of Canada daily rate, Oct. 16, 2026: US$1 = C$1.4154. If you change it, change the note too,
+  // and the converted amounts written into the profiles.
+  usdToCad: 1.4154,
+  notes: ["Salaries in Canadian dollars, converted from U.S. dollars at the Bank of Canada’s Oct. 16, 2026, rate of $1.4154. Most are the average annual value of each player’s contract; Lance Stroll’s and Yassine Bounou’s pay isn’t disclosed, so their figures are estimates."],
 };
 
 const ATHLETES = [
-  { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:[], pay:49,
-    team:"Toronto Blue Jays · Baseball",
-    blurb:"Born in Montreal while his Hall of Fame father starred for the Expos, Guerrero has become one of baseball’s most feared hitters as the Blue Jays’ first baseman. In 2025 he signed a 14-year, US$500-million extension, one of the richest contracts in the sport’s history." },
-  { id:"dort", name:"Luguentz “Lu” Dort", initials:"LD", photos:[], pay:24,
-    team:"Oklahoma City Thunder · Basketball",
-    blurb:"Raised in Montréal-Nord, Dort went undrafted in 2019 before signing with Oklahoma City, where he became one of the NBA’s toughest perimeter defenders. He won an NBA championship with the Thunder in 2025." },
-  { id:"stroll", name:"Lance Stroll", initials:"LS", photos:[], pay:21,
-    team:"Aston Martin · Formula One",
-    blurb:"The Montreal-born driver made his F1 debut with Williams in 2017 and, at 18, became the youngest driver to reach the podium in his rookie season. He has raced for Aston Martin, the team controlled by his father, Lawrence, since its rebrand in 2021." },
-  { id:"bounou", name:"Yassine “Bono” Bounou", initials:"YB", photos:[], pay:20,
-    team:"Al-Hilal · Soccer",
-    blurb:"Born in Montreal and raised in Morocco, Bounou was the star goalkeeper of Morocco’s run to the 2022 World Cup semifinals. He joined Saudi club Al-Hilal from Sevilla in 2023." },
-  { id:"huberdeau", name:"Jonathan Huberdeau", initials:"JH", photos:[], pay:14.5,
-    team:"Calgary Flames · Hockey",
-    blurb:"The Saint-Jérôme native spent a decade with the Florida Panthers, setting a franchise record with 115 points in 2021-22. Traded to Calgary that summer, he signed an eight-year, US$84-million extension." },
-  { id:"dobson", name:"Noah Dobson", initials:"ND", photos:[], pay:13,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"The P.E.I.-born defenceman, who played junior hockey in the QMJHL, was acquired from the New York Islanders in 2025. He signed an eight-year, US$76-million contract on arrival in Montreal." },
-  { id:"dubois", name:"Pierre-Luc Dubois", initials:"PD", photos:[], pay:11.7,
-    team:"Washington Capitals · Hockey",
-    blurb:"Raised in Sainte-Agathe-des-Monts, Dubois was the third overall pick in 2016 and has played for Columbus, Winnipeg and Los Angeles. He was traded to Washington in 2024 and carries an eight-year, US$68-million contract." },
-  { id:"hutson", name:"Lane Hutson", initials:"LH", photos:[], pay:11.5,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"The slick defenceman won the Calder Trophy as the NHL’s top rookie in 2025, his first full season with the Canadiens. A second-round pick in 2022, he has quickly become a cornerstone of the team’s rebuild." },
-  { id:"suzuki", name:"Nick Suzuki", initials:"NS", photos:[], pay:10.9,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"Named captain of the Canadiens in 2022, the London, Ont., native has been one of the team’s top scorers ever since. He is signed through 2030 on an eight-year, US$63-million deal." },
-  { id:"caufield", name:"Cole Caufield", initials:"CC", photos:[], pay:10.8,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"The Wisconsin-born winger is the Canadiens’ most dangerous goal scorer and topped 35 goals in 2024-25. He signed an eight-year, US$62.8-million extension in 2023." },
-  { id:"slafkovsky", name:"Juraj Slafkovsky", initials:"JS", photos:[], pay:10.5,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"The Slovak forward was the first overall pick in the 2022 NHL draft, held in Montreal. His eight-year, US$60.8-million extension kicked in last season." },
-  { id:"mathurin", name:"Bennedict Mathurin", initials:"BM", photos:[], pay:10.4,
-    team:"Indiana Pacers · Basketball",
-    blurb:"Raised in Montréal-Nord, Mathurin was the sixth overall pick in the 2022 NBA draft and an all-rookie selection. He helped the Pacers reach the NBA Finals in 2025." },
-  { id:"lafreniere", name:"Alexis Lafrenière", initials:"AL", photos:[], pay:10.3,
-    team:"New York Rangers · Hockey",
-    blurb:"The Saint-Eustache native was the first overall pick in 2020, the first Quebecer taken first since Vincent Lecavalier. He signed a seven-year, US$52.15-million extension with the Rangers in 2024." },
-  { id:"letang", name:"Kristopher Letang", initials:"KL", photos:[], pay:8.4,
-    team:"Pittsburgh Penguins · Hockey",
-    blurb:"The Montreal-born defenceman has spent his whole NHL career with Pittsburgh, winning the Stanley Cup in 2009, 2016 and 2017. He has twice returned to play after suffering strokes." },
-  { id:"matheson", name:"Mike Matheson", initials:"MM", photos:[], pay:6.7,
-    team:"Montreal Canadiens · Hockey",
-    blurb:"The Pointe-Claire native came home in a 2022 trade with Pittsburgh and has become a minutes-eating anchor on the Canadiens’ blue line. He set career highs with 62 points in 2023-24." },
+  { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:[], pay:35.7,
+    team:"Toronto Blue Jays · First baseman",
+    blurb:"Montrealers have seen the 27-year-old Blue Jays first baseman in an Expos uniform: in 2002, aged three, he joined his father, Expos star Vladimir Guerrero, on the diamond. His 14-year contract, worth about $708 million, averages about $50.5 million a year, though because of the way it’s structured he will actually make about $42.5 million this year, after $68.6 million last year. Like his dad, he’s known for hitting home runs, with 192 in his career, and was named an all-star for the sixth year in a row this season." },
+  { id:"dort", name:"Luguentz “Lu” Dort", initials:"LD", photos:[], pay:17.7,
+    team:"Atlanta Hawks · Guard",
+    blurb:"The son of Haitian immigrants, Dort grew up in Montreal North playing soccer before discovering basketball in neighbourhood parks and joining his first team, in Parc-Ex, at about 12 or 13. Known for his defence, he played for Canada at the Paris Olympics and regularly returns to Montreal North for community events. He’s earning about $25.1 million this season on the five-year, $123.8-million contract he signed in 2022." },
+  { id:"stroll", name:"Lance Stroll", initials:"LS", photos:[], pay:12.75,
+    team:"Aston Martin Aramco · Formula One driver",
+    blurb:"The Montreal-born driver’s salary isn’t declared, but Aston Martin, owned by his billionaire father, Lawrence Stroll, paid £9.6 million (about $18.1 million) in 2025 for “racing services” to Golden Eagle Racing, a company he controls. Those payments may not exactly match his pay, but it’s not a bad payday for a driver who has never finished better than third in an F1 race and hasn’t reached the podium since 2020." },
+  { id:"bounou", name:"Yassine “Bono” Bounou", initials:"YB", photos:[], pay:11,
+    team:"Al-Hilal · Goalkeeper",
+    blurb:"Born in Montreal, Bono moved with his parents to their native Morocco as a small child and grew up in Casablanca. He spent most of his career in Spain, most recently with Sevilla, before joining Riyadh-based Al-Hilal, and plays for Morocco internationally. His salary isn’t disclosed, so the figure is an estimate based on several sources." },
+  { id:"huberdeau", name:"Jonathan Huberdeau", initials:"JH", photos:[], pay:10.5,
+    team:"Calgary Flames · Centre",
+    blurb:"Raised around Saint-Jérôme, where his father owned a car dealership in Prévost, Huberdeau broke through as a teenager with the Saint-Eustache Vikings, leading the Quebec Midget AAA league in scoring in 2008-09. After winning the 2011 Memorial Cup with the Saint John Sea Dogs, he won the Calder Trophy with the Florida Panthers and was traded to Calgary in 2022. He hosts an annual golf tournament for Laval’s Cité-de-la-Santé hospital and is the spokesman for Quebec ball hockey equipment maker Knapper." },
+  { id:"dobson", name:"Noah Dobson", initials:"ND", photos:[], pay:9.5,
+    team:"Montreal Canadiens · Defenceman",
+    blurb:"The Summerside, P.E.I., native won back-to-back Memorial Cups, with Acadie-Bathurst in 2018 and then with Rouyn-Noranda after a trade. Drafted by the New York Islanders in 2018, he was traded to the Habs in 2025 and is on an eight-year, $107.6-million contract. Last season, the defenceman had 12 goals and 35 assists." },
+  { id:"hutson", name:"Lane Hutson", initials:"LH", photos:[], pay:8.85,
+    team:"Montreal Canadiens · Defenceman",
+    blurb:"The Michigan-born defenceman, who grew up near Chicago, played for Boston University before making his Canadiens debut in 2024, two years after Montreal drafted him. Scouts questioned whether he was big enough for the NHL, but he won the Calder Trophy as a rookie, the Habs’ first since Ken Dryden in 1972. According to The Athletic’s Dom Luszczyszyn, his eight-year, $100.2-million deal is the best in the league for his team, as his play could be worth around $28 million a year." },
+  { id:"dubois", name:"Pierre-Luc Dubois", initials:"PD", photos:[], pay:8.5,
+    team:"Washington Capitals · Left wing",
+    blurb:"Born in Sainte-Agathe-des-Monts and raised in Rimouski, Dubois played junior hockey for Cape Breton and Blainville-Boisbriand before Columbus drafted him. Traded to Winnipeg in 2021, he reportedly sought a move to Montreal, but the Habs passed; after a season in Los Angeles, he was traded to Washington. He is starting his third season with the Capitals after injuries cost him much of last season." },
+  { id:"suzuki", name:"Nick Suzuki", initials:"NS", photos:[], pay:7.875,
+    team:"Montreal Canadiens · Captain and centre",
+    blurb:"The Habs captain from London, Ont., signed his eight-year, $89.2-million deal in 2021 and has acknowledged it now pays less than contracts signed by other stars as salaries rise. Some Canadiens have accepted less than they could earn elsewhere because they want to win in Montreal, he said in August, adding that he and his teammates still earn enough to live comfortably for the rest of their lives. Off the ice, he has done ads for Bauer, Tim Hortons and Hellmann’s, among others." },
+  { id:"caufield", name:"Cole Caufield", initials:"CC", photos:[], pay:7.85,
+    team:"Montreal Canadiens · Forward",
+    blurb:"Born in Mosinee, Wis., Caufield was drafted by Montreal in 2019 and won the Hobey Baker Award as U.S. college hockey’s top player at the University of Wisconsin in 2021. He made his NHL debut with the Habs that spring and joined their run to the Stanley Cup final. He earns an average of $11.1 million a year on an eight-year, $88.9-million extension, and has done ads for Old Spice and McDonald’s." },
+  { id:"slafkovsky", name:"Juraj Slafkovsky", initials:"JS", photos:[], pay:7.6,
+    team:"Montreal Canadiens · Left wing",
+    blurb:"The Slovak forward from Košice was drafted by Montreal in 2022 after leading that year’s Winter Olympics in scoring and being named MVP as Slovakia won its first Olympic hockey medal, a bronze. Last April, he scored his first hat trick, leading the Canadiens to a 4-3 overtime win over Tampa Bay in the first round of the playoffs." },
+  { id:"mathurin", name:"Bennedict Mathurin", initials:"BM", photos:[], pay:7.5,
+    team:"New Orleans Pelicans · Guard and small forward",
+    blurb:"Like Lu Dort, the Montreal North native got his start with Montreal teams such as the Parc-Ex Knights and Brookwood Elite, then starred for the University of Arizona. Drafted by Indiana in 2022, he finished fourth in rookie of the year voting and was traded last season to the Los Angeles Clippers. He asked the Clippers to withdraw an extension offer so he could join New Orleans, where he is competing for a starting spot." },
+  { id:"lafreniere", name:"Alexis Lafrenière", initials:"AL", photos:[], pay:7.45,
+    team:"New York Rangers · Left wing",
+    blurb:"The Saint-Eustache native was named the QMJHL’s rookie of the year with the Rimouski Océanic before the New York Rangers drafted him first overall in 2020. After a breakout finish to a lacklustre 2025-26 season for the team, he has seven goals and 10 points so far this year, as the Rangers have won six of their eight games." },
+  { id:"letang", name:"Kristopher Letang", initials:"KL", photos:[], pay:6.1,
+    team:"Pittsburgh Penguins · Defenceman",
+    blurb:"The 39-year-old Montreal native has spent his entire NHL career with the Pittsburgh Penguins, who drafted him in 2005. He has played 20 seasons alongside Sidney Crosby and Evgeni Malkin, a record in North American sport, and won three Stanley Cups." },
+  { id:"matheson", name:"Mike Matheson", initials:"MM", photos:[], pay:6,
+    team:"Montreal Canadiens · Defenceman",
+    blurb:"The only player on the list who is both from Montreal and plays for Montreal, the Pointe-Claire native played two seasons for the Lac-Saint-Louis Lions in Dollard-des-Ormeaux before heading to Boston College. Drafted by the Florida Panthers and traded to Pittsburgh in 2020, he came home in a trade to the Canadiens two years later." },
 ];
 
 /* =====================================================================
@@ -193,7 +199,14 @@ const ATHLETES = [
 (function(){
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
-  const pay = (v) => "$" + (Math.round(v * 10) / 10) + "M";               // 49 -> $49M, 10.9 -> $10.9M
+  // US$ millions -> C$, one decimal ($50.5M). Two decimals only where neighbours would otherwise look tied.
+  const cad = (p) => p.pay * (CONFIG.usdToCad || 1);
+  const r1 = (v) => Math.round(v * 10) / 10;
+  const pay = (p) => {
+    const i = ATHLETES.indexOf(p), v = cad(p);
+    const tied = [ATHLETES[i - 1], ATHLETES[i + 1]].some(q => q && !q.blank && r1(cad(q)) === r1(v));
+    return "$" + (tied ? (Math.round(v * 100) / 100) : r1(v)) + "M";
+  };
 
   $("rl-title").textContent = CONFIG.title;
   ATHLETES.forEach((p, i) => { p.rank = i + 1; });
@@ -206,16 +219,18 @@ const ATHLETES = [
   }
 
   const list = $("rl-list");
-  list.innerHTML = ATHLETES.map(p => `<li class="rl-item" id="rl-i-${p.id}">
+  list.innerHTML = ATHLETES.map(p => p.blank
+    ? `<li class="rl-item rl-blank" id="rl-i-${p.blank === true ? "blank-" + p.rank : p.id}"><div class="rl-txt"><div class="rl-head"><div><div class="rl-rank">${p.rank}.</div></div><div class="rl-who"></div></div></div></li>`
+    : `<li class="rl-item" id="rl-i-${p.id}">
       <div class="rl-txt">
         <div class="rl-head">
           <div><div class="rl-rank">${p.rank}.</div></div>
           <div class="rl-who"><h3 class="rl-name">${esc(p.name)}</h3><span class="rl-co">${esc(p.team)}</span></div>
         </div>
-        <div class="rl-body"><p>${esc(p.blurb)}</p></div>
+        <div class="rl-body">${[].concat(p.blurb || []).map(t => `<p>${esc(t)}</p>`).join("")}</div>
       </div>
       <div class="rl-side">
-        <div class="rl-val">${pay(p.pay)}</div>
+        <div class="rl-val">${pay(p)}</div>
         ${portrait(p)}
       </div>
     </li>`).join("");
