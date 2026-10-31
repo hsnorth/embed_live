@@ -1,10 +1,10 @@
+Montreal sports stars · HTML
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="only light">
-<script>(function(){var d=document.documentElement,top=false;try{top=window.self===window.top;}catch(e){}if(top||(window.innerHeight&&window.innerHeight<=(screen.height||0)))d.classList.add("rl-fill");if(!top)d.classList.add("rl-framed");})();</script>
 <title>Montreal’s highest-paid sports stars 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,9 +28,10 @@
   --face-bg:#e8e8e8;
   --face-ink:#4a4a4a;
   --focus:#111111;
+  --intro-h:680px;      /* opening screen: same height at every width */
   color-scheme:only light;
 }
-
+ 
 html,body{margin:0;background:var(--bg);}
 *{box-sizing:border-box;}
 .rl{
@@ -41,12 +42,14 @@ html,body{margin:0;background:var(--bg);}
 }
 .rl [hidden]{display:none !important;}
 .rl :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px;}
-
-/* Opening screen: question, picture, link, laid out exactly like the rich list.
-   On its own it fills one screen, so the list starts just below the fold. */
-.rl-intro{--gap:32px;display:flex;flex-direction:column;padding:28px 0 calc(var(--gap) - 4px);}
+ 
+/* Opening screen: question, picture, link. It is a fixed height at every width;
+   the picture takes whatever room the question leaves, so a question that wraps
+   onto more lines on a phone shrinks the picture instead of pushing the list down. */
+.rl-intro{--gap:32px;display:flex;flex-direction:column;height:var(--intro-h);padding:28px 0 calc(var(--gap) - 4px);}
+.rl-intro.noflick{height:auto;}
 .rl-title{
-  margin:0 0 var(--gap);font-weight:400;letter-spacing:-.01em;line-height:1.08;
+  flex:none;margin:0 0 var(--gap);font-weight:400;letter-spacing:-.01em;line-height:1.08;
   font-size:clamp(1.6rem,5.2vw,2.3rem);
 }
 @media (max-width:639px){
@@ -70,10 +73,10 @@ html,body{margin:0;background:var(--bg);}
   transition-duration:.32s;transition-delay:calc(var(--i) * 12ms);
 }
 @media (prefers-reduced-motion:reduce){ .rl-rot .w{transition:none !important;filter:none !important;transform:none !important;} }
-
-/* Flickering photos: landscape on wide screens, portrait on phones.
-   Same light grade and warm wash as the circles, so mixed sources match. */
-.rl-flick{position:relative;margin:0;aspect-ratio:3 / 2;overflow:hidden;background:#33312f;}
+ 
+/* Flickering photos: fill the space left in the opening screen (landscape on wide
+   screens, portrait on phones). Same light grade and warm wash as the circles. */
+.rl-flick{position:relative;margin:0;flex:1 1 0;min-height:0;overflow:hidden;background:#33312f;}
 .rl-flick .fr{position:absolute;inset:0;margin:0;display:none;}
 .rl-flick .fr.on{display:block;}
 .rl-flick .fr.dark{background:#33312f;}
@@ -84,54 +87,44 @@ html,body{margin:0;background:var(--bg);}
 .rl-flick figcaption span{font-weight:400;opacity:.75;margin-right:6px;font-variant-numeric:lining-nums;}
 .rl-flick .fr.dark figcaption{color:#111;background:#f2f0ec;}
 .rl-flick .fr.light figcaption{color:#f2f0ec;background:#111;}
-@media (max-width:639px){ .rl-flick{aspect-ratio:4 / 5;} }
-/* filling the screen: the picture takes whatever height is left, within sensible limits */
-html.rl-fill .rl-intro{min-height:var(--screen,100svh);}
-/* Keep the list well clear of the fold: phone browsers show extra page when their bars
-   shrink or float over the content, so leave at least that much room, plus some. */
-html.rl-fill .rl-list{margin-top:max(64px, 100lvh - 100svh + 28px);}
-html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:min(100vw - 32px, 728px);}
-@media (max-width:639px){
-  html.rl-fill .rl-flick{min-height:260px;max-height:calc((100vw - 32px) * 1.6);}
-}
 .rl .rl-jump{
-  align-self:center;display:inline-flex;align-items:center;gap:6px;margin-top:calc(var(--gap) - 4px);padding:4px 2px;
+  flex:none;align-self:center;display:inline-flex;align-items:center;gap:6px;margin-top:calc(var(--gap) - 4px);padding:4px 2px;
   border:0;background:none;cursor:pointer;font:inherit;font-size:17px;font-weight:500;color:var(--ink);
   text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;
 }
 .rl .rl-jump svg{flex:none;transform:translateY(1px);}
 .rl .rl-jump:hover{text-decoration-thickness:2px;}
-
+ 
 /* List */
 .rl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink);scroll-margin-top:0;}
 /* Each profile. Phones: rank, name and pay on top, then the photo, then the details.
    Wider screens: details take two thirds, pay and photo sit centred in the last third. */
 .rl-item{
-  --rk:2.4rem;
+  --rk:2.9rem;
   display:grid;grid-template-columns:minmax(0,1fr) auto;
   grid-template-areas:"head val" "pic pic" "body body";
-  column-gap:12px;padding:18px 4px 20px;border-bottom:1px solid var(--hair);
+  column-gap:12px;padding:18px 2px 20px;border-bottom:1px solid var(--hair);
   scroll-margin-top:12px;
 }
 .rl-txt,.rl-side{display:contents;}
 .rl-head{grid-area:head;display:grid;grid-template-columns:var(--rk) minmax(0,1fr);column-gap:10px;align-items:start;}
-.rl-rank{font-weight:300;font-size:24px;line-height:1.05;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;}
-.rl-mv{display:flex;align-items:center;gap:3px;margin-top:5px;font-size:12.5px;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
+.rl-rank{font-weight:300;font-size:30px;line-height:1.05;color:var(--ink);font-variant-numeric:lining-nums tabular-nums;}
+.rl-mv{display:flex;align-items:center;gap:3px;margin-top:5px;font-size:13.5px;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;}
 .rl-mv .dash{font-weight:800;color:var(--ink);}
 .rl-new{font-size:11.5px;font-weight:600;padding:0 6px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);}
 .rl-who{min-width:0;}
-.rl-name{display:block;margin:0;font-weight:400;font-size:20px;line-height:1.25;}
-.rl-co{display:block;font-size:15px;color:var(--muted);line-height:1.35;margin-top:2px;}
-.rl-val{grid-area:val;font-weight:700;font-size:19px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
-/* Portraits: one, two or three circles that scale with the screen.
-   Groups overlap slightly, each circle kept apart by a thin white ring. */
+.rl-name{display:block;margin:0;font-weight:400;font-size:max(22px, calc(var(--pfs, 19px) * 1.08));line-height:1.2;text-wrap:balance;}
+.rl-co{display:block;font-size:16px;color:var(--muted);line-height:1.3;margin-top:2px;}
+.rl-val{grid-area:val;font-weight:700;font-size:22px;line-height:1.2;font-variant-numeric:lining-nums;white-space:nowrap;text-align:right;}
+/* Portraits: one, two or three circles. Groups overlap slightly, each circle kept
+   apart by a thin white ring. */
 .rl-pics{
-  grid-area:pic;justify-self:center;margin:16px 0 0;
+  grid-area:pic;justify-self:center;margin:14px 0 0;
   display:flex;justify-content:center;align-items:center;
-  --d:clamp(92px, 28vw, 120px);
+  --d:clamp(84px, 24vw, 104px);
 }
-.rl-pics.n2{--d:clamp(84px, 24vw, 108px);}
-.rl-pics.n3{--d:clamp(72px, 21vw, 96px);}
+.rl-pics.n2{--d:clamp(76px, 21vw, 94px);}
+.rl-pics.n3{--d:clamp(66px, 18vw, 84px);}
 .rl-pic{
   position:relative;flex:none;width:var(--d);height:var(--d);border-radius:50%;overflow:hidden;
   background:var(--bg);box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--hair-2);
@@ -142,29 +135,33 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
 .rl-pic img{width:100%;height:100%;object-fit:cover;display:block;filter:var(--grade);}
 .rl-pic:not(.init)::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--wash);mix-blend-mode:multiply;pointer-events:none;}
 .rl-pic span{font-weight:600;font-size:calc(var(--d) * .3);color:var(--face-ink);letter-spacing:.02em;}
-.rl-body{grid-area:body;padding:16px 0 0 calc(var(--rk) + 10px);min-width:0;}
-.rl-body p{margin:0 0 14px;max-width:60ch;font-size:16.5px;line-height:1.5;}
+.rl-body{grid-area:body;padding:14px 0 0;min-width:0;}     /* phones: full width, under the rank */
+/* Profile text. --pfs is set by the script so the whole embed keeps the same height
+   at every screen width (see CONFIG.height); 19px is the size used without it.
+   Names grow with it so they always stay a step larger than the text. */
+.rl-body p{margin:0 0 12px;max-width:60ch;font-size:var(--pfs, 19px);line-height:1.42;}
 .rl-body p:last-child{margin-bottom:0;}
-@media (max-width:639px){
-  .rl-item{--rk:2.9rem;padding:20px 2px 22px;}
-  .rl-rank{font-size:30px;}
-  .rl-mv{font-size:13.5px;}
-  .rl-name{font-size:23px;}
-  .rl-co{font-size:16.5px;}
-  .rl-val{font-size:22px;}
-  .rl-body p{font-size:18.5px;line-height:1.5;}
-}
-@media (min-width:640px){
-  .rl-item{grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
+@media (min-width:520px){
+  .rl-item{--rk:2.4rem;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-areas:none;column-gap:28px;padding:22px 4px 24px;}
   .rl-txt{display:block;}
   .rl-side{display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:2px;}
+  .rl-rank{font-size:26px;}
+  .rl-mv{font-size:12.5px;}
+  .rl-name{font-size:max(20px, calc(var(--pfs, 19px) * 1.1));line-height:1.25;}
+  .rl-co{font-size:15.5px;line-height:1.35;}
   .rl-val{font-size:24px;text-align:center;}
   .rl-pics{margin:0;justify-self:auto;--d:clamp(88px, 13vw, 112px);}
   .rl-pics.n2{--d:clamp(72px, 10.5vw, 92px);}
   .rl-pics.n3{--d:clamp(60px, 9vw, 76px);}
-  .rl-rank{font-size:26px;}
+  .rl-body{padding:16px 0 0 calc(var(--rk) + 10px);}
+  .rl-body p{margin-bottom:14px;line-height:1.55;}     /* longer lines, a little more air */
 }
-
+@media (min-width:520px) and (max-width:639px){        /* narrow two-column: text runs under the rank */
+  .rl-item{column-gap:22px;}
+  .rl-body{padding-left:0;}
+  .rl-body p{line-height:1.48;}
+}
+ 
 /* Notes */
 .rl-notes{margin-top:22px;font-size:14.5px;color:var(--muted);}
 .rl-notes p{margin:0 0 8px;}
@@ -173,7 +170,7 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
 </head>
 <body>
 <main class="rl" id="rl">
-  <header class="rl-intro">
+  <header class="rl-intro" id="rl-intro">
     <h2 class="rl-title" id="rl-title"><span class="rl-sr" id="rl-title-sr"></span><span class="rl-rot" id="rl-rot" aria-hidden="true"></span></h2>
     <div class="rl-flick" id="rl-flick" aria-hidden="true"></div>
     <button type="button" class="rl-jump" id="rl-jump">Read the full profiles<svg width="11" height="15" viewBox="0 0 11 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 1v12.5M1.5 9.5l4 4 4-4"/></svg></button>
@@ -181,7 +178,7 @@ html.rl-fill .rl-flick{flex:1 1 0;aspect-ratio:auto;min-height:320px;max-height:
   <ol class="rl-list" id="rl-list" aria-labelledby="rl-title"></ol>
   <footer class="rl-notes" id="rl-notes"></footer>
 </main>
-
+ 
 <script>
 const CONFIG = {
   title: "Montreal’s highest-paid sports stars",   // read out by screen readers in place of the questions
@@ -193,13 +190,20 @@ const CONFIG = {
     "How many athletes make over $10 million a year?",   // 13 of the 15, in Canadian dollars
   ],
   questionSeconds: 3,
-  flickerSeconds: 1.5,     
+  flickerSeconds: 1.5,
+  // Total height of the embed, in pixels, at every screen width. Set your iframe to the
+  // same height. The profile text is sized (between the two textSize values) so that
+  // everything fills exactly this much; any space left over goes at the very bottom.
+  // If you add or cut a lot of text, change this number and the iframe height together.
+  // Set it to 0 to let the height follow the content, as before.
+  height: 7900,
+  textSize: [15.5, 24],
   // Bank of Canada daily rate, Oct. 16, 2026: US$1 = C$1.4154. If you change it, change the note too,
   // and the converted amounts written into the profiles.
   usdToCad: 1.4154,
   notes: ["Salaries in Canadian dollars, converted from U.S. dollars at the Bank of Canada’s Oct. 16, 2026, rate of $1.4154. "],
 };
-
+ 
 const ATHLETES = [
   { id:"guerrero", name:"Vladimir Guerrero Jr.", initials:"VG", photos:["32.png"], big:"0327 spt col cowan - 5417.jpg", pay:35.7,
     team:"Baseball · Toronto Blue Jays",
@@ -247,7 +251,7 @@ const ATHLETES = [
     team:"Hockey · Montreal Canadiens",
     blurb:"The only player on the list who is both from Montreal and plays for Montreal, the Pointe-Claire native played two seasons for the Lac-St-Louis Lions in Dollard-des-Ormeaux before heading to Boston College. Drafted by the Florida Panthers and traded to Pittsburgh in 2020, he came home in a trade to the Canadiens two years later." },
 ];
-
+ 
 /* =====================================================================
    App
    ===================================================================== */
@@ -262,10 +266,13 @@ const ATHLETES = [
     const tied = [ATHLETES[i - 1], ATHLETES[i + 1]].some(q => q && !q.blank && r1(cad(q)) === r1(v));
     return "$" + (tied ? (Math.round(v * 100) / 100) : r1(v)) + "M";
   };
-
+ 
   ATHLETES.forEach((p, i) => { p.rank = i + 1; });
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
+  const root = document.documentElement;
+  const main = $("rl");
+  let fitQueued = false;
+ 
   /* ---------- rotating title ---------- */
   (function rotator(){
     const host = $("rl-rot");
@@ -301,12 +308,13 @@ const ATHLETES = [
     document.addEventListener("visibilitychange", sync);
     sync();
   })();
-
+ 
   /* ---------- flickering photos under the title ---------- */
   (function flicker(){
     const host = $("rl-flick");
+    const noPhotos = () => { host.hidden = true; $("rl-intro").classList.add("noflick"); fitSoon(); };
     const pics = ATHLETES.filter(p => p.big && !p.blank);     // in list order
-    if (!pics.length) { host.hidden = true; return; }
+    if (!pics.length) { noPhotos(); return; }
     host.innerHTML = pics.map((p, k) => `<figure class="fr ${k % 2 ? "light" : "dark"}">
         <img src="${esc(encodeURI(p.big))}" alt="" loading="lazy" decoding="async"${p.bigPos ? ` style="object-position:${esc(p.bigPos)}"` : ""}>
         <figcaption><span>No. ${p.rank}</span>${esc(p.bigCaption || p.name)}</figcaption>
@@ -326,7 +334,7 @@ const ATHLETES = [
       const wasOn = f.classList.contains("on");
       f.remove();
       frames = [...host.children];
-      if (!frames.length) { host.hidden = true; return; }
+      if (!frames.length) { noPhotos(); return; }
       at = at % frames.length;
       if (wasOn) show(at);
     }, true);
@@ -350,7 +358,7 @@ const ATHLETES = [
     return `<div class="rl-pics n${ph.length}">${ph.map(src =>
       `<div class="rl-pic"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"></div>`).join("")}</div>`;
   }
-
+ 
   const list = $("rl-list");
   list.innerHTML = ATHLETES.map(p => p.blank
     ? `<li class="rl-item rl-blank" id="rl-i-${p.blank === true ? "blank-" + p.rank : p.id}"><div class="rl-txt"><div class="rl-head"><div><div class="rl-rank">${p.rank}.</div></div><div class="rl-who"></div></div></div></li>`
@@ -367,7 +375,7 @@ const ATHLETES = [
         ${portrait(p)}
       </div>
     </li>`).join("");
-
+ 
   // A missing photo falls back to initials.
   list.addEventListener("error", (e) => {
     const img = e.target; if (!img || img.tagName !== "IMG") return;
@@ -375,9 +383,44 @@ const ATHLETES = [
     const p = ATHLETES.find(x => "rl-i-" + x.id === (li && li.id));
     if (pic && p) { pic.classList.add("init"); pic.innerHTML = `<span aria-hidden="true">${esc(p.initials || "")}</span>`; }
   }, true);
-
+ 
   $("rl-notes").innerHTML = (CONFIG.notes || []).map(t => `<p>${esc(t)}</p>`).join("");
-
+ 
+  /* ---------- same total height at every screen width ---------- */
+  // Narrow screens wrap the profiles onto more lines, so on its own the page grows taller
+  // as the screen gets narrower. Here the profile text is sized so the page always comes
+  // out at CONFIG.height: a little smaller on the narrowest phones, a little larger where
+  // there's room. Whatever is left over (less than a line) is added at the bottom.
+  function fitHeight(){
+    const H = +CONFIG.height || 0;
+    main.style.paddingBottom = "";
+    if (!H) { main.style.removeProperty("--pfs"); return; }
+    const [minFs, maxFs] = CONFIG.textSize || [15.5, 24];
+    const heightAt = (fs) => { main.style.setProperty("--pfs", fs + "px"); return root.getBoundingClientRect().height; };
+    let lo = Math.round(minFs * 10), hi = Math.round(maxFs * 10), best = lo;
+    if (heightAt(lo / 10) <= H) {
+      while (lo <= hi) {                                  // largest size that still fits
+        const mid = (lo + hi) >> 1;
+        if (heightAt(mid / 10) <= H) { best = mid; lo = mid + 1; } else hi = mid - 1;
+      }
+    }
+    const spare = H - heightAt(best / 10);
+    if (spare > 0) main.style.paddingBottom = (parseFloat(getComputedStyle(main).paddingBottom) + spare) + "px";
+  }
+  function fitSoon(){
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(() => { fitQueued = false; fitHeight(); });
+  }
+  fitHeight();
+  // Refit when the width changes (rotating a phone, resizing a window) and once the web font arrives.
+  let lastW = main.clientWidth;
+  new ResizeObserver(() => { const w = main.clientWidth; if (w !== lastW) { lastW = w; fitSoon(); } }).observe(main);
+  if (document.fonts) {
+    document.fonts.ready.then(fitSoon);
+    if (document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", fitSoon);
+  }
+ 
   // Deep link: embed URL ending in #suzuki jumps to that profile.
   const hash = decodeURIComponent(location.hash.replace(/^#(p=)?/, ""));
   const target = hash && document.getElementById("rl-i-" + hash);
@@ -385,11 +428,10 @@ const ATHLETES = [
     target.scrollIntoView({ block:"start" });
     if (window.parent !== window) window.parent.postMessage({ type:"richlist:sports-scrollTo", offset: Math.round(target.getBoundingClientRect().top + window.scrollY) }, "*");
   });
-
+ 
   // "Read the full profiles" scrolls down to the list. If this page scrolls by itself
   // (opened directly, or in a preview), scroll it here; inside an article iframe sized to
   // fit its content, ask the host page to scroll.
-  const root = document.documentElement;
   const scrollsItself = () => window.parent === window || root.scrollHeight > window.innerHeight + 2;
   $("rl-jump").addEventListener("click", () => {
     if (scrollsItself()) {
@@ -398,28 +440,9 @@ const ATHLETES = [
       window.parent.postMessage({ type:"richlist:sports-scrollTo", offset: Math.round(list.getBoundingClientRect().top + window.scrollY) }, "*");
     }
   });
-
-  // Inside an iframe, the host page can say how tall the reader's screen is,
-  // so the opening screen fills it (the same message the rich list listens for).
-  let hostViewport = false;
-  window.addEventListener("message", (e) => {
-    if (e.source !== window.parent || !e.data || (e.data.type !== "richlist:viewport" && e.data.type !== "richlist:sports-viewport")) return;
-    const h = Math.round(+e.data.height);
-    if (!(h > 300)) return;
-    hostViewport = true;
-    root.style.setProperty("--screen", h + "px");
-    root.classList.add("rl-fill");
-  });
-  // Without word from the host, a frame fills its own height only while that height is
-  // screen-sized, so the opening screen never grows along with a stretched frame.
-  if (window.parent !== window) {
-    window.addEventListener("resize", () => {
-      if (hostViewport) return;
-      root.classList.toggle("rl-fill", window.innerHeight <= (screen.height || 0));
-    });
-    window.parent.postMessage({ type:"richlist:sports-ready" }, "*");
-  }
-
+ 
+  if (window.parent !== window) window.parent.postMessage({ type:"richlist:sports-ready" }, "*");
+ 
   // Tell the host page our height so the iframe never needs its own scrollbar.
   let lastH = 0;
   function postHeight(){
