@@ -9,7 +9,7 @@
           --cds-chart-axis:#c3c2b7; --color-bg:#ffffff; --cds-chart-muted:#52514e; }
   html, body { margin:0; padding:0; background:#fff; }
   body { font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif; color:#0b0b0b; }
-  .sans, .foot, .hint, .chip, .field label, details.tbl summary, .tile .l { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .sans, .foot, .hint, .chip, .field label, .pick label, details.tbl summary, .tile .l { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   .wrap { box-sizing:border-box; padding:16px 12px 12px; }
   h1 { font-family:'Newsreader', Georgia, serif; font-variation-settings:'opsz' 72; font-size:36px; line-height:1.06; margin:0 0 8px; font-weight:300; letter-spacing:-0.012em; }
   h2 { font-family:'Newsreader', Georgia, serif; font-variation-settings:'opsz' 72; font-size:28px; line-height:1.1; margin:0 0 8px; font-weight:350; letter-spacing:-0.01em; }
@@ -26,15 +26,24 @@
   .money { position:relative; display:inline-flex; align-items:center; }
   .money span { position:absolute; left:10px; color:#52514e; font-size:16px; pointer-events:none; }
   .money input { font:inherit; font-size:16px; width:150px; padding:8px 10px 8px 22px; border:1px solid #c3c2b7; border-radius:6px; background:#fff; color:#0b0b0b; }
+  .money input::placeholder { color:#8a8984; opacity:1; }
   .money input:focus { outline:2px solid #0f766e; outline-offset:1px; border-color:#0f766e; }
+  .pick { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:10px 14px; margin:0 0 4px; max-width:620px; }
+  .pick label { display:block; font-size:14px; font-weight:600; margin-bottom:4px; }
+  .pick select { font:inherit; font-size:16px; width:100%; padding:8px 30px 8px 10px; border:1px solid #c3c2b7; border-radius:6px; color:#0b0b0b; -webkit-appearance:none; appearance:none;
+    background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2352514e' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 11px center; text-overflow:ellipsis; }
+  .pick select:focus { outline:2px solid #0f766e; outline-offset:1px; border-color:#0f766e; }
+  .narrow .pick { grid-template-columns:1fr; gap:8px; }
   .chip { font:inherit; font-size:13px; padding:6px 10px; border:1px solid #c3c2b7; border-radius:999px; background:#fff; color:#0b0b0b; cursor:pointer; }
   .chip:hover { border-color:#52514e; }
   .hint { font-size:12.5px; color:#6d6c68; margin:2px 0 0; }
-  .big { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px; margin:18px 0 8px; }
+  .big { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); max-width:720px; gap:18px; margin:18px 0 8px; }
   .tile { padding:0; }
   .tile .v { font-size:24px; font-weight:650; font-variant-numeric:tabular-nums; }
   .tile .l { font-size:12.5px; color:#52514e; line-height:1.35; margin-top:2px; }
   .tile.accent .v { color:#0f766e; }
+  .caveat { font-size:12.5px; color:#52514e; line-height:1.4; margin:6px 0 4px; }
+  .lbl-sub { font-weight:400; color:#6d6c68; }
   .sub { font-size:13.5px; color:#52514e; margin:-4px 0 10px; line-height:1.4; }
   h3 { font-size:15px; margin:18px 0 8px; font-weight:700; }
   .rows { display:grid; grid-template-columns:minmax(0, 15rem) minmax(0,1fr) 4.5rem; gap:5px 10px; align-items:center; font-size:13px; }
@@ -88,9 +97,10 @@
 
 <script>
 (function () {
-  var ROWS = [{"side": "revenue", "group": "Taxes (mostly property tax)", "item": "Taxes (mostly property tax)", "pct": "64.7", "amount_m": "5201.9"}, {"side": "revenue", "group": "Fees, fines & other revenue", "item": "Fees, fines & other revenue", "pct": "19.1", "amount_m": "1539.4"}, {"side": "revenue", "group": "Grants from other governments", "item": "Grants from other governments", "pct": "8.2", "amount_m": "662.9"}, {"side": "revenue", "group": "Suburbs’ share of island-wide services", "item": "Suburbs’ share of island-wide services", "pct": "8.0", "amount_m": "639.9"}, {"side": "spending", "group": "Debt payments", "item": "Debt payments", "pct": "16.3", "amount_m": "1311.2"}, {"side": "spending", "group": "Infrastructure (paid up front)", "item": "Infrastructure (paid up front)", "pct": "8.9", "amount_m": "711.8"}, {"side": "spending", "group": "Getting around", "item": "Public transit", "pct": "10.6", "amount_m": "852.7"}, {"side": "spending", "group": "Getting around", "item": "Roads", "pct": "6.2", "amount_m": "498.7"}, {"side": "spending", "group": "Getting around", "item": "Snow removal", "pct": "2.6", "amount_m": "209.1"}, {"side": "spending", "group": "Police & fire", "item": "Police & fire", "pct": "17.5", "amount_m": "1407.7"}, {"side": "spending", "group": "Culture, housing & development", "item": "Recreation & culture", "pct": "10.0", "amount_m": "804.4"}, {"side": "spending", "group": "Culture, housing & development", "item": "Social housing & other", "pct": "3.7", "amount_m": "297.6"}, {"side": "spending", "group": "Culture, housing & development", "item": "Planning & economic development", "pct": "3.7", "amount_m": "297.6"}, {"side": "spending", "group": "Running the city", "item": "General administration", "pct": "10.6", "amount_m": "852.7"}, {"side": "spending", "group": "Running the city", "item": "Corporate charges", "pct": "2.0", "amount_m": "160.9"}, {"side": "spending", "group": "Water & garbage", "item": "Water & sewers", "pct": "4.6", "amount_m": "370.0"}, {"side": "spending", "group": "Water & garbage", "item": "Garbage, recycling & environment", "pct": "3.3", "amount_m": "265.5"}], INCREASE = [{"name": "Infrastructure maintenance tax", "note": "funds a new reserve for repairing and renewing infrastructure", "pts": 5.1}, {"name": "General property tax", "note": "city services", "pts": 2.6}, {"name": "Water tax", "note": "water and sewers", "pts": 1.5}, {"name": "Borough taxes", "note": "local services and projects", "pts": 0.9}, {"name": "Debt tax", "note": "goes down", "pts": -0.3}], SPEND = [{"name": "Police & fire", "pct": 17.5}, {"name": "Debt payments", "pct": 16.3}, {"name": "Public transit", "pct": 10.6}, {"name": "General administration", "pct": 10.6}, {"name": "Recreation & culture", "pct": 10.0}, {"name": "Infrastructure (paid up front)", "pct": 8.9}, {"name": "Roads", "pct": 6.2}, {"name": "Water & sewers", "pct": 4.6}, {"name": "Social housing & other", "pct": 3.7}, {"name": "Planning & economic development", "pct": 3.7}, {"name": "Garbage, recycling & environment", "pct": 3.3}, {"name": "Snow removal", "pct": 2.6}, {"name": "Corporate charges", "pct": 2.0}];
+  var ROWS = [{"side": "revenue", "group": "Taxes (mostly property tax)", "item": "Taxes (mostly property tax)", "pct": "64.7", "amount_m": "5201.9"}, {"side": "revenue", "group": "Fees, fines & other revenue", "item": "Fees, fines & other revenue", "pct": "19.1", "amount_m": "1539.4"}, {"side": "revenue", "group": "Grants from other governments", "item": "Grants from other governments", "pct": "8.2", "amount_m": "662.9"}, {"side": "revenue", "group": "Suburbs’ share of island-wide services", "item": "Suburbs’ share of island-wide services", "pct": "8.0", "amount_m": "639.9"}, {"side": "spending", "group": "Debt payments", "item": "Debt payments", "pct": "16.3", "amount_m": "1311.2"}, {"side": "spending", "group": "Infrastructure (paid up front)", "item": "Infrastructure (paid up front)", "pct": "8.9", "amount_m": "711.8"}, {"side": "spending", "group": "Getting around", "item": "Public transit", "pct": "10.6", "amount_m": "852.7"}, {"side": "spending", "group": "Getting around", "item": "Roads", "pct": "6.2", "amount_m": "498.7"}, {"side": "spending", "group": "Getting around", "item": "Snow removal", "pct": "2.6", "amount_m": "209.1"}, {"side": "spending", "group": "Police & fire", "item": "Police & fire", "pct": "17.5", "amount_m": "1407.7"}, {"side": "spending", "group": "Culture, housing & development", "item": "Recreation & culture", "pct": "10.0", "amount_m": "804.4"}, {"side": "spending", "group": "Culture, housing & development", "item": "Social housing & other", "pct": "3.7", "amount_m": "297.6"}, {"side": "spending", "group": "Culture, housing & development", "item": "Planning & economic development", "pct": "3.7", "amount_m": "297.6"}, {"side": "spending", "group": "Running the city", "item": "General administration", "pct": "10.6", "amount_m": "852.7"}, {"side": "spending", "group": "Running the city", "item": "Corporate charges", "pct": "2.0", "amount_m": "160.9"}, {"side": "spending", "group": "Water & garbage", "item": "Water & sewers", "pct": "4.6", "amount_m": "370.0"}, {"side": "spending", "group": "Water & garbage", "item": "Garbage, recycling & environment", "pct": "3.3", "amount_m": "265.5"}], BORO = [{"name": "Whole city (not sure)", "city": true, "comp": [2.6, -0.3, 1.5, 5.1, 0.9], "all": 9.8, "house": [4937, 5449, 10.4, 254], "condo": [3314, 3627, 9.5, 169], "plex": [5538, 6072, 9.7, 283], "allbill": [5277, 5791, 9.8, 269]}, {"name": "Ahuntsic–Cartierville", "city": false, "comp": [2.8, -0.4, 1.5, 5.2, 0.7], "all": 9.8, "house": [5428, 5942, 9.5, 280], "condo": [2554, 2827, 10.7, 133], "plex": [5506, 5999, 8.9, 283]}, {"name": "Anjou", "city": false, "comp": [3.5, -0.1, 1.5, 4.6, -0.4], "all": 9.2, "house": [4492, 4874, 8.5, 207], "condo": [2639, 2876, 9.0, 122], "plex": [5553, 6060, 9.1, 257]}, {"name": "Côte-des-Neiges–Notre-Dame-de-Grâce", "city": false, "comp": [1.7, -0.4, 1.3, 5.2, 0.4], "all": 8.2, "house": [7444, 8016, 7.7, 387], "condo": [3472, 3766, 8.5, 182], "plex": [6230, 6727, 8.0, 324]}, {"name": "L’Île-Bizard–Sainte-Geneviève", "city": false, "comp": [3.1, 0.0, 1.4, 4.7, 1.9], "all": 11.1, "house": [5076, 5637, 11.0, 238], "condo": [2408, 2702, 12.2, 114], "plex": [5124, 5716, 11.5, 241]}, {"name": "LaSalle", "city": false, "comp": [2.7, -0.05, 1.5, 5.2, 0.7], "all": 10.1, "house": [4307, 4742, 10.1, 224], "condo": [2853, 3152, 10.5, 149], "plex": [4953, 5440, 9.8, 257]}, {"name": "Lachine", "city": false, "comp": [3.1, -0.05, 1.5, 5.3, 1.4], "all": 11.3, "house": [4206, 4649, 10.5, 219], "condo": [2713, 3031, 11.7, 143], "plex": [4180, 4649, 11.2, 220]}, {"name": "Mercier–Hochelaga-Maisonneuve", "city": false, "comp": [2.8, -0.4, 1.5, 5.0, 0.5], "all": 9.5, "house": [3868, 4234, 9.5, 193], "condo": [2586, 2851, 10.2, 130], "plex": [5043, 5510, 9.3, 252]}, {"name": "Montréal-Nord", "city": false, "comp": [3.7, -0.1, 1.6, 4.7, 1.7], "all": 11.5, "house": [3511, 3934, 12.0, 164], "condo": [2443, 2706, 10.7, 113], "plex": [4600, 5138, 11.7, 214]}, {"name": "Outremont", "city": false, "comp": [2.3, -0.05, 1.5, 5.3, 0.8], "all": 9.9, "house": [13796, 15164, 9.9, 729], "condo": [5266, 5821, 10.5, 280], "plex": [11964, 13035, 9.0, 626]}, {"name": "Pierrefonds–Roxboro", "city": false, "comp": [2.8, 0.0, 1.5, 5.0, 1.3], "all": 10.6, "house": [4175, 4617, 10.6, 211], "condo": [2414, 2694, 11.6, 123], "plex": [5074, 5577, 9.9, 254]}, {"name": "Le Plateau-Mont-Royal", "city": false, "comp": [2.1, -0.4, 1.4, 5.1, 1.1], "all": 9.3, "house": [7540, 8345, 10.7, 392], "condo": [3638, 3993, 9.8, 187], "plex": [7626, 8258, 8.3, 387]}, {"name": "Rivière-des-Prairies–Pointe-aux-Trembles", "city": false, "comp": [4.0, -0.3, 1.7, 4.9, 0.6], "all": 10.9, "house": [3585, 3977, 10.9, 174], "condo": [2203, 2466, 12.0, 108], "plex": [4772, 5295, 11.0, 231]}, {"name": "Rosemont–La Petite-Patrie", "city": false, "comp": [2.8, -0.4, 1.5, 5.1, 1.3], "all": 10.4, "house": [5687, 6336, 11.4, 294], "condo": [3381, 3737, 10.5, 173], "plex": [5827, 6390, 9.7, 296]}, {"name": "Saint-Laurent", "city": false, "comp": [3.0, -0.1, 1.5, 5.2, 0.6], "all": 10.1, "house": [5975, 6606, 10.6, 310], "condo": [3143, 3441, 9.5, 162], "plex": [5482, 5992, 9.3, 282]}, {"name": "Saint-Léonard", "city": false, "comp": [3.1, -0.1, 1.5, 5.0, 0.5], "all": 10.1, "house": [5180, 5750, 11.0, 260], "condo": [2816, 3125, 11.0, 141], "plex": [6364, 6978, 9.6, 315]}, {"name": "Le Sud-Ouest", "city": false, "comp": [2.3, -0.4, 1.4, 5.1, 1.2], "all": 9.6, "house": [5100, 5608, 10.0, 262], "condo": [3425, 3730, 8.9, 175], "plex": [5318, 5842, 9.9, 273]}, {"name": "Verdun", "city": false, "comp": [2.6, -0.05, 1.5, 5.1, 1.1], "all": 10.3, "house": [7387, 8122, 9.9, 377], "condo": [4134, 4577, 10.7, 213], "plex": [5635, 6191, 9.9, 288]}, {"name": "Ville-Marie", "city": false, "comp": [1.6, -0.4, 1.3, 5.3, 0.8], "all": 8.7, "house": [9335, 10190, 9.2, 499], "condo": [3635, 3915, 7.7, 192], "plex": [5747, 6311, 9.8, 309]}, {"name": "Villeray–Saint-Michel–Parc-Extension", "city": false, "comp": [3.0, -0.4, 1.5, 5.1, 1.1], "all": 10.4, "house": [4251, 4683, 10.1, 217], "condo": [3002, 3334, 11.0, 155], "plex": [4965, 5461, 10.0, 253]}], SPEND = [{"name": "Police & fire", "pct": 17.5}, {"name": "Debt payments", "pct": 16.3}, {"name": "Public transit", "pct": 10.6}, {"name": "General administration", "pct": 10.6}, {"name": "Recreation & culture", "pct": 10.0}, {"name": "Infrastructure (paid up front)", "pct": 8.9}, {"name": "Roads", "pct": 6.2}, {"name": "Water & sewers", "pct": 4.6}, {"name": "Social housing & other", "pct": 3.7}, {"name": "Planning & economic development", "pct": 3.7}, {"name": "Garbage, recycling & environment", "pct": 3.3}, {"name": "Snow removal", "pct": 2.6}, {"name": "Corporate charges", "pct": 2.0}];
   var COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100'];
   var P = new URLSearchParams(location.search), only = 'flows', forceV = P.get('layout') === 'vertical';
+  var HT = +P.get('h') || 1000;  // fixed embed height for the flow chart (iframe height)
   var fs = document.getElementById('flows-sec'), cs = document.getElementById('calc-sec');
   if (only === 'calculator' && fs) fs.classList.add('hide');
   if (only === 'flows' && cs) cs.classList.add('hide');
@@ -105,7 +115,7 @@
      Revenue: largest first (left, top), stepping down to the right.
      Spending: smallest on the left, largest on the right; the largest sits highest, each next one a step lower,
      so every label has clear space to its right. */
-  function stairFlows(el, rows, C) {
+  function stairFlows(el, rows, C, avail) {
     var NS = 'http://www.w3.org/2000/svg';
     var INK = '#0b0b0b', INK2 = '#52514e', MUT = '#6d6c68', BUDGET = '#3d3c39';
     var FONT = getComputedStyle(document.body).fontFamily;
@@ -123,8 +133,8 @@
       return lines.reduce(function (acc, l) { return acc.concat(tw(l, size) > maxW ? wrapWords(l, maxW, size) : [l]); }, []);
     }
     var B = function (m) { return '$' + (m / 1000).toFixed(2) + 'B'; };
-    var LH = { 14.5: 19, 13: 17, 12: 15.5 };
-    function block(lines) { return lines.reduce(function (s, l) { return s + LH[l[1]]; }, 0); }
+    function LHf(sz) { return sz * 1.31; }
+    function block(lines) { return lines.reduce(function (s, l) { return s + LHf(l[1]); }, 0); }
 
     el.replaceChildren(); el.style.position = 'relative';
     var W = el.clientWidth, m = 2, U = W - 2 * m;
@@ -143,9 +153,10 @@
     var NODE = ['#1f6cc7', '#c4501b'];
     var SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
     function place(n) {
-      n.pt = n.pct.toFixed(1) + '%'; n.pw = tw(n.pt, 13.5, 700); n.inside = n.pw + 12 <= n.w;
+      n.pt = n.pct.toFixed(1) + '%'; n.pw = tw(n.pt, 13.5 * S, 700); n.inside = n.pw + 12 <= n.w;
       n.lx = n.x0 + n.w + 8 + (n.inside ? 0 : n.pw + 8);
     }
+    var S = 1;
     var areaW = Math.min(U * (U < 420 ? 0.5 : 0.56), 380);
     var k = (areaW - gap * (Math.max(rev.length, out.length) - 1)) / total;
 
@@ -175,39 +186,47 @@
     function label(x, yTop, lines) {
       var y = yTop;
       lines.forEach(function (l) {
-        y += LH[l[1]];
+        y += LHf(l[1]);
         var t = add(gLab, 'text', { x: x, y: y - 4, 'font-size': l[1], 'font-weight': l[2], fill: l[3] });
         t.textContent = l[0];
       });
     }
 
-    // revenue: left to right, largest first; each one a step lower
-    var x = m, y = 4;
+    var x = m;
     rev.forEach(function (r) { r.x0 = x; r.w = r.value * k; x += r.w + gap; });
-    rev.forEach(function (r) {
-      place(r); var lx = r.lx, avail = W - m - lx;
-      var lines = wrapWords(r.name, avail, 14.5, 600).map(function (s) { return [s, 14.5, 600, INK]; });
-      lines.push([B(r.value), 13, 400, INK2]);
-      r.y = y; r.lines = lines; r.lh = block(lines);
-      y = r.y + Math.max(nh + 10, r.lh + 10);
-    });
-    var last = rev[rev.length - 1];
-    var yB = Math.max(last.y + nh + flow, last.y + last.lh + 18);
-    var bw = total * k;
-
-    // spending: smallest on the left; largest highest
     x = m; out.forEach(function (g) { g.x0 = x; g.w = g.value * k; x += g.w + gap; });
-    y = yB + bh + flow;
-    out.slice().reverse().forEach(function (g) {
-      place(g); var lx = g.lx, avail = W - m - lx;
-      var lines = wrapWords(g.name, avail, 14.5, 600).map(function (s) { return [s, 14.5, 600, INK]; });
-      lines.push([B(g.value), 13, 400, INK2]);
-      if (!g.leaf) wrapParts(g.items.map(function (it) { return it.name + ' ' + B(it.value); }), avail, 12)
-        .forEach(function (s) { lines.push([s, 12, 400, MUT]); });
-      g.y = y; g.lines = lines; g.lh = block(lines);
-      y = g.y + Math.max(nh + 10, g.lh + 12);
-    });
-    var H = Math.max.apply(null, out.map(function (g) { return g.y + g.lh; })) + 4;
+    var bw = total * k, yB;
+    // revenue: largest first, each one a step lower; spending: smallest on the left, largest highest
+    function layout(fl, pad, s) {
+      S = s; var fh = 14.5 * s, fv = 13 * s, fsm = 12 * s, y = 4;
+      rev.forEach(function (r) {
+        place(r); var aw = W - m - r.lx;
+        var lines = wrapWords(r.name, aw, fh, 600).map(function (t) { return [t, fh, 600, INK]; });
+        lines.push([B(r.value), fv, 400, INK2]);
+        r.y = y; r.lines = lines; r.lh = block(lines);
+        y = r.y + Math.max(nh + pad, r.lh + pad);
+      });
+      var last = rev[rev.length - 1];
+      yB = Math.max(last.y + nh + fl, last.y + last.lh + 18);
+      y = yB + bh + fl;
+      out.slice().reverse().forEach(function (g) {
+        place(g); var aw = W - m - g.lx;
+        var lines = wrapWords(g.name, aw, fh, 600).map(function (t) { return [t, fh, 600, INK]; });
+        lines.push([B(g.value), fv, 400, INK2]);
+        if (!g.leaf) wrapParts(g.items.map(function (it) { return it.name + ' ' + B(it.value); }), aw, fsm)
+          .forEach(function (t) { lines.push([t, fsm, 400, MUT]); });
+        g.y = y; g.lines = lines; g.lh = block(lines);
+        y = g.y + Math.max(nh + pad, g.lh + pad + 2);
+      });
+      return Math.max.apply(null, out.map(function (g) { return g.y + g.lh; })) + 4;
+    }
+    // fixed height: the longest flows that fit at full size; if needed, tighter spacing, then slightly smaller text
+    var H;
+    if (!avail) H = layout(flow, 10, 1);
+    else if (![[10, 1], [7, 1], [5, 1], [5, 0.94], [5, 0.88]].some(function (ps) {
+      for (var f = 170; f >= 24; f -= 2) { H = layout(f, ps[0], ps[1]); if (H <= avail) return true; }
+      return false;
+    })) H = layout(24, 5, 0.88);
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
 
     // links
@@ -218,16 +237,16 @@
 
     // nodes + labels
     function pctText(n, color) {
-      var t = add(gLab, 'text', { x: n.inside ? n.x0 + 7 : n.x0 + n.w + 8, y: n.y + nh / 2 + 5, 'font-size': 13.5, 'font-weight': 700, fill: n.inside ? '#fff' : color });
+      var t = add(gLab, 'text', { x: n.inside ? n.x0 + 7 : n.x0 + n.w + 8, y: n.y + nh / 2 + 5, 'font-size': 13.5 * S, 'font-weight': 700, fill: n.inside ? '#fff' : color });
       t.textContent = n.pt;
     }
     rev.forEach(function (r) { add(gNodes, 'rect', { x: r.x0, y: r.y, width: Math.max(1, r.w), height: nh, rx: 2, fill: NODE[0] }); pctText(r, NODE[0]); label(r.lx, r.y + 1, r.lines); });
     add(gNodes, 'rect', { x: m, y: yB, width: bw, height: bh, rx: 3, fill: BUDGET });
     var bt = '2027 budget: ' + B(total);
-    if (tw(bt, 14, 700) + 16 <= bw) {
-      var t = add(gLab, 'text', { x: m + 10, y: yB + bh / 2 + 5, 'font-size': 14, 'font-weight': 700, fill: '#fff' }); t.textContent = bt;
+    if (tw(bt, 14 * S, 700) + 16 <= bw) {
+      var t = add(gLab, 'text', { x: m + 10, y: yB + bh / 2 + 5, 'font-size': 14 * S, 'font-weight': 700, fill: '#fff' }); t.textContent = bt;
     } else {
-      var t2 = add(gLab, 'text', { x: m + bw + 8, y: yB + bh / 2 + 5, 'font-size': 14, 'font-weight': 700, fill: INK }); t2.textContent = bt;
+      var t2 = add(gLab, 'text', { x: m + bw + 8, y: yB + bh / 2 + 5, 'font-size': 14 * S, 'font-weight': 700, fill: INK }); t2.textContent = bt;
     }
     function heading(x, y, txt) { var h = add(gLab, 'text', { x: x, y: y, 'font-size': 12, 'font-weight': 700, fill: INK2, 'letter-spacing': '0.05em' }); h.textContent = txt; }
 
@@ -237,7 +256,7 @@
   /* Side-by-side version of the staircase (for wide screens): flows run left to right, every column starts
      at the same top line, and each bar steps a little to the right of the one above it.
      Returns false (draws nothing) if it would not fit, so the caller can use the vertical version. */
-  function hStair(el, rows, C) {
+  function hStair(el, rows, C, avail) {
     var NS = 'http://www.w3.org/2000/svg';
     var INK = '#0b0b0b', INK2 = '#52514e', MUT = '#6d6c68', BUDGET = '#3d3c39', NODE = ['#1f6cc7', '#c4501b'];
     var FONT = getComputedStyle(document.body).fontFamily;
@@ -276,7 +295,6 @@
     var colH = Math.max(380, Math.min(470, W * 0.38)), k = colH / total;
 
     rev.forEach(function (r) {
-      r.h = r.value * k;
       r.lines = wrapWords(r.name, 210, 14.5, 600).map(function (s) { return [s, 14.5, 600, INK]; });
       r.lines.push([B(r.value), 13, 400, INK2]);
       r.lh = block(r.lines); r.lw = widest(r.lines);
@@ -289,21 +307,32 @@
     if (G > 230) { spLabW += (G - 230) * 2; G = 230; }
     var xr0 = m + revLabW, xb = xr0 + 3 * step + nw + G, xs0 = xb + nw + G;
 
-    var y = top;
-    rev.forEach(function (r, i) { r.x0 = xr0 + i * step; r.y = y; y += Math.max(r.h, r.lh) + gap; });
-    var yRev = y;
-    y = top;
-    sp.forEach(function (g, j) {
-      g.h = g.value * k; g.x0 = xs0 + j * step; g.lx = g.x0 + nw + 8;
-      var avail = W - m - g.lx;
-      var lines = wrapWords(g.name, avail, 14.5, 600).map(function (s) { return [s, 14.5, 600, INK]; });
-      lines.push([B(g.value), 13, 400, INK2]);
-      if (!g.leaf) wrapParts(g.items.map(function (it) { return it.name + ' ' + B(it.value); }), avail, 12)
-        .forEach(function (s) { lines.push([s, 12, 400, MUT]); });
-      g.lines = lines; g.lh = block(lines);
-      g.y = y; y += Math.max(g.h, g.lh) + gap;
-    });
-    var H = Math.max(yRev, y, top + colH + gap) + 2;
+    function lay(ch) {
+      colH = ch; k = colH / total;
+      var y = top;
+      rev.forEach(function (r, i) { r.h = r.value * k; r.x0 = xr0 + i * step; r.y = y; y += Math.max(r.h, r.lh) + gap; });
+      var yRev = y;
+      y = top;
+      sp.forEach(function (g, j) {
+        g.h = g.value * k; g.x0 = xs0 + j * step; g.lx = g.x0 + nw + 8;
+        var aw = W - m - g.lx;
+        var lines = wrapWords(g.name, aw, 14.5, 600).map(function (s) { return [s, 14.5, 600, INK]; });
+        lines.push([B(g.value), 13, 400, INK2]);
+        if (!g.leaf) wrapParts(g.items.map(function (it) { return it.name + ' ' + B(it.value); }), aw, 12)
+          .forEach(function (s) { lines.push([s, 12, 400, MUT]); });
+        g.lines = lines; g.lh = block(lines);
+        g.y = y; y += Math.max(g.h, g.lh) + gap;
+      });
+      return Math.max(yRev, y, top + colH + gap) + 2;
+    }
+    // fixed height: the tallest columns that fit; give up (vertical version) if they would get too short
+    var H;
+    if (!avail) H = lay(colH);
+    else {
+      var ch = avail - top - gap - 2;
+      while (ch >= 300 && (H = lay(ch)) > avail) ch -= 4;
+      if (ch < 300) return false;
+    }
 
     el.replaceChildren(); el.style.position = 'relative';
     var svg = document.createElementNS(NS, 'svg');
@@ -365,7 +394,7 @@
   }
 
   function postHeight() {
-    var h = Math.ceil(wrap.getBoundingClientRect().height);
+    var h = only === 'flows' ? HT : Math.ceil(wrap.getBoundingClientRect().height);
     try { window.parent.postMessage({ 'datawrapper-height': { 'mtl-budget-flows': h } }, '*'); } catch (e) {}
   }
   var lastW = 0;
@@ -374,8 +403,15 @@
     document.body.classList.toggle('narrow', w < 560);
     if (only !== 'calculator' && el.clientWidth && el.clientWidth !== lastW) {
       lastW = el.clientWidth;
+      // fixed total height: measure everything except the chart, give the chart the rest
+      var avail = 0;
+      if (only === 'flows') {
+        el.replaceChildren(); el.style.height = '1px';  // 1px, not 0, so the margins around the chart don't collapse
+        avail = Math.floor(HT - (wrap.getBoundingClientRect().height - 1)) - 2;
+        el.style.height = '';
+      }
       // side-by-side staircase on wide screens; vertical staircase when it won't fit (or when asked for)
-      if (forceV || el.clientWidth < 760 || !hStair(el, ROWS, COLORS)) stairFlows(el, ROWS, COLORS);
+      if (forceV || el.clientWidth < 760 || !hStair(el, ROWS, COLORS, avail)) stairFlows(el, ROWS, COLORS, avail);
     }
     postHeight();
   }
@@ -397,9 +433,9 @@
       if (d.note) { var s = document.createElement('small'); s.textContent = d.note; lab.appendChild(s); }
       var bar = document.createElement('div'); bar.className = 'bar';
       var i = document.createElement('i'); i.style.width = (100 * Math.abs(d.v) / max) + '%';
-      i.style.background = d.v < 0 ? '#a8a69e' : (d.color || color); bar.appendChild(i);
+      i.style.background = d.v < 0 ? '#a8a69e' : (d.color || color); if (d.v === 0) i.style.minWidth = '0'; bar.appendChild(i);
       var pt = document.createElement('span'); pt.className = 'pt'; pt.textContent = d.pt || ''; bar.appendChild(pt);
-      var val = document.createElement('div'); val.className = 'val' + (d.v < 0 ? ' neg' : ''); val.textContent = d.signed ? sfmt(d.v) : fmt(d.v);
+      var val = document.createElement('div'); val.className = 'val' + (d.v < 0 ? ' neg' : ''); val.textContent = d.signed && d.v !== 0 ? sfmt(d.v) : fmt(d.v);
       container.appendChild(lab); container.appendChild(bar); container.appendChild(val);
       if (d.v >= 0 && pt.offsetWidth + 14 <= i.offsetWidth) pt.className = 'pt in';
       else { pt.className = 'pt out' + (d.v < 0 ? ' neg' : ''); pt.style.left = (i.offsetWidth + 6) + 'px'; }
@@ -407,31 +443,65 @@
   }
   var TEAL = '#0f766e';
   var input = document.getElementById('bill'), err = document.getElementById('err'), out = document.getElementById('out');
+  var bsel = document.getElementById('boro'), tsel = document.getElementById('type'), hint = document.getElementById('bill-hint');
+  // order of rows shown; i = index into each borough's comp [general, debts, water, infrastructure, borough]
+  var TAXES = [
+    { name: 'Infrastructure maintenance tax', i: 3 },
+    { name: 'General property tax', i: 0 },
+    { name: 'Water tax', i: 2 },
+    { name: 'Borough taxes', i: 4 },
+    { name: 'Debt tax', i: 1 }];
+  var TYPE = { house: ['single-family house', 'single-family houses'], condo: ['condo', 'condos'], plex: ['plex with 2 to 5 units', 'plexes with 2 to 5 units'], all: ['home', 'homes'] };
+  if (bsel) BORO.forEach(function (b, k) { var o = document.createElement('option'); o.value = k; o.textContent = b.name; bsel.appendChild(o); });
+  function pick() {
+    var b = BORO[+bsel.value || 0], t = tsel.value, bill = t === 'all' ? (b.allbill || null) : b[t];
+    var rate = bill ? (bill[1] - bill[0]) / bill[0] : b.all / 100;          // exact ratio from the city's own average bills
+    var shown = t === 'all' ? b.all : b[t][2];                              // the city's rounded percentage
+    var where = b.city ? 'Montreal' : b.name;
+    return { b: b, t: t, bill: bill, rate: rate, shown: shown, where: where };
+  }
+  function pct1(x) { var a = Math.abs(x); return a === 0 ? '0%' : a < 0.1 ? '<0.1%' : a.toFixed(1) + '%'; }
   function update() {
     if (!input) return;
-    var v = parseFloat(String(input.value).replace(/[^0-9.]/g, ''));
-    if (!isFinite(v) || v < 100 || v > 500000) {
-      err.textContent = 'Enter your 2026 bill in dollars, for example 4,939.'; err.classList.remove('hide'); out.style.opacity = 0.35; postHeight(); return;
+    var p = pick(), raw = String(input.value).trim(), avg = raw === '';
+    hint.classList.add('hide'); err.classList.add('hide');
+    // empty box: show the city's average bill for this borough and type of home, if there is one
+    var v = avg ? (p.bill ? p.bill[0] : NaN) : parseFloat(raw.replace(/[^0-9.]/g, ''));
+    if (avg && !p.bill) {
+      hint.textContent = 'Enter your 2026 bill to see your estimate.'; hint.classList.remove('hide'); out.style.opacity = 0.35; postHeight(); return;
     }
-    err.classList.add('hide'); out.style.opacity = 1;
-    var up = Math.round(v * 0.098), nb = Math.round(v) + up;
-    document.getElementById('t-old').textContent = fmt(v);
-    document.getElementById('t-up').textContent = '+' + fmt(up);
+    if (!isFinite(v) || v < 100 || v > 500000) {
+      err.textContent = 'Enter your 2026 bill in dollars, for example 4,937.'; err.classList.remove('hide'); out.style.opacity = 0.35; postHeight(); return;
+    }
+    out.style.opacity = 1;
+    document.getElementById('t-new-l').textContent = avg ? '2027 bill for the average ' + TYPE[p.t][0] : 'your estimated 2027 bill';
+    var up = Math.round(v * p.rate), nb = Math.round(v) + up;
+    document.getElementById('t-up').textContent = (up < 0 ? '−' : '+') + fmt(up);
     document.getElementById('t-new').textContent = fmt(nb);
-    // increase by tax: weights in percentage points; debt is negative, so split the positive total carefully
-    var amounts = INCREASE.map(function (d) { return v * d.pts / 100; });
-    var rounded = amounts.map(Math.round), diff = up - rounded.reduce(function (a, b) { return a + b; }, 0);
-    rounded[0] += diff; // absorb any $1 rounding gap in the largest item
-    document.getElementById('inc-h').textContent = 'Your extra ' + fmt(up) + ' a year, tax by tax';
-    rows(document.getElementById('inc-rows'), INCREASE.map(function (d, i) { return { name: d.name, note: d.note, v: rounded[i], signed: true,
-      pt: (d.pts < 0 ? '−' : '+') + Math.abs(d.pts).toFixed(1) + '%', color: TEAL }; }), TEAL);
+    document.getElementById('t-up-l').textContent = 'more every year from 2027 (+' + p.shown.toFixed(1) + '%, the ' +
+      (p.b.city ? 'city-wide average for ' + TYPE[p.t][1] : 'average for your borough and type of home') + ')*';
+    // split the increase: the new infrastructure tax from the city's own average-home figure (Tableaux 65-68) when there is one,
+    // the rest in the borough's proportions for all homes (Tableau 63), so the taxes add up to the increase
+    var comp = p.b.comp, infra = p.bill ? v * p.bill[3] / p.bill[0] : null;
+    var rest = infra === null ? up : up - infra, sum = comp.reduce(function (a, c, k) { return a + (infra === null || k !== 3 ? c : 0); }, 0);
+    var amounts = TAXES.map(function (d) { return d.i === 3 && infra !== null ? infra : rest * comp[d.i] / sum; });
+    var rounded = amounts.map(Math.round), diff = up - rounded.reduce(function (a, c) { return a + c; }, 0);
+    rounded[infra === null ? 0 : 1] += diff; // absorb any $1 rounding gap (not in the infrastructure tax when it is the city's exact figure)
+    document.getElementById('inc-h').textContent = (avg ? 'The extra ' : 'Your extra ') + fmt(up) + ' a year, tax by tax';
+    rows(document.getElementById('inc-rows'), TAXES.map(function (d, k) {
+      var x = 100 * amounts[k] / v, c = comp[d.i];
+      return { name: d.name, v: rounded[k], signed: true,
+               pt: c === 0 ? '0%' : (x < 0 ? '−' : '+') + pct1(x), color: TEAL };
+    }), TEAL);
     var sp = parts(nb, SPEND.map(function (d) { return d.pct; }));
     rows(document.getElementById('sp-rows'), SPEND.map(function (d, i) { return { name: d.name, v: sp[i], pt: d.pct.toFixed(1) + '%', color: TEAL }; }), TEAL);
     postHeight();
   }
-  if (input) input.addEventListener('input', update);
-  if (input) input.addEventListener('blur', function () { var v = parseFloat(String(input.value).replace(/[^0-9.]/g, '')); if (isFinite(v)) input.value = Math.round(v).toLocaleString('en-CA'); });
-  if (input) document.getElementById('avg').addEventListener('click', function () { input.value = '4,939'; update(); input.focus(); });
+  if (input) {
+    input.addEventListener('input', update);
+    input.addEventListener('blur', function () { var v = parseFloat(String(input.value).replace(/[^0-9.]/g, '')); if (isFinite(v)) input.value = Math.round(v).toLocaleString('en-CA'); });
+    bsel.addEventListener('change', update); tsel.addEventListener('change', update);
+  }
   var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(function () { draw(); if (input) update(); }, 120); });
   if (window.ResizeObserver) new ResizeObserver(postHeight).observe(wrap);
   draw(); update();
